@@ -297,7 +297,7 @@ buildSymp();
 function buildIngs(){
   const map={};
   MEDS.forEach(m=>(m.ings||[]).forEach(ing=>{
-    const k=ing.replace(/[\(（][^)）]*[\)）]/g,'').trim();
+    const k=ing.replace(/[(（][^)）]*/g,'').trim();
     if(k)map[k]=(map[k]||0)+1;
   }));
   const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,80).map(e=>e[0]);
@@ -332,7 +332,7 @@ function filter(){
     (m.effect||'').toLowerCase().includes(q)||(m.ings||[]).some(i=>i.toLowerCase().includes(q)));}
   if(S.syms.size>0)r=r.filter(m=>m.symptoms&&[...S.syms].some(s=>m.symptoms.includes(s)));
   if(S.ings.size>0)r=r.filter(m=>[...S.ings].some(si=>
-    (m.ings||[]).some(mi=>mi.replace(/[\(（][^)）]*[\)）]/g,'').trim().includes(si))));
+    (m.ings||[]).some(mi=>mi.replace(/[(（][^)）]*/g,'').trim().includes(si))));
   if(S.risk!==''){const rv=parseFloat(S.risk);
     r=rv===2?r.filter(m=>m.risk>=2&&m.risk<3):r.filter(m=>m.risk===rv);}
   if(S.nd)r=r.filter(m=>!m.drowsy);
@@ -345,9 +345,9 @@ function filter(){
 }
 
 function getSim(med,n){
-  const bi=new Set((med.ings||[]).map(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+  const bi=new Set((med.ings||[]).map(i=>i.replace(/[(（][^)）]*/g,'').trim()));
   return MEDS.filter(m=>m.id!==med.id&&m.cat===med.cat).map(m=>{
-    const mi=new Set((m.ings||[]).map(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+    const mi=new Set((m.ings||[]).map(i=>i.replace(/[(（][^)）]*/g,'').trim()));
     const inter=[...bi].filter(i=>mi.has(i)).length;
     const union=new Set([...bi,...mi]).size;
     return{m,s:union?inter/union:0};
@@ -356,7 +356,7 @@ function getSim(med,n){
 
 // 成分ポップアップ
 const pp=document.getElementById('ing-popup');
-function showPop(e,name){
+function showPop(e,el,name){
   const d=ING_DICT[name];if(!d)return;
   document.getElementById('ip-name').textContent=name;
   document.getElementById('ip-en').textContent=d.en||'';
@@ -372,13 +372,13 @@ function hidePop(){pp.classList.remove('show');}
 // カード
 function mkCard(med){
   const cat=CATS.find(c=>c.id===med.cat)||{};
-  const wSet=new Set((med.warnIngs||[]).map(w=>w.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+  const wSet=new Set((med.warnIngs||[]).map(w=>w.replace(/[(（][^)）]*/g,'').trim()));
   const iH=(med.ings||[]).map(ing=>{
-    const b=ing.replace(/[\(（][^)）]*[\)）]/g,'').trim();
+    const b=ing.replace(/[(（][^)）]*/g,'').trim();
     const iM=[...S.ings].some(s=>b.includes(s));
-    const iW=wSet.has(b)||(med.warnIngs||[]).some(w=>ing.includes(w.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+    const iW=wSet.has(b)||(med.warnIngs||[]).some(w=>ing.includes(w.replace(/[(（][^)）]*/g,'').trim()));
     const hD=!!ING_DICT[b];
-    return '<span class="itag '+(iW?'iw':iM?'im':'in')+'"'+(hD?' onmouseenter="showPop(event,''+b.replace(/'/g,"\\'")+'')" onmouseleave="hidePop()"':'')+'>'+ing+'</span>';
+    return '<span class="itag '+(iW?'iw':iM?'im':'in')+'"'+(hD?' onmouseenter="showPop(event,this,'+JSON.stringify(b)+')" onmouseleave="hidePop()"':'')+'>'+ing+'</span>';
   }).join('');
   const sH=(med.symptoms&&med.symptoms.length)?
     '<div class="csymp">'+med.symptoms.map(s=>'<span class="sym'+(S.syms.has(s)?' hit':'')+'">'+s+'</span>').join('')+'</div>':'';
@@ -442,7 +442,7 @@ function openCmp(){
   const meds=[...CMP].map(id=>MEDS.find(m=>m.id===id)).filter(Boolean);
   if(meds.length<2)return;
   const allI=new Set();
-  meds.forEach(m=>(m.ings||[]).forEach(ing=>allI.add(ing.replace(/[\(（][^)）]*[\)）]/g,'').trim())));
+  meds.forEach(m=>(m.ings||[]).forEach(ing=>allI.add(ing.replace(/[(（][^)）]*/g,'').trim())));
   const ings=[...allI].filter(Boolean);
   const hd=meds.map(m=>'<th class="'+(RCLS[m.risk]||'r25')+'"><div class="cmp-name">'+m.name+'</div>'
     +'<div style="font-size:10px;color:var(--txm)">'+(m.maker||'')+'</div>'
@@ -452,7 +452,7 @@ function openCmp(){
   const wnR='<tr><th>要注意成分</th>'+meds.map(m=>'<td>'+((m.warnIngs&&m.warnIngs.length)?'⚠ あり':'✅ なし')+'</td>').join('')+'</tr>';
   const iR=ings.map(ing=>{
     const cells=meds.map(m=>{
-      const has=(m.ings||[]).some(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()===ing);
+      const has=(m.ings||[]).some(i=>i.replace(/[(（][^)）]*/g,'').trim()===ing);
       return '<td style="text-align:center">'+(has?'<span class="ck">✓</span>':'<span class="cx">-</span>')+'</td>';
     }).join('');
     const def=ING_DICT[ing];
@@ -580,7 +580,7 @@ function showCol(id){
   const dv=document.getElementById('col-detail');
   const body=col.body
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .split('\n\n').map(p=>'<p>'+p+'</p>').join('');
+    .split('\n').map(p=>p?'<p>'+p+'</p>':'').join('');
   dv.innerHTML='<button class="col-back" onclick="backCol()">← コラム一覧に戻る</button>'
     +'<div class="col-detail"><h1>'+col.title+'</h1>'
     +'<div class="col-meta">'+col.date+' | '+col.tag+'</div>'
