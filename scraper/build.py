@@ -794,14 +794,14 @@ document.getElementById("cmpmodal").addEventListener("click",function(e){if(e.ta
 /* 症状ガイド */
 function buildGuide(){
   var el=document.getElementById("ggrid");
-  if(el.innerHTML)return;
-  el.innerHTML=SYMS.map(function(g){
-    return '<div class="gcard" onclick="filterGuide(\''+g.g.replace(/'/g,"\\'")+'\')">'
-      +'<div class="gico">'+g.i+'</div>'
-      +'<div class="gname">'+g.g+'</div>'
-      +'<div class="gsub">'+g.s.slice(0,3).join(" / ")+"…</div>"
-      +"</div>";
-  }).join("");
+  if(el.children.length)return;
+  SYMS.forEach(function(g){
+    var div=document.createElement("div");
+    div.className="gcard";
+    div.innerHTML='<div class="gico">'+g.i+'</div><div class="gname">'+g.g+'</div><div class="gsub">'+g.s.slice(0,3).join(" / ")+"…</div>";
+    (function(name){div.addEventListener("click",function(){filterGuide(name);});})(g.g);
+    el.appendChild(div);
+  });
 }
 
 function filterGuide(name){
@@ -824,13 +824,15 @@ function filterGuide(name){
 /* コラム */
 function buildCols(){
   var el=document.getElementById("cgrid");
-  if(el.innerHTML)return;
-  el.innerHTML=COLS.map(function(col){
-    return '<div class="ccard" onclick="showCol(\''+col.id+'\')">'
-      +'<div class="ctop"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div>'
-      +'<div class="cbdy"><div class="cdate">'+col.date+'</div><div class="csum">'+col.summary+'</div></div>'
-      +"</div>";
-  }).join("");
+  if(el.children.length)return;
+  COLS.forEach(function(col){
+    var div=document.createElement("div");
+    div.className="ccard";
+    div.innerHTML='<div class="ctop"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div>'
+      +'<div class="cbdy"><div class="cdate">'+col.date+'</div><div class="csum">'+col.summary+'</div></div>';
+    (function(id){div.addEventListener("click",function(){showCol(id);});})(col.id);
+    el.appendChild(div);
+  });
 }
 
 function showCol(id){
