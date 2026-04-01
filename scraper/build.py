@@ -421,7 +421,7 @@ function mkCard(med){
     +(med.note?'<div class="note '+nc+'">'+med.note+'</div>':'')
     +'<div class="cfoot"><span class="cfootl">成分数: '+((med.ings||[]).length)+'</span>'
     +'<div style="display:flex;gap:8px;align-items:center">'
-    +'<button class="sim-btn" onclick="showSim('+med.id+')">類似商品</button>'
+    +'<button type="button" class="sim-btn" onclick="showSim('+med.id+')">類似商品</button>'
     +'<a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA ↗</a>'
     +'</div></div>'
     +'<div id="sim-'+med.id+'" style="display:none"></div>'
@@ -437,7 +437,7 @@ function showSim(id){
   el.innerHTML='<div class="sim-panel"><h3>🔍 類似商品</h3>'
     +sims.map(x=>'<div class="sim-card"><div><div class="sim-name">'+x.m.name+'</div>'
     +'<div class="sim-score">成分一致度 '+Math.round(x.s*100)+'% | '+(x.m.maker||'')+'</div></div>'
-    +'<button class="sim-go" onclick="jumpTo('+x.m.id+')">詳細を見る</button></div>').join('')
+    +'<button type="button" class="sim-go" onclick="jumpTo('+x.m.id+')">詳細を見る</button></div>').join('')
     +'</div>';
   el.style.display='block';
 }
@@ -602,7 +602,7 @@ function showCol(id){
   const body=col.body
     .replace(/\\*\\*(.+?)\\*\\*/g,'<strong>$1</strong>')
     .split('\\n').map(p=>p?'<p>'+p+'</p>':'').join('');
-  dv.innerHTML='<button class="col-back" onclick="backCol()">← コラム一覧に戻る</button>'
+  dv.innerHTML='<button type="button" class="col-back" onclick="backCol()">← コラム一覧に戻る</button>'
     +'<div class="col-detail"><h1>'+col.title+'</h1>'
     +'<div class="col-meta">'+col.date+' | '+col.tag+'</div>'
     +'<div class="col-body">'+body+'</div></div>';
@@ -646,9 +646,9 @@ def run(output=None):
         '<nav class="nav"><div class="nav-inner">'
         '<div class="logo">くすり成分<em>ガイド</em></div>'
         '<div class="nav-tabs">'
-        '<button class="nav-tab active" onclick="showPage(\'search\')" id="tab-search">🔍 検索</button>'
-        '<button class="nav-tab" onclick="showPage(\'guide\')" id="tab-guide">💊 症状から選ぶ</button>'
-        '<button class="nav-tab" onclick="showPage(\'column\')" id="tab-column">📖 コラム</button>'
+        '<button type="button" class="nav-tab active" onclick="showPage(\'search\')" id="tab-search">🔍 検索</button>'
+        '<button type="button" class="nav-tab" onclick="showPage(\'guide\')" id="tab-guide">💊 症状から選ぶ</button>'
+        '<button type="button" class="nav-tab" onclick="showPage(\'column\')" id="tab-column">📖 コラム</button>'
         '</div>'
         '<div class="nav-right">' + updated_str + '</div>'
         '</div></nav>\n'
@@ -662,25 +662,25 @@ def run(output=None):
         '<input type="text" id="q" placeholder="商品名・成分・症状・メーカー…" autocomplete="off">'
         '</div></div>'
         '<div class="acc">'
-        '<button class="acc-hd" onclick="toggleAcc(this)">'
+        '<button type="button" class="acc-hd" onclick="toggleAcc(this)">'
         '<span>💊</span> カテゴリ'
         '<span class="acc-cnt" id="acc-cat-cnt"></span>'
         '<span class="acc-arr">▼</span></button>'
         '<div class="acc-bd"><div class="cat-list" id="catlist"></div></div></div>'
         '<div class="acc">'
-        '<button class="acc-hd" onclick="toggleAcc(this)">'
+        '<button type="button" class="acc-hd" onclick="toggleAcc(this)">'
         '<span>🤕</span> 症状で絞り込む'
         '<span class="acc-cnt" id="acc-sym-cnt"></span>'
         '<span class="acc-arr">▼</span></button>'
         '<div class="acc-bd"><div id="sym-area"></div></div></div>'
         '<div class="acc">'
-        '<button class="acc-hd" onclick="toggleAcc(this)">'
+        '<button type="button" class="acc-hd" onclick="toggleAcc(this)">'
         '<span>⚗️</span> 成分で絞り込む'
         '<span class="acc-cnt" id="acc-ing-cnt"></span>'
         '<span class="acc-arr">▼</span></button>'
         '<div class="acc-bd"><div id="ing-area" style="max-height:200px;overflow-y:auto;display:flex;flex-wrap:wrap"></div></div></div>'
         '<div class="acc">'
-        '<button class="acc-hd open" onclick="toggleAcc(this)">'
+        '<button type="button" class="acc-hd open" onclick="toggleAcc(this)">'
         '<span>⚙️</span> 絞り込み・並び替え'
         '<span class="acc-arr">▼</span></button>'
         '<div class="acc-bd open">'
@@ -702,7 +702,7 @@ def run(output=None):
         '<label class="chk"><input type="checkbox" id="cnd"> 眠気なしのみ表示</label>'
         '<label class="chk"><input type="checkbox" id="cnw"> 要注意成分を含まない</label>'
         '</div>'
-        '<button class="rbtn" id="rbtn">✕ すべてリセット</button>'
+        '<button type="button" class="rbtn" id="rbtn">✕ すべてリセット</button>'
         '</div></div>'
         '<div class="warn-box"><strong>⚠ 要注意成分について</strong>'
         '<b>ア尿素</b>（アリルイソプロピルアセチル尿素）→ 2023年AU規制・2025年KR麻薬類指定<br>'
@@ -710,7 +710,7 @@ def run(output=None):
         '</aside>'
         '<main class="main">'
         '<div class="cmp-bar"><span>比較したい商品を選択 <span class="cmp-cnt" id="cmp-cnt">0</span>/4</span>'
-        '<button class="cmp-btn" id="cmp-open" disabled onclick="openCmp()">📊 成分比較表を開く</button></div>'
+        '<button type="button" class="cmp-btn" id="cmp-open" disabled onclick="openCmp()">📊 成分比較表を開く</button></div>'
         '<div class="res-bar"><div class="res-info" id="ri"></div><div class="af-chips" id="af"></div></div>'
         '<div class="grid" id="grid"></div>'
         '<div class="pagi" id="pagi"></div>'
@@ -738,7 +738,7 @@ def run(output=None):
         '<div class="modal-bg hidden" id="cmp-modal">'
         '<div class="modal">'
         '<div class="modal-hd"><h2>📊 成分比較表</h2>'
-        '<button class="modal-close" onclick="closeCmp()">×</button></div>'
+        '<button type="button" class="modal-close" onclick="closeCmp()">×</button></div>'
         '<div class="modal-body" id="cmp-body"></div>'
         '</div></div>\n'
 
