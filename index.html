@@ -4,564 +4,337 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>くすり成分ガイド｜OTC医薬品 成分・効能・価格データベース</title>
-<meta name="description" content="市販薬を成分から比較。第1類〜第3類のリスク区分、眠気の有無、要注意成分を一覧で確認。115品目収録。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="description" content="市販薬を成分から比較。第1類〜第3類のリスク区分、眠気の有無、要注意成分を確認。115品目収録。">
 <style>
-:root{{
+
+:root{
   --navy:#0f1c35;--teal:#2fa18d;--teal2:#1a7f6e;--tl:#e8f5f2;
   --amber:#fffbeb;--amberb:#f59e0b;--red:#b91c1c;--rb:#fef2f2;
   --sl:#f1f5f9;--bd:#e2e8f0;--bdm:#cbd5e1;
   --tx:#0f172a;--txm:#475569;--txl:#94a3b8;--wh:#fff;
   --shadow:0 1px 3px rgba(15,23,42,.08);
   --shadow-lg:0 4px 16px rgba(15,23,42,.12);
-}}
-*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:'Noto Sans JP',-apple-system,sans-serif;background:var(--sl);color:var(--tx);font-size:14px;line-height:1.7}}
-a{{color:inherit;text-decoration:none}}
-button{{cursor:pointer;font-family:inherit}}
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;background:var(--sl);color:var(--tx);font-size:14px;line-height:1.7}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+.nav{background:var(--navy);border-bottom:3px solid var(--teal);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1240px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;height:52px}
+.logo{font-size:17px;font-weight:700;color:#fff;white-space:nowrap}
+.logo em{color:var(--teal);font-style:normal}
+.nav-tabs{display:flex;gap:2px;margin-left:auto}
+.nav-tab{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;color:#94a3b8;background:transparent;border:none;transition:all .15s}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-tab.active{color:#fff;background:var(--teal2)}
+.nav-right{font-size:11px;color:#475569;margin-left:8px;white-space:nowrap}
+.page{display:none;max-width:1240px;margin:0 auto;padding:16px 20px 60px}
+.page.active{display:block}
+.page-2col{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start}
+.sb{position:sticky;top:68px;display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 80px);overflow-y:auto;scrollbar-width:thin}
+.sb::-webkit-scrollbar{width:3px}
+.sb::-webkit-scrollbar-thumb{background:var(--bdm);border-radius:2px}
+.acc{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+.acc-hd{display:flex;align-items:center;gap:6px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--txm);background:transparent;border:none;width:100%;text-align:left}
+.acc-hd:hover{background:var(--sl)}
+.acc-cnt{margin-left:auto;font-size:11px;padding:1px 7px;background:var(--teal);color:#fff;border-radius:10px;display:none}
+.acc-cnt.on{display:inline}
+.acc-arr{margin-left:6px;font-size:10px;color:var(--txl);transition:transform .2s}
+.acc-hd.open .acc-arr{transform:rotate(180deg)}
+.acc-bd{display:none;padding:8px 10px 12px}
+.acc-bd.open{display:block}
+.srch-wrap{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:10px;box-shadow:var(--shadow)}
+.srch-box{position:relative}
+.srch-box input{width:100%;padding:8px 8px 8px 32px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;outline:none;font-family:inherit}
+.srch-box input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}
+.srch-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--txl);pointer-events:none}
+.cat-list{display:flex;flex-direction:column;gap:1px}
+.cbtn{display:flex;align-items:center;gap:7px;width:100%;padding:5px 8px;border-radius:6px;border:none;background:transparent;font-size:12.5px;color:var(--txm);text-align:left}
+.cbtn:hover{background:var(--tl);color:var(--teal2)}
+.cbtn.active{background:var(--tl);color:var(--teal2);font-weight:600}
+.cbtn .cico{font-size:13px;width:18px;text-align:center}
+.cbtn .cbadge{margin-left:auto;font-size:10px;padding:1px 5px;background:var(--sl);border-radius:8px;color:var(--txl)}
+.cbtn.active .cbadge{background:rgba(47,161,141,.15);color:var(--teal2)}
+.sym-group{margin-bottom:8px}
+.sym-gh{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--txm);padding:3px 0;border-bottom:1px solid var(--bd);cursor:pointer;user-select:none;margin-bottom:4px}
+.sym-gh .gar{margin-left:auto;font-size:10px;transition:transform .15s}
+.sym-gh.col .gar{transform:rotate(-90deg)}
+.sym-tags{display:flex;flex-wrap:wrap;gap:3px}
+.sym-tags.hidden{display:none}
+.stag{font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid var(--bd);cursor:pointer;color:var(--txm);background:var(--wh);user-select:none}
+.stag:hover{border-color:var(--amberb);color:#92400e;background:var(--amber)}
+.stag.active{background:var(--amberb);border-color:var(--amberb);color:#fff;font-weight:600}
+.ichip{font-size:11px;padding:2px 7px;border-radius:12px;border:1px solid var(--bd);cursor:pointer;color:var(--txm);background:var(--wh);margin:2px;display:inline-block}
+.ichip:hover{border-color:var(--teal);color:var(--teal)}
+.ichip.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.fsel{width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;font-size:12px;color:var(--tx);background:var(--wh);outline:none;font-family:inherit;margin-top:5px}
+.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txm);cursor:pointer;padding:3px 0}
+.chk input{accent-color:var(--teal)}
+.rbtn{width:100%;padding:6px;border:1px dashed var(--bdm);border-radius:6px;background:transparent;font-size:12px;color:var(--txl);margin-top:8px}
+.rbtn:hover{border-color:var(--red);color:var(--red);background:var(--rb)}
+.warn-box{background:var(--rb);border:1px solid #fecaca;border-radius:8px;padding:10px 12px;font-size:11px;color:#7f1d1d;line-height:1.8}
+.warn-box strong{color:var(--red);display:block;margin-bottom:2px;font-size:12px}
+.main{min-width:0}
+.res-bar{margin-bottom:10px}
+.res-info{font-size:13px;color:var(--txm)}
+.res-info strong{color:var(--tx);font-size:16px;font-weight:700}
+.af-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.afc{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 8px;background:var(--tl);color:var(--teal2);border-radius:12px;border:1px solid rgba(47,161,141,.25)}
+.afc button{background:none;border:none;font-size:13px;color:var(--teal2);padding:0 1px;line-height:1}
+.cmp-bar{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
+.cmp-bar span{font-size:13px;color:var(--txm)}
+.cmp-btn{padding:5px 14px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600}
+.cmp-btn:disabled{background:var(--bdm);cursor:not-allowed}
+.cmp-cnt{font-size:11px;padding:1px 6px;background:var(--teal);color:#fff;border-radius:10px}
+.grid{display:flex;flex-direction:column;gap:8px}
+.card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:13px 16px;box-shadow:var(--shadow);position:relative}
+.card:hover{box-shadow:var(--shadow-lg);border-color:#c5d5e5}
+.card-sel{position:absolute;top:10px;right:12px}
+.card-sel input{accent-color:var(--teal);width:16px;height:16px;cursor:pointer}
+.chard{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px;padding-right:28px}
+.cname{font-size:15px;font-weight:700}
+.cmaker{font-size:11px;color:var(--txl);margin-top:1px}
+.cprice{text-align:right;flex-shrink:0}
+.cpval{font-size:18px;font-weight:700}
+.cpval.nopr{font-size:12px;color:var(--txl);font-weight:400}
+.cpnote{font-size:10px;color:var(--txl)}
+.badges{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.badge{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap}
+.bc{background:#1c2b4a;color:#cbd5e1}
+.r0,.r1{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.r2{background:#fff7ed;color:#92400e;border:1px solid #fed7aa}
+.r25{background:#fef3c7;color:#78350f;border:1px solid #fde68a}
+.r3{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.bd2{background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe}
+.bw{background:#fef9c3;color:#713f12;border:1px solid #fde047}
+.csymp{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.sym{font-size:10px;padding:2px 7px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.sym.hit{background:var(--amberb);color:#fff;border-color:var(--amberb);font-weight:600}
+.cef{font-size:12px;color:var(--txm);margin-bottom:7px;line-height:1.6}
+.ings{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}
+.itag{font-size:11px;padding:2px 7px;border-radius:4px;cursor:pointer}
+.in{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.im{background:var(--tl);color:var(--teal2);border:1px solid #99d4cd;font-weight:600}
+.iw{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.note{font-size:11.5px;padding:6px 10px;border-radius:6px;margin-bottom:7px;line-height:1.7}
+.nn{background:var(--sl);color:var(--txm);border-left:3px solid var(--bdm)}
+.nw{background:var(--amber);color:#713f12;border-left:3px solid var(--amberb)}
+.nd{background:var(--rb);color:#7f1d1d;border-left:3px solid var(--red)}
+.cfoot{display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--bd);font-size:11px}
+.cfoot a{color:#2563eb}
+.cfoot a:hover{text-decoration:underline}
+.cfootl{color:var(--txl)}
+.sim-btn{font-size:11px;padding:2px 8px;border:1px solid var(--teal);border-radius:12px;color:var(--teal);background:transparent}
+.sim-btn:hover{background:var(--tl)}
+.pagi{display:flex;justify-content:center;align-items:center;gap:4px;margin-top:16px;flex-wrap:wrap}
+.pgb{min-width:32px;height:32px;padding:0 7px;border:1px solid var(--bd);border-radius:6px;background:var(--wh);font-size:13px;color:var(--txm)}
+.pgb:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.pgb.active{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600}
+.pgb:disabled{opacity:.35;cursor:not-allowed}
+.pagi-info{font-size:12px;color:var(--txl);padding:0 4px}
+.nores{text-align:center;padding:50px 20px;color:var(--txl)}
+.nores-ico{font-size:36px;margin-bottom:8px}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-bg.hidden{display:none}
+.modal{background:var(--wh);border-radius:12px;max-width:900px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(15,23,42,.25)}
+.modal-hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.modal-hd h2{font-size:16px;font-weight:700}
+.modal-close{width:32px;height:32px;border:none;background:var(--sl);border-radius:6px;font-size:18px;color:var(--txm)}
+.modal-body{overflow:auto;padding:16px 20px}
+.cmp-table{width:100%;border-collapse:collapse;font-size:12px}
+.cmp-table th,.cmp-table td{padding:8px 10px;border:1px solid var(--bd);text-align:left;vertical-align:top}
+.cmp-table th{background:var(--sl);font-weight:600;color:var(--txm);white-space:nowrap}
+.cmp-table tr:nth-child(even){background:#f8fafc}
+.cmp-name{font-weight:700;font-size:13px}
+.ck{color:#10b981;font-weight:700;font-size:14px}
+.cx{color:#cbd5e1}
+.ing-popup{position:fixed;z-index:300;background:var(--navy);color:#e2e8f0;border-radius:10px;padding:14px 16px;max-width:300px;font-size:12px;line-height:1.7;box-shadow:0 8px 32px rgba(15,23,42,.4);pointer-events:none;opacity:0;transition:opacity .15s}
+.ing-popup.show{opacity:1}
+.ing-popup h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.ing-popup .ip-en{font-size:10px;color:#94a3b8;margin-bottom:6px}
+.ing-popup .ip-eff{color:#e2e8f0;margin-bottom:4px}
+.ing-popup .ip-cau{color:#fca5a5;border-top:1px solid rgba(255,255,255,.1);padding-top:4px;margin-top:4px}
+.sim-panel{background:var(--sl);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-top:10px}
+.sim-panel h3{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--txm)}
+.sim-card{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.sim-name{font-size:13px;font-weight:600}
+.sim-score{font-size:11px;color:var(--txl)}
+.sim-go{font-size:11px;padding:4px 12px;background:var(--teal);color:#fff;border:none;border-radius:6px}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.guide-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:16px;cursor:pointer;text-align:center}
+.guide-card:hover{border-color:var(--teal);box-shadow:var(--shadow-lg)}
+.g-ico{font-size:28px;margin-bottom:6px}
+.g-name{font-size:14px;font-weight:600}
+.g-sub{font-size:11px;color:var(--txl);margin-top:2px}
+.col-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.col-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow)}
+.col-card:hover{box-shadow:var(--shadow-lg)}
+.col-card-top{background:linear-gradient(135deg,var(--navy) 0%,#1e3a5f 100%);padding:20px;color:#fff}
+.col-tag{font-size:10px;padding:2px 8px;background:var(--teal);border-radius:10px;display:inline-block;margin-bottom:8px}
+.col-title{font-size:14px;font-weight:700;line-height:1.5}
+.col-card-body{padding:14px}
+.col-date{font-size:11px;color:var(--txl);margin-bottom:6px}
+.col-summary{font-size:12px;color:var(--txm);line-height:1.7}
+.col-detail{background:var(--wh);border-radius:10px;padding:24px;box-shadow:var(--shadow);max-width:760px;margin:0 auto}
+.col-detail h1{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px}
+.col-meta{font-size:12px;color:var(--txl);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
+.col-body{font-size:14px;line-height:1.9}
+.col-body h2{font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--navy)}
+.col-body p{margin-bottom:12px}
+.col-back{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--teal);margin-bottom:16px;background:none;border:none;cursor:pointer}
+.page-title{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--navy)}
+.page-desc{font-size:13px;color:var(--txm);margin-bottom:16px}
+.footer{background:var(--navy);color:#64748b;text-align:center;padding:20px;font-size:11px;margin-top:40px}
+@media(max-width:800px){
+  .page-2col{grid-template-columns:1fr}
+  .sb{position:static;max-height:none}
+  .guide-grid{grid-template-columns:repeat(2,1fr)}
+}
 
-/* ── NAV ── */
-.nav{{background:var(--navy);border-bottom:3px solid var(--teal);position:sticky;top:0;z-index:100}}
-.nav-inner{{max-width:1240px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;height:52px}}
-.logo{{font-size:17px;font-weight:700;color:#fff;white-space:nowrap}}
-.logo em{{color:var(--teal);font-style:normal}}
-.nav-tabs{{display:flex;gap:2px;margin-left:auto}}
-.nav-tab{{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;color:#94a3b8;background:transparent;border:none;transition:all .15s}}
-.nav-tab:hover{{color:#fff;background:rgba(255,255,255,.08)}}
-.nav-tab.active{{color:#fff;background:var(--teal2)}}
-.nav-badge{{font-size:11px;padding:2px 6px;border-radius:10px;background:var(--teal);color:#fff;margin-left:4px;vertical-align:middle}}
-
-/* ── PAGES ── */
-.page{{display:none;max-width:1240px;margin:0 auto;padding:16px 20px 60px}}
-.page.active{{display:block}}
-.page-2col{{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start}}
-
-/* ── SIDEBAR ── */
-.sb{{position:sticky;top:68px;display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 80px);overflow-y:auto;scrollbar-width:thin}}
-.sb::-webkit-scrollbar{{width:3px}}
-.sb::-webkit-scrollbar-thumb{{background:var(--bdm);border-radius:2px}}
-
-/* アコーディオン */
-.acc{{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}}
-.acc-hd{{display:flex;align-items:center;gap:6px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--txm);background:transparent;border:none;width:100%;text-align:left;transition:background .12s}}
-.acc-hd:hover{{background:var(--sl)}}
-.acc-hd .acc-ico{{font-size:14px}}
-.acc-hd .acc-count{{margin-left:auto;font-size:11px;padding:2px 7px;background:var(--teal);color:#fff;border-radius:10px;display:none}}
-.acc-hd .acc-count.show{{display:inline}}
-.acc-hd .acc-arr{{margin-left:6px;font-size:10px;color:var(--txl);transition:transform .2s}}
-.acc-hd.open .acc-arr{{transform:rotate(180deg)}}
-.acc-bd{{display:none;padding:8px 10px 12px}}
-.acc-bd.open{{display:block}}
-
-/* 検索 */
-.srch-wrap{{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:10px;box-shadow:var(--shadow)}}
-.srch-box{{position:relative}}
-.srch-box input{{width:100%;padding:8px 8px 8px 32px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;outline:none;font-family:inherit}}
-.srch-box input:focus{{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}}
-.srch-ico{{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--txl);font-size:14px;pointer-events:none}}
-
-/* カテゴリボタン */
-.cat-list{{display:flex;flex-direction:column;gap:1px}}
-.cbtn{{display:flex;align-items:center;gap:7px;width:100%;padding:5px 8px;border-radius:6px;border:none;background:transparent;font-size:12.5px;color:var(--txm);text-align:left;transition:all .12s}}
-.cbtn:hover{{background:var(--tl);color:var(--teal2)}}
-.cbtn.active{{background:var(--tl);color:var(--teal2);font-weight:600}}
-.cbtn .cico{{font-size:13px;width:18px;text-align:center}}
-.cbtn .cbadge{{margin-left:auto;font-size:10px;padding:1px 5px;background:var(--sl);border-radius:8px;color:var(--txl)}}
-.cbtn.active .cbadge{{background:rgba(47,161,141,.15);color:var(--teal2)}}
-
-/* 症状タグ */
-.sym-group{{margin-bottom:8px}}
-.sym-gh{{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--txm);padding:3px 0;border-bottom:1px solid var(--bd);cursor:pointer;user-select:none;margin-bottom:4px}}
-.sym-gh .gar{{margin-left:auto;font-size:10px;transition:transform .15s}}
-.sym-gh.col .gar{{transform:rotate(-90deg)}}
-.sym-tags{{display:flex;flex-wrap:wrap;gap:3px}}
-.sym-tags.hidden{{display:none}}
-.stag{{font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid var(--bd);cursor:pointer;color:var(--txm);background:var(--wh);user-select:none;transition:all .12s}}
-.stag:hover{{border-color:var(--amberb);color:#92400e;background:var(--amber)}}
-.stag.active{{background:var(--amberb);border-color:var(--amberb);color:#fff;font-weight:600}}
-
-/* 成分チップ */
-.ichip{{font-size:11px;padding:2px 7px;border-radius:12px;border:1px solid var(--bd);cursor:pointer;color:var(--txm);background:var(--wh);margin:2px;display:inline-block;transition:all .12s}}
-.ichip:hover{{border-color:var(--teal);color:var(--teal)}}
-.ichip.active{{background:var(--teal);border-color:var(--teal);color:#fff}}
-
-/* フィルタ */
-.fsel{{width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;font-size:12px;color:var(--tx);background:var(--wh);outline:none;font-family:inherit;margin-top:5px}}
-.chk{{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txm);cursor:pointer;padding:3px 0}}
-.chk input{{accent-color:var(--teal)}}
-.rbtn{{width:100%;padding:6px;border:1px dashed var(--bdm);border-radius:6px;background:transparent;font-size:12px;color:var(--txl);margin-top:8px;transition:all .12s}}
-.rbtn:hover{{border-color:var(--red);color:var(--red);background:var(--rb)}}
-
-/* 警告ボックス */
-.warn-box{{background:var(--rb);border:1px solid #fecaca;border-radius:8px;padding:10px 12px;font-size:11px;color:#7f1d1d;line-height:1.8}}
-.warn-box strong{{color:var(--red);display:block;margin-bottom:2px;font-size:12px}}
-
-/* ── MAIN ── */
-.main{{min-width:0}}
-.res-bar{{margin-bottom:10px;display:flex;align-items:center;flex-wrap:wrap;gap:8px}}
-.res-info{{font-size:13px;color:var(--txm)}}
-.res-info strong{{color:var(--tx);font-size:16px;font-weight:700}}
-.af-chips{{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}}
-.afc{{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 8px;background:var(--tl);color:var(--teal2);border-radius:12px;border:1px solid rgba(47,161,141,.25)}}
-.afc button{{background:none;border:none;font-size:13px;color:var(--teal2);padding:0 1px;line-height:1}}
-
-/* 比較ボタン */
-.cmp-bar{{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}}
-.cmp-bar span{{font-size:13px;color:var(--txm)}}
-.cmp-btn{{padding:5px 14px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600}}
-.cmp-btn:disabled{{background:var(--bdm);cursor:not-allowed}}
-.cmp-count{{font-size:11px;padding:1px 6px;background:var(--teal);color:#fff;border-radius:10px}}
-
-/* ── カード ── */
-.grid{{display:flex;flex-direction:column;gap:8px}}
-.card{{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:13px 16px;box-shadow:var(--shadow);transition:box-shadow .15s,border-color .15s;position:relative}}
-.card:hover{{box-shadow:var(--shadow-lg);border-color:#c5d5e5}}
-.card-sel{{position:absolute;top:10px;right:12px}}
-.card-sel input[type=checkbox]{{accent-color:var(--teal);width:16px;height:16px;cursor:pointer}}
-.chard{{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px;padding-right:28px}}
-.cname{{font-size:15px;font-weight:700}}
-.cmaker{{font-size:11px;color:var(--txl);margin-top:1px}}
-.cprice{{text-align:right;flex-shrink:0}}
-.cpval{{font-size:18px;font-weight:700}}
-.cpval.nopr{{font-size:12px;color:var(--txl);font-weight:400}}
-.cpnote{{font-size:10px;color:var(--txl)}}
-.badges{{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}}
-.badge{{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap}}
-.bc{{background:#1c2b4a;color:#cbd5e1}}
-.r0,.r1{{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}}
-.r2{{background:#fff7ed;color:#92400e;border:1px solid #fed7aa}}
-.r25{{background:#fef3c7;color:#78350f;border:1px solid #fde68a}}
-.r3{{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}}
-.bd2{{background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe}}
-.bw{{background:#fef9c3;color:#713f12;border:1px solid #fde047}}
-.csymp{{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}}
-.sym{{font-size:10px;padding:2px 7px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #fde68a}}
-.sym.hit{{background:var(--amberb);color:#fff;border-color:var(--amberb);font-weight:600}}
-.cef{{font-size:12px;color:var(--txm);margin-bottom:7px;line-height:1.6}}
-.ings{{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}}
-.itag{{font-size:11px;padding:2px 7px;border-radius:4px;cursor:pointer;transition:opacity .12s}}
-.itag:hover{{opacity:.8}}
-.in{{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}}
-.im{{background:var(--tl);color:var(--teal2);border:1px solid #99d4cd;font-weight:600}}
-.iw{{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}}
-.note{{font-size:11.5px;padding:6px 10px;border-radius:6px;margin-bottom:7px;line-height:1.7}}
-.nn{{background:var(--sl);color:var(--txm);border-left:3px solid var(--bdm)}}
-.nw{{background:var(--amber);color:#713f12;border-left:3px solid var(--amberb)}}
-.nd{{background:var(--rb);color:#7f1d1d;border-left:3px solid var(--red)}}
-.cfoot{{display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--bd);font-size:11px}}
-.cfoot a{{color:#2563eb}}
-.cfoot a:hover{{text-decoration:underline}}
-.cfootl{{color:var(--txl)}}
-.sim-btn{{font-size:11px;padding:2px 8px;border:1px solid var(--teal);border-radius:12px;color:var(--teal);background:transparent}}
-.sim-btn:hover{{background:var(--tl)}}
-
-/* ── ページネーション ── */
-.pagi{{display:flex;justify-content:center;align-items:center;gap:4px;margin-top:16px;flex-wrap:wrap}}
-.pgb{{min-width:32px;height:32px;padding:0 7px;border:1px solid var(--bd);border-radius:6px;background:var(--wh);font-size:13px;color:var(--txm);transition:all .12s}}
-.pgb:hover:not(:disabled){{border-color:var(--teal);color:var(--teal)}}
-.pgb.active{{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600}}
-.pgb:disabled{{opacity:.35;cursor:not-allowed}}
-.pagi-info{{font-size:12px;color:var(--txl);padding:0 4px}}
-.nores{{text-align:center;padding:50px 20px;color:var(--txl)}}
-.nores .nores-ico{{font-size:36px;margin-bottom:8px}}
-
-/* ── 比較表モーダル ── */
-.modal-bg{{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}}
-.modal-bg.hidden{{display:none}}
-.modal{{background:var(--wh);border-radius:12px;max-width:900px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(15,23,42,.25)}}
-.modal-hd{{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}}
-.modal-hd h2{{font-size:16px;font-weight:700}}
-.modal-close{{width:32px;height:32px;border:none;background:var(--sl);border-radius:6px;font-size:18px;color:var(--txm)}}
-.modal-body{{overflow:auto;padding:16px 20px}}
-.cmp-table{{width:100%;border-collapse:collapse;font-size:12px}}
-.cmp-table th,.cmp-table td{{padding:8px 10px;border:1px solid var(--bd);text-align:left;vertical-align:top}}
-.cmp-table th{{background:var(--sl);font-weight:600;color:var(--txm);white-space:nowrap}}
-.cmp-table tr:nth-child(even){{background:#f8fafc}}
-.cmp-table .cmp-name{{font-weight:700;font-size:13px}}
-.cmp-table .cmp-risk0,.cmp-table .cmp-risk1{{background:#fee2e2}}
-.cmp-table .cmp-risk2,.cmp-table .cmp-risk25{{background:#fff7ed}}
-.cmp-table .cmp-risk3{{background:#f0fdf4}}
-.cmp-ings-row td{{font-size:11px}}
-.ck{{color:#10b981;font-weight:700;font-size:14px}}
-.cx{{color:#cbd5e1}}
-
-/* 成分ポップアップ */
-.ing-popup{{position:fixed;z-index:300;background:var(--navy);color:#e2e8f0;border-radius:10px;padding:14px 16px;max-width:320px;font-size:12px;line-height:1.7;box-shadow:0 8px 32px rgba(15,23,42,.4);pointer-events:none;opacity:0;transition:opacity .15s}}
-.ing-popup.show{{opacity:1}}
-.ing-popup h4{{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}}
-.ing-popup .ing-en{{font-size:10px;color:#94a3b8;margin-bottom:6px}}
-.ing-popup .ing-effect{{color:#e2e8f0;margin-bottom:4px}}
-.ing-popup .ing-caution{{color:#fca5a5;border-top:1px solid rgba(255,255,255,.1);padding-top:4px;margin-top:4px}}
-
-/* 類似商品 */
-.sim-panel{{background:var(--sl);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-top:10px}}
-.sim-panel h3{{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--txm)}}
-.sim-cards{{display:flex;flex-direction:column;gap:8px}}
-.sim-card{{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}}
-.sim-card-info{{min-width:0}}
-.sim-card-name{{font-size:13px;font-weight:600}}
-.sim-card-score{{font-size:11px;color:var(--txl)}}
-.sim-card-btn{{font-size:11px;padding:4px 12px;background:var(--teal);color:#fff;border:none;border-radius:6px;white-space:nowrap}}
-
-/* ── 症状ガイド ── */
-.guide-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px}}
-.guide-card{{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:16px;cursor:pointer;transition:all .15s;text-align:center}}
-.guide-card:hover{{border-color:var(--teal);box-shadow:var(--shadow-lg);transform:translateY(-1px)}}
-.guide-card .g-ico{{font-size:28px;margin-bottom:6px}}
-.guide-card .g-name{{font-size:14px;font-weight:600}}
-.guide-card .g-sub{{font-size:11px;color:var(--txl);margin-top:2px}}
-
-/* ── コラム ── */
-.col-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}}
-.col-card{{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}}
-.col-card:hover{{box-shadow:var(--shadow-lg);transform:translateY(-2px)}}
-.col-card-top{{background:linear-gradient(135deg,var(--navy) 0%,#1e3a5f 100%);padding:20px;color:#fff}}
-.col-card-tag{{font-size:10px;padding:2px 8px;background:var(--teal);border-radius:10px;display:inline-block;margin-bottom:8px}}
-.col-card-title{{font-size:14px;font-weight:700;line-height:1.5}}
-.col-card-body{{padding:14px}}
-.col-card-date{{font-size:11px;color:var(--txl);margin-bottom:6px}}
-.col-card-summary{{font-size:12px;color:var(--txm);line-height:1.7}}
-.col-detail{{background:var(--wh);border-radius:10px;padding:24px;box-shadow:var(--shadow);max-width:760px;margin:0 auto}}
-.col-detail h1{{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px}}
-.col-detail .col-meta{{font-size:12px;color:var(--txl);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)}}
-.col-detail .col-body{{font-size:14px;line-height:1.9;color:var(--tx)}}
-.col-detail .col-body h2{{font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--navy)}}
-.col-detail .col-body p{{margin-bottom:12px}}
-.col-back{{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--teal);margin-bottom:16px}}
-.col-back:hover{{text-decoration:underline}}
-
-/* ページタイトル */
-.page-title{{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--navy)}}
-.page-desc{{font-size:13px;color:var(--txm);margin-bottom:16px}}
-
-/* フッター */
-.footer{{background:var(--navy);color:#64748b;text-align:center;padding:20px;font-size:11px;margin-top:40px}}
-
-@media(max-width:800px){{
-  .page-2col{{grid-template-columns:1fr}}
-  .sb{{position:static;max-height:none}}
-  .nav-tab span{{display:none}}
-  .guide-grid{{grid-template-columns:repeat(2,1fr)}}
-}}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-inner">
-    <div class="logo">くすり成分<em>ガイド</em></div>
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showPage('search')" id="tab-search">🔍 <span>検索</span></button>
-      <button class="nav-tab" onclick="showPage('guide')" id="tab-guide">💊 <span>症状から選ぶ</span></button>
-      <button class="nav-tab" onclick="showPage('column')" id="tab-column">📖 <span>コラム</span></button>
-    </div>
-    <div style="font-size:11px;color:#475569;margin-left:8px;white-space:nowrap">2026年03月20日 更新</div>
-  </div>
-</nav>
-
-<!-- ページ1: 検索 -->
-<div class="page active" id="page-search">
-  <div class="page-2col">
-
-    <!-- サイドバー -->
-    <aside class="sb">
-      <!-- 検索ボックス -->
-      <div class="srch-wrap">
-        <div class="srch-box">
-          <span class="srch-ico">🔍</span>
-          <input type="text" id="q" placeholder="商品名・成分・症状・メーカー…" autocomplete="off">
-        </div>
-      </div>
-
-      <!-- カテゴリ（アコーディオン） -->
-      <div class="acc">
-        <button class="acc-hd" onclick="toggleAcc(this)">
-          <span class="acc-ico">💊</span> カテゴリ
-          <span class="acc-count" id="acc-cat-cnt"></span>
-          <span class="acc-arr">▼</span>
-        </button>
-        <div class="acc-bd">
-          <div class="cat-list" id="catlist"></div>
-        </div>
-      </div>
-
-      <!-- 症状（アコーディオン） -->
-      <div class="acc">
-        <button class="acc-hd" onclick="toggleAcc(this)">
-          <span class="acc-ico">🤕</span> 症状で絞り込む
-          <span class="acc-count" id="acc-sym-cnt"></span>
-          <span class="acc-arr">▼</span>
-        </button>
-        <div class="acc-bd">
-          <div id="sym-area"></div>
-        </div>
-      </div>
-
-      <!-- 成分（アコーディオン） -->
-      <div class="acc">
-        <button class="acc-hd" onclick="toggleAcc(this)">
-          <span class="acc-ico">⚗️</span> 成分で絞り込む
-          <span class="acc-count" id="acc-ing-cnt"></span>
-          <span class="acc-arr">▼</span>
-        </button>
-        <div class="acc-bd">
-          <div id="ing-area" style="max-height:200px;overflow-y:auto;display:flex;flex-wrap:wrap"></div>
-        </div>
-      </div>
-
-      <!-- その他フィルタ（アコーディオン） -->
-      <div class="acc">
-        <button class="acc-hd open" onclick="toggleAcc(this)">
-          <span class="acc-ico">⚙️</span> 絞り込み・並び替え
-          <span class="acc-arr">▼</span>
-        </button>
-        <div class="acc-bd open">
-          <select class="fsel" id="frisk">
-            <option value="">リスク区分：すべて</option>
-            <option value="0">要指導医薬品</option>
-            <option value="1">第1類</option>
-            <option value="2">第2類（指定含む）</option>
-            <option value="3">第3類</option>
-          </select>
-          <select class="fsel" id="fsort" style="margin-top:6px">
-            <option value="default">並び替え：デフォルト</option>
-            <option value="price_asc">価格：安い順</option>
-            <option value="price_desc">価格：高い順</option>
-            <option value="name">名前：五十音順</option>
-            <option value="risk">リスク区分順</option>
-          </select>
-          <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
-            <label class="chk"><input type="checkbox" id="cnd"> 眠気なしのみ表示</label>
-            <label class="chk"><input type="checkbox" id="cnw"> 要注意成分を含まない</label>
-          </div>
-          <button class="rbtn" id="rbtn">✕ すべてリセット</button>
-        </div>
-      </div>
-
-      <!-- 警告 -->
-      <div class="warn-box">
-        <strong>⚠️ 要注意成分について</strong>
-        <b>ア尿素</b>（アリルイソプロピルアセチル尿素）→ 2023年AU規制・2025年KR麻薬類指定<br>
-        <b>コデイン系</b> → 12歳未満禁忌・依存リスク
-      </div>
-    </aside>
-
-    <!-- メイン -->
-    <main class="main">
-      <!-- 比較バー -->
-      <div class="cmp-bar">
-        <span>比較したい商品を選択 <span class="cmp-count" id="cmp-count">0</span>/4</span>
-        <button class="cmp-btn" id="cmp-open-btn" disabled onclick="openCompare()">📊 成分比較表を開く</button>
-      </div>
-
-      <div class="res-bar">
-        <div>
-          <div class="res-info" id="ri"></div>
-          <div class="af-chips" id="af"></div>
-        </div>
-      </div>
-      <div class="grid" id="grid"></div>
-      <div class="pagi" id="pagi"></div>
-    </main>
-  </div>
-</div>
-
-<!-- ページ2: 症状から選ぶ -->
-<div class="page" id="page-guide">
-  <div class="page-title">症状から薬を選ぶ</div>
-  <div class="page-desc">症状をクリックすると、該当する薬の一覧を表示します。</div>
-  <div class="guide-grid" id="guide-grid"></div>
-  <div id="guide-result"></div>
-</div>
-
-<!-- ページ3: コラム -->
-<div class="page" id="page-column">
-  <div id="col-list-view">
-    <div class="page-title">📖 お役立ちコラム</div>
-    <div class="page-desc">市販薬の正しい選び方・安全な使い方を解説します。</div>
-    <div class="col-grid" id="col-grid"></div>
-  </div>
-  <div id="col-detail-view" style="display:none"></div>
-</div>
-
-<!-- 比較モーダル -->
-<div class="modal-bg hidden" id="cmp-modal">
-  <div class="modal">
-    <div class="modal-hd">
-      <h2>📊 成分比較表</h2>
-      <button class="modal-close" onclick="closeCompare()">×</button>
-    </div>
-    <div class="modal-body" id="cmp-body"></div>
-  </div>
-</div>
-
-<!-- 成分ポップアップ -->
-<div class="ing-popup" id="ing-popup">
-  <h4 id="ip-name"></h4>
-  <div class="ing-en" id="ip-en"></div>
-  <div class="ing-effect" id="ip-effect"></div>
-  <div class="ing-caution" id="ip-caution"></div>
-</div>
-
-<!-- フッター -->
-<footer class="footer">
-  本サイトはPMDA添付文書等の公開情報を元にした一般情報提供です。服用前に必ず添付文書をお読みください。広告収入を得ていません。
-</footer>
-
+<nav class="nav"><div class="nav-inner"><div class="logo">くすり成分<em>ガイド</em></div><div class="nav-tabs"><button class="nav-tab active" onclick="showPage('search')" id="tab-search">🔍 検索</button><button class="nav-tab" onclick="showPage('guide')" id="tab-guide">💊 症状から選ぶ</button><button class="nav-tab" onclick="showPage('column')" id="tab-column">📖 コラム</button></div><div class="nav-right">2026年03月20日 更新</div></div></nav>
+<div class="page active" id="page-search"><div class="page-2col"><aside class="sb"><div class="srch-wrap"><div class="srch-box"><span class="srch-ico">🔍</span><input type="text" id="q" placeholder="商品名・成分・症状・メーカー…" autocomplete="off"></div></div><div class="acc"><button class="acc-hd" onclick="toggleAcc(this)"><span>💊</span> カテゴリ<span class="acc-cnt" id="acc-cat-cnt"></span><span class="acc-arr">▼</span></button><div class="acc-bd"><div class="cat-list" id="catlist"></div></div></div><div class="acc"><button class="acc-hd" onclick="toggleAcc(this)"><span>🤕</span> 症状で絞り込む<span class="acc-cnt" id="acc-sym-cnt"></span><span class="acc-arr">▼</span></button><div class="acc-bd"><div id="sym-area"></div></div></div><div class="acc"><button class="acc-hd" onclick="toggleAcc(this)"><span>⚗️</span> 成分で絞り込む<span class="acc-cnt" id="acc-ing-cnt"></span><span class="acc-arr">▼</span></button><div class="acc-bd"><div id="ing-area" style="max-height:200px;overflow-y:auto;display:flex;flex-wrap:wrap"></div></div></div><div class="acc"><button class="acc-hd open" onclick="toggleAcc(this)"><span>⚙️</span> 絞り込み・並び替え<span class="acc-arr">▼</span></button><div class="acc-bd open"><select class="fsel" id="frisk"><option value="">リスク区分：すべて</option><option value="0">要指導医薬品</option><option value="1">第1類</option><option value="2">第2類（指定含む）</option><option value="3">第3類</option></select><select class="fsel" id="fsort" style="margin-top:6px"><option value="default">並び替え：デフォルト</option><option value="price_asc">価格：安い順</option><option value="price_desc">価格：高い順</option><option value="name">名前：五十音順</option><option value="risk">リスク区分順</option></select><div style="margin-top:8px;display:flex;flex-direction:column;gap:4px"><label class="chk"><input type="checkbox" id="cnd"> 眠気なしのみ表示</label><label class="chk"><input type="checkbox" id="cnw"> 要注意成分を含まない</label></div><button class="rbtn" id="rbtn">✕ すべてリセット</button></div></div><div class="warn-box"><strong>⚠ 要注意成分について</strong><b>ア尿素</b>（アリルイソプロピルアセチル尿素）→ 2023年AU規制・2025年KR麻薬類指定<br><b>コデイン系</b> → 12歳未満禁忌・依存リスク</div></aside><main class="main"><div class="cmp-bar"><span>比較したい商品を選択 <span class="cmp-cnt" id="cmp-cnt">0</span>/4</span><button class="cmp-btn" id="cmp-open" disabled onclick="openCmp()">📊 成分比較表を開く</button></div><div class="res-bar"><div class="res-info" id="ri"></div><div class="af-chips" id="af"></div></div><div class="grid" id="grid"></div><div class="pagi" id="pagi"></div></main></div></div>
+<div class="page" id="page-guide"><div class="page-title">症状から薬を選ぶ</div><div class="page-desc">症状グループをクリックすると該当する薬の一覧を表示します。</div><div class="guide-grid" id="guide-grid"></div><div id="guide-result"></div></div>
+<div class="page" id="page-column"><div id="col-list"><div class="page-title">📖 お役立ちコラム</div><div class="page-desc">市販薬の正しい選び方・安全な使い方を解説します。</div><div class="col-grid" id="col-grid"></div></div><div id="col-detail" style="display:none"></div></div>
+<div class="modal-bg hidden" id="cmp-modal"><div class="modal"><div class="modal-hd"><h2>📊 成分比較表</h2><button class="modal-close" onclick="closeCmp()">×</button></div><div class="modal-body" id="cmp-body"></div></div></div>
+<div class="ing-popup" id="ing-popup"><h4 id="ip-name"></h4><div class="ip-en" id="ip-en"></div><div class="ip-eff" id="ip-eff"></div><div class="ip-cau" id="ip-cau"></div></div>
+<footer class="footer">本サイトはPMDA添付文書等の公開情報を元にした一般情報提供です。服用前に必ず添付文書をお読みください。広告収入を得ていません。</footer>
 <script>
-// ── データ ─────────────────────────────────────────
-const MEDS = [{"id": 1, "cat": "cold", "name": "ロキソニンS", "maker": "第一三共ヘルスケア", "price": 1408, "risk": 1, "drowsy": false, "symptoms": ["頭痛", "歯痛", "のど痛", "月経痛", "腰痛", "関節痛", "神経痛", "発熱"], "effect": "解熱・鎮痛。頭痛・歯痛・咽喉痛・月経痛・腰痛・関節痛・神経痛・発熱に。", "ings": ["ロキソプロフェンNa水和物(68mg)"], "warnIngs": [], "note": "NSAIDs系。第1類（薬剤師要相談）。食後服用推奨。喘息・腎機能障害者・妊婦は要注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 2, "cat": "cold", "name": "ロキソニンSプレミアム", "maker": "第一三共ヘルスケア", "price": 1628, "risk": 1, "drowsy": false, "symptoms": ["頭痛", "月経痛", "腰痛", "関節痛", "発熱"], "effect": "解熱・鎮痛。ロキソニンSに胃保護・鎮痙成分を追加配合。", "ings": ["ロキソプロフェンNa水和物(68mg)", "酸化マグネシウム(33.3mg)", "メタケイ酸アルミン酸Mg(83.3mg)"], "warnIngs": [], "note": "第1類。胃保護成分配合版。それでも食後服用推奨。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 3, "cat": "cold", "name": "イブA錠", "maker": "エスエス製薬", "price": 1188, "risk": 2, "drowsy": true, "symptoms": ["頭痛", "月経痛", "関節痛", "筋肉痛", "神経痛", "発熱"], "effect": "解熱・鎮痛。頭痛・生理痛・関節痛・筋肉痛・神経痛に。", "ings": ["イブプロフェン(150mg)", "アリルイソプロピルアセチル尿素(60mg)", "無水カフェイン(80mg)"], "warnIngs": ["アリルイソプロピルアセチル尿素"], "note": "⚠ア尿素含有：AU全面規制（2023）・KR麻薬類指定（2025）済。依存リスクあり。眠気・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 4, "cat": "cold", "name": "イブクイック頭痛薬DX", "maker": "エスエス製薬", "price": 1518, "risk": 2, "drowsy": true, "symptoms": ["頭痛", "偏頭痛", "月経痛", "歯痛", "発熱"], "effect": "頭痛・偏頭痛・月経痛・歯痛・発熱に。イブプロフェン高配合。", "ings": ["イブプロフェン(200mg)", "アリルイソプロピルアセチル尿素(60mg)", "無水カフェイン(80mg)"], "warnIngs": ["アリルイソプロピルアセチル尿素"], "note": "⚠ア尿素含有。イブプロフェン増量版。眠気・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 5, "cat": "cold", "name": "タイレノールA", "maker": "J&J", "price": 1078, "risk": 2, "drowsy": false, "symptoms": ["頭痛", "歯痛", "月経痛", "発熱"], "effect": "解熱・鎮痛。胃に比較的優しい。空腹時でも服用可能。", "ings": ["アセトアミノフェン(300mg)"], "warnIngs": [], "note": "肝臓で代謝。アルコール常用者・肝機能障害者は禁忌。過量服用で肝障害リスク。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 6, "cat": "cold", "name": "バファリンA", "maker": "ライオン", "price": 968, "risk": 2, "drowsy": false, "symptoms": ["頭痛", "月経痛", "歯痛", "発熱"], "effect": "解熱・鎮痛。頭痛・生理痛・歯痛・発熱に。", "ings": ["アスピリン(330mg)", "ダイバッファーHT合成ヒドロタルサイト(33mg)"], "warnIngs": [], "note": "NSAIDs。インフルエンザ・水痘患者・15歳未満禁忌（ライ症候群）。胃保護成分配合。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 7, "cat": "cold", "name": "パブロンゴールドA微粒", "maker": "大正製薬", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["発熱", "鼻水", "鼻づまり", "のど痛", "せき", "たん"], "effect": "発熱・鼻水・鼻づまり・咽喉痛・咳・痰の総合風邪薬。", "ings": ["アセトアミノフェン(900mg)", "マレイン酸クロルフェニラミン(7.5mg)", "ジヒドロコデインリン酸塩(24mg)", "dl-メチルエフェドリン塩酸塩(60mg)", "無水カフェイン(75mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系含有。12歳未満禁忌。眠気強め・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 8, "cat": "cold", "name": "新ルルAゴールドs", "maker": "第一三共ヘルスケア", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["鼻水", "せき", "発熱", "のど痛"], "effect": "鼻水・せき・発熱・のどの痛みの総合風邪薬。", "ings": ["アセトアミノフェン(900mg)", "グアイフェネシン(250mg)", "ノスカピン(48mg)", "塩酸プソイドエフェドリン(90mg)", "マレイン酸クロルフェニラミン(8mg)", "無水カフェイン(75mg)"], "warnIngs": [], "note": "眠気あり・運転不可。前立腺肥大・緑内障患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 9, "cat": "cold", "name": "エスタックイブNEX", "maker": "エスエス製薬", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["発熱", "頭痛", "鼻水", "くしゃみ", "せき", "のど痛"], "effect": "発熱・頭痛・鼻水・くしゃみ・咳・のど痛の総合風邪薬。", "ings": ["イブプロフェン(450mg)", "dl-クロルフェニラミンマレイン酸塩(5mg)", "ジヒドロコデインリン酸塩(16mg)", "dl-メチルエフェドリン塩酸塩(40mg)", "無水カフェイン(75mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系含有。12歳未満禁忌。眠気強め・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 10, "cat": "cold", "name": "ストナアイビージェルEx", "maker": "佐藤製薬", "price": 1848, "risk": 2, "drowsy": true, "symptoms": ["のど痛", "鼻づまり", "頭痛", "発熱"], "effect": "のど痛・鼻づまりを伴う風邪症状に。ソフトカプセルで吸収速い。", "ings": ["イブプロフェン(450mg)", "マレイン酸クロルフェニラミン(7.5mg)", "dl-メチルエフェドリン塩酸塩(37.5mg)", "無水カフェイン(75mg)"], "warnIngs": [], "note": "眠気あり・運転不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 11, "cat": "cold", "name": "カコナール2", "maker": "第一三共ヘルスケア", "price": 748, "risk": 2, "drowsy": true, "symptoms": ["発熱", "鼻水", "頭痛"], "effect": "発熱・悪寒・鼻水・頭痛のかぜ症状緩和に。", "ings": ["アセトアミノフェン(450mg)", "マレイン酸クロルフェニラミン(3.5mg)", "ニコチン酸アミド(20mg)", "無水カフェイン(60mg)"], "warnIngs": [], "note": "顆粒タイプ。眠気あり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 12, "cat": "cold", "name": "ノーシン（アセトアミノフェン）", "maker": "アラクス", "price": 858, "risk": 2, "drowsy": false, "symptoms": ["頭痛", "月経痛", "発熱"], "effect": "頭痛・月経痛・発熱の解熱鎮痛に。", "ings": ["アセトアミノフェン(300mg)", "無水カフェイン(50mg)"], "warnIngs": [], "note": "成分シンプル。胃への刺激が少ない。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 20, "cat": "stomach", "name": "ガスター10", "maker": "第一三共ヘルスケア", "price": 1628, "risk": 1, "drowsy": false, "symptoms": ["胸やけ", "胃痛", "胃もたれ", "吐き気"], "effect": "胃酸分泌を抑制。胸やけ・胃痛・もたれ・むかつきに。", "ings": ["ファモチジン(10mg)"], "warnIngs": [], "note": "H2ブロッカー。第1類（薬剤師要相談）。腎機能障害者は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 21, "cat": "stomach", "name": "ガスター10S", "maker": "第一三共ヘルスケア", "price": 1848, "risk": 1, "drowsy": false, "symptoms": ["胸やけ", "胃痛", "胃もたれ"], "effect": "胸やけ・胃痛に。H2ブロッカー＋制酸成分の速効タイプ。", "ings": ["ファモチジン(10mg)", "水酸化Mg(225mg)", "炭酸Ca(270mg)"], "warnIngs": [], "note": "第1類。制酸成分追加で速効性を高めた版。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 22, "cat": "stomach", "name": "キャベジンコーワα", "maker": "興和", "price": 1188, "risk": 3, "drowsy": false, "symptoms": ["胃もたれ", "食べ過ぎ", "胃痛", "腹部膨満"], "effect": "胃粘膜を修復。胃もたれ・食欲不振・胃部膨満感・胃酸過多に。", "ings": ["メチルメチオニンスルホニウムクロライド(MMSC)(150mg)", "ビオジアスターゼ2000(60mg)", "リパーゼAP12(30mg)"], "warnIngs": [], "note": "胃粘膜保護＋消化酵素。副作用少なく継続向き。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 23, "cat": "stomach", "name": "太田胃散", "maker": "太田胃散", "price": 1078, "risk": 3, "drowsy": false, "symptoms": ["胃もたれ", "食べ過ぎ", "飲み過ぎ", "胸やけ", "腹部膨満"], "effect": "胃もたれ・食べ過ぎ・飲み過ぎ・胃部不快感・胃酸過多に。", "ings": ["炭酸水素ナトリウム", "沈降炭酸カルシウム", "炭酸マグネシウム", "苦味チンキ", "ケイ酸アルミン酸Mg"], "warnIngs": [], "note": "制酸・健胃の複合処方。胃のむかつきに広く対応。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 24, "cat": "stomach", "name": "正露丸", "maker": "大幸薬品", "price": 880, "risk": 2, "drowsy": false, "symptoms": ["下痢", "腹部膨満"], "effect": "下痢・軟便・食あたり・水あたりに。", "ings": ["木クレオソート(180mg)"], "warnIngs": [], "note": "シンプル成分。独特のにおいあり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 25, "cat": "stomach", "name": "新ビオフェルミンS錠", "maker": "武田コンシューマーヘルスケア", "price": 990, "risk": 3, "drowsy": false, "symptoms": ["下痢", "便秘", "腹部膨満", "整腸"], "effect": "整腸薬。下痢・便秘・軟便・腹部膨満感に。", "ings": ["ラクトミン（乳酸菌）", "ビフィズス菌", "糖化菌"], "warnIngs": [], "note": "乳酸菌製剤。副作用少・長期服用可。小児にも使いやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 26, "cat": "stomach", "name": "ビオスリーHi錠", "maker": "東亜薬品", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["下痢", "便秘", "腹部膨満", "整腸"], "effect": "整腸薬。便秘・軟便・腹部膨満感の改善。", "ings": ["酪酸菌（宮入菌）", "糖化菌", "乳酸菌（ラクトミン）"], "warnIngs": [], "note": "3種生菌配合。抗生物質併用でも有効。長期服用可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 27, "cat": "stomach", "name": "コーラック", "maker": "武田コンシューマーヘルスケア", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["便秘", "腹部膨満"], "effect": "便秘薬。便秘に伴う腹部膨満・食欲不振に。", "ings": ["ビサコジル(10mg)"], "warnIngs": [], "note": "大腸刺激型下剤。急激な効果。連用不可。妊婦・授乳婦は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 28, "cat": "stomach", "name": "コーラックII（センノシド）", "maker": "武田コンシューマーヘルスケア", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["便秘"], "effect": "便秘薬。就寝前服用で翌朝効果。", "ings": ["センノシドA・B(12mg)"], "warnIngs": [], "note": "センナ系。就寝前服用で翌朝に排便。連用は避けること。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 29, "cat": "stomach", "name": "スルーラック（センナ）", "maker": "エスエス製薬", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["便秘"], "effect": "便秘薬。排便促進に。", "ings": ["センノシド(12mg)"], "warnIngs": [], "note": "大腸刺激型。慢性的使用で依存性（弛緩性便秘）になりやすい。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 30, "cat": "stomach", "name": "サクロンQ", "maker": "エーザイ", "price": 1188, "risk": 2, "drowsy": false, "symptoms": ["飲み過ぎ", "吐き気", "胸やけ", "胃もたれ"], "effect": "飲み過ぎ・二日酔い・悪心・嘔吐感・胸やけ・胃もたれに。", "ings": ["ジメチルポリシロキサン(200mg)", "ゲンチアナ乾燥エキス(20mg)", "スクラルファート水和物(1000mg)"], "warnIngs": [], "note": "消泡・胃粘膜保護・苦味健胃の複合処方。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 31, "cat": "stomach", "name": "ガストール錠", "maker": "エスエス製薬", "price": 1188, "risk": 2, "drowsy": false, "symptoms": ["胃痛", "腹部膨満", "胸やけ", "胃もたれ"], "effect": "胃痛・腹痛・胃もたれ・胸やけ・胃酸過多に。", "ings": ["ロートエキス(30mg)", "炭酸水素ナトリウム(1000mg)", "沈降炭酸カルシウム(900mg)"], "warnIngs": [], "note": "抗コリン成分含有。緑内障・前立腺肥大患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 32, "cat": "stomach", "name": "ブスコパン", "maker": "サノフィ", "price": 1078, "risk": 2, "drowsy": false, "symptoms": ["胃痛", "腹部膨満"], "effect": "胃・腹部の痙攣性疼痛・過敏性腸症候群の腹痛に。", "ings": ["臭化ブチルスコポラミン(10mg)"], "warnIngs": [], "note": "抗コリン薬。胃腸の痙攣を緩和。緑内障・前立腺肥大患者禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 40, "cat": "allergy", "name": "アレグラFX", "maker": "久光製薬", "price": 1980, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "鼻づまり", "目のかゆみ"], "effect": "アレルギー性鼻炎・花粉症。くしゃみ・鼻水・鼻づまりに。", "ings": ["フェキソフェナジン塩酸塩(60mg)"], "warnIngs": [], "note": "第二世代。眠気が出にくい。1日2回服用。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 41, "cat": "allergy", "name": "クラリチンEX", "maker": "大正製薬", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "かゆみ"], "effect": "アレルギー性鼻炎・蕁麻疹・皮膚のかゆみに。", "ings": ["ロラタジン(10mg)"], "warnIngs": [], "note": "第二世代。1日1回。眠気少。成分がシンプル。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 42, "cat": "allergy", "name": "アレジオン20", "maker": "エスエス製薬", "price": 1848, "risk": 2, "drowsy": true, "symptoms": ["花粉症", "鼻水", "くしゃみ", "目のかゆみ"], "effect": "アレルギー性鼻炎・花粉症に。くしゃみ・鼻水・目のかゆみに。", "ings": ["エピナスチン塩酸塩(20mg)"], "warnIngs": [], "note": "1日1回。眠気が出ることあり。予防的服用に向く。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 43, "cat": "allergy", "name": "タリオンAR", "maker": "田辺三菱製薬", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "かゆみ"], "effect": "アレルギー性鼻炎・蕁麻疹に。", "ings": ["ベポタスチンベシル酸塩(10mg)"], "warnIngs": [], "note": "第二世代。眠気少。腎機能障害者は注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 44, "cat": "allergy", "name": "レスタミン錠", "maker": "武田コンシューマーヘルスケア", "price": 748, "risk": 3, "drowsy": true, "symptoms": ["かゆみ", "虫刺され", "花粉症"], "effect": "蕁麻疹・虫刺され・皮膚のかゆみ・花粉症に。", "ings": ["ジフェンヒドラミン塩酸塩(30mg)"], "warnIngs": [], "note": "第一世代。眠気強め・運転不可。安価。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 45, "cat": "allergy", "name": "ポラリスAR", "maker": "興和", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["花粉症", "鼻水", "くしゃみ", "かゆみ", "湿疹・かぶれ"], "effect": "アレルギー性鼻炎・蕁麻疹・皮膚炎のかゆみに。", "ings": ["d-マレイン酸クロルフェニラミン(3mg)", "イソチペンジル塩酸塩(6mg)"], "warnIngs": [], "note": "眠気あり。運転不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 50, "cat": "cough", "name": "ブロン錠エース", "maker": "エスエス製薬", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["せき", "たん"], "effect": "せき・たんに。気道粘液を薄め・せきを鎮める。", "ings": ["ジヒドロコデインリン酸塩(30mg)", "dl-メチルエフェドリン塩酸塩(75mg)", "グアヤコールスルホン酸K(267mg)", "無水カフェイン(90mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系（依存リスク高）。乱用注意。12歳未満禁忌。眠気・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 51, "cat": "cough", "name": "新コンタック咳止めダブル持続性", "maker": "グラクソ・スミスクライン", "price": 1298, "risk": 2, "drowsy": true, "symptoms": ["せき", "たん", "のどの炎症"], "effect": "せき・のどの不快感・たんに。", "ings": ["ジヒドロコデインリン酸塩(20mg)", "dl-メチルエフェドリン塩酸塩(50mg)", "マレイン酸クロルフェニラミン(5mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系含有。12歳未満禁忌。眠気あり・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 52, "cat": "cough", "name": "ムコダインS（カルボシステイン）", "maker": "各社", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["たん", "鼻づまり", "せき"], "effect": "たん・鼻づまりを伴うせきに。粘液を薄め排出促進。", "ings": ["L-カルボシステイン(750mg)"], "warnIngs": [], "note": "去痰薬。副作用少なく比較的安全。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 53, "cat": "cough", "name": "龍角散ダイレクト", "maker": "龍角散", "price": 1078, "risk": 3, "drowsy": false, "symptoms": ["のどの炎症", "のど痛", "声がれ", "せき", "たん"], "effect": "のどの炎症・痛み・声がれ・せき・たんに。", "ings": ["キキョウ末", "セネガ末", "カンゾウ末", "アセンヤク末"], "warnIngs": [], "note": "生薬配合。口内で直接溶かして服用。水不要。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 54, "cat": "cough", "name": "浅田飴クールS", "maker": "浅田飴", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["のどの炎症", "のど痛", "声がれ", "口腔殺菌"], "effect": "のどの炎症・痛み・声がれ・せきに。", "ings": ["セチルピリジニウム塩化物水和物(0.5mg)", "l-メントール(2mg)"], "warnIngs": [], "note": "口腔内殺菌成分配合のトローチ。軽症向き。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 55, "cat": "cough", "name": "イソジンうがい薬", "maker": "塩野義製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["のどの炎症", "口腔殺菌"], "effect": "口腔・咽頭の殺菌・消毒・洗浄。口臭の除去に。", "ings": ["ポビドンヨード(7%)"], "warnIngs": [], "note": "ヨウ素系殺菌。甲状腺疾患・妊婦・授乳婦は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 56, "cat": "cough", "name": "パブロン50α微粒", "maker": "大正製薬", "price": 1078, "risk": 2, "drowsy": true, "symptoms": ["せき", "たん", "のどの炎症"], "effect": "せき・たん・のどのはれ・炎症に。", "ings": ["グアイフェネシン(270mg)", "dl-メチルエフェドリン塩酸塩(60mg)", "ジフェンヒドラミン塩酸塩(37.5mg)", "ノスカピン(54mg)"], "warnIngs": [], "note": "眠気あり・運転不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 60, "cat": "nose", "name": "パブロン鼻炎カプセルSα", "maker": "大正製薬", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["鼻水", "くしゃみ", "鼻づまり", "花粉症"], "effect": "鼻水・くしゃみ・鼻づまり。急性・アレルギー性鼻炎に。", "ings": ["マレイン酸クロルフェニラミン(6mg)", "塩酸プソイドエフェドリン(60mg)", "ベラドンナ総アルカロイド(0.2mg)"], "warnIngs": [], "note": "眠気あり・運転不可。緑内障・前立腺肥大患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 61, "cat": "nose", "name": "ナザール点鼻薬", "maker": "佐藤製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["鼻づまり"], "effect": "急性鼻炎・アレルギー性鼻炎・副鼻腔炎の鼻づまりに。", "ings": ["塩酸テトラヒドロゾリン(0.1%)", "dl-マレイン酸クロルフェニラミン(0.03%)"], "warnIngs": [], "note": "血管収縮薬。短時間で鼻通り改善。連続使用7日以内。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 62, "cat": "nose", "name": "コルゲンコーワ鼻炎フィルムα", "maker": "興和", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["鼻水", "くしゃみ", "鼻づまり"], "effect": "鼻水・くしゃみ・鼻づまりに。", "ings": ["マレイン酸クロルフェニラミン(6mg)", "塩酸プソイドエフェドリン(60mg)"], "warnIngs": [], "note": "口腔内フィルム剤。眠気あり。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 63, "cat": "nose", "name": "エージーノーズアレルカットC", "maker": "第一三共ヘルスケア", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["鼻水", "くしゃみ", "鼻づまり", "花粉症"], "effect": "アレルギー性鼻炎の鼻水・くしゃみ・鼻づまりに。", "ings": ["ベクロメタゾンプロピオン酸エステル(0.05mg/噴霧)"], "warnIngs": [], "note": "ステロイド点鼻薬。局所作用が主で全身影響少。感染性鼻炎には不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 70, "cat": "ext_pain", "name": "ロイヒつぼ膏", "maker": "ニチバン", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["肩こり", "腰痛", "筋肉痛", "関節痛", "打撲・ねんざ"], "effect": "肩こり・腰痛・筋肉痛・関節痛・打撲・ねんざに。", "ings": ["カプサイシン", "ノニル酸ワニリルアミド", "dl-カンフル", "サリチル酸メチル"], "warnIngs": [], "note": "温感系。傷口・粘膜・眼周囲に使用不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 71, "cat": "ext_pain", "name": "サロンパス", "maker": "久光製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["肩こり", "腰痛", "筋肉痛", "打撲・ねんざ"], "effect": "肩こり・腰痛・筋肉痛・打撲・ねんざの局所消炎鎮痛に。", "ings": ["サリチル酸メチル(10%)", "l-メントール(3%)", "dl-カンフル(1%)"], "warnIngs": [], "note": "温感・冷感タイプあり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 72, "cat": "ext_pain", "name": "ボルタレンACゲル", "maker": "グラクソ・スミスクライン", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["肩こり", "腰痛", "関節痛", "筋肉痛"], "effect": "肩こり・腰痛・関節痛・筋肉痛の局所消炎鎮痛に。", "ings": ["ジクロフェナクNa(1%)"], "warnIngs": [], "note": "NSAIDs外用薬。喘息患者・妊婦は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 73, "cat": "ext_pain", "name": "フェイタスチックEX", "maker": "久光製薬", "price": 1408, "risk": 2, "drowsy": false, "symptoms": ["肩こり", "腰痛", "関節痛", "筋肉痛"], "effect": "肩こり・腰痛・関節痛・筋肉痛に。", "ings": ["フェルビナク(3%)"], "warnIngs": [], "note": "NSAIDs外用薬。スティックで塗布しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 74, "cat": "ext_pain", "name": "バンテリンコーワ液剤EX", "maker": "興和", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["関節痛", "筋肉痛", "腰痛", "肩こり"], "effect": "肩・腰・膝の関節痛・筋肉痛の消炎鎮痛に。", "ings": ["インドメタシン(1%)"], "warnIngs": [], "note": "NSAIDs系外用。速乾性液剤。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 75, "cat": "ext_pain", "name": "アンメルツヨコヨコ", "maker": "小林製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["肩こり", "腰痛", "筋肉痛"], "effect": "肩こり・腰痛・筋肉痛に。", "ings": ["サリチル酸メチル(10%)", "l-メントール(10%)", "dl-カンフル(5%)", "ノニル酸ワニリルアミド(0.025%)"], "warnIngs": [], "note": "ロールオンタイプで塗布しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 76, "cat": "ext_pain", "name": "タイガーバーム", "maker": "各社", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["筋肉痛", "肩こり", "打撲・ねんざ", "腰痛", "神経痛"], "effect": "筋肉痛・肩こり・打撲・腰痛・神経痛に。", "ings": ["カンフル(25%)", "はっか油(16%)", "桂皮油(10%)", "ウィンターグリーン油(8%)"], "warnIngs": [], "note": "アジア伝統の外用薬。刺激が強いため皮膚の弱い方は注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 77, "cat": "ext_pain", "name": "モーラステープL20mg", "maker": "久光製薬", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["筋肉痛", "関節痛", "腰痛", "打撲・ねんざ"], "effect": "筋肉痛・関節痛・腱鞘炎・肩こり・打撲・捻挫に。", "ings": ["ケトプロフェン(20mg/枚)"], "warnIngs": [], "note": "NSAIDs系テープ。光線過敏症リスクあり：貼付中・剥がした後も日光回避4週間必要。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 78, "cat": "ext_pain", "name": "ロキソニンSテープ", "maker": "第一三共ヘルスケア", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["筋肉痛", "関節痛", "肩こり", "腰痛"], "effect": "筋肉痛・関節痛・肩こり・腰痛に。", "ings": ["ロキソプロフェンNa水和物(50mg/枚)"], "warnIngs": [], "note": "NSAIDs系テープ。内服ロキソニンと併用注意（同成分重複）。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 80, "cat": "ext_skin", "name": "テラ・コートリル軟膏a", "maker": "ファイザー", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ", "にきび"], "effect": "皮膚細菌感染（とびひ・毛嚢炎）・湿疹の二次感染に。", "ings": ["オキシテトラサイクリン塩酸塩(30mg/g)", "ヒドロコルチゾン(10mg/g)"], "warnIngs": [], "note": "抗菌薬＋ステロイド複合。長期・広範囲使用不可。顔面注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 81, "cat": "ext_skin", "name": "メンソレータムADクリームm", "maker": "ロート製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ"], "effect": "湿疹・かぶれ・皮膚炎・かゆみに。", "ings": ["ジフェンヒドラミン塩酸塩(1%)", "グリチルレチン酸(0.5%)", "l-メントール(1%)"], "warnIngs": [], "note": "抗ヒスタミン・抗炎症・清涼感の複合処方。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 82, "cat": "ext_skin", "name": "ケラチナミンコーワクリーム20%", "maker": "興和", "price": 1298, "risk": 3, "drowsy": false, "symptoms": ["乾燥肌"], "effect": "手足のひび・あかぎれ・かかとのガサガサ・乾燥肌に。", "ings": ["尿素(20%)"], "warnIngs": [], "note": "高濃度尿素で角質軟化。傷口・粘膜に使用不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 83, "cat": "ext_skin", "name": "ムヒS2a", "maker": "池田模範堂", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["かゆみ", "虫刺され", "湿疹・かぶれ"], "effect": "虫刺され・かぶれ・湿疹のかゆみに。", "ings": ["クロタミトン(5%)", "ジフェンヒドラミン塩酸塩(1%)", "グリチルレチン酸(0.3%)", "l-メントール(1.5%)"], "warnIngs": [], "note": "かゆみ止め複数成分配合。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 84, "cat": "ext_skin", "name": "オロナインH軟膏", "maker": "大塚製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["にきび", "乾燥肌", "湿疹・かぶれ"], "effect": "にきび・吹き出物・はたけ・やけど・ひび・あかぎれに。", "ings": ["クロルヘキシジングルコン酸塩液(0.5%)"], "warnIngs": [], "note": "殺菌成分配合。長年親しまれてきたマルチ外用薬。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 85, "cat": "ext_skin", "name": "リンデロンVGクリーム", "maker": "塩野義製薬", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ"], "effect": "湿疹・皮膚炎・かぶれ・あせもの炎症・かゆみに。", "ings": ["ベタメタゾン吉草酸エステル(0.12%)", "ゲンタマイシン硫酸塩(0.1%)"], "warnIngs": [], "note": "中強度ステロイド＋抗菌薬。長期・広範囲・顔面使用不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 86, "cat": "ext_skin", "name": "ヘパリン類似物質クリーム", "maker": "各社", "price": 1408, "risk": 3, "drowsy": false, "symptoms": ["乾燥肌"], "effect": "皮脂欠乏症・乾皮症・老人性乾皮症・外傷後の瘢痕や皮膚硬化症に。", "ings": ["ヘパリン類似物質(0.3%)"], "warnIngs": [], "note": "保湿・血行促進。出血している傷口や血小板減少症患者は注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 87, "cat": "ext_skin", "name": "フルコートf", "maker": "田辺三菱製薬", "price": 1408, "risk": 2, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ", "虫刺され"], "effect": "湿疹・皮膚炎・かぶれ・虫刺されの炎症・かゆみに。", "ings": ["フルオシノロンアセトニド(0.025%)", "フラジオマイシン硫酸塩(0.35%)"], "warnIngs": [], "note": "強度ステロイド＋抗菌薬。長期・広範囲・顔面・乳幼児使用注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 90, "cat": "eye", "name": "ロートVアクティブ", "maker": "ロート製薬", "price": 880, "risk": 3, "drowsy": false, "symptoms": ["目の疲れ", "充血", "乾き目"], "effect": "目の疲れ・かすみ・充血・乾き目に。", "ings": ["ネオスチグミンメチル硫酸塩(0.005%)", "VB12(0.02%)", "タウリン(0.1%)", "コンドロイチン硫酸エステルNa(0.5%)"], "warnIngs": [], "note": "ピント調節成分配合。コンタクト非対応品あり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 91, "cat": "eye", "name": "ロート抗菌目薬i", "maker": "ロート製薬", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["目の疲れ", "目のかゆみ", "充血"], "effect": "ものもらい・結膜炎・目ヤニ・目のかゆみに。", "ings": ["スルファメトキサゾール(4%)"], "warnIngs": [], "note": "抗菌性点眼薬。5〜6日改善なければ受診を。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 92, "cat": "eye", "name": "アイリスAGガード", "maker": "大正製薬", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["目のかゆみ", "充血", "花粉症"], "effect": "花粉・ハウスダストによる目のかゆみ・充血・涙目に。", "ings": ["クロモグリク酸Na(1%)", "塩酸テトラヒドロゾリン(0.05%)", "グリチルリチン酸二K(0.25%)"], "warnIngs": [], "note": "抗アレルギー＋血管収縮成分配合。花粉症の目症状に有効。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 93, "cat": "eye", "name": "サンテピュア（コンタクト用）", "maker": "参天製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["乾き目", "目の疲れ"], "effect": "乾き目・目の疲れ・かすみ。コンタクトレンズ装着中に使用可。", "ings": ["コンドロイチン硫酸エステルNa(0.1%)", "塩化Na", "塩化K"], "warnIngs": [], "note": "防腐剤フリー。全種コンタクトレンズ対応。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 94, "cat": "eye", "name": "クロマイN点眼液", "maker": "参天製薬", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["目の疲れ", "充血"], "effect": "ものもらい・結膜炎・目ヤニに。", "ings": ["クロラムフェニコール(0.5%)"], "warnIngs": [], "note": "抗菌性点眼薬。長期連続使用注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 95, "cat": "eye", "name": "サンテドウブルアクション", "maker": "参天製薬", "price": 1188, "risk": 3, "drowsy": false, "symptoms": ["目の疲れ", "眼精疲労", "充血"], "effect": "目の疲れ・かすみ・充血・眼病予防に。", "ings": ["ネオスチグミンメチル硫酸塩(0.005%)", "VB12(0.02%)", "L-アスパラギン酸K(1%)", "タウリン(1%)"], "warnIngs": [], "note": "疲れ目・老眼に対応する多機能点眼薬。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 100, "cat": "joint", "name": "コンドロイチンZS錠", "maker": "ゼリア新薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["関節痛", "腰痛", "筋肉痛"], "effect": "膝・腰などの関節痛・筋肉痛の緩和に。", "ings": ["コンドロイチン硫酸エステルNa(200mg)", "VE酢酸エステル(50mg)"], "warnIngs": [], "note": "軟骨成分配合。効果発現まで数週間〜数ヶ月。副作用少ない。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 101, "cat": "joint", "name": "アリナミンEXゴールド", "maker": "アリナミン製薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["肉体疲労", "眼精疲労", "手足のしびれ", "筋肉痛", "神経痛"], "effect": "肉体疲労・神経痛・筋肉痛・眼精疲労・手足のしびれに。", "ings": ["フルスルチアミン(109mg)", "VB2(12mg)", "VB6(100mg)", "VB12(60μg)"], "warnIngs": [], "note": "VB群強化。尿が黄色くなる（B2由来）は正常。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 110, "cat": "skin_oral", "name": "ハイチオールCプラスEX", "maker": "エスエス製薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["シミ・そばかす", "にきび", "肌荒れ"], "effect": "シミ・そばかすの改善。にきびにも。VC高配合。", "ings": ["L-システイン(240mg)", "アスコルビン酸VC(500mg)", "VB6(60mg)", "パントテン酸Ca(24mg)"], "warnIngs": [], "note": "メラニン生成を抑制。効果に個人差あり。継続服用で効果が出やすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 111, "cat": "skin_oral", "name": "トランシーノII", "maker": "第一三共ヘルスケア", "price": 3960, "risk": 2, "drowsy": false, "symptoms": ["シミ・そばかす", "肝斑"], "effect": "肝斑（かんぱん）・シミの改善に。医薬品クラスの美白内服薬。", "ings": ["トラネキサム酸(750mg)", "VC(500mg)", "VB6(60mg)", "L-システイン(120mg)"], "warnIngs": [], "note": "トラネキサム酸は肝斑に特異的に有効。血栓症リスクのある方は要相談。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 112, "cat": "skin_oral", "name": "チョコラBBプラス", "maker": "エーザイ", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["にきび", "口内炎", "肌荒れ", "湿疹・かぶれ"], "effect": "にきび・口内炎・口角炎・肌荒れ・湿疹・かぶれに。", "ings": ["リボフラビン酪酸エステルVB2(10mg)", "VB6(100mg)", "パントテン酸Ca(30mg)", "VC(200mg)"], "warnIngs": [], "note": "VB2・B6中心の皮膚・粘膜補修配合。副作用少ない。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 113, "cat": "skin_oral", "name": "DHCビタミンC（医薬品）", "maker": "DHC", "price": 1188, "risk": 3, "drowsy": false, "symptoms": ["シミ・そばかす", "肌荒れ"], "effect": "VCの補給。しみ・そばかすの緩和に。", "ings": ["アスコルビン酸VC(1000mg)"], "warnIngs": [], "note": "高用量VC。過剰摂取で消化器症状あり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 120, "cat": "hair", "name": "リアップX5プラスネオ", "maker": "大正製薬", "price": 9790, "risk": 0, "drowsy": false, "symptoms": ["薄毛・脱毛"], "effect": "壮年性脱毛症（男性型）の発毛・育毛・脱毛進行予防に。", "ings": ["ミノキシジル(5%)"], "warnIngs": [], "note": "要指導（薬剤師要相談）。効果発現まで4ヶ月以上。低血圧・心臓病禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 121, "cat": "hair", "name": "リグロEX5エナジー", "maker": "ロート製薬", "price": 8778, "risk": 0, "drowsy": false, "symptoms": ["薄毛・脱毛"], "effect": "男性の壮年性脱毛症の発毛・育毛に。", "ings": ["ミノキシジル(5%)"], "warnIngs": [], "note": "要指導。ミノキシジル最大濃度（5%）。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 122, "cat": "hair", "name": "リアップリジェンヌ（女性用）", "maker": "大正製薬", "price": 5478, "risk": 1, "drowsy": false, "symptoms": ["薄毛・脱毛"], "effect": "女性の壮年性脱毛症の発毛・育毛に。", "ings": ["ミノキシジル(1%)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。女性用は1%。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 130, "cat": "women", "name": "命の母A", "maker": "小林製薬", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["更年期障害", "月経不順", "冷え"], "effect": "更年期障害・月経不順・冷え症・血の道症に。", "ings": ["センキュウ末", "トウキ末", "ブクリョウ末", "シャクヤク末", "ハンゲ末", "コウブシ末", "ケイヒ末", "ニンジン末", "ハッカ末", "チンピ末", "ヤクモソウ末", "オウバク末", "カンゾウ末"], "warnIngs": [], "note": "13種生薬配合の婦人薬。継続服用で効果。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 131, "cat": "women", "name": "ルビーナ（当帰芍薬散）", "maker": "クラシエ薬品", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["更年期障害", "月経不順", "冷え"], "effect": "更年期障害・月経不順・冷え症・貧血・肩こりに。", "ings": ["当帰芍薬散エキス（トウキ・シャクヤク・センキュウ・ブクリョウ・ビャクジュツ・タクシャ）"], "warnIngs": [], "note": "漢方処方（当帰芍薬散）。冷え傾向の虚弱女性向き。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 132, "cat": "women", "name": "加味逍遙散エキス錠", "maker": "ツムラ", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["更年期障害", "月経不順", "不眠", "肩こり"], "effect": "更年期障害・月経不順・月経困難・肩こり・頭痛・めまい・不眠に。", "ings": ["加味逍遙散エキス（サイコ・シャクヤク・ソウジュツ・トウキ・ブクリョウ・ボタンピ・サンシシ・カンゾウ・ショウキョウ・ハッカ）"], "warnIngs": [], "note": "イライラ・ほてり・不眠傾向の更年期症状に向く。間質性肺炎に注意（稀）。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 133, "cat": "women", "name": "エルペインコーワ", "maker": "興和", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["月経痛"], "effect": "月経痛・月経困難症の鎮痛に。", "ings": ["イブプロフェン(150mg)", "ブチルスコポラミン臭化物(5mg)"], "warnIngs": [], "note": "NSAIDs＋鎮痙薬の月経痛特化処方。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 140, "cat": "sleep", "name": "ドリエル", "maker": "エスエス製薬", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["不眠"], "effect": "一時的な不眠の改善（寝つきが悪い・眠りが浅い）に。", "ings": ["ジフェンヒドラミン塩酸塩(25mg)"], "warnIngs": [], "note": "抗ヒスタミン薬の催眠作用を応用。連続2週間以上使用不可。慢性的な睡眠障害には不向き。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 141, "cat": "sleep", "name": "ネオデイ", "maker": "エスエス製薬", "price": 1298, "risk": 2, "drowsy": true, "symptoms": ["不眠"], "effect": "一時的な不眠に。", "ings": ["ジフェンヒドラミン塩酸塩(25mg)"], "warnIngs": [], "note": "ドリエルと同成分・同効果。翌日持ち越しやすい。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 150, "cat": "vitamin", "name": "アリナミンEXゴールドα", "maker": "アリナミン製薬", "price": 2398, "risk": 3, "drowsy": false, "symptoms": ["眼精疲労", "肩こり", "腰痛", "神経痛", "手足のしびれ", "肉体疲労"], "effect": "眼精疲労・肩こり・腰痛・神経痛・手足のしびれに。", "ings": ["フルスルチアミン(109mg)", "VB2(12mg)", "VB6(100mg)", "VB12(60μg)", "VE(45mg)"], "warnIngs": [], "note": "ビタミンB群にEを追加。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 151, "cat": "vitamin", "name": "チョコラBBリッチ", "maker": "エーザイ", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["肌荒れ", "口内炎", "にきび"], "effect": "肌荒れ・口内炎・にきびの緩和。VB2・B6補給。", "ings": ["リボフラビン酪酸エステルVB2(60mg)", "VB6(50mg)"], "warnIngs": [], "note": "VB2・B6配合。副作用少なく服用しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 152, "cat": "vitamin", "name": "エーザイVEEC", "maker": "エーザイ", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["冷え", "肩こり", "肉体疲労"], "effect": "末梢血行障害の緩和。肩こり・冷え・しもやけ・頭痛に。", "ings": ["トコフェロール酢酸エステルVE(300mg)", "VC(300mg)"], "warnIngs": [], "note": "VE＋C配合。血行促進。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 153, "cat": "vitamin", "name": "ハイシーBメガ", "maker": "武田コンシューマーヘルスケア", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["にきび", "口内炎", "肌荒れ"], "effect": "VB2・VC補給。にきび・口内炎・肌荒れに。", "ings": ["VB2(10mg)", "VC(1000mg)"], "warnIngs": [], "note": "高用量VC＋VB2。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 154, "cat": "vitamin", "name": "ネルビタB12", "maker": "武田コンシューマーヘルスケア", "price": 1848, "risk": 3, "drowsy": false, "symptoms": ["神経痛", "筋肉痛", "手足のしびれ", "肉体疲労", "肩こり"], "effect": "神経痛・筋肉痛・関節痛・肩こり・末梢神経症状に。", "ings": ["メコバラミン（VB12）(250μg)", "フルスルチアミン(50mg)", "VB6(50mg)"], "warnIngs": [], "note": "活性型VB12配合。末梢神経障害の補助に。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 160, "cat": "kampo", "name": "葛根湯エキスEX", "maker": "クラシエ薬品", "price": 1188, "risk": 2, "drowsy": false, "symptoms": ["発熱", "頭痛", "肩こり", "鼻水", "花粉症"], "effect": "かぜのひきはじめ・首筋のこわばり・肩こり・頭痛・鼻炎に。", "ings": ["葛根湯エキス（カッコン・マオウ・ケイシ・シャクヤク・タイソウ・カンゾウ・ショウキョウ）"], "warnIngs": [], "note": "かぜ初期に効果的。体力中等度以上向き。麻黄含有のため心臓病・高血圧注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 161, "cat": "kampo", "name": "防風通聖散エキス錠", "maker": "大正製薬", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["肉体疲労", "便秘", "肩こり"], "effect": "脂肪太りに伴う肥満・便秘・肩こり・むくみに。", "ings": ["防風通聖散エキス（18種生薬）"], "warnIngs": [], "note": "代謝改善漢方。効果発現まで2〜3ヶ月。甘草配合・偽アルドステロン症注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 162, "cat": "kampo", "name": "小青竜湯エキス顆粒", "maker": "ツムラ", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "せき"], "effect": "アレルギー性鼻炎・鼻水・くしゃみ・花粉症・気管支炎に。", "ings": ["小青竜湯エキス（マオウ・シャクヤク・カンキョウ・カンゾウ・ケイシ・ゴミシ・ハンゲ・サイシン）"], "warnIngs": [], "note": "水っぽい鼻水に効果的。麻黄含有のため心臓病・高血圧注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 163, "cat": "kampo", "name": "大建中湯エキス顆粒", "maker": "ツムラ", "price": 1848, "risk": 3, "drowsy": false, "symptoms": ["腹部膨満", "便秘", "胃痛"], "effect": "腸の冷えによる腹痛・腹部膨満感・便秘（特に高齢者）に。", "ings": ["大建中湯エキス（サンショウ・ニンジン・カンキョウ・膠飴）"], "warnIngs": [], "note": "腸を温め動きを活性化。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 164, "cat": "kampo", "name": "芍薬甘草湯エキス顆粒", "maker": "クラシエ薬品", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["筋肉痛", "腰痛", "腹部膨満"], "effect": "こむら返り・筋肉のけいれん・腹痛・腰痛に。急性期の筋痙攣に。", "ings": ["芍薬甘草湯エキス（シャクヤク・カンゾウ）"], "warnIngs": [], "note": "速効性。繰り返し使用は偽アルドステロン症リスクあり。甘草高含有。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 165, "cat": "kampo", "name": "半夏厚朴湯エキス顆粒", "maker": "ツムラ", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["不眠", "動悸", "めまい・立ちくらみ", "吐き気"], "effect": "不安・神経症・のどのつかえ感・動悸・めまい・吐き気に。", "ings": ["半夏厚朴湯エキス（ハンゲ・ブクリョウ・コウボク・ソヨウ・ショウキョウ）"], "warnIngs": [], "note": "喉の異物感「梅核気」に多用。比較的穏やかな作用。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 166, "cat": "kampo", "name": "八味地黄丸", "maker": "ツムラ", "price": 2178, "risk": 2, "drowsy": false, "symptoms": ["冷え", "腰痛", "めまい・立ちくらみ", "手足のしびれ"], "effect": "夜間頻尿・腰痛・むくみ・排尿困難・倦怠感に。中高年の腎虚証に。", "ings": ["八味地黄丸エキス（ジオウ・サンシュユ・サンヤク・タクシャ・ブクリョウ・ボタンピ・ケイシ・ブシ）"], "warnIngs": [], "note": "附子（ブシ）含有。高齢者の泌尿器・下肢症状に広く使われる。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 167, "cat": "kampo", "name": "抑肝散エキス顆粒", "maker": "ツムラ", "price": 2178, "risk": 2, "drowsy": false, "symptoms": ["不眠", "更年期障害"], "effect": "神経症・不眠・小児夜泣き・歯ぎしり・更年期のいらいらに。", "ings": ["抑肝散エキス（ソウジュツ・ブクリョウ・センキュウ・トウキ・サイコ・カンゾウ・チョウトウコウ）"], "warnIngs": [], "note": "認知症の周辺症状（BPSD）にも使われる。甘草含有注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 168, "cat": "kampo", "name": "補中益気湯エキス顆粒", "maker": "ツムラ", "price": 2178, "risk": 2, "drowsy": false, "symptoms": ["肉体疲労", "冷え"], "effect": "虚弱体質・胃腸虚弱・夏やせ・病後の体力低下・倦怠感に。", "ings": ["補中益気湯エキス（オウギ・ソウジュツ・ニンジン・トウキ・サイコ・タイソウ・カンゾウ・チンピ・ショウキョウ・ショウマ）"], "warnIngs": [], "note": "「免疫調節」作用が研究されている漢方。甘草含有に注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 170, "cat": "foot", "name": "ラミシールAT", "maker": "ノバルティス", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "水虫（足白癬）・いんきんたむし・ぜにたむしに。", "ings": ["塩酸テルビナフィン(1%)"], "warnIngs": [], "note": "アリルアミン系抗真菌薬。治癒後も1〜2週間継続塗布推奨。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 171, "cat": "foot", "name": "ブテナロックVαクリーム", "maker": "久光製薬", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "水虫・いんきんたむし・ぜにたむしに。", "ings": ["ブテナフィン塩酸塩(1%)"], "warnIngs": [], "note": "1日1回塗布。爪水虫には使用不可（皮膚のみ）。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 172, "cat": "foot", "name": "ダマリングランデX", "maker": "武田コンシューマーヘルスケア", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "水虫・いんきんたむし・ぜにたむしに。", "ings": ["ビフォナゾール(1%)"], "warnIngs": [], "note": "イミダゾール系抗真菌薬。角層浸透性高い。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 173, "cat": "foot", "name": "クリアネールEX（爪水虫）", "maker": "池田模範堂", "price": 3278, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "爪の水虫（爪白癬）に。", "ings": ["エフィナコナゾール(10%)"], "warnIngs": [], "note": "爪白癬対応。爪への浸透性を高めた処方。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 180, "cat": "oral", "name": "アフタッチ口内炎薬", "maker": "大鵬薬品", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["口内炎"], "effect": "口内炎の症状緩和・炎症抑制に。", "ings": ["トリアムシノロンアセトニド(0.025%)"], "warnIngs": [], "note": "ステロイド含有粘膜付着剤。長期連続使用不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 181, "cat": "oral", "name": "チョコラBBリップ", "maker": "エーザイ", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["口内炎", "肌荒れ"], "effect": "口内炎・口角炎・舌炎・口唇炎に。VB2・B6補給。", "ings": ["VB2(10mg)", "VB6(100mg)"], "warnIngs": [], "note": "内服薬タイプ。副作用少なく服用しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 182, "cat": "oral", "name": "歯痛薬ハイ（ストッパ）", "maker": "ライオン", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["歯痛"], "effect": "歯痛の緩和に。", "ings": ["テトラカイン塩酸塩(0.5%)", "フェノール(1.2%)", "ユーカリ油"], "warnIngs": [], "note": "局所麻酔成分配合。痛みが続く場合は歯科受診を。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 190, "cat": "anal", "name": "ボラギノールA坐剤", "maker": "天藤製薬", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["痔"], "effect": "内痔核・出血性外痔核の疼痛・出血・腫れ・かゆみに。", "ings": ["リドカイン(60mg)", "ヒドロコルチゾン酢酸エステル(5mg)", "アラントイン(20mg)", "dl-α-トコフェロール酢酸エステル(60mg)"], "warnIngs": [], "note": "局所麻酔＋ステロイド＋組織修復成分配合。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 191, "cat": "anal", "name": "プリザエースII坐剤", "maker": "大正製薬", "price": 1408, "risk": 2, "drowsy": false, "symptoms": ["痔"], "effect": "痔の出血・はれ・痛み・かゆみに。", "ings": ["ヒドロコルチゾン酢酸エステル(3mg)", "塩酸リドカイン(50mg)", "アラントイン(15mg)", "酢酸トコフェロール(50mg)"], "warnIngs": [], "note": "ステロイド含有。長期・連続使用は避けること。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 200, "cat": "circu", "name": "センソ（強心薬）", "maker": "東洋参茸", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["動悸"], "effect": "動悸・息切れ・気つけに。", "ings": ["センソ（ヒキガエル毒）"], "warnIngs": [], "note": "強心薬。少量で有効、過量で毒性。1回1錠厳守。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 201, "cat": "circu", "name": "苓桂朮甘湯（ドコア）", "maker": "クラシエ薬品", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["めまい・立ちくらみ", "動悸"], "effect": "立ちくらみ・めまい・動悸・息切れに。起立性調節障害にも。", "ings": ["苓桂朮甘湯エキス（ブクリョウ・ケイシ・ソウジュツ・カンゾウ）"], "warnIngs": [], "note": "利水作用でめまい・動悸を改善。甘草含有注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 210, "cat": "motion", "name": "トラベルミン", "maker": "エーザイ", "price": 748, "risk": 2, "drowsy": true, "symptoms": ["乗物酔い", "吐き気", "めまい・立ちくらみ", "頭痛"], "effect": "乗物酔いの予防・治療に。吐き気・めまい・頭痛に。", "ings": ["ジフェンヒドラミンサリチル酸塩(40mg)", "ジプロフィリン(26mg)"], "warnIngs": [], "note": "眠気あり・運転不可。乗車前30分に服用。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 211, "cat": "motion", "name": "アネロン（ニスキャップ）", "maker": "エスエス製薬", "price": 1078, "risk": 2, "drowsy": true, "symptoms": ["乗物酔い", "吐き気", "めまい・立ちくらみ"], "effect": "乗物酔いの予防・治療に。吐き気・めまい・頭痛に。", "ings": ["塩酸メクリジン(25mg)", "スコポラミン臭化水素酸塩(0.25mg)", "カフェイン水和物(20mg)"], "warnIngs": [], "note": "眠気あり。緑内障・前立腺肥大患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 220, "cat": "smoking", "name": "ニコレットガム（2mg）", "maker": "J&J", "price": 2178, "risk": 1, "drowsy": false, "symptoms": ["禁煙"], "effect": "禁煙補助。ニコチン依存症者の禁断症状緩和に。", "ings": ["ニコチン(2mg/個)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。心臓疾患・妊婦は禁忌。コーヒー直後は使用不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 221, "cat": "smoking", "name": "ニコレットガム（4mg）", "maker": "J&J", "price": 2398, "risk": 1, "drowsy": false, "symptoms": ["禁煙"], "effect": "禁煙補助。ヘビースモーカー向け高用量タイプ。", "ings": ["ニコチン(4mg/個)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。高用量版。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 222, "cat": "smoking", "name": "ニコチネルTTS30（パッチ）", "maker": "ノバルティス", "price": 2948, "risk": 1, "drowsy": false, "symptoms": ["禁煙"], "effect": "禁煙補助。ニコチン依存症者の禁煙開始・維持に。", "ings": ["ニコチン(52.5mg/patch → 21mg/24hr放出)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。貼り薬。段階的に濃度を下げる。心臓病・妊婦禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 230, "cat": "test", "name": "ドゥーテストLHII（排卵）", "maker": "ロート製薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["排卵確認"], "effect": "尿中LH（黄体形成ホルモン）を検出。排卵時期の予測に。", "ings": ["LH測定試薬（モノクローナル抗体）"], "warnIngs": [], "note": "排卵の2日前からLH上昇を検出。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 231, "cat": "test", "name": "ドゥーテスト（妊娠検査薬）", "maker": "ロート製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["妊娠確認"], "effect": "妊娠の可能性を調べる尿中hCGの検出に。", "ings": ["hCG測定試薬（モノクローナル抗体）"], "warnIngs": [], "note": "月経予定日当日から使用可。陽性の場合は必ず産婦人科を受診。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 240, "cat": "disinfect", "name": "マキロン", "maker": "第一三共ヘルスケア", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["消毒"], "effect": "傷・すり傷・切り傷・かみ傷・やけど・虫刺されの消毒に。", "ings": ["塩化ベンゼトニウム(0.02%)"], "warnIngs": [], "note": "逆性石鹸系殺菌薬。目・粘膜への接触に注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 241, "cat": "disinfect", "name": "オキシドール（過酸化水素水）", "maker": "各社", "price": 198, "risk": 3, "drowsy": false, "symptoms": ["消毒"], "effect": "傷・すり傷・切り傷の消毒に。", "ings": ["過酸化水素水(3%)"], "warnIngs": [], "note": "気泡で物理的に傷口の汚染を除去。深い傷や広範囲には使用不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 242, "cat": "disinfect", "name": "消毒用エタノール", "maker": "各社", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["消毒"], "effect": "手指・皮膚の消毒。医療機器・器具類の消毒に。", "ings": ["エタノール(76.9〜81.4%)"], "warnIngs": [], "note": "最も広く使われる消毒薬。引火性があるため火気に注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}];
-const ING_DICT = {"アセトアミノフェン": {"en": "Acetaminophen", "effect": "解熱・鎮痛。プロスタグランジン合成を抑制し、痛みや発熱を緩和します。胃への刺激が少なく、空腹時でも服用可能。", "caution": "過量服用・飲酒との併用で肝障害リスク。1日最大量4000mgを厳守。", "color": "#3b82f6"}, "イブプロフェン": {"en": "Ibuprofen", "effect": "消炎・鎮痛・解熱。NSAIDsの代表。炎症の原因物質(プロスタグランジン)を強力に抑制し、痛み・腫れ・熱を取り除きます。", "caution": "空腹時服用で胃腸障害。喘息患者・妊娠後期禁忌。腎機能障害に注意。", "color": "#3b82f6"}, "ロキソプロフェンナトリウム": {"en": "Loxoprofen", "effect": "プロドラッグ型NSAIDs。体内で活性化され強力な消炎鎮痛効果を発揮。胃腸への直接刺激が少ない設計。", "caution": "第1類医薬品（薬剤師要相談）。腎機能・心機能障害者注意。", "color": "#3b82f6"}, "アスピリン": {"en": "Aspirin", "effect": "NSAIDs。解熱鎮痛に加え、低用量では血小板凝集抑制（抗血栓）作用も持つ。", "caution": "15歳未満・インフルエンザ患者禁忌（ライ症候群）。胃潰瘍に注意。", "color": "#3b82f6"}, "クロルフェニラミンマレイン酸塩": {"en": "Chlorpheniramine", "effect": "第一世代抗ヒスタミン薬。アレルギー反応を抑え、鼻水・くしゃみ・かゆみを改善。鎮静作用で眠気が出やすい。", "caution": "眠気・集中力低下。車の運転不可。緑内障・前立腺肥大患者注意。", "color": "#f59e0b"}, "ジフェンヒドラミン": {"en": "Diphenhydramine", "effect": "第一世代抗ヒスタミン薬。アレルギー症状の緩和と強い鎮静作用。睡眠補助薬としても使用される。", "caution": "強い眠気。運転不可。連続使用で効果減弱（耐性）が起きやすい。", "color": "#f59e0b"}, "フェキソフェナジン": {"en": "Fexofenadine", "effect": "第二世代抗ヒスタミン薬。眠気が出にくく、花粉症・アレルギー性鼻炎に広く使用される。1日2回服用。", "caution": "果汁（グレープフルーツ・オレンジ等）と同時服用で吸収低下。", "color": "#10b981"}, "ロラタジン": {"en": "Loratadine", "effect": "第二世代抗ヒスタミン薬。1日1回服用で眠気が出にくい。アレルギー性鼻炎・蕁麻疹に有効。", "caution": "腎・肝機能障害者は減量。", "color": "#10b981"}, "エピナスチン塩酸塩": {"en": "Epinastine", "effect": "第二世代抗ヒスタミン薬。1日1回。花粉症の予防的服用にも有効。抗炎症作用を併せ持つ。", "caution": "眠気が出ることあり。高齢者は慎重に。", "color": "#10b981"}, "ジヒドロコデインリン酸塩": {"en": "Dihydrocodeine", "effect": "中枢性鎮咳薬。咳中枢を直接抑制し強力な鎮咳効果を発揮。痰が多い場合は去痰薬と併用。", "caution": "⚠️依存性あり。12歳未満禁忌。眠気・便秘。連用で精神的・身体的依存。", "color": "#ef4444"}, "コデインリン酸塩": {"en": "Codeine", "effect": "中枢性鎮咳・鎮痛薬。強力な咳止め効果と軽度の鎮痛作用を持つ。", "caution": "⚠️依存性あり。12歳未満禁忌。眠気・便秘・呼吸抑制リスク。", "color": "#ef4444"}, "アリルイソプロピルアセチル尿素": {"en": "Allylisopropylacetylurea", "effect": "鎮静・催眠補助成分。解熱鎮痛薬に配合され、痛みへの不安を和らげる鎮静作用を持つ。", "caution": "⚠️2023年AU全面規制・2025年KR麻薬類指定。依存性あり。眠気必発・運転不可。", "color": "#ef4444"}, "ブロムワレリル尿素": {"en": "Bromvalerylurea", "effect": "鎮静・催眠補助成分。鎮痛薬への配合で鎮静効果を補助する。", "caution": "⚠️海外規制済・依存性あり。眠気・運転不可。連用禁忌。", "color": "#ef4444"}, "グアイフェネシン": {"en": "Guaifenesin", "effect": "去痰薬。気道の分泌液を増やし痰を柔らかくして排出を促進。単独では咳を止めない。", "caution": "大量の水分補給で効果UP。過剰摂取で悪心。", "color": "#8b5cf6"}, "カルボシステイン": {"en": "Carbocisteine", "effect": "去痰・鼻粘膜正常化薬。痰の粘性を下げ排出を助けると同時に、鼻づまりにも効果。", "caution": "副作用少なく比較的安全。長期服用可能。", "color": "#8b5cf6"}, "ファモチジン": {"en": "Famotidine", "effect": "H2ブロッカー。胃酸分泌を抑制しストマ・胸やけ・胃痛を改善。効果持続8〜12時間。", "caution": "第1類（薬剤師要相談）。腎機能障害者は用量調整必要。", "color": "#0ea5e9"}, "ビサコジル": {"en": "Bisacodyl", "effect": "大腸刺激型下剤。大腸の蠕動運動を促進し排便を助ける。就寝前服用で翌朝に効果。", "caution": "連用で依存性（弛緩性便秘）。妊婦・授乳婦注意。牛乳と同時服用禁忌。", "color": "#0ea5e9"}, "センノシド": {"en": "Sennoside", "effect": "刺激性下剤。大腸で分解され腸壁を刺激し排便を促進。就寝前服用で翌朝効果。", "caution": "連用禁忌（習慣性）。妊婦注意。腹痛を伴う便秘には使用禁忌。", "color": "#0ea5e9"}, "ミノキシジル": {"en": "Minoxidil", "effect": "血管拡張作用により頭皮の血流を改善し毛包に栄養を供給。発毛・育毛を促進。", "caution": "要指導（薬剤師要相談）。低血圧・心臓病禁忌。4ヶ月以上継続必要。", "color": "#10b981"}, "テルビナフィン": {"en": "Terbinafine", "effect": "アリルアミン系抗真菌薬。白癬菌の細胞膜合成を阻害。水虫・たむしに有効。", "caution": "爪水虫には浸透しにくい（専用製品が必要）。皮膚刺激に注意。", "color": "#10b981"}, "ビフォナゾール": {"en": "Bifonazole", "effect": "イミダゾール系抗真菌薬。真菌の細胞膜を破壊。水虫・いんきんたむし・ぜにたむしに有効。", "caution": "角層浸透性高く1日1回で効果。眼・粘膜への接触回避。", "color": "#10b981"}, "ニコチン": {"en": "Nicotine", "effect": "ニコチン代替療法。禁煙時のニコチン渇望・禁断症状を緩和し、段階的に依存を断ち切る。", "caution": "第1類（薬剤師要相談）。喫煙との並行禁忌。心臓疾患・妊婦禁忌。", "color": "#f59e0b"}, "フルスルチアミン": {"en": "Fursultiamine", "effect": "ビタミンB1誘導体（脂溶性）。通常のB1より吸収が良く、神経機能の維持・エネルギー代謝の促進に働く。", "caution": "大量摂取で消化器症状。過剰分は尿中に排泄される。", "color": "#6366f1"}, "シアノコバラミン": {"en": "Cyanocobalamin", "effect": "ビタミンB12。神経細胞の修復・DNA合成に不可欠。末梢神経障害・しびれ・貧血に有効。", "caution": "基本的に安全。大量投与でも毒性は低い。", "color": "#6366f1"}, "メコバラミン": {"en": "Mecobalamin", "effect": "活性型ビタミンB12（補酵素型）。通常のB12より末梢神経への移行が良好。しびれ・神経痛に直接的に効く。", "caution": "光に不安定。遮光保存が重要。", "color": "#6366f1"}, "トラネキサム酸": {"en": "Tranexamic acid", "effect": "抗プラスミン薬。炎症・アレルギー反応を抑制。肝斑（シミ）の改善に特異的な効果を持つ。", "caution": "血栓症リスクのある方は服用前に相談。長期服用の安全性は確立。", "color": "#ec4899"}, "L-システイン": {"en": "L-Cysteine", "effect": "アミノ酸。メラニン生成を抑制しシミ・そばかすを改善。ケラチン合成にも寄与し髪・爪・皮膚を強化。", "caution": "基本的に安全。過剰摂取で消化器症状の可能性。", "color": "#ec4899"}, "コンドロイチン硫酸エステルナトリウム": {"en": "Chondroitin sulfate", "effect": "軟骨の主成分。関節軟骨の保護・再生を助け、膝・腰の関節痛を緩和。目薬では角膜保護にも使用。", "caution": "効果発現まで数週間〜数ヶ月。副作用は少ない。", "color": "#0ea5e9"}, "ベクロメタゾン": {"en": "Beclomethasone", "effect": "局所ステロイド。鼻腔内の炎症を直接抑制。アレルギー性鼻炎に高い効果を発揮。全身への影響は少ない。", "caution": "鼻感染症には使用禁忌。長期使用で鼻粘膜乾燥。", "color": "#f97316"}, "ヒドロコルチゾン": {"en": "Hydrocortisone", "effect": "弱〜中強度ステロイド。皮膚・粘膜の炎症・かゆみを抑制。外用・坐薬等に使用。", "caution": "長期・広範囲・顔面使用禁忌。感染症への使用禁忌。", "color": "#f97316"}, "木クレオソート": {"en": "Wood Creosote", "effect": "殺菌・収れん・局所麻酔作用。腸内の過剰な蠕動を抑え下痢を改善。古くから使われる民間薬由来成分。", "caution": "独特のにおい。大量使用で口腔粘膜への刺激。", "color": "#0ea5e9"}, "ラクトミン": {"en": "Lactobacillus", "effect": "乳酸菌（プロバイオティクス）。腸内細菌バランスを改善し、下痢・便秘・腹部膨満を緩和。", "caution": "副作用はほぼない。冷暗所保存が効果を維持。", "color": "#10b981"}, "ポビドンヨード": {"en": "Povidone-iodine", "effect": "ヨウ素系殺菌消毒薬。細菌・真菌・ウイルスに広範な殺菌効果。傷の消毒・うがいに使用。", "caution": "甲状腺疾患・妊婦・授乳婦注意。ヨウ素アレルギーに禁忌。", "color": "#8b5cf6"}, "エタノール": {"en": "Ethanol", "effect": "タンパク質変性による殺菌消毒。70〜80%濃度で最大効果。手指消毒・医療器具の消毒に広く使用。", "caution": "引火性あり火気厳禁。粘膜・目への直接使用禁忌。", "color": "#8b5cf6"}};
-const COLUMNS = [{"id": "c1", "title": "第1類・第2類・第3類、何が違うの？OTC医薬品のリスク区分を徹底解説", "date": "2026-03-01", "tag": "基礎知識", "summary": "薬局で見かける「第1類」「第2類」などの表示。これはリスクの高さを示す分類です。選び方・購入方法の違いを解説します。", "body": "OTC（市販）医薬品は副作用リスクに応じて4段階に分類されています。\n\n**要指導医薬品（最もリスクが高い）**\nダイレクトOTCやスイッチ直後の成分が含まれます。薬剤師による対面販売が義務付けられ、ネット購入は不可。ミノキシジル5%（リアップX5等）が代表例です。\n\n**第1類医薬品**\n副作用・相互作用のリスクが高い成分を含みます。薬剤師からの情報提供が義務。ファモチジン（ガスター10）、ロキソプロフェン（ロキソニンS）、ニコチン製品等。ネット購入時も薬剤師とのやり取りが必要です。\n\n**第2類医薬品（指定第2類含む）**\n比較的リスクの高い成分を含む薬。登録販売者でも販売可能。市販薬の大半がこのカテゴリ。パブロン・バファリン・コーラック等。\n\n**第3類医薬品**\n日常的なビタミン剤・整腸薬など、副作用リスクが比較的低い薬。コンビニでも販売可能なものも。\n\n**選び方のポイント**：症状が重い・長期間続く場合は医師への受診を優先。市販薬を選ぶ際は第1類・要指導は薬剤師に相談する習慣をつけましょう。"}, {"id": "c2", "title": "「ア尿素」が含まれる市販薬に注意。海外で規制が進む依存性成分とは", "date": "2026-03-10", "tag": "安全情報", "summary": "イブA錠などに含まれる「アリルイソプロピルアセチル尿素（ア尿素）」。2023年にオーストラリアで全面規制、2025年には韓国で麻薬類に指定されました。", "body": "**アリルイソプロピルアセチル尿素（ア尿素）とは**\n\n解熱鎮痛薬に「鎮静補助成分」として配合されている成分です。痛みへの不安を和らげ薬の効果を高める目的で長年使用されてきましたが、近年その依存性が問題視されています。\n\n**規制の動向**\n- 2023年：オーストラリアで販売全面禁止\n- 2025年：韓国で麻薬類に指定\n- 日本：現時点では規制なし、販売継続中\n\n**含有する主な市販薬**\nイブA錠、イブクイック頭痛薬DX、ノーシンピュア等\n\n**症状と注意点**\n- 服用後に必ず眠気が出る（運転・機械操作禁忌）\n- 長期・頻回使用で耐性・依存が形成される\n- 急な中断で不快感（不眠、焦燥感）が生じることも\n\n**代替選択肢**\n同様の症状にはア尿素を含まないアセトアミノフェン単体（タイレノールA等）やイブプロフェン（ただしア尿素なし製品を選ぶ）を選ぶと安全です。"}, {"id": "c3", "title": "花粉症の市販薬、眠くなる・ならないの差は？成分で選ぶ正しい方法", "date": "2026-03-15", "tag": "花粉症", "summary": "「眠くなる花粉症薬」と「眠くならない花粉症薬」の違いは世代の違いにあります。仕事中でも使える薬の選び方を解説。", "body": "花粉症薬の「眠気の出やすさ」は、抗ヒスタミン薬の世代によって大きく異なります。\n\n**第一世代抗ヒスタミン薬（眠気が強い）**\nクロルフェニラミン、ジフェンヒドラミン等。血液脳関門を通過しやすく、脳内のヒスタミン受容体も遮断するため強い眠気が出ます。\n→ 就寝前に服用、乗り物酔い防止にも使われる\n\n**第二世代抗ヒスタミン薬（眠気が少ない）**\nフェキソフェナジン（アレグラFX）、ロラタジン（クラリチンEX）、エピナスチン（アレジオン20）等。血液脳関門を通過しにくく、末梢のアレルギー反応を選択的に抑える。\n→ 日中の使用・仕事・運転（製品により異なる）に適している\n\n**選び方のポイント**\n- 仕事中・運転あり → 第二世代（フェキソフェナジン・ロラタジンが特に眠気少）\n- 夜間・症状が強い → 第一世代も選択肢（コスト低め）\n- ステロイド点鼻薬（ベクロメタゾン等）の併用で効果大幅アップ\n\n**服用タイミング**\n花粉飛散シーズン前（1〜2週間前）から予防的に服用を開始すると、シーズン中の症状が大幅に軽減されます。"}, {"id": "c4", "title": "コデイン系咳止め薬の12歳未満禁忌。なぜ？代替品の選び方", "date": "2026-03-20", "tag": "安全情報", "summary": "2019年以降、コデイン・ジヒドロコデイン含有薬の12歳未満への使用が禁忌となりました。その理由と安全な代替品を解説します。", "body": "**なぜ12歳未満禁忌になったのか**\n\nコデインは体内でモルヒネに変換されます。大人はゆっくり変換されますが、CYP2D6という酵素が活発な「超高速代謝者」では急激に大量のモルヒネが産生される可能性があります。\n\n特に子どもでは代謝の個人差が大きく、呼吸抑制（呼吸が止まる）という重篤な副作用が報告されたため、2019年に12歳未満への使用が禁忌となりました。\n\n**コデイン系が含まれる主な市販薬**\n- ブロン錠エース\n- パブロンゴールドA\n- 新コンタック咳止めダブル持続性\n- エスタックイブNEX\n\n**子どもの咳に使える代替品**\n- カルボシステイン（去痰薬）：痰を柔らかくして排出促進。副作用少なく安全\n- ムコダインSなど去痰薬中心の製品\n- 龍角散（生薬系）：のど・咳に穏やかに作用\n\n**大人でも注意**\nコデイン系は依存性があるため、必要最小限の期間・量での使用が推奨されます。"}];
+const MEDS=[{"id": 1, "cat": "cold", "name": "ロキソニンS", "maker": "第一三共ヘルスケア", "price": 1408, "risk": 1, "drowsy": false, "symptoms": ["頭痛", "歯痛", "のど痛", "月経痛", "腰痛", "関節痛", "神経痛", "発熱"], "effect": "解熱・鎮痛。頭痛・歯痛・咽喉痛・月経痛・腰痛・関節痛・神経痛・発熱に。", "ings": ["ロキソプロフェンNa水和物(68mg)"], "warnIngs": [], "note": "NSAIDs系。第1類（薬剤師要相談）。食後服用推奨。喘息・腎機能障害者・妊婦は要注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 2, "cat": "cold", "name": "ロキソニンSプレミアム", "maker": "第一三共ヘルスケア", "price": 1628, "risk": 1, "drowsy": false, "symptoms": ["頭痛", "月経痛", "腰痛", "関節痛", "発熱"], "effect": "解熱・鎮痛。ロキソニンSに胃保護・鎮痙成分を追加配合。", "ings": ["ロキソプロフェンNa水和物(68mg)", "酸化マグネシウム(33.3mg)", "メタケイ酸アルミン酸Mg(83.3mg)"], "warnIngs": [], "note": "第1類。胃保護成分配合版。それでも食後服用推奨。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 3, "cat": "cold", "name": "イブA錠", "maker": "エスエス製薬", "price": 1188, "risk": 2, "drowsy": true, "symptoms": ["頭痛", "月経痛", "関節痛", "筋肉痛", "神経痛", "発熱"], "effect": "解熱・鎮痛。頭痛・生理痛・関節痛・筋肉痛・神経痛に。", "ings": ["イブプロフェン(150mg)", "アリルイソプロピルアセチル尿素(60mg)", "無水カフェイン(80mg)"], "warnIngs": ["アリルイソプロピルアセチル尿素"], "note": "⚠ア尿素含有：AU全面規制（2023）・KR麻薬類指定（2025）済。依存リスクあり。眠気・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 4, "cat": "cold", "name": "イブクイック頭痛薬DX", "maker": "エスエス製薬", "price": 1518, "risk": 2, "drowsy": true, "symptoms": ["頭痛", "偏頭痛", "月経痛", "歯痛", "発熱"], "effect": "頭痛・偏頭痛・月経痛・歯痛・発熱に。イブプロフェン高配合。", "ings": ["イブプロフェン(200mg)", "アリルイソプロピルアセチル尿素(60mg)", "無水カフェイン(80mg)"], "warnIngs": ["アリルイソプロピルアセチル尿素"], "note": "⚠ア尿素含有。イブプロフェン増量版。眠気・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 5, "cat": "cold", "name": "タイレノールA", "maker": "J&J", "price": 1078, "risk": 2, "drowsy": false, "symptoms": ["頭痛", "歯痛", "月経痛", "発熱"], "effect": "解熱・鎮痛。胃に比較的優しい。空腹時でも服用可能。", "ings": ["アセトアミノフェン(300mg)"], "warnIngs": [], "note": "肝臓で代謝。アルコール常用者・肝機能障害者は禁忌。過量服用で肝障害リスク。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 6, "cat": "cold", "name": "バファリンA", "maker": "ライオン", "price": 968, "risk": 2, "drowsy": false, "symptoms": ["頭痛", "月経痛", "歯痛", "発熱"], "effect": "解熱・鎮痛。頭痛・生理痛・歯痛・発熱に。", "ings": ["アスピリン(330mg)", "ダイバッファーHT合成ヒドロタルサイト(33mg)"], "warnIngs": [], "note": "NSAIDs。インフルエンザ・水痘患者・15歳未満禁忌（ライ症候群）。胃保護成分配合。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 7, "cat": "cold", "name": "パブロンゴールドA微粒", "maker": "大正製薬", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["発熱", "鼻水", "鼻づまり", "のど痛", "せき", "たん"], "effect": "発熱・鼻水・鼻づまり・咽喉痛・咳・痰の総合風邪薬。", "ings": ["アセトアミノフェン(900mg)", "マレイン酸クロルフェニラミン(7.5mg)", "ジヒドロコデインリン酸塩(24mg)", "dl-メチルエフェドリン塩酸塩(60mg)", "無水カフェイン(75mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系含有。12歳未満禁忌。眠気強め・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 8, "cat": "cold", "name": "新ルルAゴールドs", "maker": "第一三共ヘルスケア", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["鼻水", "せき", "発熱", "のど痛"], "effect": "鼻水・せき・発熱・のどの痛みの総合風邪薬。", "ings": ["アセトアミノフェン(900mg)", "グアイフェネシン(250mg)", "ノスカピン(48mg)", "塩酸プソイドエフェドリン(90mg)", "マレイン酸クロルフェニラミン(8mg)", "無水カフェイン(75mg)"], "warnIngs": [], "note": "眠気あり・運転不可。前立腺肥大・緑内障患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 9, "cat": "cold", "name": "エスタックイブNEX", "maker": "エスエス製薬", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["発熱", "頭痛", "鼻水", "くしゃみ", "せき", "のど痛"], "effect": "発熱・頭痛・鼻水・くしゃみ・咳・のど痛の総合風邪薬。", "ings": ["イブプロフェン(450mg)", "dl-クロルフェニラミンマレイン酸塩(5mg)", "ジヒドロコデインリン酸塩(16mg)", "dl-メチルエフェドリン塩酸塩(40mg)", "無水カフェイン(75mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系含有。12歳未満禁忌。眠気強め・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 10, "cat": "cold", "name": "ストナアイビージェルEx", "maker": "佐藤製薬", "price": 1848, "risk": 2, "drowsy": true, "symptoms": ["のど痛", "鼻づまり", "頭痛", "発熱"], "effect": "のど痛・鼻づまりを伴う風邪症状に。ソフトカプセルで吸収速い。", "ings": ["イブプロフェン(450mg)", "マレイン酸クロルフェニラミン(7.5mg)", "dl-メチルエフェドリン塩酸塩(37.5mg)", "無水カフェイン(75mg)"], "warnIngs": [], "note": "眠気あり・運転不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 11, "cat": "cold", "name": "カコナール2", "maker": "第一三共ヘルスケア", "price": 748, "risk": 2, "drowsy": true, "symptoms": ["発熱", "鼻水", "頭痛"], "effect": "発熱・悪寒・鼻水・頭痛のかぜ症状緩和に。", "ings": ["アセトアミノフェン(450mg)", "マレイン酸クロルフェニラミン(3.5mg)", "ニコチン酸アミド(20mg)", "無水カフェイン(60mg)"], "warnIngs": [], "note": "顆粒タイプ。眠気あり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 12, "cat": "cold", "name": "ノーシン（アセトアミノフェン）", "maker": "アラクス", "price": 858, "risk": 2, "drowsy": false, "symptoms": ["頭痛", "月経痛", "発熱"], "effect": "頭痛・月経痛・発熱の解熱鎮痛に。", "ings": ["アセトアミノフェン(300mg)", "無水カフェイン(50mg)"], "warnIngs": [], "note": "成分シンプル。胃への刺激が少ない。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 20, "cat": "stomach", "name": "ガスター10", "maker": "第一三共ヘルスケア", "price": 1628, "risk": 1, "drowsy": false, "symptoms": ["胸やけ", "胃痛", "胃もたれ", "吐き気"], "effect": "胃酸分泌を抑制。胸やけ・胃痛・もたれ・むかつきに。", "ings": ["ファモチジン(10mg)"], "warnIngs": [], "note": "H2ブロッカー。第1類（薬剤師要相談）。腎機能障害者は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 21, "cat": "stomach", "name": "ガスター10S", "maker": "第一三共ヘルスケア", "price": 1848, "risk": 1, "drowsy": false, "symptoms": ["胸やけ", "胃痛", "胃もたれ"], "effect": "胸やけ・胃痛に。H2ブロッカー＋制酸成分の速効タイプ。", "ings": ["ファモチジン(10mg)", "水酸化Mg(225mg)", "炭酸Ca(270mg)"], "warnIngs": [], "note": "第1類。制酸成分追加で速効性を高めた版。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 22, "cat": "stomach", "name": "キャベジンコーワα", "maker": "興和", "price": 1188, "risk": 3, "drowsy": false, "symptoms": ["胃もたれ", "食べ過ぎ", "胃痛", "腹部膨満"], "effect": "胃粘膜を修復。胃もたれ・食欲不振・胃部膨満感・胃酸過多に。", "ings": ["メチルメチオニンスルホニウムクロライド(MMSC)(150mg)", "ビオジアスターゼ2000(60mg)", "リパーゼAP12(30mg)"], "warnIngs": [], "note": "胃粘膜保護＋消化酵素。副作用少なく継続向き。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 23, "cat": "stomach", "name": "太田胃散", "maker": "太田胃散", "price": 1078, "risk": 3, "drowsy": false, "symptoms": ["胃もたれ", "食べ過ぎ", "飲み過ぎ", "胸やけ", "腹部膨満"], "effect": "胃もたれ・食べ過ぎ・飲み過ぎ・胃部不快感・胃酸過多に。", "ings": ["炭酸水素ナトリウム", "沈降炭酸カルシウム", "炭酸マグネシウム", "苦味チンキ", "ケイ酸アルミン酸Mg"], "warnIngs": [], "note": "制酸・健胃の複合処方。胃のむかつきに広く対応。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 24, "cat": "stomach", "name": "正露丸", "maker": "大幸薬品", "price": 880, "risk": 2, "drowsy": false, "symptoms": ["下痢", "腹部膨満"], "effect": "下痢・軟便・食あたり・水あたりに。", "ings": ["木クレオソート(180mg)"], "warnIngs": [], "note": "シンプル成分。独特のにおいあり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 25, "cat": "stomach", "name": "新ビオフェルミンS錠", "maker": "武田コンシューマーヘルスケア", "price": 990, "risk": 3, "drowsy": false, "symptoms": ["下痢", "便秘", "腹部膨満", "整腸"], "effect": "整腸薬。下痢・便秘・軟便・腹部膨満感に。", "ings": ["ラクトミン（乳酸菌）", "ビフィズス菌", "糖化菌"], "warnIngs": [], "note": "乳酸菌製剤。副作用少・長期服用可。小児にも使いやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 26, "cat": "stomach", "name": "ビオスリーHi錠", "maker": "東亜薬品", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["下痢", "便秘", "腹部膨満", "整腸"], "effect": "整腸薬。便秘・軟便・腹部膨満感の改善。", "ings": ["酪酸菌（宮入菌）", "糖化菌", "乳酸菌（ラクトミン）"], "warnIngs": [], "note": "3種生菌配合。抗生物質併用でも有効。長期服用可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 27, "cat": "stomach", "name": "コーラック", "maker": "武田コンシューマーヘルスケア", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["便秘", "腹部膨満"], "effect": "便秘薬。便秘に伴う腹部膨満・食欲不振に。", "ings": ["ビサコジル(10mg)"], "warnIngs": [], "note": "大腸刺激型下剤。急激な効果。連用不可。妊婦・授乳婦は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 28, "cat": "stomach", "name": "コーラックII（センノシド）", "maker": "武田コンシューマーヘルスケア", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["便秘"], "effect": "便秘薬。就寝前服用で翌朝効果。", "ings": ["センノシドA・B(12mg)"], "warnIngs": [], "note": "センナ系。就寝前服用で翌朝に排便。連用は避けること。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 29, "cat": "stomach", "name": "スルーラック（センナ）", "maker": "エスエス製薬", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["便秘"], "effect": "便秘薬。排便促進に。", "ings": ["センノシド(12mg)"], "warnIngs": [], "note": "大腸刺激型。慢性的使用で依存性（弛緩性便秘）になりやすい。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 30, "cat": "stomach", "name": "サクロンQ", "maker": "エーザイ", "price": 1188, "risk": 2, "drowsy": false, "symptoms": ["飲み過ぎ", "吐き気", "胸やけ", "胃もたれ"], "effect": "飲み過ぎ・二日酔い・悪心・嘔吐感・胸やけ・胃もたれに。", "ings": ["ジメチルポリシロキサン(200mg)", "ゲンチアナ乾燥エキス(20mg)", "スクラルファート水和物(1000mg)"], "warnIngs": [], "note": "消泡・胃粘膜保護・苦味健胃の複合処方。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 31, "cat": "stomach", "name": "ガストール錠", "maker": "エスエス製薬", "price": 1188, "risk": 2, "drowsy": false, "symptoms": ["胃痛", "腹部膨満", "胸やけ", "胃もたれ"], "effect": "胃痛・腹痛・胃もたれ・胸やけ・胃酸過多に。", "ings": ["ロートエキス(30mg)", "炭酸水素ナトリウム(1000mg)", "沈降炭酸カルシウム(900mg)"], "warnIngs": [], "note": "抗コリン成分含有。緑内障・前立腺肥大患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 32, "cat": "stomach", "name": "ブスコパン", "maker": "サノフィ", "price": 1078, "risk": 2, "drowsy": false, "symptoms": ["胃痛", "腹部膨満"], "effect": "胃・腹部の痙攣性疼痛・過敏性腸症候群の腹痛に。", "ings": ["臭化ブチルスコポラミン(10mg)"], "warnIngs": [], "note": "抗コリン薬。胃腸の痙攣を緩和。緑内障・前立腺肥大患者禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 40, "cat": "allergy", "name": "アレグラFX", "maker": "久光製薬", "price": 1980, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "鼻づまり", "目のかゆみ"], "effect": "アレルギー性鼻炎・花粉症。くしゃみ・鼻水・鼻づまりに。", "ings": ["フェキソフェナジン塩酸塩(60mg)"], "warnIngs": [], "note": "第二世代。眠気が出にくい。1日2回服用。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 41, "cat": "allergy", "name": "クラリチンEX", "maker": "大正製薬", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "かゆみ"], "effect": "アレルギー性鼻炎・蕁麻疹・皮膚のかゆみに。", "ings": ["ロラタジン(10mg)"], "warnIngs": [], "note": "第二世代。1日1回。眠気少。成分がシンプル。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 42, "cat": "allergy", "name": "アレジオン20", "maker": "エスエス製薬", "price": 1848, "risk": 2, "drowsy": true, "symptoms": ["花粉症", "鼻水", "くしゃみ", "目のかゆみ"], "effect": "アレルギー性鼻炎・花粉症に。くしゃみ・鼻水・目のかゆみに。", "ings": ["エピナスチン塩酸塩(20mg)"], "warnIngs": [], "note": "1日1回。眠気が出ることあり。予防的服用に向く。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 43, "cat": "allergy", "name": "タリオンAR", "maker": "田辺三菱製薬", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "かゆみ"], "effect": "アレルギー性鼻炎・蕁麻疹に。", "ings": ["ベポタスチンベシル酸塩(10mg)"], "warnIngs": [], "note": "第二世代。眠気少。腎機能障害者は注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 44, "cat": "allergy", "name": "レスタミン錠", "maker": "武田コンシューマーヘルスケア", "price": 748, "risk": 3, "drowsy": true, "symptoms": ["かゆみ", "虫刺され", "花粉症"], "effect": "蕁麻疹・虫刺され・皮膚のかゆみ・花粉症に。", "ings": ["ジフェンヒドラミン塩酸塩(30mg)"], "warnIngs": [], "note": "第一世代。眠気強め・運転不可。安価。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 45, "cat": "allergy", "name": "ポラリスAR", "maker": "興和", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["花粉症", "鼻水", "くしゃみ", "かゆみ", "湿疹・かぶれ"], "effect": "アレルギー性鼻炎・蕁麻疹・皮膚炎のかゆみに。", "ings": ["d-マレイン酸クロルフェニラミン(3mg)", "イソチペンジル塩酸塩(6mg)"], "warnIngs": [], "note": "眠気あり。運転不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 50, "cat": "cough", "name": "ブロン錠エース", "maker": "エスエス製薬", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["せき", "たん"], "effect": "せき・たんに。気道粘液を薄め・せきを鎮める。", "ings": ["ジヒドロコデインリン酸塩(30mg)", "dl-メチルエフェドリン塩酸塩(75mg)", "グアヤコールスルホン酸K(267mg)", "無水カフェイン(90mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系（依存リスク高）。乱用注意。12歳未満禁忌。眠気・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 51, "cat": "cough", "name": "新コンタック咳止めダブル持続性", "maker": "グラクソ・スミスクライン", "price": 1298, "risk": 2, "drowsy": true, "symptoms": ["せき", "たん", "のどの炎症"], "effect": "せき・のどの不快感・たんに。", "ings": ["ジヒドロコデインリン酸塩(20mg)", "dl-メチルエフェドリン塩酸塩(50mg)", "マレイン酸クロルフェニラミン(5mg)"], "warnIngs": ["ジヒドロコデインリン酸塩"], "note": "⚠コデイン系含有。12歳未満禁忌。眠気あり・運転不可。", "noteType": "danger", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 52, "cat": "cough", "name": "ムコダインS（カルボシステイン）", "maker": "各社", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["たん", "鼻づまり", "せき"], "effect": "たん・鼻づまりを伴うせきに。粘液を薄め排出促進。", "ings": ["L-カルボシステイン(750mg)"], "warnIngs": [], "note": "去痰薬。副作用少なく比較的安全。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 53, "cat": "cough", "name": "龍角散ダイレクト", "maker": "龍角散", "price": 1078, "risk": 3, "drowsy": false, "symptoms": ["のどの炎症", "のど痛", "声がれ", "せき", "たん"], "effect": "のどの炎症・痛み・声がれ・せき・たんに。", "ings": ["キキョウ末", "セネガ末", "カンゾウ末", "アセンヤク末"], "warnIngs": [], "note": "生薬配合。口内で直接溶かして服用。水不要。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 54, "cat": "cough", "name": "浅田飴クールS", "maker": "浅田飴", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["のどの炎症", "のど痛", "声がれ", "口腔殺菌"], "effect": "のどの炎症・痛み・声がれ・せきに。", "ings": ["セチルピリジニウム塩化物水和物(0.5mg)", "l-メントール(2mg)"], "warnIngs": [], "note": "口腔内殺菌成分配合のトローチ。軽症向き。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 55, "cat": "cough", "name": "イソジンうがい薬", "maker": "塩野義製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["のどの炎症", "口腔殺菌"], "effect": "口腔・咽頭の殺菌・消毒・洗浄。口臭の除去に。", "ings": ["ポビドンヨード(7%)"], "warnIngs": [], "note": "ヨウ素系殺菌。甲状腺疾患・妊婦・授乳婦は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 56, "cat": "cough", "name": "パブロン50α微粒", "maker": "大正製薬", "price": 1078, "risk": 2, "drowsy": true, "symptoms": ["せき", "たん", "のどの炎症"], "effect": "せき・たん・のどのはれ・炎症に。", "ings": ["グアイフェネシン(270mg)", "dl-メチルエフェドリン塩酸塩(60mg)", "ジフェンヒドラミン塩酸塩(37.5mg)", "ノスカピン(54mg)"], "warnIngs": [], "note": "眠気あり・運転不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 60, "cat": "nose", "name": "パブロン鼻炎カプセルSα", "maker": "大正製薬", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["鼻水", "くしゃみ", "鼻づまり", "花粉症"], "effect": "鼻水・くしゃみ・鼻づまり。急性・アレルギー性鼻炎に。", "ings": ["マレイン酸クロルフェニラミン(6mg)", "塩酸プソイドエフェドリン(60mg)", "ベラドンナ総アルカロイド(0.2mg)"], "warnIngs": [], "note": "眠気あり・運転不可。緑内障・前立腺肥大患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 61, "cat": "nose", "name": "ナザール点鼻薬", "maker": "佐藤製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["鼻づまり"], "effect": "急性鼻炎・アレルギー性鼻炎・副鼻腔炎の鼻づまりに。", "ings": ["塩酸テトラヒドロゾリン(0.1%)", "dl-マレイン酸クロルフェニラミン(0.03%)"], "warnIngs": [], "note": "血管収縮薬。短時間で鼻通り改善。連続使用7日以内。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 62, "cat": "nose", "name": "コルゲンコーワ鼻炎フィルムα", "maker": "興和", "price": 1628, "risk": 2, "drowsy": true, "symptoms": ["鼻水", "くしゃみ", "鼻づまり"], "effect": "鼻水・くしゃみ・鼻づまりに。", "ings": ["マレイン酸クロルフェニラミン(6mg)", "塩酸プソイドエフェドリン(60mg)"], "warnIngs": [], "note": "口腔内フィルム剤。眠気あり。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 63, "cat": "nose", "name": "エージーノーズアレルカットC", "maker": "第一三共ヘルスケア", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["鼻水", "くしゃみ", "鼻づまり", "花粉症"], "effect": "アレルギー性鼻炎の鼻水・くしゃみ・鼻づまりに。", "ings": ["ベクロメタゾンプロピオン酸エステル(0.05mg/噴霧)"], "warnIngs": [], "note": "ステロイド点鼻薬。局所作用が主で全身影響少。感染性鼻炎には不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 70, "cat": "ext_pain", "name": "ロイヒつぼ膏", "maker": "ニチバン", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["肩こり", "腰痛", "筋肉痛", "関節痛", "打撲・ねんざ"], "effect": "肩こり・腰痛・筋肉痛・関節痛・打撲・ねんざに。", "ings": ["カプサイシン", "ノニル酸ワニリルアミド", "dl-カンフル", "サリチル酸メチル"], "warnIngs": [], "note": "温感系。傷口・粘膜・眼周囲に使用不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 71, "cat": "ext_pain", "name": "サロンパス", "maker": "久光製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["肩こり", "腰痛", "筋肉痛", "打撲・ねんざ"], "effect": "肩こり・腰痛・筋肉痛・打撲・ねんざの局所消炎鎮痛に。", "ings": ["サリチル酸メチル(10%)", "l-メントール(3%)", "dl-カンフル(1%)"], "warnIngs": [], "note": "温感・冷感タイプあり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 72, "cat": "ext_pain", "name": "ボルタレンACゲル", "maker": "グラクソ・スミスクライン", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["肩こり", "腰痛", "関節痛", "筋肉痛"], "effect": "肩こり・腰痛・関節痛・筋肉痛の局所消炎鎮痛に。", "ings": ["ジクロフェナクNa(1%)"], "warnIngs": [], "note": "NSAIDs外用薬。喘息患者・妊婦は注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 73, "cat": "ext_pain", "name": "フェイタスチックEX", "maker": "久光製薬", "price": 1408, "risk": 2, "drowsy": false, "symptoms": ["肩こり", "腰痛", "関節痛", "筋肉痛"], "effect": "肩こり・腰痛・関節痛・筋肉痛に。", "ings": ["フェルビナク(3%)"], "warnIngs": [], "note": "NSAIDs外用薬。スティックで塗布しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 74, "cat": "ext_pain", "name": "バンテリンコーワ液剤EX", "maker": "興和", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["関節痛", "筋肉痛", "腰痛", "肩こり"], "effect": "肩・腰・膝の関節痛・筋肉痛の消炎鎮痛に。", "ings": ["インドメタシン(1%)"], "warnIngs": [], "note": "NSAIDs系外用。速乾性液剤。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 75, "cat": "ext_pain", "name": "アンメルツヨコヨコ", "maker": "小林製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["肩こり", "腰痛", "筋肉痛"], "effect": "肩こり・腰痛・筋肉痛に。", "ings": ["サリチル酸メチル(10%)", "l-メントール(10%)", "dl-カンフル(5%)", "ノニル酸ワニリルアミド(0.025%)"], "warnIngs": [], "note": "ロールオンタイプで塗布しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 76, "cat": "ext_pain", "name": "タイガーバーム", "maker": "各社", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["筋肉痛", "肩こり", "打撲・ねんざ", "腰痛", "神経痛"], "effect": "筋肉痛・肩こり・打撲・腰痛・神経痛に。", "ings": ["カンフル(25%)", "はっか油(16%)", "桂皮油(10%)", "ウィンターグリーン油(8%)"], "warnIngs": [], "note": "アジア伝統の外用薬。刺激が強いため皮膚の弱い方は注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 77, "cat": "ext_pain", "name": "モーラステープL20mg", "maker": "久光製薬", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["筋肉痛", "関節痛", "腰痛", "打撲・ねんざ"], "effect": "筋肉痛・関節痛・腱鞘炎・肩こり・打撲・捻挫に。", "ings": ["ケトプロフェン(20mg/枚)"], "warnIngs": [], "note": "NSAIDs系テープ。光線過敏症リスクあり：貼付中・剥がした後も日光回避4週間必要。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 78, "cat": "ext_pain", "name": "ロキソニンSテープ", "maker": "第一三共ヘルスケア", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["筋肉痛", "関節痛", "肩こり", "腰痛"], "effect": "筋肉痛・関節痛・肩こり・腰痛に。", "ings": ["ロキソプロフェンNa水和物(50mg/枚)"], "warnIngs": [], "note": "NSAIDs系テープ。内服ロキソニンと併用注意（同成分重複）。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 80, "cat": "ext_skin", "name": "テラ・コートリル軟膏a", "maker": "ファイザー", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ", "にきび"], "effect": "皮膚細菌感染（とびひ・毛嚢炎）・湿疹の二次感染に。", "ings": ["オキシテトラサイクリン塩酸塩(30mg/g)", "ヒドロコルチゾン(10mg/g)"], "warnIngs": [], "note": "抗菌薬＋ステロイド複合。長期・広範囲使用不可。顔面注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 81, "cat": "ext_skin", "name": "メンソレータムADクリームm", "maker": "ロート製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ"], "effect": "湿疹・かぶれ・皮膚炎・かゆみに。", "ings": ["ジフェンヒドラミン塩酸塩(1%)", "グリチルレチン酸(0.5%)", "l-メントール(1%)"], "warnIngs": [], "note": "抗ヒスタミン・抗炎症・清涼感の複合処方。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 82, "cat": "ext_skin", "name": "ケラチナミンコーワクリーム20%", "maker": "興和", "price": 1298, "risk": 3, "drowsy": false, "symptoms": ["乾燥肌"], "effect": "手足のひび・あかぎれ・かかとのガサガサ・乾燥肌に。", "ings": ["尿素(20%)"], "warnIngs": [], "note": "高濃度尿素で角質軟化。傷口・粘膜に使用不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 83, "cat": "ext_skin", "name": "ムヒS2a", "maker": "池田模範堂", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["かゆみ", "虫刺され", "湿疹・かぶれ"], "effect": "虫刺され・かぶれ・湿疹のかゆみに。", "ings": ["クロタミトン(5%)", "ジフェンヒドラミン塩酸塩(1%)", "グリチルレチン酸(0.3%)", "l-メントール(1.5%)"], "warnIngs": [], "note": "かゆみ止め複数成分配合。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 84, "cat": "ext_skin", "name": "オロナインH軟膏", "maker": "大塚製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["にきび", "乾燥肌", "湿疹・かぶれ"], "effect": "にきび・吹き出物・はたけ・やけど・ひび・あかぎれに。", "ings": ["クロルヘキシジングルコン酸塩液(0.5%)"], "warnIngs": [], "note": "殺菌成分配合。長年親しまれてきたマルチ外用薬。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 85, "cat": "ext_skin", "name": "リンデロンVGクリーム", "maker": "塩野義製薬", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ"], "effect": "湿疹・皮膚炎・かぶれ・あせもの炎症・かゆみに。", "ings": ["ベタメタゾン吉草酸エステル(0.12%)", "ゲンタマイシン硫酸塩(0.1%)"], "warnIngs": [], "note": "中強度ステロイド＋抗菌薬。長期・広範囲・顔面使用不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 86, "cat": "ext_skin", "name": "ヘパリン類似物質クリーム", "maker": "各社", "price": 1408, "risk": 3, "drowsy": false, "symptoms": ["乾燥肌"], "effect": "皮脂欠乏症・乾皮症・老人性乾皮症・外傷後の瘢痕や皮膚硬化症に。", "ings": ["ヘパリン類似物質(0.3%)"], "warnIngs": [], "note": "保湿・血行促進。出血している傷口や血小板減少症患者は注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 87, "cat": "ext_skin", "name": "フルコートf", "maker": "田辺三菱製薬", "price": 1408, "risk": 2, "drowsy": false, "symptoms": ["湿疹・かぶれ", "かゆみ", "虫刺され"], "effect": "湿疹・皮膚炎・かぶれ・虫刺されの炎症・かゆみに。", "ings": ["フルオシノロンアセトニド(0.025%)", "フラジオマイシン硫酸塩(0.35%)"], "warnIngs": [], "note": "強度ステロイド＋抗菌薬。長期・広範囲・顔面・乳幼児使用注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 90, "cat": "eye", "name": "ロートVアクティブ", "maker": "ロート製薬", "price": 880, "risk": 3, "drowsy": false, "symptoms": ["目の疲れ", "充血", "乾き目"], "effect": "目の疲れ・かすみ・充血・乾き目に。", "ings": ["ネオスチグミンメチル硫酸塩(0.005%)", "VB12(0.02%)", "タウリン(0.1%)", "コンドロイチン硫酸エステルNa(0.5%)"], "warnIngs": [], "note": "ピント調節成分配合。コンタクト非対応品あり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 91, "cat": "eye", "name": "ロート抗菌目薬i", "maker": "ロート製薬", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["目の疲れ", "目のかゆみ", "充血"], "effect": "ものもらい・結膜炎・目ヤニ・目のかゆみに。", "ings": ["スルファメトキサゾール(4%)"], "warnIngs": [], "note": "抗菌性点眼薬。5〜6日改善なければ受診を。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 92, "cat": "eye", "name": "アイリスAGガード", "maker": "大正製薬", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["目のかゆみ", "充血", "花粉症"], "effect": "花粉・ハウスダストによる目のかゆみ・充血・涙目に。", "ings": ["クロモグリク酸Na(1%)", "塩酸テトラヒドロゾリン(0.05%)", "グリチルリチン酸二K(0.25%)"], "warnIngs": [], "note": "抗アレルギー＋血管収縮成分配合。花粉症の目症状に有効。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 93, "cat": "eye", "name": "サンテピュア（コンタクト用）", "maker": "参天製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["乾き目", "目の疲れ"], "effect": "乾き目・目の疲れ・かすみ。コンタクトレンズ装着中に使用可。", "ings": ["コンドロイチン硫酸エステルNa(0.1%)", "塩化Na", "塩化K"], "warnIngs": [], "note": "防腐剤フリー。全種コンタクトレンズ対応。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 94, "cat": "eye", "name": "クロマイN点眼液", "maker": "参天製薬", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["目の疲れ", "充血"], "effect": "ものもらい・結膜炎・目ヤニに。", "ings": ["クロラムフェニコール(0.5%)"], "warnIngs": [], "note": "抗菌性点眼薬。長期連続使用注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 95, "cat": "eye", "name": "サンテドウブルアクション", "maker": "参天製薬", "price": 1188, "risk": 3, "drowsy": false, "symptoms": ["目の疲れ", "眼精疲労", "充血"], "effect": "目の疲れ・かすみ・充血・眼病予防に。", "ings": ["ネオスチグミンメチル硫酸塩(0.005%)", "VB12(0.02%)", "L-アスパラギン酸K(1%)", "タウリン(1%)"], "warnIngs": [], "note": "疲れ目・老眼に対応する多機能点眼薬。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 100, "cat": "joint", "name": "コンドロイチンZS錠", "maker": "ゼリア新薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["関節痛", "腰痛", "筋肉痛"], "effect": "膝・腰などの関節痛・筋肉痛の緩和に。", "ings": ["コンドロイチン硫酸エステルNa(200mg)", "VE酢酸エステル(50mg)"], "warnIngs": [], "note": "軟骨成分配合。効果発現まで数週間〜数ヶ月。副作用少ない。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 101, "cat": "joint", "name": "アリナミンEXゴールド", "maker": "アリナミン製薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["肉体疲労", "眼精疲労", "手足のしびれ", "筋肉痛", "神経痛"], "effect": "肉体疲労・神経痛・筋肉痛・眼精疲労・手足のしびれに。", "ings": ["フルスルチアミン(109mg)", "VB2(12mg)", "VB6(100mg)", "VB12(60μg)"], "warnIngs": [], "note": "VB群強化。尿が黄色くなる（B2由来）は正常。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 110, "cat": "skin_oral", "name": "ハイチオールCプラスEX", "maker": "エスエス製薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["シミ・そばかす", "にきび", "肌荒れ"], "effect": "シミ・そばかすの改善。にきびにも。VC高配合。", "ings": ["L-システイン(240mg)", "アスコルビン酸VC(500mg)", "VB6(60mg)", "パントテン酸Ca(24mg)"], "warnIngs": [], "note": "メラニン生成を抑制。効果に個人差あり。継続服用で効果が出やすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 111, "cat": "skin_oral", "name": "トランシーノII", "maker": "第一三共ヘルスケア", "price": 3960, "risk": 2, "drowsy": false, "symptoms": ["シミ・そばかす", "肝斑"], "effect": "肝斑（かんぱん）・シミの改善に。医薬品クラスの美白内服薬。", "ings": ["トラネキサム酸(750mg)", "VC(500mg)", "VB6(60mg)", "L-システイン(120mg)"], "warnIngs": [], "note": "トラネキサム酸は肝斑に特異的に有効。血栓症リスクのある方は要相談。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 112, "cat": "skin_oral", "name": "チョコラBBプラス", "maker": "エーザイ", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["にきび", "口内炎", "肌荒れ", "湿疹・かぶれ"], "effect": "にきび・口内炎・口角炎・肌荒れ・湿疹・かぶれに。", "ings": ["リボフラビン酪酸エステルVB2(10mg)", "VB6(100mg)", "パントテン酸Ca(30mg)", "VC(200mg)"], "warnIngs": [], "note": "VB2・B6中心の皮膚・粘膜補修配合。副作用少ない。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 113, "cat": "skin_oral", "name": "DHCビタミンC（医薬品）", "maker": "DHC", "price": 1188, "risk": 3, "drowsy": false, "symptoms": ["シミ・そばかす", "肌荒れ"], "effect": "VCの補給。しみ・そばかすの緩和に。", "ings": ["アスコルビン酸VC(1000mg)"], "warnIngs": [], "note": "高用量VC。過剰摂取で消化器症状あり。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 120, "cat": "hair", "name": "リアップX5プラスネオ", "maker": "大正製薬", "price": 9790, "risk": 0, "drowsy": false, "symptoms": ["薄毛・脱毛"], "effect": "壮年性脱毛症（男性型）の発毛・育毛・脱毛進行予防に。", "ings": ["ミノキシジル(5%)"], "warnIngs": [], "note": "要指導（薬剤師要相談）。効果発現まで4ヶ月以上。低血圧・心臓病禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 121, "cat": "hair", "name": "リグロEX5エナジー", "maker": "ロート製薬", "price": 8778, "risk": 0, "drowsy": false, "symptoms": ["薄毛・脱毛"], "effect": "男性の壮年性脱毛症の発毛・育毛に。", "ings": ["ミノキシジル(5%)"], "warnIngs": [], "note": "要指導。ミノキシジル最大濃度（5%）。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 122, "cat": "hair", "name": "リアップリジェンヌ（女性用）", "maker": "大正製薬", "price": 5478, "risk": 1, "drowsy": false, "symptoms": ["薄毛・脱毛"], "effect": "女性の壮年性脱毛症の発毛・育毛に。", "ings": ["ミノキシジル(1%)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。女性用は1%。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 130, "cat": "women", "name": "命の母A", "maker": "小林製薬", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["更年期障害", "月経不順", "冷え"], "effect": "更年期障害・月経不順・冷え症・血の道症に。", "ings": ["センキュウ末", "トウキ末", "ブクリョウ末", "シャクヤク末", "ハンゲ末", "コウブシ末", "ケイヒ末", "ニンジン末", "ハッカ末", "チンピ末", "ヤクモソウ末", "オウバク末", "カンゾウ末"], "warnIngs": [], "note": "13種生薬配合の婦人薬。継続服用で効果。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 131, "cat": "women", "name": "ルビーナ（当帰芍薬散）", "maker": "クラシエ薬品", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["更年期障害", "月経不順", "冷え"], "effect": "更年期障害・月経不順・冷え症・貧血・肩こりに。", "ings": ["当帰芍薬散エキス（トウキ・シャクヤク・センキュウ・ブクリョウ・ビャクジュツ・タクシャ）"], "warnIngs": [], "note": "漢方処方（当帰芍薬散）。冷え傾向の虚弱女性向き。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 132, "cat": "women", "name": "加味逍遙散エキス錠", "maker": "ツムラ", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["更年期障害", "月経不順", "不眠", "肩こり"], "effect": "更年期障害・月経不順・月経困難・肩こり・頭痛・めまい・不眠に。", "ings": ["加味逍遙散エキス（サイコ・シャクヤク・ソウジュツ・トウキ・ブクリョウ・ボタンピ・サンシシ・カンゾウ・ショウキョウ・ハッカ）"], "warnIngs": [], "note": "イライラ・ほてり・不眠傾向の更年期症状に向く。間質性肺炎に注意（稀）。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 133, "cat": "women", "name": "エルペインコーワ", "maker": "興和", "price": 1298, "risk": 2, "drowsy": false, "symptoms": ["月経痛"], "effect": "月経痛・月経困難症の鎮痛に。", "ings": ["イブプロフェン(150mg)", "ブチルスコポラミン臭化物(5mg)"], "warnIngs": [], "note": "NSAIDs＋鎮痙薬の月経痛特化処方。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 140, "cat": "sleep", "name": "ドリエル", "maker": "エスエス製薬", "price": 1408, "risk": 2, "drowsy": true, "symptoms": ["不眠"], "effect": "一時的な不眠の改善（寝つきが悪い・眠りが浅い）に。", "ings": ["ジフェンヒドラミン塩酸塩(25mg)"], "warnIngs": [], "note": "抗ヒスタミン薬の催眠作用を応用。連続2週間以上使用不可。慢性的な睡眠障害には不向き。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 141, "cat": "sleep", "name": "ネオデイ", "maker": "エスエス製薬", "price": 1298, "risk": 2, "drowsy": true, "symptoms": ["不眠"], "effect": "一時的な不眠に。", "ings": ["ジフェンヒドラミン塩酸塩(25mg)"], "warnIngs": [], "note": "ドリエルと同成分・同効果。翌日持ち越しやすい。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 150, "cat": "vitamin", "name": "アリナミンEXゴールドα", "maker": "アリナミン製薬", "price": 2398, "risk": 3, "drowsy": false, "symptoms": ["眼精疲労", "肩こり", "腰痛", "神経痛", "手足のしびれ", "肉体疲労"], "effect": "眼精疲労・肩こり・腰痛・神経痛・手足のしびれに。", "ings": ["フルスルチアミン(109mg)", "VB2(12mg)", "VB6(100mg)", "VB12(60μg)", "VE(45mg)"], "warnIngs": [], "note": "ビタミンB群にEを追加。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 151, "cat": "vitamin", "name": "チョコラBBリッチ", "maker": "エーザイ", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["肌荒れ", "口内炎", "にきび"], "effect": "肌荒れ・口内炎・にきびの緩和。VB2・B6補給。", "ings": ["リボフラビン酪酸エステルVB2(60mg)", "VB6(50mg)"], "warnIngs": [], "note": "VB2・B6配合。副作用少なく服用しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 152, "cat": "vitamin", "name": "エーザイVEEC", "maker": "エーザイ", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["冷え", "肩こり", "肉体疲労"], "effect": "末梢血行障害の緩和。肩こり・冷え・しもやけ・頭痛に。", "ings": ["トコフェロール酢酸エステルVE(300mg)", "VC(300mg)"], "warnIngs": [], "note": "VE＋C配合。血行促進。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 153, "cat": "vitamin", "name": "ハイシーBメガ", "maker": "武田コンシューマーヘルスケア", "price": 1628, "risk": 3, "drowsy": false, "symptoms": ["にきび", "口内炎", "肌荒れ"], "effect": "VB2・VC補給。にきび・口内炎・肌荒れに。", "ings": ["VB2(10mg)", "VC(1000mg)"], "warnIngs": [], "note": "高用量VC＋VB2。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 154, "cat": "vitamin", "name": "ネルビタB12", "maker": "武田コンシューマーヘルスケア", "price": 1848, "risk": 3, "drowsy": false, "symptoms": ["神経痛", "筋肉痛", "手足のしびれ", "肉体疲労", "肩こり"], "effect": "神経痛・筋肉痛・関節痛・肩こり・末梢神経症状に。", "ings": ["メコバラミン（VB12）(250μg)", "フルスルチアミン(50mg)", "VB6(50mg)"], "warnIngs": [], "note": "活性型VB12配合。末梢神経障害の補助に。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 160, "cat": "kampo", "name": "葛根湯エキスEX", "maker": "クラシエ薬品", "price": 1188, "risk": 2, "drowsy": false, "symptoms": ["発熱", "頭痛", "肩こり", "鼻水", "花粉症"], "effect": "かぜのひきはじめ・首筋のこわばり・肩こり・頭痛・鼻炎に。", "ings": ["葛根湯エキス（カッコン・マオウ・ケイシ・シャクヤク・タイソウ・カンゾウ・ショウキョウ）"], "warnIngs": [], "note": "かぜ初期に効果的。体力中等度以上向き。麻黄含有のため心臓病・高血圧注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 161, "cat": "kampo", "name": "防風通聖散エキス錠", "maker": "大正製薬", "price": 2948, "risk": 2, "drowsy": false, "symptoms": ["肉体疲労", "便秘", "肩こり"], "effect": "脂肪太りに伴う肥満・便秘・肩こり・むくみに。", "ings": ["防風通聖散エキス（18種生薬）"], "warnIngs": [], "note": "代謝改善漢方。効果発現まで2〜3ヶ月。甘草配合・偽アルドステロン症注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 162, "cat": "kampo", "name": "小青竜湯エキス顆粒", "maker": "ツムラ", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["花粉症", "鼻水", "くしゃみ", "せき"], "effect": "アレルギー性鼻炎・鼻水・くしゃみ・花粉症・気管支炎に。", "ings": ["小青竜湯エキス（マオウ・シャクヤク・カンキョウ・カンゾウ・ケイシ・ゴミシ・ハンゲ・サイシン）"], "warnIngs": [], "note": "水っぽい鼻水に効果的。麻黄含有のため心臓病・高血圧注意。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 163, "cat": "kampo", "name": "大建中湯エキス顆粒", "maker": "ツムラ", "price": 1848, "risk": 3, "drowsy": false, "symptoms": ["腹部膨満", "便秘", "胃痛"], "effect": "腸の冷えによる腹痛・腹部膨満感・便秘（特に高齢者）に。", "ings": ["大建中湯エキス（サンショウ・ニンジン・カンキョウ・膠飴）"], "warnIngs": [], "note": "腸を温め動きを活性化。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 164, "cat": "kampo", "name": "芍薬甘草湯エキス顆粒", "maker": "クラシエ薬品", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["筋肉痛", "腰痛", "腹部膨満"], "effect": "こむら返り・筋肉のけいれん・腹痛・腰痛に。急性期の筋痙攣に。", "ings": ["芍薬甘草湯エキス（シャクヤク・カンゾウ）"], "warnIngs": [], "note": "速効性。繰り返し使用は偽アルドステロン症リスクあり。甘草高含有。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 165, "cat": "kampo", "name": "半夏厚朴湯エキス顆粒", "maker": "ツムラ", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["不眠", "動悸", "めまい・立ちくらみ", "吐き気"], "effect": "不安・神経症・のどのつかえ感・動悸・めまい・吐き気に。", "ings": ["半夏厚朴湯エキス（ハンゲ・ブクリョウ・コウボク・ソヨウ・ショウキョウ）"], "warnIngs": [], "note": "喉の異物感「梅核気」に多用。比較的穏やかな作用。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 166, "cat": "kampo", "name": "八味地黄丸", "maker": "ツムラ", "price": 2178, "risk": 2, "drowsy": false, "symptoms": ["冷え", "腰痛", "めまい・立ちくらみ", "手足のしびれ"], "effect": "夜間頻尿・腰痛・むくみ・排尿困難・倦怠感に。中高年の腎虚証に。", "ings": ["八味地黄丸エキス（ジオウ・サンシュユ・サンヤク・タクシャ・ブクリョウ・ボタンピ・ケイシ・ブシ）"], "warnIngs": [], "note": "附子（ブシ）含有。高齢者の泌尿器・下肢症状に広く使われる。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 167, "cat": "kampo", "name": "抑肝散エキス顆粒", "maker": "ツムラ", "price": 2178, "risk": 2, "drowsy": false, "symptoms": ["不眠", "更年期障害"], "effect": "神経症・不眠・小児夜泣き・歯ぎしり・更年期のいらいらに。", "ings": ["抑肝散エキス（ソウジュツ・ブクリョウ・センキュウ・トウキ・サイコ・カンゾウ・チョウトウコウ）"], "warnIngs": [], "note": "認知症の周辺症状（BPSD）にも使われる。甘草含有注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 168, "cat": "kampo", "name": "補中益気湯エキス顆粒", "maker": "ツムラ", "price": 2178, "risk": 2, "drowsy": false, "symptoms": ["肉体疲労", "冷え"], "effect": "虚弱体質・胃腸虚弱・夏やせ・病後の体力低下・倦怠感に。", "ings": ["補中益気湯エキス（オウギ・ソウジュツ・ニンジン・トウキ・サイコ・タイソウ・カンゾウ・チンピ・ショウキョウ・ショウマ）"], "warnIngs": [], "note": "「免疫調節」作用が研究されている漢方。甘草含有に注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 170, "cat": "foot", "name": "ラミシールAT", "maker": "ノバルティス", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "水虫（足白癬）・いんきんたむし・ぜにたむしに。", "ings": ["塩酸テルビナフィン(1%)"], "warnIngs": [], "note": "アリルアミン系抗真菌薬。治癒後も1〜2週間継続塗布推奨。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 171, "cat": "foot", "name": "ブテナロックVαクリーム", "maker": "久光製薬", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "水虫・いんきんたむし・ぜにたむしに。", "ings": ["ブテナフィン塩酸塩(1%)"], "warnIngs": [], "note": "1日1回塗布。爪水虫には使用不可（皮膚のみ）。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 172, "cat": "foot", "name": "ダマリングランデX", "maker": "武田コンシューマーヘルスケア", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "水虫・いんきんたむし・ぜにたむしに。", "ings": ["ビフォナゾール(1%)"], "warnIngs": [], "note": "イミダゾール系抗真菌薬。角層浸透性高い。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 173, "cat": "foot", "name": "クリアネールEX（爪水虫）", "maker": "池田模範堂", "price": 3278, "risk": 2, "drowsy": false, "symptoms": ["水虫"], "effect": "爪の水虫（爪白癬）に。", "ings": ["エフィナコナゾール(10%)"], "warnIngs": [], "note": "爪白癬対応。爪への浸透性を高めた処方。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 180, "cat": "oral", "name": "アフタッチ口内炎薬", "maker": "大鵬薬品", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["口内炎"], "effect": "口内炎の症状緩和・炎症抑制に。", "ings": ["トリアムシノロンアセトニド(0.025%)"], "warnIngs": [], "note": "ステロイド含有粘膜付着剤。長期連続使用不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 181, "cat": "oral", "name": "チョコラBBリップ", "maker": "エーザイ", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["口内炎", "肌荒れ"], "effect": "口内炎・口角炎・舌炎・口唇炎に。VB2・B6補給。", "ings": ["VB2(10mg)", "VB6(100mg)"], "warnIngs": [], "note": "内服薬タイプ。副作用少なく服用しやすい。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 182, "cat": "oral", "name": "歯痛薬ハイ（ストッパ）", "maker": "ライオン", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["歯痛"], "effect": "歯痛の緩和に。", "ings": ["テトラカイン塩酸塩(0.5%)", "フェノール(1.2%)", "ユーカリ油"], "warnIngs": [], "note": "局所麻酔成分配合。痛みが続く場合は歯科受診を。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 190, "cat": "anal", "name": "ボラギノールA坐剤", "maker": "天藤製薬", "price": 1628, "risk": 2, "drowsy": false, "symptoms": ["痔"], "effect": "内痔核・出血性外痔核の疼痛・出血・腫れ・かゆみに。", "ings": ["リドカイン(60mg)", "ヒドロコルチゾン酢酸エステル(5mg)", "アラントイン(20mg)", "dl-α-トコフェロール酢酸エステル(60mg)"], "warnIngs": [], "note": "局所麻酔＋ステロイド＋組織修復成分配合。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 191, "cat": "anal", "name": "プリザエースII坐剤", "maker": "大正製薬", "price": 1408, "risk": 2, "drowsy": false, "symptoms": ["痔"], "effect": "痔の出血・はれ・痛み・かゆみに。", "ings": ["ヒドロコルチゾン酢酸エステル(3mg)", "塩酸リドカイン(50mg)", "アラントイン(15mg)", "酢酸トコフェロール(50mg)"], "warnIngs": [], "note": "ステロイド含有。長期・連続使用は避けること。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 200, "cat": "circu", "name": "センソ（強心薬）", "maker": "東洋参茸", "price": 748, "risk": 2, "drowsy": false, "symptoms": ["動悸"], "effect": "動悸・息切れ・気つけに。", "ings": ["センソ（ヒキガエル毒）"], "warnIngs": [], "note": "強心薬。少量で有効、過量で毒性。1回1錠厳守。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 201, "cat": "circu", "name": "苓桂朮甘湯（ドコア）", "maker": "クラシエ薬品", "price": 1848, "risk": 2, "drowsy": false, "symptoms": ["めまい・立ちくらみ", "動悸"], "effect": "立ちくらみ・めまい・動悸・息切れに。起立性調節障害にも。", "ings": ["苓桂朮甘湯エキス（ブクリョウ・ケイシ・ソウジュツ・カンゾウ）"], "warnIngs": [], "note": "利水作用でめまい・動悸を改善。甘草含有注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 210, "cat": "motion", "name": "トラベルミン", "maker": "エーザイ", "price": 748, "risk": 2, "drowsy": true, "symptoms": ["乗物酔い", "吐き気", "めまい・立ちくらみ", "頭痛"], "effect": "乗物酔いの予防・治療に。吐き気・めまい・頭痛に。", "ings": ["ジフェンヒドラミンサリチル酸塩(40mg)", "ジプロフィリン(26mg)"], "warnIngs": [], "note": "眠気あり・運転不可。乗車前30分に服用。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 211, "cat": "motion", "name": "アネロン（ニスキャップ）", "maker": "エスエス製薬", "price": 1078, "risk": 2, "drowsy": true, "symptoms": ["乗物酔い", "吐き気", "めまい・立ちくらみ"], "effect": "乗物酔いの予防・治療に。吐き気・めまい・頭痛に。", "ings": ["塩酸メクリジン(25mg)", "スコポラミン臭化水素酸塩(0.25mg)", "カフェイン水和物(20mg)"], "warnIngs": [], "note": "眠気あり。緑内障・前立腺肥大患者は禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 220, "cat": "smoking", "name": "ニコレットガム（2mg）", "maker": "J&J", "price": 2178, "risk": 1, "drowsy": false, "symptoms": ["禁煙"], "effect": "禁煙補助。ニコチン依存症者の禁断症状緩和に。", "ings": ["ニコチン(2mg/個)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。心臓疾患・妊婦は禁忌。コーヒー直後は使用不可。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 221, "cat": "smoking", "name": "ニコレットガム（4mg）", "maker": "J&J", "price": 2398, "risk": 1, "drowsy": false, "symptoms": ["禁煙"], "effect": "禁煙補助。ヘビースモーカー向け高用量タイプ。", "ings": ["ニコチン(4mg/個)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。高用量版。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 222, "cat": "smoking", "name": "ニコチネルTTS30（パッチ）", "maker": "ノバルティス", "price": 2948, "risk": 1, "drowsy": false, "symptoms": ["禁煙"], "effect": "禁煙補助。ニコチン依存症者の禁煙開始・維持に。", "ings": ["ニコチン(52.5mg/patch → 21mg/24hr放出)"], "warnIngs": [], "note": "第1類（薬剤師要相談）。貼り薬。段階的に濃度を下げる。心臓病・妊婦禁忌。", "noteType": "warn", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 230, "cat": "test", "name": "ドゥーテストLHII（排卵）", "maker": "ロート製薬", "price": 2178, "risk": 3, "drowsy": false, "symptoms": ["排卵確認"], "effect": "尿中LH（黄体形成ホルモン）を検出。排卵時期の予測に。", "ings": ["LH測定試薬（モノクローナル抗体）"], "warnIngs": [], "note": "排卵の2日前からLH上昇を検出。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 231, "cat": "test", "name": "ドゥーテスト（妊娠検査薬）", "maker": "ロート製薬", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["妊娠確認"], "effect": "妊娠の可能性を調べる尿中hCGの検出に。", "ings": ["hCG測定試薬（モノクローナル抗体）"], "warnIngs": [], "note": "月経予定日当日から使用可。陽性の場合は必ず産婦人科を受診。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 240, "cat": "disinfect", "name": "マキロン", "maker": "第一三共ヘルスケア", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["消毒"], "effect": "傷・すり傷・切り傷・かみ傷・やけど・虫刺されの消毒に。", "ings": ["塩化ベンゼトニウム(0.02%)"], "warnIngs": [], "note": "逆性石鹸系殺菌薬。目・粘膜への接触に注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 241, "cat": "disinfect", "name": "オキシドール（過酸化水素水）", "maker": "各社", "price": 198, "risk": 3, "drowsy": false, "symptoms": ["消毒"], "effect": "傷・すり傷・切り傷の消毒に。", "ings": ["過酸化水素水(3%)"], "warnIngs": [], "note": "気泡で物理的に傷口の汚染を除去。深い傷や広範囲には使用不可。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}, {"id": 242, "cat": "disinfect", "name": "消毒用エタノール", "maker": "各社", "price": 748, "risk": 3, "drowsy": false, "symptoms": ["消毒"], "effect": "手指・皮膚の消毒。医療機器・器具類の消毒に。", "ings": ["エタノール(76.9〜81.4%)"], "warnIngs": [], "note": "最も広く使われる消毒薬。引火性があるため火気に注意。", "noteType": "", "asin": "", "rakuten_url": "", "amazon_tag": "", "price_updated_at": ""}];
+const ING_DICT={"アセトアミノフェン": {"en": "Acetaminophen", "effect": "解熱・鎮痛。プロスタグランジン合成を抑制し痛みや発熱を緩和。胃への刺激が少なく空腹時でも服用可能。", "caution": "過量服用・飲酒併用で肝障害リスク。1日最大4000mgを厳守。"}, "イブプロフェン": {"en": "Ibuprofen", "effect": "消炎・鎮痛・解熱。NSAIDsの代表。炎症の原因物質を強力に抑制し痛み・腫れ・熱を取り除く。", "caution": "空腹時服用で胃腸障害。喘息患者・妊娠後期禁忌。腎機能障害に注意。"}, "ロキソプロフェンナトリウム": {"en": "Loxoprofen", "effect": "プロドラッグ型NSAIDs。体内で活性化され強力な消炎鎮痛効果を発揮。胃腸への直接刺激が少ない設計。", "caution": "第1類医薬品（薬剤師要相談）。腎機能・心機能障害者注意。"}, "クロルフェニラミンマレイン酸塩": {"en": "Chlorpheniramine", "effect": "第一世代抗ヒスタミン薬。アレルギー反応を抑え鼻水・くしゃみ・かゆみを改善。鎮静作用で眠気が出やすい。", "caution": "眠気・集中力低下。車の運転不可。緑内障・前立腺肥大患者注意。"}, "ジフェンヒドラミン": {"en": "Diphenhydramine", "effect": "第一世代抗ヒスタミン薬。アレルギー症状の緩和と強い鎮静作用。睡眠補助薬としても使用。", "caution": "強い眠気。運転不可。連続使用で効果減弱（耐性）が起きやすい。"}, "フェキソフェナジン": {"en": "Fexofenadine", "effect": "第二世代抗ヒスタミン薬。眠気が出にくく花粉症・アレルギー性鼻炎に広く使用。1日2回服用。", "caution": "果汁（グレープフルーツ等）と同時服用で吸収低下。"}, "ロラタジン": {"en": "Loratadine", "effect": "第二世代抗ヒスタミン薬。1日1回服用で眠気が出にくい。アレルギー性鼻炎・蕁麻疹に有効。", "caution": "腎・肝機能障害者は減量。"}, "ジヒドロコデインリン酸塩": {"en": "Dihydrocodeine", "effect": "中枢性鎮咳薬。咳中枢を直接抑制し強力な鎮咳効果を発揮。", "caution": "依存性あり。12歳未満禁忌。眠気・便秘。連用で精神的・身体的依存。"}, "アリルイソプロピルアセチル尿素": {"en": "Allylisopropylacetylurea", "effect": "鎮静補助成分。解熱鎮痛薬に配合され痛みへの不安を和らげる鎮静作用を持つ。", "caution": "2023年AU全面規制・2025年KR麻薬類指定。依存性あり。眠気必発・運転不可。"}, "ファモチジン": {"en": "Famotidine", "effect": "H2ブロッカー。胃酸分泌を抑制し胸やけ・胃痛を改善。効果持続8〜12時間。", "caution": "第1類（薬剤師要相談）。腎機能障害者は用量調整必要。"}, "ミノキシジル": {"en": "Minoxidil", "effect": "血管拡張作用により頭皮の血流を改善し毛包に栄養を供給。発毛・育毛を促進。", "caution": "要指導（薬剤師要相談）。低血圧・心臓病禁忌。4ヶ月以上継続必要。"}, "トラネキサム酸": {"en": "Tranexamic acid", "effect": "抗プラスミン薬。炎症・アレルギー反応を抑制。肝斑（シミ）の改善に特異的な効果を持つ。", "caution": "血栓症リスクのある方は服用前に相談。"}, "L-システイン": {"en": "L-Cysteine", "effect": "アミノ酸。メラニン生成を抑制しシミ・そばかすを改善。ケラチン合成にも寄与し髪・爪・皮膚を強化。", "caution": "基本的に安全。過剰摂取で消化器症状の可能性。"}, "フルスルチアミン": {"en": "Fursultiamine", "effect": "ビタミンB1誘導体（脂溶性）。通常のB1より吸収が良く神経機能の維持・エネルギー代謝の促進に働く。", "caution": "大量摂取で消化器症状。"}, "シアノコバラミン": {"en": "Cyanocobalamin", "effect": "ビタミンB12。神経細胞の修復・DNA合成に不可欠。末梢神経障害・しびれ・貧血に有効。", "caution": "基本的に安全。大量投与でも毒性は低い。"}, "コンドロイチン硫酸エステルナトリウム": {"en": "Chondroitin sulfate", "effect": "軟骨の主成分。関節軟骨の保護・再生を助け膝・腰の関節痛を緩和。目薬では角膜保護にも使用。", "caution": "効果発現まで数週間〜数ヶ月。副作用は少ない。"}, "グアイフェネシン": {"en": "Guaifenesin", "effect": "去痰薬。気道の分泌液を増やし痰を柔らかくして排出を促進。単独では咳を止めない。", "caution": "大量の水分補給で効果UP。"}, "ニコチン": {"en": "Nicotine", "effect": "ニコチン代替療法。禁煙時のニコチン渇望・禁断症状を緩和し段階的に依存を断ち切る。", "caution": "第1類（薬剤師要相談）。喫煙との並行禁忌。心臓疾患・妊婦禁忌。"}, "ポビドンヨード": {"en": "Povidone-iodine", "effect": "ヨウ素系殺菌消毒薬。細菌・真菌・ウイルスに広範な殺菌効果。傷の消毒・うがいに使用。", "caution": "甲状腺疾患・妊婦・授乳婦注意。ヨウ素アレルギーに禁忌。"}, "テルビナフィン塩酸塩": {"en": "Terbinafine", "effect": "アリルアミン系抗真菌薬。白癬菌の細胞膜合成を阻害。水虫・たむしに有効。", "caution": "爪水虫には浸透しにくい（専用製品が必要）。"}};
+const COLUMNS=[{"id": "c1", "title": "第1類・第2類・第3類、何が違うの？OTC医薬品のリスク区分を徹底解説", "date": "2026-03-01", "tag": "基礎知識", "summary": "薬局で見かける「第1類」「第2類」などの表示。これはリスクの高さを示す分類です。選び方・購入方法の違いを解説します。", "body": "OTC医薬品は副作用リスクに応じて4段階に分類されています。\n\n**要指導医薬品（最もリスクが高い）**\nダイレクトOTCやスイッチ直後の成分が含まれます。薬剤師による対面販売が義務付けられネット購入は不可。ミノキシジル5%（リアップX5等）が代表例です。\n\n**第1類医薬品**\n副作用・相互作用のリスクが高い成分を含みます。薬剤師からの情報提供が義務。ファモチジン（ガスター10）・ロキソプロフェン（ロキソニンS）等。\n\n**第2類医薬品**\n比較的リスクの高い成分を含む薬。登録販売者でも販売可能。市販薬の大半がこのカテゴリ。\n\n**第3類医薬品**\nビタミン剤・整腸薬など副作用リスクが比較的低い薬。コンビニでも販売可能なものも。"}, {"id": "c2", "title": "「ア尿素」が含まれる市販薬に注意。海外で規制が進む依存性成分とは", "date": "2026-03-10", "tag": "安全情報", "summary": "イブA錠などに含まれる「アリルイソプロピルアセチル尿素（ア尿素）」。2023年にオーストラリアで全面規制、2025年には韓国で麻薬類に指定されました。", "body": "**アリルイソプロピルアセチル尿素（ア尿素）とは**\n\n解熱鎮痛薬に「鎮静補助成分」として配合されている成分です。\n\n**規制の動向**\n2023年：オーストラリアで販売全面禁止\n2025年：韓国で麻薬類に指定\n日本：現時点では規制なし、販売継続中\n\n**含有する主な市販薬**\nイブA錠、イブクイック頭痛薬DX等\n\n**注意点**\n服用後に必ず眠気が出る（運転・機械操作禁忌）。長期・頻回使用で耐性・依存が形成される。\n\n**代替選択肢**\nアセトアミノフェン単体（タイレノールA等）やア尿素なしのイブプロフェン製品を選ぶと安全です。"}, {"id": "c3", "title": "花粉症の市販薬、眠くなる・ならないの差は？成分で選ぶ正しい方法", "date": "2026-03-15", "tag": "花粉症", "summary": "「眠くなる花粉症薬」と「眠くならない花粉症薬」の違いは世代の違いにあります。仕事中でも使える薬の選び方を解説。", "body": "花粉症薬の眠気の出やすさは抗ヒスタミン薬の世代によって大きく異なります。\n\n**第一世代（眠気が強い）**\nクロルフェニラミン、ジフェンヒドラミン等。血液脳関門を通過しやすく脳内のヒスタミン受容体も遮断するため強い眠気が出ます。\n\n**第二世代（眠気が少ない）**\nフェキソフェナジン（アレグラFX）、ロラタジン（クラリチンEX）等。末梢のアレルギー反応を選択的に抑える。\n\n**選び方のポイント**\n仕事中・運転あり → 第二世代\n夜間・症状が強い → 第一世代も選択肢\n\n花粉飛散シーズン前（1〜2週間前）から予防的に服用を開始すると症状が大幅に軽減されます。"}, {"id": "c4", "title": "コデイン系咳止め薬の12歳未満禁忌。なぜ？代替品の選び方", "date": "2026-03-20", "tag": "安全情報", "summary": "2019年以降、コデイン・ジヒドロコデイン含有薬の12歳未満への使用が禁忌となりました。その理由と安全な代替品を解説します。", "body": "**なぜ12歳未満禁忌になったのか**\n\nコデインは体内でモルヒネに変換されます。特に子どもでは代謝の個人差が大きく呼吸抑制という重篤な副作用が報告されたため2019年に12歳未満への使用が禁忌となりました。\n\n**コデイン系が含まれる主な市販薬**\nブロン錠エース・パブロンゴールドA・新コンタック咳止めダブル持続性等\n\n**子どもの咳に使える代替品**\nカルボシステイン（去痰薬）：痰を柔らかくして排出促進。副作用少なく安全。\n龍角散（生薬系）：のど・咳に穏やかに作用。\n\n**大人でも注意**\nコデイン系は依存性があるため必要最小限の期間・量での使用が推奨されます。"}];
 
 const SYMP_GROUPS = [
-  {{g:"痛み・熱",i:"🔥",s:["頭痛","偏頭痛","歯痛","のど痛","月経痛","腰痛","関節痛","筋肉痛","神経痛","打撲・ねんざ","発熱"]}},
-  {{g:"鼻・目・のど",i:"👃",s:["鼻水","くしゃみ","鼻づまり","目のかゆみ","充血","目の疲れ","乾き目","花粉症","のどの炎症","のど痛"]}},
-  {{g:"咳・痰・声",i:"😮‍💨",s:["せき","たん","声がれ","口腔殺菌"]}},
-  {{g:"胃腸・お腹",i:"🫃",s:["胃痛","胸やけ","胃もたれ","食べ過ぎ","飲み過ぎ","吐き気","下痢","便秘","腹部膨満","整腸"]}},
-  {{g:"皮膚・かゆみ",i:"🧴",s:["湿疹・かぶれ","かゆみ","虫刺され","乾燥肌","にきび","口内炎","水虫","肌荒れ"]}},
-  {{g:"疲労・神経",i:"💪",s:["肉体疲労","眼精疲労","手足のしびれ","冷え","めまい・立ちくらみ","動悸"]}},
-  {{g:"美容",i:"✨",s:["シミ・そばかす","肝斑","肌荒れ","薄毛・脱毛"]}},
-  {{g:"女性・メンタル",i:"🌙",s:["更年期障害","月経不順","不眠","乗物酔い"]}},
-  {{g:"その他",i:"💊",s:["禁煙","痔","排卵確認","妊娠確認","消毒"]}},
+  {g:"痛み・熱",i:"🔥",s:["頭痛","偏頭痛","歯痛","のど痛","月経痛","腰痛","関節痛","筋肉痛","神経痛","打撲・ねんざ","発熱"]},
+  {g:"鼻・目・のど",i:"👃",s:["鼻水","くしゃみ","鼻づまり","目のかゆみ","充血","目の疲れ","乾き目","花粉症","のどの炎症","のど痛"]},
+  {g:"咳・痰・声",i:"😮‍💨",s:["せき","たん","声がれ","口腔殺菌"]},
+  {g:"胃腸・お腹",i:"🫃",s:["胃痛","胸やけ","胃もたれ","食べ過ぎ","飲み過ぎ","吐き気","下痢","便秘","腹部膨満","整腸"]},
+  {g:"皮膚・かゆみ",i:"🧴",s:["湿疹・かぶれ","かゆみ","虫刺され","乾燥肌","にきび","口内炎","水虫","肌荒れ"]},
+  {g:"疲労・神経",i:"💪",s:["肉体疲労","眼精疲労","手足のしびれ","冷え","めまい・立ちくらみ","動悸"]},
+  {g:"美容",i:"✨",s:["シミ・そばかす","肝斑","肌荒れ","薄毛・脱毛"]},
+  {g:"女性・メンタル",i:"🌙",s:["更年期障害","月経不順","不眠","乗物酔い"]},
+  {g:"その他",i:"💊",s:["禁煙","痔","排卵確認","妊娠確認","消毒"]},
 ];
 const CATS = [
-  {{id:"all",l:"すべて",i:"💊"}},{{id:"cold",l:"かぜ薬・解熱鎮痛",i:"🤒"}},
-  {{id:"stomach",l:"消化器官用薬",i:"🫃"}},{{id:"allergy",l:"アレルギー用薬",i:"🌸"}},
-  {{id:"cough",l:"鎮咳・去痰・含嗽薬",i:"😮‍💨"}},{{id:"nose",l:"鼻炎用薬",i:"👃"}},
-  {{id:"ext_pain",l:"外皮用薬（鎮痛）",i:"🩹"}},{{id:"ext_skin",l:"外皮用薬（皮膚）",i:"🧴"}},
-  {{id:"eye",l:"眼科用薬",i:"👁"}},{{id:"joint",l:"関節・筋肉（内服）",i:"🦴"}},
-  {{id:"skin_oral",l:"皮膚科・シミ（内服）",i:"✨"}},{{id:"hair",l:"育毛・発毛薬",i:"💈"}},
-  {{id:"women",l:"女性用薬",i:"🌙"}},{{id:"sleep",l:"催眠鎮静薬",i:"😴"}},
-  {{id:"vitamin",l:"ビタミン・滋養強壮",i:"💪"}},{{id:"kampo",l:"漢方製剤",i:"🌿"}},
-  {{id:"foot",l:"水虫・皮膚感染",i:"🦶"}},{{id:"oral",l:"歯科口腔用薬",i:"🦷"}},
-  {{id:"anal",l:"痔疾用薬",i:"🔴"}},{{id:"circu",l:"循環器・血液用薬",i:"❤️"}},
-  {{id:"smoking",l:"禁煙補助剤",i:"🚭"}},{{id:"motion",l:"乗物酔い",i:"🚢"}},
-  {{id:"test",l:"一般用検査薬",i:"🔬"}},{{id:"disinfect",l:"消毒薬",i:"🧪"}},
+  {id:"all",l:"すべて",i:"💊"},{id:"cold",l:"かぜ薬・解熱鎮痛",i:"🤒"},
+  {id:"stomach",l:"消化器官用薬",i:"🫃"},{id:"allergy",l:"アレルギー用薬",i:"🌸"},
+  {id:"cough",l:"鎮咳・去痰・含嗽薬",i:"😮‍💨"},{id:"nose",l:"鼻炎用薬",i:"👃"},
+  {id:"ext_pain",l:"外皮用薬（鎮痛）",i:"🩹"},{id:"ext_skin",l:"外皮用薬（皮膚）",i:"🧴"},
+  {id:"eye",l:"眼科用薬",i:"👁"},{id:"joint",l:"関節・筋肉（内服）",i:"🦴"},
+  {id:"skin_oral",l:"皮膚科・シミ（内服）",i:"✨"},{id:"hair",l:"育毛・発毛薬",i:"💈"},
+  {id:"women",l:"女性用薬",i:"🌙"},{id:"sleep",l:"催眠鎮静薬",i:"😴"},
+  {id:"vitamin",l:"ビタミン・滋養強壮",i:"💪"},{id:"kampo",l:"漢方製剤",i:"🌿"},
+  {id:"foot",l:"水虫・皮膚感染",i:"🦶"},{id:"oral",l:"歯科口腔用薬",i:"🦷"},
+  {id:"anal",l:"痔疾用薬",i:"🔴"},{id:"circu",l:"循環器・血液用薬",i:"❤️"},
+  {id:"smoking",l:"禁煙補助剤",i:"🚭"},{id:"motion",l:"乗物酔い",i:"🚢"},
+  {id:"test",l:"一般用検査薬",i:"🔬"},{id:"disinfect",l:"消毒薬",i:"🧪"},
 ];
-const RLABEL={{0:"要指導",1:"第1類",2:"第2類（指定）",2.5:"第２類",3:"第3類"}};
-const RCLS={{0:"r0",1:"r1",2:"r2",2.5:"r25",3:"r3"}};
+const RLABEL={0:"要指導",1:"第1類",2:"第2類（指定）",2.5:"第２類",3:"第3類"};
+const RCLS={0:"r0",1:"r1",2:"r2",2.5:"r25",3:"r3"};
 
-// ── 状態 ────────────────────────────────────────────
-const S={{cat:"all",q:"",ings:new Set(),syms:new Set(),risk:"",sort:"default",nd:false,nw:false,page:1,pp:20}};
-const CMP_SET = new Set(); // 比較選択中の商品ID
+const S={cat:"all",q:"",ings:new Set(),syms:new Set(),risk:"",sort:"default",nd:false,nw:false,page:1,pp:20};
+const CMP=new Set();
 
-// ── ページ切替 ──────────────────────────────────────
-function showPage(id){{
+function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('tab-'+id).classList.add('active');
-  if(id==='column') renderColumns();
-  if(id==='guide') renderGuide();
-}}
+  if(id==='column')renderCols();
+  if(id==='guide')renderGuide();
+}
 
-// ── アコーディオン ──────────────────────────────────
-function toggleAcc(btn){{
+function toggleAcc(btn){
   btn.classList.toggle('open');
-  const bd=btn.nextElementSibling;
-  bd.classList.toggle('open');
-}}
+  btn.nextElementSibling.classList.toggle('open');
+}
 
-// ── カテゴリ構築 ────────────────────────────────────
+// カテゴリ
 const catEl=document.getElementById('catlist');
-CATS.forEach(c=>{{
+CATS.forEach(c=>{
   const cnt=c.id==='all'?MEDS.length:MEDS.filter(m=>m.cat===c.id).length;
   if(cnt===0&&c.id!=='all')return;
   const b=document.createElement('button');
   b.className='cbtn'+(c.id==='all'?' active':'');
   b.dataset.cat=c.id;
-  b.innerHTML=`<span class="cico">${{c.i}}</span>${{c.l}}<span class="cbadge">${{cnt}}</span>`;
-  b.addEventListener('click',()=>{{
+  b.innerHTML='<span class="cico">'+c.i+'</span>'+c.l+'<span class="cbadge">'+cnt+'</span>';
+  b.addEventListener('click',()=>{
     document.querySelectorAll('.cbtn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');S.cat=c.id;S.page=1;render();
-    updateAccCnt();
-  }});
+    b.classList.add('active');S.cat=c.id;S.page=1;render();updCnt();
+  });
   catEl.appendChild(b);
-}});
+});
 
-// ── 症状パネル ──────────────────────────────────────
-function buildSymp(){{
+// 症状
+function buildSymp(){
   const el=document.getElementById('sym-area');el.innerHTML='';
-  SYMP_GROUPS.forEach(grp=>{{
+  SYMP_GROUPS.forEach(grp=>{
     const d=document.createElement('div');d.className='sym-group';
     const h=document.createElement('div');h.className='sym-gh';
-    h.innerHTML=`<span>${{grp.i}}</span>${{grp.g}}<span class="gar">▼</span>`;
+    h.innerHTML='<span>'+grp.i+'</span>'+grp.g+'<span class="gar">▼</span>';
     const t=document.createElement('div');t.className='sym-tags hidden';
-    grp.s.forEach(sym=>{{
+    grp.s.forEach(sym=>{
       const cnt=MEDS.filter(m=>m.symptoms&&m.symptoms.includes(sym)).length;
-      if(cnt===0)return;
+      if(!cnt)return;
       const sp=document.createElement('span');
       sp.className='stag'+(S.syms.has(sym)?' active':'');
-      sp.innerHTML=`${{sym}}<span style="opacity:.5;font-size:9px;margin-left:2px">${{cnt}}</span>`;
-      sp.addEventListener('click',()=>{{
+      sp.innerHTML=sym+'<span style="opacity:.5;font-size:9px;margin-left:2px">'+cnt+'</span>';
+      sp.addEventListener('click',()=>{
         if(S.syms.has(sym))S.syms.delete(sym);else S.syms.add(sym);
-        sp.classList.toggle('active');S.page=1;render();updateAccCnt();
-      }});
+        sp.classList.toggle('active');S.page=1;render();updCnt();
+      });
       t.appendChild(sp);
-    }});
-    h.addEventListener('click',()=>{{h.classList.toggle('col');t.classList.toggle('hidden');}});
+    });
+    h.addEventListener('click',()=>{h.classList.toggle('col');t.classList.toggle('hidden');});
     d.appendChild(h);d.appendChild(t);el.appendChild(d);
-  }});
-}}
+  });
+}
 buildSymp();
 
-// ── 成分チップ ──────────────────────────────────────
-function buildIngs(){{
-  const map={{}};
-  MEDS.forEach(m=>(m.ings||[]).forEach(ing=>{{
+// 成分チップ
+function buildIngs(){
+  const map={};
+  MEDS.forEach(m=>(m.ings||[]).forEach(ing=>{
     const k=ing.replace(/[\(（][^)）]*[\)）]/g,'').trim();
     if(k)map[k]=(map[k]||0)+1;
-  }}));
+  }));
   const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,80).map(e=>e[0]);
   const el=document.getElementById('ing-area');el.innerHTML='';
-  sorted.forEach(ing=>{{
+  sorted.forEach(ing=>{
     const c=document.createElement('span');
     c.className='ichip'+(S.ings.has(ing)?' active':'');
     c.textContent=ing;
-    c.addEventListener('click',()=>{{
-      if(S.ings.has(ing)){{S.ings.delete(ing);c.classList.remove('active');}}
-      else{{S.ings.add(ing);c.classList.add('active');}}
-      S.page=1;render();updateAccCnt();
-    }});
+    c.addEventListener('click',()=>{
+      if(S.ings.has(ing)){S.ings.delete(ing);c.classList.remove('active');}
+      else{S.ings.add(ing);c.classList.add('active');}
+      S.page=1;render();updCnt();
+    });
     el.appendChild(c);
-  }});
-}}
+  });
+}
 buildIngs();
 
-// アコーディオンのバッジ更新
-function updateAccCnt(){{
-  const catCnt=S.cat!=='all'?1:0;
-  const symCnt=S.syms.size;
-  const ingCnt=S.ings.size;
-  ['cat','sym','ing'].forEach((k,i)=>{{
-    const cnt=[catCnt,symCnt,ingCnt][i];
-    const el=document.getElementById(`acc-${{k}}-cnt`);
-    if(el){{el.textContent=cnt;el.classList.toggle('show',cnt>0);}}
-  }});
-}}
+function updCnt(){
+  const catC=S.cat!=='all'?1:0,symC=S.syms.size,ingC=S.ings.size;
+  [['cat',catC],['sym',symC],['ing',ingC]].forEach(([k,v])=>{
+    const e=document.getElementById('acc-'+k+'-cnt');
+    if(e){e.textContent=v;e.classList.toggle('on',v>0);}
+  });
+}
 
-// ── フィルタ・ソート ────────────────────────────────
-function filter(){{
+function filter(){
   let r=[...MEDS];
   if(S.cat!=='all')r=r.filter(m=>m.cat===S.cat);
-  if(S.q){{
-    const q=S.q.toLowerCase();
-    r=r.filter(m=>
-      (m.name||'').toLowerCase().includes(q)||
-      (m.maker||'').toLowerCase().includes(q)||
-      (m.effect||'').toLowerCase().includes(q)||
-      (m.ings||[]).some(i=>i.toLowerCase().includes(q)));
-  }}
+  if(S.q){const q=S.q.toLowerCase();r=r.filter(m=>
+    (m.name||'').toLowerCase().includes(q)||(m.maker||'').toLowerCase().includes(q)||
+    (m.effect||'').toLowerCase().includes(q)||(m.ings||[]).some(i=>i.toLowerCase().includes(q)));}
   if(S.syms.size>0)r=r.filter(m=>m.symptoms&&[...S.syms].some(s=>m.symptoms.includes(s)));
   if(S.ings.size>0)r=r.filter(m=>[...S.ings].some(si=>
     (m.ings||[]).some(mi=>mi.replace(/[\(（][^)）]*[\)）]/g,'').trim().includes(si))));
-  if(S.risk!==''){{
-    const rv=parseFloat(S.risk);
-    r=rv===2?r.filter(m=>m.risk>=2&&m.risk<3):r.filter(m=>m.risk===rv);
-  }}
+  if(S.risk!==''){const rv=parseFloat(S.risk);
+    r=rv===2?r.filter(m=>m.risk>=2&&m.risk<3):r.filter(m=>m.risk===rv);}
   if(S.nd)r=r.filter(m=>!m.drowsy);
   if(S.nw)r=r.filter(m=>!(m.warnIngs&&m.warnIngs.length));
   if(S.sort==='price_asc')r.sort((a,b)=>(a.price||999999)-(b.price||999999));
@@ -569,236 +342,186 @@ function filter(){{
   else if(S.sort==='name')r.sort((a,b)=>a.name.localeCompare(b.name,'ja'));
   else if(S.sort==='risk')r.sort((a,b)=>(a.risk||9)-(b.risk||9));
   return r;
-}}
+}
 
-// ── 類似商品スコア ───────────────────────────────────
-function getSimilar(med,n=3){{
-  const baseIngs=new Set((med.ings||[]).map(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
-  return MEDS.filter(m=>m.id!==med.id&&m.cat===med.cat)
-    .map(m=>{{
-      const mIngs=new Set((m.ings||[]).map(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
-      const inter=[...baseIngs].filter(i=>mIngs.has(i)).length;
-      const union=new Set([...baseIngs,...mIngs]).size;
-      return {{m,score:union?inter/union:0}};
-    }})
-    .filter(x=>x.score>0)
-    .sort((a,b)=>b.score-a.score)
-    .slice(0,n);
-}}
+function getSim(med,n){
+  const bi=new Set((med.ings||[]).map(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+  return MEDS.filter(m=>m.id!==med.id&&m.cat===med.cat).map(m=>{
+    const mi=new Set((m.ings||[]).map(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+    const inter=[...bi].filter(i=>mi.has(i)).length;
+    const union=new Set([...bi,...mi]).size;
+    return{m,s:union?inter/union:0};
+  }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,n||3);
+}
 
-// ── カード描画 ──────────────────────────────────────
-function card(med){{
-  const cat=CATS.find(c=>c.id===med.cat)||{{}};
-  const wSet=new Set((med.warnIngs||[]).map(w=>w.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
-  const ingsH=(med.ings||[]).map(ing=>{{
-    const base=ing.replace(/[\(（][^)）]*[\)）]/g,'').trim();
-    const isM=[...S.ings].some(si=>base.includes(si));
-    const isW=wSet.has(base)||(med.warnIngs||[]).some(w=>ing.includes(w.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
-    const hasDef=!!ING_DICT[base];
-    return `<span class="itag ${{isW?'iw':isM?'im':'in'}}" 
-      ${{hasDef?`onmouseenter="showIngPopup(event,'${{base.replace(/'/g,"\'")}}')"`:''}}`+
-      ` onmouseleave="hideIngPopup()">${{ing}}</span>`;
-  }}).join('');
-  const symH=(med.symptoms&&med.symptoms.length)?
-    `<div class="csymp">${{med.symptoms.map(s=>`<span class="sym${{S.syms.has(s)?' hit':''}}">
-${{s}}</span>`).join('')}}</div>`:'';
-  const nc=med.noteType==='danger'?'nd':med.noteType==='warn'?'nw':'nn';
-  const pr=med.price?`<div class="cpval">¥${{med.price.toLocaleString()}}</div><div class="cpnote">参考価格（税込）</div>`:
-    `<div class="cpval nopr">価格要確認</div>`;
-  const isSelected=CMP_SET.has(med.id);
-  return `<div class="card" id="card-${{med.id}}">
-    <div class="card-sel">
-      <input type="checkbox" ${{isSelected?'checked':''}} title="比較に追加"
-        onchange="toggleCmp(${{med.id}},this.checked)">
-    </div>
-    <div class="chard">
-      <div><div class="cname">${{med.name}}</div><div class="cmaker">${{med.maker||''}}</div></div>
-      <div class="cprice">${{pr}}</div>
-    </div>
-    <div class="badges">
-      <span class="badge bc">${{cat.i||''}} ${{cat.l||med.cat||''}}</span>
-      <span class="badge ${{RCLS[med.risk]||'r25'}}">${{RLABEL[med.risk]||''}}</span>
-      ${{med.drowsy?'<span class="badge bd2">🌙 眠気注意</span>':''}}
-      ${{(med.warnIngs&&med.warnIngs.length)?'<span class="badge bw">⚠️ 要注意成分</span>':''}}
-    </div>
-    ${{symH}}
-    <div class="cef">${{med.effect||''}}</div>
-    <div class="ings">${{ingsH}}</div>
-    ${{med.note?`<div class="note ${{nc}}">${{med.note}}</div>`:''}}
-    <div class="cfoot">
-      <span class="cfootl">成分数: ${{(med.ings||[]).length}}</span>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="sim-btn" onclick="showSimilar(${{med.id}})">類似商品</button>
-        <a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank" rel="noopener">📄 PMDA ↗</a>
-      </div>
-    </div>
-    <div id="sim-${{med.id}}" style="display:none"></div>
-  </div>`;
-}}
-
-// ── 類似商品パネル ──────────────────────────────────
-function showSimilar(id){{
-  const med=MEDS.find(m=>m.id===id);
-  if(!med)return;
-  const el=document.getElementById('sim-'+id);
-  if(el.style.display==='block'){{el.style.display='none';return;}}
-  const sims=getSimilar(med);
-  if(!sims.length){{el.innerHTML='<div style="font-size:12px;color:var(--txl);padding:8px">類似商品が見つかりません</div>';el.style.display='block';return;}}
-  el.innerHTML=`<div class="sim-panel"><h3>🔍 類似商品</h3><div class="sim-cards">${{
-    sims.map(x=>`<div class="sim-card">
-      <div class="sim-card-info">
-        <div class="sim-card-name">${{x.m.name}}</div>
-        <div class="sim-card-score">成分一致度 ${{Math.round(x.score*100)}}% | ${{x.m.maker||''}}</div>
-      </div>
-      <button class="sim-card-btn" onclick="jumpToCard(${{x.m.id}})">詳細を見る</button>
-    </div>`).join('')
-  }}</div></div>`;
-  el.style.display='block';
-}}
-
-function jumpToCard(id){{
-  const el=document.getElementById('card-'+id);
-  if(el){{el.scrollIntoView({{behavior:'smooth',block:'center'}});el.style.outline='2px solid var(--teal)';setTimeout(()=>el.style.outline='',1500);}}
-}}
-
-// ── 成分ポップアップ ────────────────────────────────
-const popup=document.getElementById('ing-popup');
-function showIngPopup(e,name){{
+// 成分ポップアップ
+const pp=document.getElementById('ing-popup');
+function showPop(e,name){
   const d=ING_DICT[name];if(!d)return;
   document.getElementById('ip-name').textContent=name;
   document.getElementById('ip-en').textContent=d.en||'';
-  document.getElementById('ip-effect').textContent=d.effect||'';
-  document.getElementById('ip-caution').textContent=d.caution?'⚠️ '+d.caution:'';
-  const{{clientX:x,clientY:y}}=e;
-  const pw=320,ph=160;
-  popup.style.left=(x+pw>window.innerWidth?x-pw-8:x+12)+'px';
-  popup.style.top=(y+ph>window.innerHeight?y-ph-8:y+12)+'px';
-  popup.classList.add('show');
-}}
-function hideIngPopup(){{popup.classList.remove('show');}}
+  document.getElementById('ip-eff').textContent=d.effect||'';
+  document.getElementById('ip-cau').textContent=d.caution?'⚠ '+d.caution:'';
+  const x=e.clientX,y=e.clientY,pw=300,ph=150;
+  pp.style.left=(x+pw>innerWidth?x-pw-8:x+12)+'px';
+  pp.style.top=(y+ph>innerHeight?y-ph-8:y+12)+'px';
+  pp.classList.add('show');
+}
+function hidePop(){pp.classList.remove('show');}
 
-// ── 比較機能 ────────────────────────────────────────
-function toggleCmp(id,checked){{
-  if(checked){{
-    if(CMP_SET.size>=4){{alert('最大4件まで比較できます');
-      const cb=document.querySelector(`#card-${{id}} input[type=checkbox]`);
-      if(cb)cb.checked=false;return;}}
-    CMP_SET.add(id);
-  }}else CMP_SET.delete(id);
-  const cnt=CMP_SET.size;
-  document.getElementById('cmp-count').textContent=cnt;
-  document.getElementById('cmp-open-btn').disabled=cnt<2;
-}}
+// カード
+function mkCard(med){
+  const cat=CATS.find(c=>c.id===med.cat)||{};
+  const wSet=new Set((med.warnIngs||[]).map(w=>w.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+  const iH=(med.ings||[]).map(ing=>{
+    const b=ing.replace(/[\(（][^)）]*[\)）]/g,'').trim();
+    const iM=[...S.ings].some(s=>b.includes(s));
+    const iW=wSet.has(b)||(med.warnIngs||[]).some(w=>ing.includes(w.replace(/[\(（][^)）]*[\)）]/g,'').trim()));
+    const hD=!!ING_DICT[b];
+    return '<span class="itag '+(iW?'iw':iM?'im':'in')+'"'+(hD?' onmouseenter="showPop(event,''+b.replace(/'/g,"\\'")+'')" onmouseleave="hidePop()"':'')+'>'+ing+'</span>';
+  }).join('');
+  const sH=(med.symptoms&&med.symptoms.length)?
+    '<div class="csymp">'+med.symptoms.map(s=>'<span class="sym'+(S.syms.has(s)?' hit':'')+'">'+s+'</span>').join('')+'</div>':'';
+  const nc=med.noteType==='danger'?'nd':med.noteType==='warn'?'nw':'nn';
+  const pr=med.price?'<div class="cpval">¥'+med.price.toLocaleString()+'</div><div class="cpnote">参考価格（税込）</div>':'<div class="cpval nopr">価格要確認</div>';
+  const sel=CMP.has(med.id);
+  return '<div class="card" id="card-'+med.id+'">'
+    +'<div class="card-sel"><input type="checkbox"'+(sel?' checked':'')
+    +' title="比較に追加" onchange="tglCmp('+med.id+',this.checked)"></div>'
+    +'<div class="chard"><div><div class="cname">'+med.name+'</div><div class="cmaker">'+(med.maker||'')+'</div></div>'
+    +'<div class="cprice">'+pr+'</div></div>'
+    +'<div class="badges"><span class="badge bc">'+(cat.i||'')+' '+(cat.l||med.cat||'')+'</span>'
+    +'<span class="badge '+(RCLS[med.risk]||'r25')+'">'+(RLABEL[med.risk]||'')+'</span>'
+    +(med.drowsy?'<span class="badge bd2">🌙 眠気注意</span>':'')
+    +((med.warnIngs&&med.warnIngs.length)?'<span class="badge bw">⚠ 要注意成分</span>':'')
+    +'</div>'+sH
+    +'<div class="cef">'+(med.effect||'')+'</div>'
+    +'<div class="ings">'+iH+'</div>'
+    +(med.note?'<div class="note '+nc+'">'+med.note+'</div>':'')
+    +'<div class="cfoot"><span class="cfootl">成分数: '+((med.ings||[]).length)+'</span>'
+    +'<div style="display:flex;gap:8px;align-items:center">'
+    +'<button class="sim-btn" onclick="showSim('+med.id+')">類似商品</button>'
+    +'<a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA ↗</a>'
+    +'</div></div>'
+    +'<div id="sim-'+med.id+'" style="display:none"></div>'
+    +'</div>';
+}
 
-function openCompare(){{
-  const meds=[...CMP_SET].map(id=>MEDS.find(m=>m.id===id)).filter(Boolean);
+function showSim(id){
+  const med=MEDS.find(m=>m.id===id);if(!med)return;
+  const el=document.getElementById('sim-'+id);
+  if(el.style.display==='block'){el.style.display='none';return;}
+  const sims=getSim(med);
+  if(!sims.length){el.innerHTML='<div style="font-size:12px;color:var(--txl);padding:8px">類似商品が見つかりません</div>';el.style.display='block';return;}
+  el.innerHTML='<div class="sim-panel"><h3>🔍 類似商品</h3>'
+    +sims.map(x=>'<div class="sim-card"><div><div class="sim-name">'+x.m.name+'</div>'
+    +'<div class="sim-score">成分一致度 '+Math.round(x.s*100)+'% | '+(x.m.maker||'')+'</div></div>'
+    +'<button class="sim-go" onclick="jumpTo('+x.m.id+')">詳細を見る</button></div>').join('')
+    +'</div>';
+  el.style.display='block';
+}
+
+function jumpTo(id){
+  const el=document.getElementById('card-'+id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='2px solid var(--teal)';setTimeout(()=>el.style.outline='',1500);}
+}
+
+// 比較
+function tglCmp(id,chk){
+  if(chk){
+    if(CMP.size>=4){alert('最大4件まで比較できます');
+      const cb=document.querySelector('#card-'+id+' input[type=checkbox]');if(cb)cb.checked=false;return;}
+    CMP.add(id);
+  }else CMP.delete(id);
+  const n=CMP.size;
+  document.getElementById('cmp-cnt').textContent=n;
+  document.getElementById('cmp-open').disabled=n<2;
+}
+
+function openCmp(){
+  const meds=[...CMP].map(id=>MEDS.find(m=>m.id===id)).filter(Boolean);
   if(meds.length<2)return;
-
-  // 全成分の収集
-  const allIngsSet=new Set();
-  meds.forEach(m=>(m.ings||[]).forEach(ing=>allIngsSet.add(ing.replace(/[\(（][^)）]*[\)）]/g,'').trim())));
-  const allIngs=[...allIngsSet].filter(Boolean);
-
-  const hd=meds.map(m=>`<th class="${{RCLS[m.risk]||'r25'}}">
-    <div class="cmp-name">${{m.name}}</div>
-    <div style="font-size:10px;color:var(--txm)">${{m.maker||''}}</div>
-    <div style="font-size:10px;margin-top:2px">${{RLABEL[m.risk]||''}}</div>
-  </th>`).join('');
-
-  const prRow=`<tr><th>価格</th>${{meds.map(m=>`<td>${{m.price?'¥'+m.price.toLocaleString():'不明'}}</td>`).join('')}}</tr>`;
-  const drRow=`<tr><th>眠気</th>${{meds.map(m=>`<td>${{m.drowsy?'🌙 あり':'✅ なし'}}</td>`).join('')}}</tr>`;
-  const wnRow=`<tr><th>要注意成分</th>${{meds.map(m=>`<td>${{(m.warnIngs&&m.warnIngs.length)?'⚠️ あり':'✅ なし'}}</td>`).join('')}}</tr>`;
-
-  const ingRows=allIngs.map(ing=>{{
-    const cells=meds.map(m=>{{
+  const allI=new Set();
+  meds.forEach(m=>(m.ings||[]).forEach(ing=>allI.add(ing.replace(/[\(（][^)）]*[\)）]/g,'').trim())));
+  const ings=[...allI].filter(Boolean);
+  const hd=meds.map(m=>'<th class="'+(RCLS[m.risk]||'r25')+'"><div class="cmp-name">'+m.name+'</div>'
+    +'<div style="font-size:10px;color:var(--txm)">'+(m.maker||'')+'</div>'
+    +'<div style="font-size:10px">'+(RLABEL[m.risk]||'')+'</div></th>').join('');
+  const prR='<tr><th>価格</th>'+meds.map(m=>'<td>'+(m.price?'¥'+m.price.toLocaleString():'不明')+'</td>').join('')+'</tr>';
+  const drR='<tr><th>眠気</th>'+meds.map(m=>'<td>'+(m.drowsy?'🌙 あり':'✅ なし')+'</td>').join('')+'</tr>';
+  const wnR='<tr><th>要注意成分</th>'+meds.map(m=>'<td>'+((m.warnIngs&&m.warnIngs.length)?'⚠ あり':'✅ なし')+'</td>').join('')+'</tr>';
+  const iR=ings.map(ing=>{
+    const cells=meds.map(m=>{
       const has=(m.ings||[]).some(i=>i.replace(/[\(（][^)）]*[\)）]/g,'').trim()===ing);
-      return `<td style="text-align:center">${{has?'<span class="ck">✓</span>':'<span class="cx">-</span>'}}</td>`;
-    }}).join('');
+      return '<td style="text-align:center">'+(has?'<span class="ck">✓</span>':'<span class="cx">-</span>')+'</td>';
+    }).join('');
     const def=ING_DICT[ing];
-    return `<tr><th title="${{def?def.effect:''}}">${{ing}}${{def?'<span style="font-size:9px;color:var(--teal);margin-left:4px">ⓘ</span>':''}}</th>${{cells}}</tr>`;
-  }}).join('');
-
-  document.getElementById('cmp-body').innerHTML=`
-    <table class="cmp-table">
-      <thead><tr><th>成分 / 商品</th>${{hd}}</tr></thead>
-      <tbody>
-        ${{prRow}}${{drRow}}${{wnRow}}
-        <tr><th colspan="${{meds.length+1}}" style="background:#f1f5f9;font-size:11px;color:var(--txl)">── 有効成分 ──</th></tr>
-        ${{ingRows}}
-      </tbody>
-    </table>
-    <p style="font-size:11px;color:var(--txl);margin-top:8px">成分名にカーソルを合わせると効果説明が表示されます（辞典登録成分のみ）</p>`;
-
+    return '<tr><th title="'+(def?def.effect:'')+'">'+ing+(def?'<span style="font-size:9px;color:var(--teal);margin-left:4px">ⓘ</span>':'')+'</th>'+cells+'</tr>';
+  }).join('');
+  document.getElementById('cmp-body').innerHTML=
+    '<table class="cmp-table"><thead><tr><th>成分 / 商品</th>'+hd+'</tr></thead>'
+    +'<tbody>'+prR+drR+wnR
+    +'<tr><th colspan="'+(meds.length+1)+'" style="background:#f1f5f9;font-size:11px;color:var(--txl)">── 有効成分 ──</th></tr>'
+    +iR+'</tbody></table>'
+    +'<p style="font-size:11px;color:var(--txl);margin-top:8px">成分名にカーソルを合わせると効果説明が表示されます（辞典登録成分のみ）</p>';
   document.getElementById('cmp-modal').classList.remove('hidden');
-}}
+}
+function closeCmp(){document.getElementById('cmp-modal').classList.add('hidden');}
 
-function closeCompare(){{document.getElementById('cmp-modal').classList.add('hidden');}}
-
-// ── アクティブフィルタチップ ────────────────────────
-function afChips(){{
+// アクティブチップ
+function afChips(){
   const el=document.getElementById('af');el.innerHTML='';
-  const add=(label,fn)=>{{
-    const s=document.createElement('span');s.className='afc';
-    s.innerHTML=`${{label}} <button>×</button>`;
-    s.querySelector('button').addEventListener('click',fn);el.appendChild(s);
-  }};
-  if(S.cat!=='all'){{const c=CATS.find(x=>x.id===S.cat);if(c)add(c.l,()=>{{S.cat='all';
+  const add=(lb,fn)=>{const s=document.createElement('span');s.className='afc';
+    s.innerHTML=lb+' <button>×</button>';s.querySelector('button').addEventListener('click',fn);el.appendChild(s);};
+  if(S.cat!=='all'){const c=CATS.find(x=>x.id===S.cat);if(c)add(c.l,()=>{S.cat='all';
     document.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('active'));
-    document.querySelector('[data-cat="all"]').classList.add('active');S.page=1;render();updateAccCnt();}});}}
-  if(S.q)add(`"${{S.q}}"`,()=>{{S.q='';document.getElementById('q').value='';S.page=1;render();}});
-  S.syms.forEach(s=>add(`🤕 ${{s}}`,()=>{{S.syms.delete(s);buildSymp();S.page=1;render();updateAccCnt();}}));
-  S.ings.forEach(i=>add(i,()=>{{S.ings.delete(i);buildIngs();S.page=1;render();updateAccCnt();}}));
-  if(S.risk)add(RLABEL[parseFloat(S.risk)]||S.risk,()=>{{S.risk='';document.getElementById('frisk').value='';S.page=1;render();}});
-  if(S.nd)add('眠気なし',()=>{{S.nd=false;document.getElementById('cnd').checked=false;S.page=1;render();}});
-  if(S.nw)add('要注意成分なし',()=>{{S.nw=false;document.getElementById('cnw').checked=false;S.page=1;render();}});
-}}
+    document.querySelector('[data-cat="all"]').classList.add('active');S.page=1;render();updCnt();});}
+  if(S.q)add('"'+S.q+'"',()=>{S.q='';document.getElementById('q').value='';S.page=1;render();});
+  S.syms.forEach(s=>add('🤕 '+s,()=>{S.syms.delete(s);buildSymp();S.page=1;render();updCnt();}));
+  S.ings.forEach(i=>add(i,()=>{S.ings.delete(i);buildIngs();S.page=1;render();updCnt();}));
+  if(S.risk)add(RLABEL[parseFloat(S.risk)]||S.risk,()=>{S.risk='';document.getElementById('frisk').value='';S.page=1;render();});
+  if(S.nd)add('眠気なし',()=>{S.nd=false;document.getElementById('cnd').checked=false;S.page=1;render();});
+  if(S.nw)add('要注意成分なし',()=>{S.nw=false;document.getElementById('cnw').checked=false;S.page=1;render();});
+}
 
-// ── ページネーション ────────────────────────────────
-function pagi(total){{
+function pagi(total){
   const pages=Math.ceil(total/S.pp);
   const el=document.getElementById('pagi');el.innerHTML='';
   if(pages<=1)return;
-  const mk=(lb,pg,dis,act)=>{{
+  const mk=(lb,pg,dis,act)=>{
     const b=document.createElement('button');b.className='pgb'+(act?' active':'');
     b.textContent=lb;if(dis)b.disabled=true;
-    else b.addEventListener('click',()=>{{S.page=pg;render();scrollTo({{top:0,behavior:'smooth'}});}});
-    return b;
-  }};
+    else b.addEventListener('click',()=>{S.page=pg;render();scrollTo({top:0,behavior:'smooth'});});
+    return b;};
   el.appendChild(mk('‹',S.page-1,S.page===1,false));
   let prev=0;
-  for(let i=1;i<=pages;i++){{
-    if(i===1||i===pages||(i>=S.page-2&&i<=S.page+2)){{
-      if(prev&&i-prev>1){{const d=document.createElement('span');d.className='pagi-info';d.textContent='…';el.appendChild(d);}}
-      el.appendChild(mk(i,i,false,i===S.page));prev=i;
-    }}
-  }}
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||(i>=S.page-2&&i<=S.page+2)){
+      if(prev&&i-prev>1){const d=document.createElement('span');d.className='pagi-info';d.textContent='…';el.appendChild(d);}
+      el.appendChild(mk(i,i,false,i===S.page));prev=i;}}
   el.appendChild(mk('›',S.page+1,S.page===pages,false));
-}}
+}
 
-// ── メインレンダリング ───────────────────────────────
-function render(){{
-  const filtered=filter();const total=filtered.length;
-  const start=(S.page-1)*S.pp;const paged=filtered.slice(start,start+S.pp);
-  document.getElementById('ri').innerHTML=`<strong>${{total.toLocaleString()}}件</strong>表示中（全${{MEDS.length.toLocaleString()}}件）`;
+function render(){
+  const fl=filter();const total=fl.length;
+  const start=(S.page-1)*S.pp;
+  document.getElementById('ri').innerHTML='<strong>'+total.toLocaleString()+'件</strong>表示中（全'+MEDS.length.toLocaleString()+'件）';
   afChips();
-  document.getElementById('grid').innerHTML=paged.length===0?
-    `<div class="nores"><div class="nores-ico">🔍</div><p>条件に合う医薬品が見つかりません</p></div>`:
-    paged.map(card).join('');
+  document.getElementById('grid').innerHTML=fl.slice(start,start+S.pp).length===0
+    ?'<div class="nores"><div class="nores-ico">🔍</div><p>条件に合う医薬品が見つかりません</p></div>'
+    :fl.slice(start,start+S.pp).map(mkCard).join('');
   pagi(total);
-}}
+}
 
-// ── イベント ────────────────────────────────────────
-let t;
-document.getElementById('q').addEventListener('input',e=>{{
-  clearTimeout(t);t=setTimeout(()=>{{S.q=e.target.value.trim();S.page=1;render();}},200);
-}});
-document.getElementById('frisk').addEventListener('change',e=>{{S.risk=e.target.value;S.page=1;render();}});
-document.getElementById('fsort').addEventListener('change',e=>{{S.sort=e.target.value;S.page=1;render();}});
-document.getElementById('cnd').addEventListener('change',e=>{{S.nd=e.target.checked;S.page=1;render();}});
-document.getElementById('cnw').addEventListener('change',e=>{{S.nw=e.target.checked;S.page=1;render();}});
-document.getElementById('rbtn').addEventListener('click',()=>{{
-  S.cat='all';S.q='';S.ings.clear();S.syms.clear();S.risk='';
-  S.sort='default';S.nd=false;S.nw=false;S.page=1;
+let ti;
+document.getElementById('q').addEventListener('input',e=>{
+  clearTimeout(ti);ti=setTimeout(()=>{S.q=e.target.value.trim();S.page=1;render();},200);});
+document.getElementById('frisk').addEventListener('change',e=>{S.risk=e.target.value;S.page=1;render();});
+document.getElementById('fsort').addEventListener('change',e=>{S.sort=e.target.value;S.page=1;render();});
+document.getElementById('cnd').addEventListener('change',e=>{S.nd=e.target.checked;S.page=1;render();});
+document.getElementById('cnw').addEventListener('change',e=>{S.nw=e.target.checked;S.page=1;render();});
+document.getElementById('rbtn').addEventListener('click',()=>{
+  S.cat='all';S.q='';S.ings.clear();S.syms.clear();S.risk='';S.sort='default';S.nd=false;S.nw=false;S.page=1;
   document.getElementById('q').value='';
   document.getElementById('frisk').value='';
   document.getElementById('fsort').value='default';
@@ -806,94 +529,69 @@ document.getElementById('rbtn').addEventListener('click',()=>{{
   document.getElementById('cnw').checked=false;
   document.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('active'));
   document.querySelector('[data-cat="all"]').classList.add('active');
-  buildIngs();buildSymp();updateAccCnt();render();
-}});
-document.getElementById('cmp-modal').addEventListener('click',e=>{{
-  if(e.target===document.getElementById('cmp-modal'))closeCompare();
-}});
+  buildIngs();buildSymp();updCnt();render();
+});
+document.getElementById('cmp-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('cmp-modal'))closeCmp();});
 
-// ── 症状ガイドページ ────────────────────────────────
-function renderGuide(){{
+// 症状ガイド
+function renderGuide(){
   const el=document.getElementById('guide-grid');
   if(el.innerHTML)return;
   el.innerHTML=SYMP_GROUPS.map(g=>
-    `<div class="guide-card" onclick="guideFilter('${{g.g}}')">
-      <div class="g-ico">${{g.i}}</div>
-      <div class="g-name">${{g.g}}</div>
-      <div class="g-sub">${{g.s.slice(0,3).join(' / ')}}…</div>
-    </div>`
-  ).join('');
-}}
+    '<div class="guide-card" onclick="guideFilter(''+g.g+'')">'
+    +'<div class="g-ico">'+g.i+'</div>'
+    +'<div class="g-name">'+g.g+'</div>'
+    +'<div class="g-sub">'+g.s.slice(0,3).join(' / ')+'…</div>'
+    +'</div>').join('');
+}
 
-function guideFilter(groupName){{
-  const grp=SYMP_GROUPS.find(g=>g.g===groupName);
-  if(!grp)return;
-  const res=document.getElementById('guide-result');
+function guideFilter(name){
+  const grp=SYMP_GROUPS.find(g=>g.g===name);if(!grp)return;
   const meds=MEDS.filter(m=>m.symptoms&&grp.s.some(s=>m.symptoms.includes(s)));
-  res.innerHTML=`
-    <div style="margin-top:16px">
-      <div class="page-title" style="font-size:15px">${{grp.i}} ${{groupName}}（${{meds.length}}件）</div>
-      <div class="grid" style="margin-top:10px">${{meds.slice(0,20).map(m=>{{
-        const cat=CATS.find(c=>c.id===m.cat)||{{}};
-        return `<div class="card">
-          <div class="chard"><div><div class="cname">${{m.name}}</div><div class="cmaker">${{m.maker||''}}</div></div>
-          <div class="cprice">${{m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div>':'<div class="cpval nopr">価格要確認</div>'}}</div></div>
-          <div class="badges"><span class="badge bc">${{cat.i||''}} ${{cat.l||m.cat}}</span>
-          <span class="badge ${{RCLS[m.risk]||'r25'}}">${{RLABEL[m.risk]||''}}</span></div>
-          <div class="cef">${{m.effect||''}}</div>
-          <div class="ings">${{(m.ings||[]).slice(0,5).map(i=>`<span class="itag in">${{i}}</span>`).join('')}}</div>
-        </div>`;
-      }}).join('')}}</div>
-      ${{meds.length>20?`<p style="font-size:12px;color:var(--txl);margin-top:8px">他${{meds.length-20}}件は検索ページで「症状」で絞り込んでください。</p>`:''}}
-    </div>`;
-}}
+  const el=document.getElementById('guide-result');
+  el.innerHTML='<div style="margin-top:16px"><div class="page-title" style="font-size:15px">'+grp.i+' '+name+'（'+meds.length+'件）</div>'
+    +'<div class="grid" style="margin-top:10px">'+meds.slice(0,20).map(m=>{
+      const cat=CATS.find(c=>c.id===m.cat)||{};
+      return '<div class="card"><div class="chard"><div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||'')+'</div></div>'
+        +'<div class="cprice">'+(m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div>':'<div class="cpval nopr">価格要確認</div>')+'</div></div>'
+        +'<div class="badges"><span class="badge bc">'+(cat.i||'')+' '+(cat.l||m.cat)+'</span>'
+        +'<span class="badge '+(RCLS[m.risk]||'r25')+'">'+(RLABEL[m.risk]||'')+'</span></div>'
+        +'<div class="cef">'+(m.effect||'')+'</div></div>';}).join('')+'</div>'
+    +(meds.length>20?'<p style="font-size:12px;color:var(--txl);margin-top:8px">他'+(meds.length-20)+'件は検索ページで絞り込んでください。</p>':'')
+    +'</div>';
+}
 
-// ── コラムページ ────────────────────────────────────
-function renderColumns(){{
+// コラム
+function renderCols(){
   const el=document.getElementById('col-grid');
   if(el.innerHTML)return;
   el.innerHTML=COLUMNS.map(col=>
-    `<div class="col-card" onclick="showColumn('${{col.id}}')">
-      <div class="col-card-top">
-        <div class="col-card-tag">${{col.tag}}</div>
-        <div class="col-card-title">${{col.title}}</div>
-      </div>
-      <div class="col-card-body">
-        <div class="col-card-date">${{col.date}}</div>
-        <div class="col-card-summary">${{col.summary}}</div>
-      </div>
-    </div>`
-  ).join('');
-}}
+    '<div class="col-card" onclick="showCol(''+col.id+'')">'
+    +'<div class="col-card-top"><div class="col-tag">'+col.tag+'</div>'
+    +'<div class="col-title">'+col.title+'</div></div>'
+    +'<div class="col-card-body"><div class="col-date">'+col.date+'</div>'
+    +'<div class="col-summary">'+col.summary+'</div></div></div>').join('');
+}
 
-function showColumn(id){{
-  const col=COLUMNS.find(c=>c.id===id);
-  if(!col)return;
-  document.getElementById('col-list-view').style.display='none';
-  const dv=document.getElementById('col-detail-view');
-  dv.style.display='block';
-  // マークダウン的な変換
+function showCol(id){
+  const col=COLUMNS.find(c=>c.id===id);if(!col)return;
+  document.getElementById('col-list').style.display='none';
+  const dv=document.getElementById('col-detail');
   const body=col.body
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/^- (.+)$/gm,'<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/s,'<ul>$1</ul>')
-    .split('
+    .split('\n\n').map(p=>'<p>'+p+'</p>').join('');
+  dv.innerHTML='<button class="col-back" onclick="backCol()">← コラム一覧に戻る</button>'
+    +'<div class="col-detail"><h1>'+col.title+'</h1>'
+    +'<div class="col-meta">'+col.date+' | '+col.tag+'</div>'
+    +'<div class="col-body">'+body+'</div></div>';
+  dv.style.display='block';
+}
+function backCol(){
+  document.getElementById('col-list').style.display='block';
+  document.getElementById('col-detail').style.display='none';
+}
 
-').map(p=>p.startsWith('<')?p:`<p>${{p}}</p>`).join('');
-  dv.innerHTML=`<div class="col-detail">
-    <div class="col-back" onclick="backToColumns()">← コラム一覧に戻る</div>
-    <h1>${{col.title}}</h1>
-    <div class="col-meta">${{col.date}} | ${{col.tag}}</div>
-    <div class="col-body">${{body}}</div>
-  </div>`;
-}}
-
-function backToColumns(){{
-  document.getElementById('col-list-view').style.display='block';
-  document.getElementById('col-detail-view').style.display='none';
-}}
-
-// ── 初期化 ──────────────────────────────────────────
 render();
 </script>
 </body>
