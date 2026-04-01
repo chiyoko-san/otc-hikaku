@@ -616,7 +616,8 @@ function mkCard(m){
     var iW=!!wset[b];
     var hD=!!ING[b];
     var cls=iW?"iw":iM?"im":"in";
-    var ev=hD?' onmouseenter="showTip(event,\''+b.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+\')" onmouseleave="hideTip()"':'';
+        var title=hD?(ING[b]||""):"";
+    var ev=title?' title="'+title.substring(0,80).replace(/"/g,"&quot;")+'"':'';
     return '<span class="itag '+cls+'"'+ev+'>'+ing+'</span>';
   }).join("");
   var sH="";
