@@ -518,7 +518,23 @@ function buildCols(){
   if(el.children.length)return;
   COLS.forEach(function(col){
     var div=document.createElement("div");div.className="ccard";
-    div.innerHTML='<div class="ctop"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div>'
+    var hasThumb=col.thumb&&col.thumb.length>10;
+    var topHtml;
+    if(hasThumb){
+      topHtml='<div class="ctop has-thumb">'
+        +'<img src="'+col.thumb+'" alt="'+col.title+'" loading="lazy">'
+        +'<div class="ctop-overlay">'
+        +'<div class="ctag">'+col.tag+'</div>'
+        +'<div class="ctitle">'+col.title+'</div>'
+        +'</div></div>';
+    }else{
+      topHtml='<div class="ctop no-thumb">'
+        +'<div class="ctop-overlay">'
+        +'<div class="ctag">'+col.tag+'</div>'
+        +'<div class="ctitle">'+col.title+'</div>'
+        +'</div></div>';
+    }
+    div.innerHTML=topHtml
       +'<div class="cbdy"><div class="cdate">'+col.date+'</div><div class="csum">'+col.summary+'</div></div>';
     (function(id){div.addEventListener("click",function(){showCol(id);});})(col.id);
     el.appendChild(div);
@@ -535,9 +551,10 @@ function showCol(id){
     p=p.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
     return"<p>"+p+"</p>";
   }).join("");
+  var tHtml=col.thumb?'<img src="'+col.thumb+'" alt="" style="width:100%;max-height:260px;object-fit:cover;border-radius:8px;margin-bottom:16px">':'';
   document.getElementById("cdetail").innerHTML=
     '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
-    +'<div class="cdetail"><h1>'+col.title+'</h1>'
+    +'<div class="cdetail">'+tHtml+'<h1>'+col.title+'</h1>'
     +'<div class="cmeta">'+col.date+" | "+col.tag+'</div>'
     +'<div class="cbody">'+body+'</div></div>';
   document.getElementById("cdetail").style.display="block";
