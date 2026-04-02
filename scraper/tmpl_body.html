@@ -1,0 +1,123 @@
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">くすり成分<em>ガイド</em></div>
+    <button type="button" class="ntab on" id="t-search" onclick="showPg('search')">🔍 検索</button>
+    <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">💊 症状から選ぶ</button>
+    <button type="button" class="ntab" id="t-column" onclick="showPg('column')">📖 コラム</button>
+    <span class="nright">__UPDATED__</span>
+  </div>
+</nav>
+
+<!-- 検索ページ -->
+<div class="pg on" id="pg-search">
+  <div class="layout">
+    <aside class="sb">
+      <div class="sbox">
+        <div class="srel">
+          <span class="sico">🔍</span>
+          <input type="text" id="qinp" placeholder="商品名・成分・症状・メーカー…" autocomplete="off">
+        </div>
+      </div>
+      <div class="acc">
+        <button type="button" class="acc-hd" id="hd-cat" onclick="togAcc('cat')">
+          <span>💊</span> カテゴリ
+          <span class="acc-cnt" id="cnt-cat"></span>
+          <span class="acc-arr">▼</span>
+        </button>
+        <div class="acc-bd" id="bd-cat"><div class="catlist" id="catlist"></div></div>
+      </div>
+      <div class="acc">
+        <button type="button" class="acc-hd" id="hd-sym" onclick="togAcc('sym')">
+          <span>🤕</span> 症状で絞り込む
+          <span class="acc-cnt" id="cnt-sym"></span>
+          <span class="acc-arr">▼</span>
+        </button>
+        <div class="acc-bd" id="bd-sym"><div id="symarea"></div></div>
+      </div>
+      <div class="acc">
+        <button type="button" class="acc-hd" id="hd-ing" onclick="togAcc('ing')">
+          <span>⚗️</span> 成分で絞り込む
+          <span class="acc-cnt" id="cnt-ing"></span>
+          <span class="acc-arr">▼</span>
+        </button>
+        <div class="acc-bd" id="bd-ing">
+          <div id="ingarea" style="max-height:200px;overflow-y:auto;display:flex;flex-wrap:wrap"></div>
+        </div>
+      </div>
+      <div class="acc">
+        <button type="button" class="acc-hd open" id="hd-fil" onclick="togAcc('fil')">
+          <span>⚙️</span> 絞り込み・並び替え
+          <span class="acc-arr">▼</span>
+        </button>
+        <div class="acc-bd open" id="bd-fil">
+          <select class="fsel" id="frisk">
+            <option value="">リスク区分：すべて</option>
+            <option value="0">要指導医薬品</option>
+            <option value="1">第1類</option>
+            <option value="2">第2類（指定含む）</option>
+            <option value="3">第3類</option>
+          </select>
+          <select class="fsel" id="fsort" style="margin-top:6px">
+            <option value="def">並び替え：デフォルト</option>
+            <option value="pa">価格：安い順</option>
+            <option value="pd">価格：高い順</option>
+            <option value="nm">名前：五十音順</option>
+            <option value="rk">リスク区分順</option>
+          </select>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+            <label class="chk"><input type="checkbox" id="cnd"> 眠気なしのみ表示</label>
+            <label class="chk"><input type="checkbox" id="cnw"> 要注意成分を含まない</label>
+          </div>
+          <button type="button" class="rbtn" id="rbtn">✕ すべてリセット</button>
+        </div>
+      </div>
+      <div class="wbox">
+        <strong>⚠ 要注意成分について</strong>
+        <b>ア尿素</b>→ 2023年AU規制・2025年KR麻薬類指定<br>
+        <b>コデイン系</b>→ 12歳未満禁忌・依存リスク
+      </div>
+    </aside>
+    <main>
+      <div class="cmpbar">
+        <span>比較したい商品を選択 <span class="cmpcnt" id="cmpcnt">0</span>/4</span>
+        <button type="button" class="cmpbtn" id="cmpbtn" disabled onclick="openCmp()">📊 成分比較表を開く</button>
+      </div>
+      <div class="resinfo" id="resinfo"></div>
+      <div class="afchips" id="afchips"></div>
+      <div class="grid" id="grid"></div>
+      <div class="pagi" id="pagi"></div>
+    </main>
+  </div>
+</div>
+
+<!-- 症状から選ぶ -->
+<div class="pg" id="pg-guide">
+  <div class="ptitle">💊 症状から薬を選ぶ</div>
+  <div class="pdesc">症状グループをクリックすると該当する薬の一覧を表示します。</div>
+  <div class="ggrid" id="ggrid"></div>
+  <div id="gresult"></div>
+</div>
+
+<!-- コラム -->
+<div class="pg" id="pg-column">
+  <div id="clist">
+    <div class="ptitle">📖 お役立ちコラム</div>
+    <div class="pdesc">市販薬の正しい選び方・安全な使い方を解説します。</div>
+    <div class="cgrid" id="cgrid"></div>
+  </div>
+  <div id="cdetail" style="display:none"></div>
+</div>
+
+<!-- 比較モーダル -->
+<div class="mbg hide" id="cmpmodal">
+  <div class="mdl">
+    <div class="mhd">
+      <h2>📊 成分比較表</h2>
+      <div id="cmpshare" style="font-size:11px;color:var(--txm)"></div>
+      <button type="button" class="mcls" onclick="closeCmp()">×</button>
+    </div>
+    <div class="mbd" id="cmpbody"></div>
+  </div>
+</div>
+
+<footer>本サイトはPMDA添付文書等の公開情報を元にした一般情報提供です。服用前に必ず添付文書をお読みください。広告収入を得ていません。</footer>
