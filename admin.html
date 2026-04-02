@@ -13,18 +13,15 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
 .nav .logo em{color:var(--teal);font-style:normal}
 .nav a{color:#94a3b8;font-size:12px;text-decoration:none}
 .nav a:hover{color:#fff}
-/* LOGIN */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 52px)}
 .login-box{background:var(--wh);border-radius:12px;padding:32px;width:100%;max-width:360px;box-shadow:0 4px 20px rgba(15,23,42,.12)}
 .login-box h2{font-size:18px;font-weight:700;margin-bottom:20px;text-align:center}
-/* FORMS */
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:12px;font-weight:600;color:var(--txm);margin-bottom:5px}
 .form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:14px;font-family:inherit;outline:none;background:var(--wh);color:var(--tx)}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}
 .form-group textarea{resize:vertical;min-height:120px}
 .char-count{font-size:11px;color:var(--txl);text-align:right;margin-top:3px}
-/* BUTTONS */
 .btn{padding:10px 20px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer}
 .btn:hover{background:var(--teal2)}
 .btn:disabled{background:var(--txl);cursor:not-allowed}
@@ -33,47 +30,58 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
 .btn-sec:hover{background:var(--bd)}
 .btn-del{background:#fee2e2;color:var(--red);border:1px solid #fecaca;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer}
 .btn-del:hover{background:var(--rb)}
-.btn-edit{background:var(--tl);color:var(--teal2);border:1px solid #99d4cd;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer;white-space:nowrap}
+.btn-edit{background:var(--tl);color:var(--teal2);border:1px solid #99d4cd;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer}
 .btn-edit:hover{background:#d1ede9}
-/* MAIN */
 #main-screen{display:none;max-width:900px;margin:0 auto;padding:24px 20px}
 .page-title{font-size:20px;font-weight:700;margin-bottom:20px;color:var(--navy)}
-/* TABS */
-.tabs{display:flex;gap:4px;border-bottom:2px solid var(--bd);margin-bottom:20px}
-.tab{padding:8px 18px;border:none;background:none;font-size:13px;font-weight:500;color:var(--txm);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--bd);margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 16px;border:none;background:none;font-size:13px;font-weight:500;color:var(--txm);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
 .tab.on{color:var(--teal);border-bottom-color:var(--teal);font-weight:700}
 .tab-pane{display:none}
 .tab-pane.on{display:block}
-/* COLUMN LIST */
-.col-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.col-item{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+/* コラム一覧カード */
+.col-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.col-item{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;display:flex;gap:0}
+.col-thumb{width:100px;min-width:100px;background:var(--sl);position:relative;overflow:hidden}
+.col-thumb img{width:100%;height:100%;object-fit:cover}
+.col-thumb-none{display:flex;align-items:center;justify-content:center;height:100%;min-height:80px;color:var(--txl);font-size:22px}
+.col-item-body{flex:1;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;min-width:0}
 .col-item-info{flex:1;min-width:0}
-.col-item-title{font-size:14px;font-weight:600;margin-bottom:3px;line-height:1.4}
-.col-item-meta{font-size:11px;color:var(--txl);margin-top:3px}
+.col-item-title{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.4}
+.col-item-summary{font-size:11px;color:var(--txm);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.col-item-meta{font-size:11px;color:var(--txl);margin-top:4px}
 .col-tag{font-size:10px;padding:1px 7px;background:var(--tl);color:var(--teal2);border-radius:10px;margin-right:6px}
-.col-item-actions{display:flex;gap:6px;flex-shrink:0}
-/* FORM CARD */
+.col-item-actions{display:flex;gap:5px;flex-shrink:0;flex-direction:column}
+/* サムネイルアップロード */
+.thumb-upload-area{border:2px dashed var(--bd);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .15s;position:relative;background:var(--sl)}
+.thumb-upload-area:hover,.thumb-upload-area.drag{border-color:var(--teal);background:var(--tl)}
+.thumb-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.thumb-upload-area .upload-ico{font-size:28px;margin-bottom:6px}
+.thumb-upload-area p{font-size:13px;color:var(--txm)}
+.thumb-upload-area small{font-size:11px;color:var(--txl)}
+.thumb-preview-wrap{position:relative;display:inline-block;margin-top:10px}
+.thumb-preview-wrap img{width:280px;max-width:100%;height:160px;object-fit:cover;border-radius:8px;border:1px solid var(--bd);display:block}
+.thumb-remove{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.thumb-remove:hover{background:var(--red)}
+.thumb-size{font-size:11px;color:var(--txl);margin-top:4px}
+/* フォーム */
 .form-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:24px;margin-bottom:16px}
 .form-card h3{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--navy)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-/* PREVIEW */
 .preview{background:var(--sl);border:1px solid var(--bd);border-radius:6px;padding:14px;font-size:13px;line-height:1.9;min-height:80px;color:var(--txm)}
 .preview p{margin-bottom:8px}
 .preview strong{font-weight:700;color:var(--tx)}
-/* STATUS */
 .status{padding:10px 14px;border-radius:7px;font-size:13px;margin-bottom:14px;display:none}
 .status.ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
 .status.err{background:var(--rb);color:var(--red);border:1px solid #fecaca}
 .status.warn{background:var(--amber);color:#713f12;border:1px solid #fde68a}
-/* NOTICE */
 .notice{background:var(--amber);border:1px solid #fde68a;border-radius:8px;padding:12px 16px;font-size:12px;color:#713f12;line-height:1.8;margin-bottom:16px}
 .notice strong{font-weight:700;display:block;margin-bottom:2px}
-/* SETTING */
 .setting-item{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:16px;margin-bottom:10px}
 .setting-item label{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
 .setting-item input{width:100%;padding:8px 12px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;font-family:inherit;outline:none}
 .setting-item input:focus{border-color:var(--teal)}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}.col-item{flex-direction:column}.col-item-actions{align-self:flex-end}}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}.col-item-actions{flex-direction:row}}
 </style>
 </head>
 <body>
@@ -83,33 +91,28 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
   <a href="/">← サイトに戻る</a>
 </nav>
 
-<!-- ログイン画面 -->
+<!-- ログイン -->
 <div id="login-screen">
   <div class="login-box">
     <h2>🔐 管理者ログイン</h2>
     <div class="form-group">
       <label>パスワード</label>
       <input type="password" id="inp-pw" placeholder="パスワードを入力" autocomplete="current-password">
-      <div style="font-size:11px;color:var(--txl);margin-top:4px">初回は任意のパスワードを設定できます</div>
+      <div style="font-size:11px;color:var(--txl);margin-top:4px">初回は任意のパスワードを設定できます（4文字以上）</div>
     </div>
     <div id="login-err" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none"></div>
     <button type="button" class="btn btn-full" onclick="doLogin()">ログイン</button>
-    <p style="font-size:11px;color:var(--txl);margin-top:12px;text-align:center">
-      パスワードはこのブラウザにのみ保存されます
-    </p>
   </div>
 </div>
 
-<!-- メイン画面 -->
+<!-- メイン -->
 <div id="main-screen">
   <div class="page-title">📝 コラム管理</div>
   <div id="status-msg" class="status"></div>
 
   <div class="notice">
     <strong>⚠ このブラウザのみに保存されます</strong>
-    コラムデータはこのブラウザのLocalStorageに保存されます。別のブラウザやデバイスからは見えません。
-    サイトのコラム一覧に表示するには、別途 <code>build.py</code> のCOLUMNSに追記してGitHubにpushする必要があります。
-    下の「エクスポート」ボタンでデータを出力できます。
+    コラムデータはLocalStorageに保存されます。サイトへの反映は「📤 エクスポート」で出力したコードを <code>scraper/build.py</code> に貼り付けてGitHubにpushしてください。
   </div>
 
   <div class="tabs">
@@ -122,14 +125,33 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
   <!-- コラム一覧 -->
   <div class="tab-pane on" id="tab-cols">
     <div class="col-list" id="col-list"></div>
-    <button type="button" class="btn-sec" onclick="loadBuiltinCols()">📥 build.pyの既存コラムを読み込む</button>
+    <button type="button" class="btn-sec" onclick="loadBuiltinCols()">📥 既存コラムを読み込む</button>
   </div>
 
   <!-- 新規追加 / 編集 -->
   <div class="tab-pane" id="tab-add">
     <div class="form-card">
       <h3 id="form-title">➕ 新規コラム追加</h3>
-      <input type="hidden" id="edit-id">
+
+      <!-- サムネイル -->
+      <div class="form-group">
+        <label>🖼️ サムネイル画像 <span style="font-size:11px;color:var(--txl)">推奨: 600×340px以上 / JPG・PNG・WebP / 500KB以下</span></label>
+        <div id="thumb-drop" class="thumb-upload-area" ondragover="onDrag(event,true)" ondragleave="onDrag(event,false)" ondrop="onDrop(event)">
+          <input type="file" id="thumb-file" accept="image/*" onchange="onFileSelect(event)">
+          <div id="thumb-placeholder">
+            <div class="upload-ico">📷</div>
+            <p>クリックまたはドラッグ＆ドロップ</p>
+            <small>JPG / PNG / WebP（500KB以下）</small>
+          </div>
+          <div id="thumb-preview-wrap" class="thumb-preview-wrap" style="display:none">
+            <img id="thumb-preview" src="" alt="サムネイルプレビュー">
+            <button type="button" class="thumb-remove" onclick="removeThumb(event)" title="削除">×</button>
+          </div>
+          <div id="thumb-size" class="thumb-size"></div>
+        </div>
+        <div id="thumb-err" style="color:var(--red);font-size:12px;margin-top:4px;display:none"></div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>タイトル *</label>
@@ -141,25 +163,28 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
           <select id="f-tag">
             <option>基礎知識</option><option>安全情報</option><option>花粉症</option>
             <option>胃腸</option><option>かぜ薬</option><option>アレルギー</option>
-            <option>漢方</option><option>美容・スキンケア</option><option>育毛</option>
-            <option>その他</option>
+            <option>漢方</option><option>美容・スキンケア</option><option>育毛</option><option>その他</option>
           </select>
         </div>
       </div>
+
       <div class="form-group">
-        <label>サマリー（一覧に表示される説明文）*</label>
+        <label>サマリー（一覧に表示）*</label>
         <textarea id="f-summary" rows="3" placeholder="この記事の概要を2〜3文で書いてください"></textarea>
         <div class="char-count"><span id="summary-count">0</span>/200文字</div>
       </div>
+
       <div class="form-group">
         <label>本文 * <span style="font-size:11px;color:var(--txl)">**太字** で強調。空行で段落区切り。</span></label>
-        <textarea id="f-body" rows="15" placeholder="本文を書いてください。&#10;&#10;**見出し**&#10;&#10;内容の段落..."></textarea>
+        <textarea id="f-body" rows="14" placeholder="本文を書いてください。&#10;&#10;**見出し**&#10;&#10;内容の段落..."></textarea>
         <div class="char-count"><span id="body-count">0</span>文字</div>
       </div>
+
       <div class="form-group">
         <label>プレビュー</label>
         <div class="preview" id="preview-area">本文を入力するとプレビューが表示されます</div>
       </div>
+
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <button type="button" class="btn" onclick="saveCol()">💾 保存</button>
         <button type="button" class="btn-sec" onclick="clearForm()">クリア</button>
@@ -172,16 +197,17 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
     <div class="form-card">
       <h3>📤 build.py用エクスポート</h3>
       <p style="font-size:13px;color:var(--txm);margin-bottom:16px">
-        以下のコードを <code>scraper/build.py</code> の <code>COLUMNS = [</code> の部分に貼り付けてください。
+        以下のコードを <code>scraper/build.py</code> の <code>COLUMNS = [</code> から <code>]</code> までの部分と置き換えてください。
       </p>
       <div class="form-group">
-        <label>Pythonコード（コピーして貼り付け）</label>
-        <textarea id="export-code" rows="20" style="font-family:monospace;font-size:12px;background:#1e293b;color:#e2e8f0;border-color:#334155" readonly></textarea>
+        <label>Pythonコード</label>
+        <textarea id="export-code" rows="20" style="font-family:monospace;font-size:11px;background:#1e293b;color:#e2e8f0;border-color:#334155" readonly></textarea>
       </div>
-      <div style="display:flex;gap:10px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
         <button type="button" class="btn" onclick="genExport()">🔄 生成</button>
         <button type="button" class="btn-sec" onclick="copyExport()">📋 コピー</button>
       </div>
+      <p style="font-size:11px;color:var(--txl);margin-top:12px">※サムネイル画像はBase64データとして埋め込まれます。画像が大きいとbuild.pyが肥大化するため500KB以下を推奨。</p>
     </div>
   </div>
 
@@ -190,7 +216,7 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
     <div class="setting-item">
       <label>パスワードを変更</label>
       <input type="password" id="set-pw-old" placeholder="現在のパスワード" style="margin-bottom:8px">
-      <input type="password" id="set-pw-new" placeholder="新しいパスワード">
+      <input type="password" id="set-pw-new" placeholder="新しいパスワード（4文字以上）">
     </div>
     <button type="button" class="btn" onclick="changePw()">パスワードを変更</button>
     <button type="button" class="btn-sec" style="margin-left:10px" onclick="doLogout()">ログアウト</button>
@@ -203,13 +229,12 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
 <script>
 var COLS=[];
 var EDIT_ID=null;
+var CUR_THUMB=null; // Base64 or null
 var PW_KEY="admin_pw_hash";
 var COLS_KEY="admin_cols";
 
-/* ── ハッシュ（簡易） ── */
-function simpleHash(s){
-  var h=0;for(var i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h=h&h;}return h.toString(36);
-}
+/* ── ハッシュ ── */
+function simpleHash(s){var h=0;for(var i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h=h&h;}return h.toString(36);}
 
 /* ── ログイン ── */
 function doLogin(){
@@ -217,92 +242,84 @@ function doLogin(){
   if(!pw){showLoginErr("パスワードを入力してください");return;}
   var stored=localStorage.getItem(PW_KEY);
   if(!stored){
-    // 初回：パスワードを設定
     if(pw.length<4){showLoginErr("パスワードは4文字以上で設定してください");return;}
     localStorage.setItem(PW_KEY,simpleHash(pw));
     enterAdmin();
   }else{
-    if(simpleHash(pw)===stored){enterAdmin();}
-    else{showLoginErr("パスワードが違います");}
+    if(simpleHash(pw)===stored)enterAdmin();
+    else showLoginErr("パスワードが違います");
   }
 }
-
-function showLoginErr(msg){
-  var el=document.getElementById("login-err");el.textContent=msg;el.style.display="block";
-}
-
+function showLoginErr(msg){var el=document.getElementById("login-err");el.textContent=msg;el.style.display="block";}
 document.getElementById("inp-pw").addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
-
 function enterAdmin(){
+  sessionStorage.setItem("admin_authed","1");
   document.getElementById("login-screen").style.display="none";
   document.getElementById("main-screen").style.display="block";
   loadCols();
 }
+function doLogout(){sessionStorage.removeItem("admin_authed");location.reload();}
 
-function doLogout(){
-  sessionStorage.removeItem("admin_authed");
-  location.reload();
-}
-
-/* ── コラムデータ ── */
+/* ── データ ── */
 function loadCols(){
   var raw=localStorage.getItem(COLS_KEY);
   COLS=raw?JSON.parse(raw):[];
   renderColList();
-  showStatus("コラム"+COLS.length+"件を読み込みました","ok");
+  showStatus("コラム"+COLS.length+"件","ok");
 }
+function saveCols(){localStorage.setItem(COLS_KEY,JSON.stringify(COLS));}
 
-function saveCols(){
-  localStorage.setItem(COLS_KEY,JSON.stringify(COLS));
-}
-
-// build.pyに埋め込まれている既存コラムをLSに取り込む
-var BUILTIN_COLS = [
-  {id:"c1",title:"第1類・第2類・第3類の違いとは？OTC医薬品のリスク区分を解説",date:"2026-03-01",tag:"基礎知識",
+var BUILTIN_COLS=[
+  {id:"c1",title:"第1類・第2類・第3類の違いとは？OTC医薬品のリスク区分を解説",date:"2026-03-01",tag:"基礎知識",thumb:null,
    summary:"薬局で見かける「第1類」「第2類」などの表示。これはリスクの高さを示す分類です。",
    body:"OTC医薬品は副作用リスクに応じて4段階に分類されています。\n\n要指導医薬品はダイレクトOTCやスイッチ直後の成分が含まれ、薬剤師による対面販売が義務付けられネット購入は不可です。ミノキシジル5%（リアップX5等）が代表例です。\n\n第1類医薬品は副作用・相互作用のリスクが高い成分を含みます。薬剤師からの情報提供が義務付けられています。ファモチジン（ガスター10）・ロキソプロフェン（ロキソニンS）等が該当します。\n\n第2類医薬品は比較的リスクの高い成分を含む薬で、登録販売者でも販売可能。市販薬の大半がこのカテゴリです。\n\n第3類医薬品はビタミン剤・整腸薬など副作用リスクが比較的低い薬で、コンビニでも販売可能なものも含まれます。"},
-  {id:"c2",title:"「ア尿素」が含まれる市販薬に注意。海外で規制が進む依存性成分",date:"2026-03-10",tag:"安全情報",
+  {id:"c2",title:"「ア尿素」が含まれる市販薬に注意。海外で規制が進む依存性成分",date:"2026-03-10",tag:"安全情報",thumb:null,
    summary:"イブA錠などに含まれる「アリルイソプロピルアセチル尿素（ア尿素）」。2023年にオーストラリアで全面規制、2025年には韓国で麻薬類に指定されました。",
    body:"アリルイソプロピルアセチル尿素（ア尿素）は解熱鎮痛薬に「鎮静補助成分」として配合されている成分です。\n\n規制の動向として、2023年にオーストラリアで販売全面禁止、2025年に韓国で麻薬類に指定されました。日本では現時点では規制なく販売継続中です。\n\n含有する主な市販薬はイブA錠、イブクイック頭痛薬DX等です。服用後に必ず眠気が出るため運転・機械操作禁忌です。長期・頻回使用で耐性・依存が形成されます。\n\n代替選択肢としてはアセトアミノフェン単体（タイレノールA等）やア尿素なしのイブプロフェン製品を選ぶことをお勧めします。"},
-  {id:"c3",title:"花粉症の市販薬、眠くなる・ならないの違いは？成分で選ぶ方法",date:"2026-03-15",tag:"花粉症",
+  {id:"c3",title:"花粉症の市販薬、眠くなる・ならないの違いは？成分で選ぶ方法",date:"2026-03-15",tag:"花粉症",thumb:null,
    summary:"眠くなる花粉症薬と眠くならない花粉症薬の違いは抗ヒスタミン薬の世代にあります。",
    body:"花粉症薬の眠気の出やすさは抗ヒスタミン薬の世代によって大きく異なります。\n\n第一世代（眠気が強い）はクロルフェニラミン、ジフェンヒドラミン等です。血液脳関門を通過しやすく強い眠気が出ます。就寝前の使用に向いています。\n\n第二世代（眠気が少ない）はフェキソフェナジン（アレグラFX）、ロラタジン（クラリチンEX）等です。末梢のアレルギー反応を選択的に抑えるため眠気が出にくいです。\n\n仕事中や運転がある場合は第二世代を選びましょう。花粉飛散シーズン前から予防的に服用を開始すると症状が大幅に軽減されます。"},
-  {id:"c4",title:"コデイン系咳止め薬の12歳未満禁忌。理由と代替品の選び方",date:"2026-03-20",tag:"安全情報",
+  {id:"c4",title:"コデイン系咳止め薬の12歳未満禁忌。理由と代替品の選び方",date:"2026-03-20",tag:"安全情報",thumb:null,
    summary:"2019年以降、コデイン・ジヒドロコデイン含有薬の12歳未満への使用が禁忌となりました。",
    body:"コデインは体内でモルヒネに変換されます。子どもでは代謝の個人差が大きく、呼吸抑制という重篤な副作用が報告されたため2019年に12歳未満への使用が禁忌となりました。\n\nコデイン系が含まれる主な市販薬はブロン錠エース、パブロンゴールドA、新コンタック咳止めダブル持続性等です。\n\n子どもの咳に使える代替品としてはカルボシステイン（去痰薬）があります。副作用が少なく安全です。また龍角散（生薬系）はのどや咳に穏やかに作用します。\n\n大人でもコデイン系は依存性があるため必要最小限の期間・量での使用が推奨されます。"},
 ];
 
 function loadBuiltinCols(){
-  if(COLS.length>0&&!confirm("既存のデータに追加しますか？（重複は除外します）"))return;
+  if(COLS.length>0&&!confirm("既存データに追加します（重複除外）。よろしいですか？"))return;
   var added=0;
-  BUILTIN_COLS.forEach(function(bc){
-    if(!COLS.some(function(c){return c.id===bc.id;})){COLS.push(bc);added++;}
-  });
+  BUILTIN_COLS.forEach(function(bc){if(!COLS.some(function(c){return c.id===bc.id;})){COLS.push(bc);added++;}});
   saveCols();renderColList();
   showStatus(added+"件の既存コラムを読み込みました","ok");
 }
 
-/* ── 一覧表示 ── */
+/* ── 一覧 ── */
+function escHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
 function renderColList(){
   var el=document.getElementById("col-list");
   if(!COLS.length){
-    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--txl)">コラムがありません。「新規追加」から作成するか、既存コラムを読み込んでください。</div>';
+    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--txl)">コラムがありません。「➕ 新規追加」から作成するか「📥 既存コラムを読み込む」を押してください。</div>';
     return;
   }
   el.innerHTML=COLS.map(function(col,idx){
+    var thumbHtml=col.thumb
+      ?'<img src="'+col.thumb+'" alt="'+escHtml(col.title)+'">'
+      :'<div class="col-thumb-none">🖼️</div>';
     return '<div class="col-item">'
+      +'<div class="col-thumb">'+thumbHtml+'</div>'
+      +'<div class="col-item-body">'
       +'<div class="col-item-info">'
       +'<div class="col-item-title">'+escHtml(col.title)+'</div>'
+      +'<div class="col-item-summary">'+escHtml(col.summary)+'</div>'
       +'<div class="col-item-meta"><span class="col-tag">'+col.tag+'</span>'+col.date+'</div>'
       +'</div>'
       +'<div class="col-item-actions">'
       +'<button type="button" class="btn-edit" onclick="editCol('+idx+')">✏️ 編集</button>'
       +'<button type="button" class="btn-del" onclick="deleteCol('+idx+')">削除</button>'
+      +'</div>'
       +'</div></div>';
   }).join("");
 }
-
-function escHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
 /* ── タブ ── */
 function switchTab(id,btn){
@@ -311,6 +328,66 @@ function switchTab(id,btn){
   btn.classList.add("on");
   document.getElementById("tab-"+id).classList.add("on");
   if(id==="export")genExport();
+}
+
+/* ── サムネイル ── */
+function onDrag(e,over){e.preventDefault();document.getElementById("thumb-drop").classList.toggle("drag",over);}
+
+function onDrop(e){
+  e.preventDefault();document.getElementById("thumb-drop").classList.remove("drag");
+  var file=e.dataTransfer.files[0];
+  if(file&&file.type.startsWith("image/"))processThumb(file);
+}
+
+function onFileSelect(e){
+  var file=e.target.files[0];
+  if(file)processThumb(file);
+}
+
+function processThumb(file){
+  var errEl=document.getElementById("thumb-err");errEl.style.display="none";
+  if(file.size>600*1024){
+    errEl.textContent="ファイルサイズが大きすぎます（"+Math.round(file.size/1024)+"KB）。500KB以下にしてください。";
+    errEl.style.display="block";return;
+  }
+  // Canvasでリサイズ（最大幅640px）
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement("canvas");
+      var maxW=640,maxH=360;
+      var w=img.width,h=img.height;
+      if(w>maxW||h>maxH){
+        var ratio=Math.min(maxW/w,maxH/h);
+        w=Math.round(w*ratio);h=Math.round(h*ratio);
+      }
+      canvas.width=w;canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      var b64=canvas.toDataURL("image/jpeg",0.82);
+      CUR_THUMB=b64;
+      showThumbPreview(b64,Math.round(b64.length*0.75/1024));
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function showThumbPreview(b64,sizeKb){
+  document.getElementById("thumb-placeholder").style.display="none";
+  var pw=document.getElementById("thumb-preview-wrap");
+  pw.style.display="inline-block";
+  document.getElementById("thumb-preview").src=b64;
+  document.getElementById("thumb-size").textContent="サイズ: 約"+sizeKb+"KB（Base64後）";
+}
+
+function removeThumb(e){
+  e.stopPropagation();CUR_THUMB=null;
+  document.getElementById("thumb-placeholder").style.display="block";
+  document.getElementById("thumb-preview-wrap").style.display="none";
+  document.getElementById("thumb-preview").src="";
+  document.getElementById("thumb-size").textContent="";
+  document.getElementById("thumb-file").value="";
 }
 
 /* ── フォーム ── */
@@ -331,7 +408,7 @@ function updatePreview(){
 }
 
 function clearForm(){
-  EDIT_ID=null;
+  EDIT_ID=null;CUR_THUMB=null;
   document.getElementById("form-title").textContent="➕ 新規コラム追加";
   ["title","summary","body"].forEach(function(k){
     document.getElementById("f-"+k).value="";
@@ -339,11 +416,17 @@ function clearForm(){
   });
   document.getElementById("f-tag").value="基礎知識";
   document.getElementById("preview-area").innerHTML="本文を入力するとプレビューが表示されます";
+  document.getElementById("thumb-placeholder").style.display="block";
+  document.getElementById("thumb-preview-wrap").style.display="none";
+  document.getElementById("thumb-preview").src="";
+  document.getElementById("thumb-size").textContent="";
+  document.getElementById("thumb-file").value="";
+  document.getElementById("thumb-err").style.display="none";
 }
 
 function editCol(idx){
   var col=COLS[idx];if(!col)return;
-  EDIT_ID=idx;
+  EDIT_ID=idx;CUR_THUMB=col.thumb||null;
   document.getElementById("form-title").textContent="✏️ 編集: "+col.title.substring(0,25)+"…";
   document.getElementById("f-title").value=col.title;
   document.getElementById("f-summary").value=col.summary;
@@ -353,7 +436,15 @@ function editCol(idx){
     document.getElementById(k+"-count").textContent=document.getElementById("f-"+k).value.length;
   });
   updatePreview();
-  // 編集タブへ切替
+  // サムネイル表示
+  if(col.thumb){
+    var sizeKb=Math.round(col.thumb.length*0.75/1024);
+    showThumbPreview(col.thumb,sizeKb);
+  }else{
+    document.getElementById("thumb-placeholder").style.display="block";
+    document.getElementById("thumb-preview-wrap").style.display="none";
+  }
+  // 編集タブへ
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".tab")[1].classList.add("on");
@@ -363,8 +454,7 @@ function editCol(idx){
 
 function deleteCol(idx){
   if(!confirm("「"+COLS[idx].title+"」を削除しますか？"))return;
-  COLS.splice(idx,1);
-  saveCols();renderColList();
+  COLS.splice(idx,1);saveCols();renderColList();
   showStatus("削除しました","ok");
 }
 
@@ -376,18 +466,17 @@ function saveCol(){
   if(!title){showStatus("タイトルを入力してください","err");return;}
   if(!summary){showStatus("サマリーを入力してください","err");return;}
   if(!body){showStatus("本文を入力してください","err");return;}
-
   var today=new Date().toISOString().slice(0,10);
   if(EDIT_ID!==null){
-    COLS[EDIT_ID]={id:COLS[EDIT_ID].id,title:title,date:COLS[EDIT_ID].date,tag:tag,summary:summary,body:body};
+    var old=COLS[EDIT_ID];
+    COLS[EDIT_ID]={id:old.id,title:title,date:old.date,tag:tag,summary:summary,body:body,thumb:CUR_THUMB};
     showStatus("✅ 更新しました","ok");
   }else{
-    var newId="c"+Date.now();
-    COLS.push({id:newId,title:title,date:today,tag:tag,summary:summary,body:body});
+    COLS.push({id:"c"+Date.now(),title:title,date:today,tag:tag,summary:summary,body:body,thumb:CUR_THUMB});
     showStatus("✅ 追加しました。「エクスポート」からbuild.pyに反映できます","ok");
   }
   saveCols();renderColList();clearForm();
-  // 一覧タブに戻る
+  // 一覧タブへ
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".tab")[0].classList.add("on");
@@ -401,8 +490,10 @@ function genExport(){
   if(!COLS.length){document.getElementById("export-code").value="# コラムがありません";return;}
   var lines=["COLUMNS = ["];
   COLS.forEach(function(col){
+    var thumbVal=col.thumb?'"'+col.thumb+'"':"None";
     lines.push('    {"id":"'+col.id+'","title":"'+escPy(col.title)+'","date":"'+col.date+'",');
     lines.push('     "tag":"'+col.tag+'","summary":"'+escPy(col.summary)+'",');
+    lines.push('     "thumb":'+thumbVal+',');
     lines.push('     "body":"'+escPy(col.body)+'"},');
   });
   lines.push("]");
@@ -410,30 +501,25 @@ function genExport(){
 }
 
 function copyExport(){
-  var ta=document.getElementById("export-code");
-  ta.select();
+  var ta=document.getElementById("export-code");ta.select();
   try{document.execCommand("copy");}catch(e){navigator.clipboard&&navigator.clipboard.writeText(ta.value);}
-  showStatus("コピーしました！scraper/build.pyのCOLUMNS = [ ... ] 部分と置き換えてください","ok");
+  showStatus("コピーしました！scraper/build.pyのCOLUMNS = [ ... ]部分を置き換えてください","ok");
 }
 
 /* ── パスワード変更 ── */
 function changePw(){
   var old=document.getElementById("set-pw-old").value;
   var nw=document.getElementById("set-pw-new").value;
-  var stored=localStorage.getItem(PW_KEY);
-  if(simpleHash(old)!==stored){showStatus("現在のパスワードが違います","err");return;}
+  if(simpleHash(old)!==localStorage.getItem(PW_KEY)){showStatus("現在のパスワードが違います","err");return;}
   if(nw.length<4){showStatus("新しいパスワードは4文字以上にしてください","err");return;}
   localStorage.setItem(PW_KEY,simpleHash(nw));
-  document.getElementById("set-pw-old").value="";
-  document.getElementById("set-pw-new").value="";
+  document.getElementById("set-pw-old").value="";document.getElementById("set-pw-new").value="";
   showStatus("パスワードを変更しました","ok");
 }
 
 function clearAll(){
   if(!confirm("全データを削除しますか？この操作は元に戻せません。"))return;
-  localStorage.removeItem(COLS_KEY);
-  localStorage.removeItem(PW_KEY);
-  location.reload();
+  localStorage.removeItem(COLS_KEY);localStorage.removeItem(PW_KEY);location.reload();
 }
 
 /* ── ステータス ── */
@@ -444,19 +530,7 @@ function showStatus(msg,type){
 }
 
 /* ── 初期化 ── */
-(function(){
-  // セッション中は再ログイン不要
-  if(sessionStorage.getItem("admin_authed")==="1"&&localStorage.getItem(PW_KEY)){
-    enterAdmin();
-  }
-})();
-
-function enterAdmin(){
-  sessionStorage.setItem("admin_authed","1");
-  document.getElementById("login-screen").style.display="none";
-  document.getElementById("main-screen").style.display="block";
-  loadCols();
-}
+if(sessionStorage.getItem("admin_authed")==="1"&&localStorage.getItem(PW_KEY)){enterAdmin();}
 </script>
 </body>
 </html>

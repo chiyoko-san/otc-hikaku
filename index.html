@@ -184,9 +184,13 @@ a{color:inherit;text-decoration:none}
 .gsub{font-size:11px;color:var(--txl);margin-top:2px}
 /* COLUMN PAGE */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.ccard{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer}
-.ccard:hover{box-shadow:0 4px 16px rgba(15,23,42,.12)}
-.ctop{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:20px;color:#fff}
+.ccard{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.ccard:hover{box-shadow:0 4px 16px rgba(15,23,42,.12);transform:translateY(-2px)}
+.ctop{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:20px;color:#fff;position:relative;min-height:120px}
+.ctop.has-thumb{padding:0;min-height:160px}
+.ctop.has-thumb img{width:100%;height:160px;object-fit:cover;display:block}
+.ctop.has-thumb .ctop-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,28,53,.85) 0%,rgba(15,28,53,.2) 60%);padding:14px;display:flex;flex-direction:column;justify-content:flex-end}
+.ctop.no-thumb .ctop-overlay{padding:20px}
 .ctag{font-size:10px;padding:2px 8px;background:var(--teal);border-radius:10px;display:inline-block;margin-bottom:8px}
 .ctitle{font-size:14px;font-weight:700;line-height:1.5}
 .cbdy{padding:14px}
@@ -851,7 +855,23 @@ function buildCols(){
   if(el.children.length)return;
   COLS.forEach(function(col){
     var div=document.createElement("div");div.className="ccard";
-    div.innerHTML='<div class="ctop"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div>'
+    var hasThumb=col.thumb&&col.thumb.length>10;
+    var topHtml;
+    if(hasThumb){
+      topHtml='<div class="ctop has-thumb">'
+        +'<img src="'+col.thumb+'" alt="'+col.title+'" loading="lazy">'
+        +'<div class="ctop-overlay">'
+        +'<div class="ctag">'+col.tag+'</div>'
+        +'<div class="ctitle">'+col.title+'</div>'
+        +'</div></div>';
+    }else{
+      topHtml='<div class="ctop no-thumb">'
+        +'<div class="ctop-overlay">'
+        +'<div class="ctag">'+col.tag+'</div>'
+        +'<div class="ctitle">'+col.title+'</div>'
+        +'</div></div>';
+    }
+    div.innerHTML=topHtml
       +'<div class="cbdy"><div class="cdate">'+col.date+'</div><div class="csum">'+col.summary+'</div></div>';
     (function(id){div.addEventListener("click",function(){showCol(id);});})(col.id);
     el.appendChild(div);
@@ -868,9 +888,10 @@ function showCol(id){
     p=p.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
     return"<p>"+p+"</p>";
   }).join("");
+  var tHtml=col.thumb?'<img src="'+col.thumb+'" alt="" style="width:100%;max-height:260px;object-fit:cover;border-radius:8px;margin-bottom:16px">':'';
   document.getElementById("cdetail").innerHTML=
     '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
-    +'<div class="cdetail"><h1>'+col.title+'</h1>'
+    +'<div class="cdetail">'+tHtml+'<h1>'+col.title+'</h1>'
     +'<div class="cmeta">'+col.date+" | "+col.tag+'</div>'
     +'<div class="cbody">'+body+'</div></div>';
   document.getElementById("cdetail").style.display="block";
