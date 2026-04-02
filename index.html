@@ -826,6 +826,7 @@ function buildGuide(){
 function filterGuide(name){
   var grp=null;for(var i=0;i<SYMS.length;i++){if(SYMS[i].g===name){grp=SYMS[i];break;}}
   if(!grp)return;
+  setParam("guide",encodeURIComponent(name));
   var meds=MEDS.filter(function(m){return m.symptoms&&grp.s.some(function(s){return m.symptoms.indexOf(s)>-1;});});
   document.getElementById("gresult").innerHTML='<div style="margin-top:16px">'
     +'<div class="ptitle" style="font-size:15px">'+grp.i+" "+name+"（"+meds.length+"件）</div>"
@@ -860,6 +861,7 @@ function buildCols(){
 function showCol(id){
   var col=null;for(var i=0;i<COLS.length;i++){if(COLS[i].id===id){col=COLS[i];break;}}
   if(!col)return;
+  setParam("col",id);
   document.getElementById("clist").style.display="none";
   var body=col.body.split("\n").map(function(p){
     if(!p.trim())return"";
@@ -875,6 +877,7 @@ function showCol(id){
 }
 
 function backCol(){
+  clearParam("col");
   document.getElementById("clist").style.display="block";
   document.getElementById("cdetail").style.display="none";
 }
@@ -883,8 +886,18 @@ function backCol(){
 (function init(){
   var medName=getParam("med");
   var cmpNames=getParam("compare");
+  var colId=getParam("col");
+  var guideName=getParam("guide");
 
-  if(medName){
+  if(colId){
+    showPg("column");
+    buildCols();
+    showCol(colId);
+  } else if(guideName){
+    showPg("guide");
+    buildGuide();
+    filterGuide(decodeURIComponent(guideName));
+  } else if(medName){
     // 詳細ページ
     render();
     showDetail(decodeURIComponent(medName));
@@ -907,7 +920,11 @@ function backCol(){
   // ブラウザの戻るボタン対応
   window.addEventListener("popstate",function(){
     var mn=getParam("med");
+    var cn=getParam("col");
+    var gn=getParam("guide");
     if(mn){showDetail(decodeURIComponent(mn));}
+    else if(cn){showPg("column");buildCols();showCol(cn);}
+    else if(gn){showPg("guide");buildGuide();filterGuide(decodeURIComponent(gn));}
     else{backFromDetail();}
   });
 })();
