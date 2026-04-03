@@ -9,93 +9,99 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background:var(--sl);color:var(--tx);font-size:14px;line-height:1.7;min-height:100vh}
 .nav{background:var(--navy);border-bottom:3px solid var(--teal);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between}
-.nav .logo{font-size:15px;font-weight:700;color:#fff}
-.nav .logo em{color:var(--teal);font-style:normal}
-.nav a{color:#94a3b8;font-size:12px;text-decoration:none}
-.nav a:hover{color:#fff}
+.nav .logo{font-size:15px;font-weight:700;color:#fff}.nav .logo em{color:var(--teal);font-style:normal}
+.nav a{color:#94a3b8;font-size:12px;text-decoration:none}.nav a:hover{color:#fff}
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 52px)}
 .login-box{background:var(--wh);border-radius:12px;padding:32px;width:100%;max-width:360px;box-shadow:0 4px 20px rgba(15,23,42,.12)}
 .login-box h2{font-size:18px;font-weight:700;margin-bottom:20px;text-align:center}
-.form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:12px;font-weight:600;color:var(--txm);margin-bottom:5px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:14px;font-family:inherit;outline:none;background:var(--wh);color:var(--tx)}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}
-.form-group textarea{resize:vertical;min-height:120px}
-.char-count{font-size:11px;color:var(--txl);text-align:right;margin-top:3px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--txm);margin-bottom:5px}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:14px;font-family:inherit;outline:none;background:var(--wh);color:var(--tx)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}
+.cc{font-size:11px;color:var(--txl);text-align:right;margin-top:3px}
 .btn{padding:10px 20px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer}
-.btn:hover{background:var(--teal2)}
-.btn:disabled{background:var(--txl);cursor:not-allowed}
-.btn-full{width:100%}
+.btn:hover{background:var(--teal2)}.btn-full{width:100%}
 .btn-sec{background:var(--sl);color:var(--txm);border:1px solid var(--bd);border-radius:7px;padding:8px 16px;font-size:13px;cursor:pointer}
 .btn-sec:hover{background:var(--bd)}
 .btn-del{background:#fee2e2;color:var(--red);border:1px solid #fecaca;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer}
 .btn-del:hover{background:var(--rb)}
 .btn-edit{background:var(--tl);color:var(--teal2);border:1px solid #99d4cd;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer}
-.btn-edit:hover{background:#d1ede9}
-#main-screen{display:none;max-width:900px;margin:0 auto;padding:24px 20px}
-.page-title{font-size:20px;font-weight:700;margin-bottom:20px;color:var(--navy)}
+#main-screen{display:none;max-width:960px;margin:0 auto;padding:24px 20px}
+.pg-title{font-size:20px;font-weight:700;margin-bottom:20px;color:var(--navy)}
 .tabs{display:flex;gap:4px;border-bottom:2px solid var(--bd);margin-bottom:20px;flex-wrap:wrap}
 .tab{padding:8px 16px;border:none;background:none;font-size:13px;font-weight:500;color:var(--txm);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
 .tab.on{color:var(--teal);border-bottom-color:var(--teal);font-weight:700}
-.tab-pane{display:none}
-.tab-pane.on{display:block}
-/* コラム一覧カード */
+.tab-pane{display:none}.tab-pane.on{display:block}
+/* コラム一覧 */
 .col-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.col-item{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;display:flex;gap:0}
-.col-thumb{width:100px;min-width:100px;background:var(--sl);position:relative;overflow:hidden}
+.col-item{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;display:flex}
+.col-thumb{width:90px;min-width:90px;background:var(--sl);overflow:hidden}
 .col-thumb img{width:100%;height:100%;object-fit:cover}
-.col-thumb-none{display:flex;align-items:center;justify-content:center;height:100%;min-height:80px;color:var(--txl);font-size:22px}
-.col-item-body{flex:1;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;min-width:0}
+.col-thumb-none{display:flex;align-items:center;justify-content:center;height:100%;min-height:72px;color:var(--txl);font-size:20px}
+.col-item-body{flex:1;padding:10px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;min-width:0}
 .col-item-info{flex:1;min-width:0}
-.col-item-title{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.4}
-.col-item-summary{font-size:11px;color:var(--txm);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.col-item-meta{font-size:11px;color:var(--txl);margin-top:4px}
+.col-item-title{font-size:13px;font-weight:600;margin-bottom:2px;line-height:1.4}
+.col-item-summary{font-size:11px;color:var(--txm);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5}
+.col-item-meta{font-size:11px;color:var(--txl);margin-top:3px}
 .col-tag{font-size:10px;padding:1px 7px;background:var(--tl);color:var(--teal2);border-radius:10px;margin-right:6px}
-.col-item-actions{display:flex;gap:5px;flex-shrink:0;flex-direction:column}
-/* サムネイルアップロード */
-.thumb-upload-area{border:2px dashed var(--bd);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .15s;position:relative;background:var(--sl)}
-.thumb-upload-area:hover,.thumb-upload-area.drag{border-color:var(--teal);background:var(--tl)}
-.thumb-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.thumb-upload-area .upload-ico{font-size:28px;margin-bottom:6px}
-.thumb-upload-area p{font-size:13px;color:var(--txm)}
-.thumb-upload-area small{font-size:11px;color:var(--txl)}
-.thumb-preview-wrap{position:relative;display:inline-block;margin-top:10px}
-.thumb-preview-wrap img{width:280px;max-width:100%;height:160px;object-fit:cover;border-radius:8px;border:1px solid var(--bd);display:block}
-.thumb-remove{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
-.thumb-remove:hover{background:var(--red)}
-.thumb-size{font-size:11px;color:var(--txl);margin-top:4px}
-/* フォーム */
+.col-item-acts{display:flex;gap:5px;flex-shrink:0;flex-direction:column}
+/* サムネイル */
+.thumb-drop{border:2px dashed var(--bd);border-radius:8px;padding:16px;text-align:center;cursor:pointer;position:relative;background:var(--sl)}
+.thumb-drop:hover,.thumb-drop.drag{border-color:var(--teal);background:var(--tl)}
+.thumb-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.thumb-drop .d-ico{font-size:24px;margin-bottom:4px}
+.thumb-drop p{font-size:12px;color:var(--txm)}.thumb-drop small{font-size:11px;color:var(--txl)}
+.thumb-pw{display:inline-block;margin-top:8px;position:relative}
+.thumb-pw img{width:240px;max-width:100%;height:135px;object-fit:cover;border-radius:6px;border:1px solid var(--bd);display:block}
+.thumb-rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.thumb-rm:hover{background:var(--red)}
+/* エディタ */
 .form-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:24px;margin-bottom:16px}
 .form-card h3{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--navy)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.preview{background:var(--sl);border:1px solid var(--bd);border-radius:6px;padding:14px;font-size:13px;line-height:1.9;min-height:80px;color:var(--txm)}
-.preview p{margin-bottom:8px}
-.preview strong{font-weight:700;color:var(--tx)}
+/* MDエディタ */
+.md-editor{border:1.5px solid var(--bd);border-radius:8px;overflow:hidden}
+.md-editor:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}
+.md-toolbar{background:var(--sl);border-bottom:1px solid var(--bd);padding:6px 10px;display:flex;gap:3px;flex-wrap:wrap}
+.md-btn{padding:3px 8px;border:1px solid var(--bd);border-radius:4px;background:var(--wh);font-size:12px;cursor:pointer;color:var(--txm);white-space:nowrap}
+.md-btn:hover{background:var(--tl);border-color:var(--teal);color:var(--teal2)}
+.md-btn.sep{border:none;background:none;color:var(--bdm);cursor:default;padding:3px 2px}
+.md-pane{display:grid;grid-template-columns:1fr 1fr;min-height:280px}
+.md-input{padding:12px;border:none;outline:none;font-family:'SFMono-Regular',Consolas,monospace;font-size:13px;line-height:1.7;resize:none;background:var(--wh);color:var(--tx);width:100%;min-height:280px;border-right:1px solid var(--bd)}
+.md-preview{padding:12px;overflow-y:auto;font-size:13px;line-height:1.8;background:#fafcff;color:var(--tx)}
+.md-preview h2{font-size:16px;font-weight:700;color:var(--navy);margin:18px 0 7px;padding-bottom:5px;border-bottom:2px solid var(--tl)}
+.md-preview h3{font-size:14px;font-weight:700;color:var(--navy);margin:14px 0 5px}
+.md-preview p{margin:5px 0}
+.md-preview ul,.md-preview ol{padding-left:20px;margin:7px 0}
+.md-preview li{margin:2px 0}
+.md-preview blockquote{border-left:4px solid var(--teal);padding:8px 14px;background:var(--tl);border-radius:0 6px 6px 0;margin:10px 0;color:var(--teal2)}
+.md-preview hr{border:none;border-top:1px solid var(--bd);margin:14px 0}
+.md-preview code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px;font-family:monospace}
+.md-footer{padding:4px 10px;background:var(--sl);border-top:1px solid var(--bd);font-size:11px;color:var(--txl);display:flex;justify-content:space-between}
+.md-hint{font-size:11px;color:var(--txl);margin-top:5px;line-height:1.6}
+/* status */
 .status{padding:10px 14px;border-radius:7px;font-size:13px;margin-bottom:14px;display:none}
 .status.ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
 .status.err{background:var(--rb);color:var(--red);border:1px solid #fecaca}
-.status.warn{background:var(--amber);color:#713f12;border:1px solid #fde68a}
 .notice{background:var(--amber);border:1px solid #fde68a;border-radius:8px;padding:12px 16px;font-size:12px;color:#713f12;line-height:1.8;margin-bottom:16px}
 .notice strong{font-weight:700;display:block;margin-bottom:2px}
 .setting-item{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:16px;margin-bottom:10px}
 .setting-item label{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
 .setting-item input{width:100%;padding:8px 12px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;font-family:inherit;outline:none}
 .setting-item input:focus{border-color:var(--teal)}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}.col-item-actions{flex-direction:row}}
+@media(max-width:700px){.form-row{grid-template-columns:1fr}.md-pane{grid-template-columns:1fr}.md-input{border-right:none;border-bottom:1px solid var(--bd)}.col-item-acts{flex-direction:row}}
 </style>
 </head>
 <body>
-
 <nav class="nav">
   <div class="logo">くすり成分<em>ガイド</em> <span style="font-size:11px;color:#475569;font-weight:400">管理画面</span></div>
   <a href="/">← サイトに戻る</a>
 </nav>
 
-<!-- ログイン -->
 <div id="login-screen">
   <div class="login-box">
     <h2>🔐 管理者ログイン</h2>
-    <div class="form-group">
+    <div class="fg">
       <label>パスワード</label>
       <input type="password" id="inp-pw" placeholder="パスワードを入力" autocomplete="current-password">
       <div style="font-size:11px;color:var(--txl);margin-top:4px">初回は任意のパスワードを設定できます（4文字以上）</div>
@@ -105,16 +111,13 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
   </div>
 </div>
 
-<!-- メイン -->
 <div id="main-screen">
-  <div class="page-title">📝 コラム管理</div>
+  <div class="pg-title">📝 コラム管理</div>
   <div id="status-msg" class="status"></div>
-
   <div class="notice">
     <strong>⚠ このブラウザのみに保存されます</strong>
-    コラムデータはLocalStorageに保存されます。サイトへの反映は「📤 エクスポート」で出力したコードを <code>scraper/build.py</code> に貼り付けてGitHubにpushしてください。
+    サイトへの反映は「📤 エクスポート」で出力したコードを <code>scraper/build.py</code> のCOLUMNS部分に貼り付けてGitHubにpushしてください。
   </div>
-
   <div class="tabs">
     <button type="button" class="tab on" onclick="switchTab('cols',this)">📖 コラム一覧</button>
     <button type="button" class="tab" onclick="switchTab('add',this)">➕ 新規追加</button>
@@ -125,7 +128,7 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
   <!-- コラム一覧 -->
   <div class="tab-pane on" id="tab-cols">
     <div class="col-list" id="col-list"></div>
-    <button type="button" class="btn-sec" onclick="loadBuiltinCols()">📥 既存コラムを読み込む</button>
+    <button type="button" class="btn-sec" onclick="loadBuiltin()">📥 既存コラムを読み込む</button>
   </div>
 
   <!-- 新規追加 / 編集 -->
@@ -134,31 +137,27 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
       <h3 id="form-title">➕ 新規コラム追加</h3>
 
       <!-- サムネイル -->
-      <div class="form-group">
-        <label>🖼️ サムネイル画像 <span style="font-size:11px;color:var(--txl)">推奨: 600×340px以上 / JPG・PNG・WebP / 500KB以下</span></label>
-        <div id="thumb-drop" class="thumb-upload-area" ondragover="onDrag(event,true)" ondragleave="onDrag(event,false)" ondrop="onDrop(event)">
+      <div class="fg">
+        <label>🖼️ サムネイル画像 <span style="font-size:11px;color:var(--txl)">推奨: 600×340px / JPG・PNG・WebP / 500KB以下</span></label>
+        <div id="thumb-drop" class="thumb-drop" ondragover="onDrag(event,true)" ondragleave="onDrag(event,false)" ondrop="onDrop(event)">
           <input type="file" id="thumb-file" accept="image/*" onchange="onFileSelect(event)">
-          <div id="thumb-placeholder">
-            <div class="upload-ico">📷</div>
-            <p>クリックまたはドラッグ＆ドロップ</p>
-            <small>JPG / PNG / WebP（500KB以下）</small>
+          <div id="thumb-ph"><div class="d-ico">📷</div><p>クリックまたはドラッグ＆ドロップ</p><small>JPG / PNG / WebP（500KB以下）</small></div>
+          <div id="thumb-pw" class="thumb-pw" style="display:none">
+            <img id="thumb-img" src="" alt="">
+            <button type="button" class="thumb-rm" onclick="rmThumb(event)">×</button>
           </div>
-          <div id="thumb-preview-wrap" class="thumb-preview-wrap" style="display:none">
-            <img id="thumb-preview" src="" alt="サムネイルプレビュー">
-            <button type="button" class="thumb-remove" onclick="removeThumb(event)" title="削除">×</button>
-          </div>
-          <div id="thumb-size" class="thumb-size"></div>
+          <div id="thumb-sz" style="font-size:11px;color:var(--txl);margin-top:4px"></div>
         </div>
         <div id="thumb-err" style="color:var(--red);font-size:12px;margin-top:4px;display:none"></div>
       </div>
 
       <div class="form-row">
-        <div class="form-group">
+        <div class="fg">
           <label>タイトル *</label>
-          <input type="text" id="f-title" placeholder="記事タイトルを入力">
-          <div class="char-count"><span id="title-count">0</span>/100文字</div>
+          <input type="text" id="f-title" placeholder="記事タイトルを入力" oninput="document.getElementById('cnt-title').textContent=this.value.length">
+          <div class="cc"><span id="cnt-title">0</span>/100文字</div>
         </div>
-        <div class="form-group">
+        <div class="fg">
           <label>タグ *</label>
           <select id="f-tag">
             <option>基礎知識</option><option>安全情報</option><option>花粉症</option>
@@ -168,24 +167,61 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="fg">
         <label>サマリー（一覧に表示）*</label>
-        <textarea id="f-summary" rows="3" placeholder="この記事の概要を2〜3文で書いてください"></textarea>
-        <div class="char-count"><span id="summary-count">0</span>/200文字</div>
+        <textarea id="f-summary" rows="3" placeholder="この記事の概要を2〜3文で書いてください" oninput="document.getElementById('cnt-summary').textContent=this.value.length"></textarea>
+        <div class="cc"><span id="cnt-summary">0</span>/200文字</div>
       </div>
 
-      <div class="form-group">
-        <label>本文 * <span style="font-size:11px;color:var(--txl)">**太字** で強調。空行で段落区切り。</span></label>
-        <textarea id="f-body" rows="14" placeholder="本文を書いてください。&#10;&#10;**見出し**&#10;&#10;内容の段落..."></textarea>
-        <div class="char-count"><span id="body-count">0</span>文字</div>
+      <!-- Markdownエディタ -->
+      <div class="fg">
+        <label>本文（Markdown対応）*</label>
+        <div class="md-editor">
+          <!-- ツールバー -->
+          <div class="md-toolbar">
+            <button type="button" class="md-btn" onclick="ins('## ','')">H2</button>
+            <button type="button" class="md-btn" onclick="ins('### ','')">H3</button>
+            <span class="md-btn sep">|</span>
+            <button type="button" class="md-btn" onclick="ins('**','**')"><b>太字</b></button>
+            <button type="button" class="md-btn" onclick="ins('*','*')"><i>斜体</i></button>
+            <button type="button" class="md-btn" onclick="ins('`','`')">コード</button>
+            <button type="button" class="md-btn" onclick="ins('==','==')">マーカー</button>
+            <span class="md-btn sep">|</span>
+            <button type="button" class="md-btn" onclick="ins('> ','')">引用</button>
+            <button type="button" class="md-btn" onclick="ins('- ','')">箇条書き</button>
+            <button type="button" class="md-btn" onclick="ins('1. ','')">番号リスト</button>
+            <span class="md-btn sep">|</span>
+            <button type="button" class="md-btn" onclick="ins('::: tip\n','\n:::')" style="color:#2fa18d">💡ヒント</button>
+            <button type="button" class="md-btn" onclick="ins('::: warn\n','\n:::')" style="color:#f59e0b">⚠警告</button>
+            <button type="button" class="md-btn" onclick="ins('::: danger\n','\n:::')" style="color:#b91c1c">🚫危険</button>
+            <button type="button" class="md-btn" onclick="ins('::: info\n','\n:::')">ℹ情報</button>
+            <span class="md-btn sep">|</span>
+            <button type="button" class="md-btn" onclick="ins('[!緑] ','')">🟢緑</button>
+            <button type="button" class="md-btn" onclick="ins('[!赤] ','')">🔴赤</button>
+            <button type="button" class="md-btn" onclick="ins('[!青] ','')">🔵青</button>
+            <button type="button" class="md-btn" onclick="ins('[!黄] ','')">🟡黄</button>
+            <span class="md-btn sep">|</span>
+            <button type="button" class="md-btn" onclick="insTable()">表</button>
+            <button type="button" class="md-btn" onclick="ins('---','')">区切り線</button>
+          </div>
+          <!-- 編集 / プレビュー -->
+          <div class="md-pane">
+            <textarea class="md-input" id="f-body" placeholder="## 見出し&#10;&#10;本文を書いてください。&#10;&#10;**太字** や *斜体* も使えます。&#10;&#10;> 引用文はこのように&#10;&#10;- 箇条書き1&#10;- 箇条書き2&#10;&#10;---&#10;&#10;出典：消費者庁「...」" oninput="updatePreview();document.getElementById('cnt-body').textContent=this.value.length"></textarea>
+            <div class="md-preview" id="md-preview"><span style="color:var(--txl);font-size:12px">← 左に入力するとここにプレビューが表示されます</span></div>
+          </div>
+          <div class="md-footer">
+            <span id="cnt-body">0</span>文字
+            <span>Markdown記法対応</span>
+          </div>
+        </div>
+        <div class="md-hint">
+          <b>H2/H3</b> → <code>## 見出し</code>　<b>太字</b> → <code>**テキスト**</code>　<b>マーカー</b> → <code>==テキスト==</code>　<b>引用</b> → <code>&gt; テキスト</code>　<b>箇条書き</b> → <code>- テキスト</code><br>
+          <b>💡ヒント吹き出し</b> → <code>::: tip タイトル（任意）</code>～<code>:::</code>　<b>⚠警告</b> → <code>::: warn</code>　<b>🚫危険</b> → <code>::: danger</code>　<b>ℹ情報</b> → <code>::: info</code><br>
+          <b>色バッジ</b> → <code>[!緑] テキスト</code>　<b>表</b> → ツールバーの「表」ボタン
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>プレビュー</label>
-        <div class="preview" id="preview-area">本文を入力するとプレビューが表示されます</div>
-      </div>
-
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
         <button type="button" class="btn" onclick="saveCol()">💾 保存</button>
         <button type="button" class="btn-sec" onclick="clearForm()">クリア</button>
       </div>
@@ -196,10 +232,8 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
   <div class="tab-pane" id="tab-export">
     <div class="form-card">
       <h3>📤 build.py用エクスポート</h3>
-      <p style="font-size:13px;color:var(--txm);margin-bottom:16px">
-        以下のコードを <code>scraper/build.py</code> の <code>COLUMNS = [</code> から <code>]</code> までの部分と置き換えてください。
-      </p>
-      <div class="form-group">
+      <p style="font-size:13px;color:var(--txm);margin-bottom:16px"><code>scraper/build.py</code> の <code>COLUMNS = [</code> から <code>]</code> までの部分をこのコードで置き換えてください。</p>
+      <div class="fg">
         <label>Pythonコード</label>
         <textarea id="export-code" rows="20" style="font-family:monospace;font-size:11px;background:#1e293b;color:#e2e8f0;border-color:#334155" readonly></textarea>
       </div>
@@ -207,7 +241,6 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
         <button type="button" class="btn" onclick="genExport()">🔄 生成</button>
         <button type="button" class="btn-sec" onclick="copyExport()">📋 コピー</button>
       </div>
-      <p style="font-size:11px;color:var(--txl);margin-top:12px">※サムネイル画像はBase64データとして埋め込まれます。画像が大きいとbuild.pyが肥大化するため500KB以下を推奨。</p>
     </div>
   </div>
 
@@ -227,32 +260,23 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
 </div>
 
 <script>
-var COLS=[];
-var EDIT_ID=null;
-var CUR_THUMB=null; // Base64 or null
-var PW_KEY="admin_pw_hash";
-var COLS_KEY="admin_cols";
+var COLS=[], EDIT_ID=null, CUR_THUMB=null;
+var PW_KEY="admin_pw_hash", COLS_KEY="admin_cols";
 
 /* ── ハッシュ ── */
-function simpleHash(s){var h=0;for(var i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h=h&h;}return h.toString(36);}
+function h(s){var v=0;for(var i=0;i<s.length;i++){v=(v<<5)-v+s.charCodeAt(i);v=v&v;}return v.toString(36);}
 
 /* ── ログイン ── */
 function doLogin(){
   var pw=document.getElementById("inp-pw").value;
-  if(!pw){showLoginErr("パスワードを入力してください");return;}
-  var stored=localStorage.getItem(PW_KEY);
-  if(!stored){
-    if(pw.length<4){showLoginErr("パスワードは4文字以上で設定してください");return;}
-    localStorage.setItem(PW_KEY,simpleHash(pw));
-    enterAdmin();
-  }else{
-    if(simpleHash(pw)===stored)enterAdmin();
-    else showLoginErr("パスワードが違います");
-  }
+  if(!pw){err("パスワードを入力してください");return;}
+  var st=localStorage.getItem(PW_KEY);
+  if(!st){if(pw.length<4){err("4文字以上で設定してください");return;}localStorage.setItem(PW_KEY,h(pw));enter();}
+  else{if(h(pw)===st)enter();else err("パスワードが違います");}
 }
-function showLoginErr(msg){var el=document.getElementById("login-err");el.textContent=msg;el.style.display="block";}
+function err(m){var e=document.getElementById("login-err");e.textContent=m;e.style.display="block";}
 document.getElementById("inp-pw").addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
-function enterAdmin(){
+function enter(){
   sessionStorage.setItem("admin_authed","1");
   document.getElementById("login-screen").style.display="none";
   document.getElementById("main-screen").style.display="block";
@@ -261,63 +285,53 @@ function enterAdmin(){
 function doLogout(){sessionStorage.removeItem("admin_authed");location.reload();}
 
 /* ── データ ── */
-function loadCols(){
-  var raw=localStorage.getItem(COLS_KEY);
-  COLS=raw?JSON.parse(raw):[];
-  renderColList();
-  showStatus("コラム"+COLS.length+"件","ok");
-}
+function loadCols(){var r=localStorage.getItem(COLS_KEY);COLS=r?JSON.parse(r):[];renderList();showStatus("コラム"+COLS.length+"件","ok");}
 function saveCols(){localStorage.setItem(COLS_KEY,JSON.stringify(COLS));}
 
-var BUILTIN_COLS=[
+var BUILTIN=[
   {id:"c1",title:"第1類・第2類・第3類の違いとは？OTC医薬品のリスク区分を解説",date:"2026-03-01",tag:"基礎知識",thumb:null,
    summary:"薬局で見かける「第1類」「第2類」などの表示。これはリスクの高さを示す分類です。",
-   body:"OTC医薬品は副作用リスクに応じて4段階に分類されています。\n\n要指導医薬品はダイレクトOTCやスイッチ直後の成分が含まれ、薬剤師による対面販売が義務付けられネット購入は不可です。ミノキシジル5%（リアップX5等）が代表例です。\n\n第1類医薬品は副作用・相互作用のリスクが高い成分を含みます。薬剤師からの情報提供が義務付けられています。ファモチジン（ガスター10）・ロキソプロフェン（ロキソニンS）等が該当します。\n\n第2類医薬品は比較的リスクの高い成分を含む薬で、登録販売者でも販売可能。市販薬の大半がこのカテゴリです。\n\n第3類医薬品はビタミン剤・整腸薬など副作用リスクが比較的低い薬で、コンビニでも販売可能なものも含まれます。"},
+   body:"## リスク区分とは\n\nOTC医薬品は副作用リスクに応じて4段階に分類されています。\n\n### 要指導医薬品\n\nダイレクトOTCやスイッチ直後の成分が含まれ、薬剤師による**対面販売が義務付け**られネット購入は不可です。ミノキシジル5%（リアップX5等）が代表例です。\n\n### 第1類医薬品\n\n副作用・相互作用のリスクが高い成分を含みます。薬剤師からの情報提供が義務付けられています。ファモチジン（ガスター10）・ロキソプロフェン（ロキソニンS）等が該当します。\n\n### 第2類医薬品\n\n比較的リスクの高い成分を含む薬で、登録販売者でも販売可能。市販薬の大半がこのカテゴリです。\n\n### 第3類医薬品\n\nビタミン剤・整腸薬など副作用リスクが比較的低い薬で、コンビニでも販売可能なものも含まれます。"},
   {id:"c2",title:"「ア尿素」が含まれる市販薬に注意。海外で規制が進む依存性成分",date:"2026-03-10",tag:"安全情報",thumb:null,
    summary:"イブA錠などに含まれる「アリルイソプロピルアセチル尿素（ア尿素）」。2023年にオーストラリアで全面規制、2025年には韓国で麻薬類に指定されました。",
-   body:"アリルイソプロピルアセチル尿素（ア尿素）は解熱鎮痛薬に「鎮静補助成分」として配合されている成分です。\n\n規制の動向として、2023年にオーストラリアで販売全面禁止、2025年に韓国で麻薬類に指定されました。日本では現時点では規制なく販売継続中です。\n\n含有する主な市販薬はイブA錠、イブクイック頭痛薬DX等です。服用後に必ず眠気が出るため運転・機械操作禁忌です。長期・頻回使用で耐性・依存が形成されます。\n\n代替選択肢としてはアセトアミノフェン単体（タイレノールA等）やア尿素なしのイブプロフェン製品を選ぶことをお勧めします。"},
+   body:"## ア尿素とは\n\nアリルイソプロピルアセチル尿素（ア尿素）は解熱鎮痛薬に「鎮静補助成分」として配合されている成分です。\n\n## 規制の動向\n\n- 2023年：オーストラリアで販売**全面禁止**\n- 2025年：韓国で**麻薬類に指定**\n- 日本：現時点では規制なく販売継続中\n\n> ⚠ 日本では未規制ですが、服用後に必ず眠気が出るため運転・機械操作は禁忌です。\n\n## 含有する主な市販薬\n\n- イブA錠\n- イブクイック頭痛薬DX\n\n## 代替選択肢\n\nアセトアミノフェン単体（タイレノールA等）やア尿素なしのイブプロフェン製品を選ぶことをお勧めします。\n\n---\n\n出典：消費者庁「ア尿素含有医薬品に関する情報」"},
   {id:"c3",title:"花粉症の市販薬、眠くなる・ならないの違いは？成分で選ぶ方法",date:"2026-03-15",tag:"花粉症",thumb:null,
    summary:"眠くなる花粉症薬と眠くならない花粉症薬の違いは抗ヒスタミン薬の世代にあります。",
-   body:"花粉症薬の眠気の出やすさは抗ヒスタミン薬の世代によって大きく異なります。\n\n第一世代（眠気が強い）はクロルフェニラミン、ジフェンヒドラミン等です。血液脳関門を通過しやすく強い眠気が出ます。就寝前の使用に向いています。\n\n第二世代（眠気が少ない）はフェキソフェナジン（アレグラFX）、ロラタジン（クラリチンEX）等です。末梢のアレルギー反応を選択的に抑えるため眠気が出にくいです。\n\n仕事中や運転がある場合は第二世代を選びましょう。花粉飛散シーズン前から予防的に服用を開始すると症状が大幅に軽減されます。"},
+   body:"## 第一世代（眠気が強い）\n\nクロルフェニラミン、ジフェンヒドラミン等です。血液脳関門を通過しやすく**強い眠気**が出ます。\n\n> 就寝前の使用に向いています。乗り物の運転は禁忌です。\n\n## 第二世代（眠気が少ない）\n\nフェキソフェナジン（アレグラFX）、ロラタジン（クラリチンEX）等です。末梢のアレルギー反応を選択的に抑えるため眠気が出にくいです。\n\n## 選び方のまとめ\n\n- **仕事中・運転あり** → 第二世代を選ぶ\n- **夜間・症状が強い** → 第一世代も選択肢\n- **予防的服用** → 花粉飛散前2週間前から開始\n\n---\n\n出典：政府広報オンライン「花粉症の医薬品」"},
   {id:"c4",title:"コデイン系咳止め薬の12歳未満禁忌。理由と代替品の選び方",date:"2026-03-20",tag:"安全情報",thumb:null,
    summary:"2019年以降、コデイン・ジヒドロコデイン含有薬の12歳未満への使用が禁忌となりました。",
-   body:"コデインは体内でモルヒネに変換されます。子どもでは代謝の個人差が大きく、呼吸抑制という重篤な副作用が報告されたため2019年に12歳未満への使用が禁忌となりました。\n\nコデイン系が含まれる主な市販薬はブロン錠エース、パブロンゴールドA、新コンタック咳止めダブル持続性等です。\n\n子どもの咳に使える代替品としてはカルボシステイン（去痰薬）があります。副作用が少なく安全です。また龍角散（生薬系）はのどや咳に穏やかに作用します。\n\n大人でもコデイン系は依存性があるため必要最小限の期間・量での使用が推奨されます。"},
+   body:"## なぜ禁忌になったのか\n\nコデインは体内でモルヒネに変換されます。子どもでは代謝の個人差が大きく、**呼吸抑制**という重篤な副作用が報告されたため2019年に12歳未満への使用が禁忌となりました。\n\n> ⚠ 2019年以降、12歳未満への使用は法的に禁止されています。\n\n## 主な含有薬\n\n- ブロン錠エース\n- パブロンゴールドA\n- 新コンタック咳止めダブル持続性\n\n## 代替品\n\n### カルボシステイン（去痰薬）\n副作用が少なく安全。痰を柔らかくして排出を促進します。\n\n### 龍角散（生薬系）\nのどや咳に穏やかに作用します。\n\n---\n\n出典：厚生労働省「コデイン類含有医薬品の使用上の注意改訂」"},
+  {id:"c5",title:"その「効果絶大」は本当？景品表示法から見る市販薬広告の読み方",date:"2026-04-04",tag:"安全情報",thumb:null,
+   summary:"「即効」「医師推薦」「売上No.1」——SNSや検索広告で見かける表現は景品表示法で規制されています。消費者庁の情報をもとに、広告の正しい読み方を解説します。",
+   body:"## 景品表示法とは何か\n\n景品表示法（景表法）の正式名称は「**不当景品類及び不当表示防止法**」です。商品の品質・内容・価格について、実際よりも著しく優良または有利であると消費者に誤認させる表示を禁止し、消費者が**自主的・合理的に商品を選択できる環境を守る**ことを目的としています（消費者庁管轄）。\n\n## 禁止されている「優良誤認表示」\n\n景表法第5条第1号が禁じる「優良誤認表示」とは、商品の品質・効能などについて実際のものよりも著しく優良であると消費者に**誤認させる表示**です。\n\n### 合理的な根拠のない効果の表現\n\n科学的な根拠なしに「劇的に改善」「飲むだけで解決」などと表現することは優良誤認表示にあたる可能性があります。\n\n### 体験談・口コミを使った誇張表現\n\n> 個人の体験談が真実であっても、一般的なデータの裏付けがなければ問題となります。\n\n消費者庁のガイドラインでは「体験談はそれが真実なだけでは足りず、一般的なデータの裏付けが必要」とされています。\n\n### No.1・医師推薦などの根拠不明な表現\n\n「医師の9割が推薦」「売上No.1」などの表示は、調査条件・母集団・実施時期が**明確でなければ有利誤認表示**（景表法第5条第2号）にあたるおそれがあります。\n\n## 2024年の景表法改正で罰則が強化\n\n2024年10月施行の改正景表法では、故意に優良誤認表示をした場合、措置命令を待たずに**100万円以下の罰金**が科されるようになりました（直罰制度）。\n\n## 消費者としての見方\n\n- 効果の根拠として具体的な試験・研究が示されているか\n- 「個人の感想です」などの注釈が目立たない場所に書かれていないか\n- 「期間限定」など割引表示に期間・条件の明示があるか\n\n> おかしいと感じた広告は消費者庁の**消費者ホットライン（局番なし188）**に相談できます。\n\n---\n\n出典：消費者庁「景品表示法」、消費者庁「不当景品類及び不当表示防止法（令和5年改正）」"},
 ];
 
-function loadBuiltinCols(){
-  if(COLS.length>0&&!confirm("既存データに追加します（重複除外）。よろしいですか？"))return;
+function loadBuiltin(){
+  if(COLS.length>0&&!confirm("既存データに追加しますか（重複除外）？"))return;
   var added=0;
-  BUILTIN_COLS.forEach(function(bc){if(!COLS.some(function(c){return c.id===bc.id;})){COLS.push(bc);added++;}});
-  saveCols();renderColList();
-  showStatus(added+"件の既存コラムを読み込みました","ok");
+  BUILTIN.forEach(function(b){if(!COLS.some(function(c){return c.id===b.id;})){COLS.push(b);added++;}});
+  saveCols();renderList();showStatus(added+"件の既存コラムを読み込みました","ok");
 }
 
 /* ── 一覧 ── */
-function escHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-
-function renderColList(){
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function renderList(){
   var el=document.getElementById("col-list");
-  if(!COLS.length){
-    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--txl)">コラムがありません。「➕ 新規追加」から作成するか「📥 既存コラムを読み込む」を押してください。</div>';
-    return;
-  }
-  el.innerHTML=COLS.map(function(col,idx){
-    var thumbHtml=col.thumb
-      ?'<img src="'+col.thumb+'" alt="'+escHtml(col.title)+'">'
-      :'<div class="col-thumb-none">🖼️</div>';
+  if(!COLS.length){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--txl)">コラムがありません。「➕ 新規追加」から作成するか「📥 既存コラムを読み込む」を押してください。</div>';return;}
+  el.innerHTML=COLS.map(function(col,i){
+    var th=col.thumb?'<img src="'+col.thumb+'" alt="">':'<div class="col-thumb-none">🖼️</div>';
     return '<div class="col-item">'
-      +'<div class="col-thumb">'+thumbHtml+'</div>'
+      +'<div class="col-thumb">'+th+'</div>'
       +'<div class="col-item-body">'
       +'<div class="col-item-info">'
-      +'<div class="col-item-title">'+escHtml(col.title)+'</div>'
-      +'<div class="col-item-summary">'+escHtml(col.summary)+'</div>'
+      +'<div class="col-item-title">'+esc(col.title)+'</div>'
+      +'<div class="col-item-summary">'+esc(col.summary)+'</div>'
       +'<div class="col-item-meta"><span class="col-tag">'+col.tag+'</span>'+col.date+'</div>'
       +'</div>'
-      +'<div class="col-item-actions">'
-      +'<button type="button" class="btn-edit" onclick="editCol('+idx+')">✏️ 編集</button>'
-      +'<button type="button" class="btn-del" onclick="deleteCol('+idx+')">削除</button>'
-      +'</div>'
-      +'</div></div>';
+      +'<div class="col-item-acts">'
+      +'<button type="button" class="btn-edit" onclick="editCol('+i+')">✏️ 編集</button>'
+      +'<button type="button" class="btn-del" onclick="delCol('+i+')">削除</button>'
+      +'</div></div></div>';
   }).join("");
 }
 
@@ -325,212 +339,241 @@ function renderColList(){
 function switchTab(id,btn){
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
-  btn.classList.add("on");
-  document.getElementById("tab-"+id).classList.add("on");
+  btn.classList.add("on");document.getElementById("tab-"+id).classList.add("on");
   if(id==="export")genExport();
 }
 
 /* ── サムネイル ── */
-function onDrag(e,over){e.preventDefault();document.getElementById("thumb-drop").classList.toggle("drag",over);}
+function onDrag(e,ov){e.preventDefault();document.getElementById("thumb-drop").classList.toggle("drag",ov);}
+function onDrop(e){e.preventDefault();document.getElementById("thumb-drop").classList.remove("drag");var f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))procThumb(f);}
+function onFileSelect(e){var f=e.target.files[0];if(f)procThumb(f);}
+function procThumb(file){
+  var ee=document.getElementById("thumb-err");ee.style.display="none";
+  if(file.size>600*1024){ee.textContent="ファイルサイズが大きすぎます（"+Math.round(file.size/1024)+"KB）。500KB以下にしてください。";ee.style.display="block";return;}
+  var r=new FileReader();r.onload=function(ev){
+    var img=new Image();img.onload=function(){
+      var c=document.createElement("canvas");
+      var mw=640,mh=360,w=img.width,h=img.height;
+      if(w>mw||h>mh){var ratio=Math.min(mw/w,mh/h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
+      c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);
+      var b64=c.toDataURL("image/jpeg",0.82);CUR_THUMB=b64;
+      document.getElementById("thumb-ph").style.display="none";
+      document.getElementById("thumb-pw").style.display="inline-block";
+      document.getElementById("thumb-img").src=b64;
+      document.getElementById("thumb-sz").textContent="約"+Math.round(b64.length*0.75/1024)+"KB";
+    };img.src=ev.target.result;};r.readAsDataURL(file);
+}
+function rmThumb(e){e.stopPropagation();CUR_THUMB=null;
+  document.getElementById("thumb-ph").style.display="block";
+  document.getElementById("thumb-pw").style.display="none";
+  document.getElementById("thumb-img").src="";
+  document.getElementById("thumb-sz").textContent="";
+  document.getElementById("thumb-file").value="";}
 
-function onDrop(e){
-  e.preventDefault();document.getElementById("thumb-drop").classList.remove("drag");
-  var file=e.dataTransfer.files[0];
-  if(file&&file.type.startsWith("image/"))processThumb(file);
+/* ── Markdownエディタ ── */
+function updatePreview(){
+  var src=document.getElementById("f-body").value;
+  document.getElementById("md-preview").innerHTML=mdToHtml(src)||'<span style="color:var(--txl);font-size:12px">← 左に入力するとここにプレビューが表示されます</span>';
 }
 
-function onFileSelect(e){
-  var file=e.target.files[0];
-  if(file)processThumb(file);
-}
-
-function processThumb(file){
-  var errEl=document.getElementById("thumb-err");errEl.style.display="none";
-  if(file.size>600*1024){
-    errEl.textContent="ファイルサイズが大きすぎます（"+Math.round(file.size/1024)+"KB）。500KB以下にしてください。";
-    errEl.style.display="block";return;
+function mdToHtml(src){
+  var lines=src.split("\n"),html="",inUl=false,inOl=false,inBq=false,inTbl=false,tblRows=[];
+  function close(){
+    if(inUl){html+="</ul>";inUl=false;}
+    if(inOl){html+="</ol>";inOl=false;}
+    if(inBq){html+="</blockquote>";inBq=false;}
+    if(inTbl){html+=flushTable();inTbl=false;tblRows=[];}
   }
-  // Canvasでリサイズ（最大幅640px）
-  var reader=new FileReader();
-  reader.onload=function(ev){
-    var img=new Image();
-    img.onload=function(){
-      var canvas=document.createElement("canvas");
-      var maxW=640,maxH=360;
-      var w=img.width,h=img.height;
-      if(w>maxW||h>maxH){
-        var ratio=Math.min(maxW/w,maxH/h);
-        w=Math.round(w*ratio);h=Math.round(h*ratio);
-      }
-      canvas.width=w;canvas.height=h;
-      canvas.getContext("2d").drawImage(img,0,0,w,h);
-      var b64=canvas.toDataURL("image/jpeg",0.82);
-      CUR_THUMB=b64;
-      showThumbPreview(b64,Math.round(b64.length*0.75/1024));
-    };
-    img.src=ev.target.result;
-  };
-  reader.readAsDataURL(file);
+  function flushTable(){
+    if(!tblRows.length)return"";
+    var rows=tblRows.filter(function(r){return!/^[\|\s\-:]+$/.test(r);});
+    var t='<div style="overflow-x:auto;margin:12px 0"><table style="width:100%;border-collapse:collapse;font-size:13px">';
+    rows.forEach(function(row,ri){
+      var cells=row.replace(/^\||\|$/g,"").split("|");
+      var tag=ri===0?"th":"td";
+      t+="<tr>"+cells.map(function(c){
+        return "<"+tag+' style="padding:7px 10px;border:1px solid var(--bd);'+(ri===0?"background:var(--sl);font-weight:600":"background:var(--wh)")+'">'
+          +inl(c.trim())+"</"+tag+">";}).join("")+"</tr>";
+    });
+    return t+"</table></div>";
+  }
+  function inl(s){
+    return s
+      .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+      .replace(/\*([^*\n]+?)\*/g,"<em>$1</em>")
+      .replace(/`([^`\n]+?)`/g,'<code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px;font-family:monospace">$1</code>');
+  }
+  for(var i=0;i<lines.length;i++){
+    var raw=lines[i],l=inl(raw);
+    // 吹き出し: ::: tip / ::: warn / ::: danger
+    var callout=/^::: ?(tip|warn|danger|info)\s*(.*)$/.exec(raw);
+    if(callout){
+      close();
+      var ctype=callout[1],ctitle=callout[2]||"";
+      var cmap={tip:{bg:"var(--tl)",bd:"var(--teal)",color:"var(--teal2)",ico:"💡"},warn:{bg:"var(--amber)",bd:"var(--amberb)",color:"#713f12",ico:"⚠️"},danger:{bg:"var(--rb)",bd:"var(--red)",color:"var(--red)",ico:"🚫"},info:{bg:"#eff6ff",bd:"#2563eb",color:"#1d4ed8",ico:"ℹ️"}};
+      var cs=cmap[ctype]||cmap.info;
+      var inner=[];
+      i++;
+      while(i<lines.length&&lines[i].trim()!==":::"){inner.push(lines[i]);i++;}
+      html+='<div style="border-left:4px solid '+cs.bd+';background:'+cs.bg+';border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0">'
+        +'<div style="font-weight:700;color:'+cs.color+';margin-bottom:4px">'+cs.ico+(ctitle?" "+ctitle:"")+'</div>'
+        +'<div style="color:'+cs.color+';font-size:13px;line-height:1.8">'+inner.map(function(ln){return inl(ln);}).join("<br>")+'</div>'
+        +'</div>';
+      continue;
+    }
+    // マーカー背景: ==テキスト==
+    l=l.replace(/==(.+?)==/g,'<mark style="background:#fef08a;padding:1px 3px;border-radius:2px">$1</mark>');
+    // 色付きバッジ: [!緑] [!赤] [!青] [!黄]
+    l=l.replace(/\[!(緑|赤|青|黄)\]\s*(.+)/g,function(_,color,text){
+      var cs={緑:{bg:"#f0fdf4",bd:"#bbf7d0",tx:"#166534"},赤:{bg:"var(--rb)",bd:"#fecaca",tx:"var(--red)"},青:{bg:"#eff6ff",bd:"#bfdbfe",tx:"#1d4ed8"},黄:{bg:"var(--amber)",bd:"#fde68a",tx:"#713f12"}};
+      var c=cs[color]||cs.青;
+      return'<span style="display:inline-block;background:'+c.bg+';border:1px solid '+c.bd+';color:'+c.tx+';border-radius:4px;padding:1px 8px;font-size:12px;font-weight:600">'+inl(text)+'</span>';
+    });
+    // テーブル
+    if(/^\|.+\|/.test(raw)){
+      if(!inTbl){close();inTbl=true;tblRows=[];}
+      tblRows.push(raw);continue;
+    }
+    if(inTbl&&!/^\|.+\|/.test(raw)){html+=flushTable();inTbl=false;tblRows=[];}
+    // H2/H3
+    var h3=/^### (.+)/.exec(raw),h2=/^## (.+)/.exec(raw);
+    if(h3){close();html+='<h3 style="font-size:15px;font-weight:700;color:var(--navy);margin:16px 0 5px">'+inl(h3[1])+'</h3>';continue;}
+    if(h2){close();html+='<h2 style="font-size:17px;font-weight:700;color:var(--navy);margin:22px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--tl)">'+inl(h2[1])+'</h2>';continue;}
+    // 区切り線
+    if(/^---+$/.test(raw)){close();html+='<hr style="border:none;border-top:1px solid var(--bd);margin:16px 0">';continue;}
+    // 引用
+    var bq=/^> (.*)/.exec(raw);
+    if(bq){if(!inBq){close();html+='<blockquote style="border-left:4px solid var(--teal);padding:8px 16px;background:var(--tl);border-radius:0 6px 6px 0;margin:10px 0;color:var(--teal2)">';inBq=true;}html+='<p style="margin:3px 0">'+inl(bq[1])+'</p>';continue;}
+    if(inBq&&!bq){html+="</blockquote>";inBq=false;}
+    // リスト
+    var ul=/^[-*] (.*)/.exec(raw),ol=/^\d+\. (.*)/.exec(raw);
+    if(ul){if(!inUl){if(inOl){html+="</ol>";inOl=false;}html+='<ul style="padding-left:20px;margin:8px 0">';inUl=true;}html+='<li style="margin:3px 0">'+inl(ul[1])+'</li>';continue;}
+    if(inUl&&!ul){html+="</ul>";inUl=false;}
+    if(ol){if(!inOl){if(inUl){html+="</ul>";inUl=false;}html+='<ol style="padding-left:20px;margin:8px 0">';inOl=true;}html+='<li style="margin:3px 0">'+inl(ol[1])+'</li>';continue;}
+    if(inOl&&!ol){html+="</ol>";inOl=false;}
+    // 空行
+    if(!raw.trim()){close();continue;}
+    html+='<p style="margin:6px 0">'+l+'</p>';
+  }
+  close();
+  return html;
 }
 
-function showThumbPreview(b64,sizeKb){
-  document.getElementById("thumb-placeholder").style.display="none";
-  var pw=document.getElementById("thumb-preview-wrap");
-  pw.style.display="inline-block";
-  document.getElementById("thumb-preview").src=b64;
-  document.getElementById("thumb-size").textContent="サイズ: 約"+sizeKb+"KB（Base64後）";
+
+/* ── ツールバーボタン ── */
+function insTable(){
+  var ta=document.getElementById("f-body");
+  var tpl="| 列1 | 列2 | 列3 |\n|---|---|---|\n| データ | データ | データ |";
+  var s=ta.selectionStart,v=ta.value;
+  ta.value=v.substring(0,s)+"\n"+tpl+"\n"+v.substring(s);
+  ta.focus();updatePreview();
+  document.getElementById("cnt-body").textContent=ta.value.length;
 }
 
-function removeThumb(e){
-  e.stopPropagation();CUR_THUMB=null;
-  document.getElementById("thumb-placeholder").style.display="block";
-  document.getElementById("thumb-preview-wrap").style.display="none";
-  document.getElementById("thumb-preview").src="";
-  document.getElementById("thumb-size").textContent="";
-  document.getElementById("thumb-file").value="";
+function ins(pre,suf){
+  var ta=document.getElementById("f-body");
+  var s=ta.selectionStart,e=ta.selectionEnd,v=ta.value;
+  var sel=v.substring(s,e);
+  var rep=pre+sel+suf;
+  ta.value=v.substring(0,s)+rep+v.substring(e);
+  ta.selectionStart=s+pre.length;
+  ta.selectionEnd=s+pre.length+sel.length;
+  ta.focus();updatePreview();
+  document.getElementById("cnt-body").textContent=ta.value.length;
 }
 
 /* ── フォーム ── */
-["title","summary","body"].forEach(function(k){
-  document.getElementById("f-"+k).addEventListener("input",function(){
-    document.getElementById(k+"-count").textContent=this.value.length;
-    if(k==="body")updatePreview();
-  });
-});
-
-function updatePreview(){
-  var body=document.getElementById("f-body").value;
-  var html=body.split("\n").map(function(p){
-    if(!p.trim())return"";
-    return"<p>"+p.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")+"</p>";
-  }).join("");
-  document.getElementById("preview-area").innerHTML=html||"本文を入力するとプレビューが表示されます";
-}
-
 function clearForm(){
   EDIT_ID=null;CUR_THUMB=null;
   document.getElementById("form-title").textContent="➕ 新規コラム追加";
-  ["title","summary","body"].forEach(function(k){
-    document.getElementById("f-"+k).value="";
-    document.getElementById(k+"-count").textContent="0";
-  });
+  document.getElementById("f-title").value="";
+  document.getElementById("f-summary").value="";
+  document.getElementById("f-body").value="";
   document.getElementById("f-tag").value="基礎知識";
-  document.getElementById("preview-area").innerHTML="本文を入力するとプレビューが表示されます";
-  document.getElementById("thumb-placeholder").style.display="block";
-  document.getElementById("thumb-preview-wrap").style.display="none";
-  document.getElementById("thumb-preview").src="";
-  document.getElementById("thumb-size").textContent="";
-  document.getElementById("thumb-file").value="";
-  document.getElementById("thumb-err").style.display="none";
+  ["title","summary","body"].forEach(function(k){document.getElementById("cnt-"+k).textContent="0";});
+  document.getElementById("md-preview").innerHTML='<span style="color:var(--txl);font-size:12px">← 左に入力するとここにプレビューが表示されます</span>';
+  document.getElementById("thumb-ph").style.display="block";document.getElementById("thumb-pw").style.display="none";
+  document.getElementById("thumb-img").src="";document.getElementById("thumb-sz").textContent="";document.getElementById("thumb-file").value="";
 }
 
-function editCol(idx){
-  var col=COLS[idx];if(!col)return;
-  EDIT_ID=idx;CUR_THUMB=col.thumb||null;
+function editCol(i){
+  var col=COLS[i];if(!col)return;
+  EDIT_ID=i;CUR_THUMB=col.thumb||null;
   document.getElementById("form-title").textContent="✏️ 編集: "+col.title.substring(0,25)+"…";
   document.getElementById("f-title").value=col.title;
   document.getElementById("f-summary").value=col.summary;
   document.getElementById("f-body").value=col.body;
   document.getElementById("f-tag").value=col.tag;
-  ["title","summary","body"].forEach(function(k){
-    document.getElementById(k+"-count").textContent=document.getElementById("f-"+k).value.length;
-  });
+  ["title","summary","body"].forEach(function(k){document.getElementById("cnt-"+k).textContent=document.getElementById("f-"+k).value.length;});
   updatePreview();
-  // サムネイル表示
-  if(col.thumb){
-    var sizeKb=Math.round(col.thumb.length*0.75/1024);
-    showThumbPreview(col.thumb,sizeKb);
-  }else{
-    document.getElementById("thumb-placeholder").style.display="block";
-    document.getElementById("thumb-preview-wrap").style.display="none";
-  }
-  // 編集タブへ
+  if(col.thumb){document.getElementById("thumb-ph").style.display="none";document.getElementById("thumb-pw").style.display="inline-block";document.getElementById("thumb-img").src=col.thumb;document.getElementById("thumb-sz").textContent="約"+Math.round(col.thumb.length*0.75/1024)+"KB";}
+  else{document.getElementById("thumb-ph").style.display="block";document.getElementById("thumb-pw").style.display="none";}
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
-  document.querySelectorAll(".tab")[1].classList.add("on");
-  document.getElementById("tab-add").classList.add("on");
+  document.querySelectorAll(".tab")[1].classList.add("on");document.getElementById("tab-add").classList.add("on");
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function deleteCol(idx){
-  if(!confirm("「"+COLS[idx].title+"」を削除しますか？"))return;
-  COLS.splice(idx,1);saveCols();renderColList();
-  showStatus("削除しました","ok");
+function delCol(i){
+  if(!confirm("「"+COLS[i].title+"」を削除しますか？"))return;
+  COLS.splice(i,1);saveCols();renderList();showStatus("削除しました","ok");
 }
 
 function saveCol(){
-  var title=document.getElementById("f-title").value.trim();
-  var summary=document.getElementById("f-summary").value.trim();
-  var body=document.getElementById("f-body").value.trim();
+  var t=document.getElementById("f-title").value.trim();
+  var sm=document.getElementById("f-summary").value.trim();
+  var b=document.getElementById("f-body").value.trim();
   var tag=document.getElementById("f-tag").value;
-  if(!title){showStatus("タイトルを入力してください","err");return;}
-  if(!summary){showStatus("サマリーを入力してください","err");return;}
-  if(!body){showStatus("本文を入力してください","err");return;}
+  if(!t){showStatus("タイトルを入力してください","err");return;}
+  if(!sm){showStatus("サマリーを入力してください","err");return;}
+  if(!b){showStatus("本文を入力してください","err");return;}
   var today=new Date().toISOString().slice(0,10);
-  if(EDIT_ID!==null){
-    var old=COLS[EDIT_ID];
-    COLS[EDIT_ID]={id:old.id,title:title,date:old.date,tag:tag,summary:summary,body:body,thumb:CUR_THUMB};
-    showStatus("✅ 更新しました","ok");
-  }else{
-    COLS.push({id:"c"+Date.now(),title:title,date:today,tag:tag,summary:summary,body:body,thumb:CUR_THUMB});
-    showStatus("✅ 追加しました。「エクスポート」からbuild.pyに反映できます","ok");
-  }
-  saveCols();renderColList();clearForm();
-  // 一覧タブへ
+  if(EDIT_ID!==null){var old=COLS[EDIT_ID];COLS[EDIT_ID]={id:old.id,title:t,date:old.date,tag:tag,summary:sm,body:b,thumb:CUR_THUMB};showStatus("✅ 更新しました","ok");}
+  else{COLS.push({id:"c"+Date.now(),title:t,date:today,tag:tag,summary:sm,body:b,thumb:CUR_THUMB});showStatus("✅ 追加しました。「エクスポート」からbuild.pyに反映できます","ok");}
+  saveCols();renderList();clearForm();
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
-  document.querySelectorAll(".tab")[0].classList.add("on");
-  document.getElementById("tab-cols").classList.add("on");
+  document.querySelectorAll(".tab")[0].classList.add("on");document.getElementById("tab-cols").classList.add("on");
 }
 
 /* ── エクスポート ── */
-function escPy(s){return s.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\n/g,"\\n");}
-
+function ep(s){return s.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\n/g,"\\n");}
 function genExport(){
   if(!COLS.length){document.getElementById("export-code").value="# コラムがありません";return;}
   var lines=["COLUMNS = ["];
   COLS.forEach(function(col){
-    var thumbVal=col.thumb?'"'+col.thumb+'"':"None";
-    lines.push('    {"id":"'+col.id+'","title":"'+escPy(col.title)+'","date":"'+col.date+'",');
-    lines.push('     "tag":"'+col.tag+'","summary":"'+escPy(col.summary)+'",');
-    lines.push('     "thumb":'+thumbVal+',');
-    lines.push('     "body":"'+escPy(col.body)+'"},');
+    var tv=col.thumb?'"'+col.thumb+'"':"None";
+    lines.push('    {"id":"'+col.id+'","title":"'+ep(col.title)+'","date":"'+col.date+'",');
+    lines.push('     "tag":"'+col.tag+'","summary":"'+ep(col.summary)+'",');
+    lines.push('     "thumb":'+tv+',');
+    lines.push('     "body":"'+ep(col.body)+'"},');
   });
   lines.push("]");
   document.getElementById("export-code").value=lines.join("\n");
 }
-
 function copyExport(){
   var ta=document.getElementById("export-code");ta.select();
   try{document.execCommand("copy");}catch(e){navigator.clipboard&&navigator.clipboard.writeText(ta.value);}
-  showStatus("コピーしました！scraper/build.pyのCOLUMNS = [ ... ]部分を置き換えてください","ok");
+  showStatus("コピーしました！scraper/build.pyのCOLUMNS部分を置き換えてください","ok");
 }
 
 /* ── パスワード変更 ── */
 function changePw(){
   var old=document.getElementById("set-pw-old").value;
   var nw=document.getElementById("set-pw-new").value;
-  if(simpleHash(old)!==localStorage.getItem(PW_KEY)){showStatus("現在のパスワードが違います","err");return;}
+  if(h(old)!==localStorage.getItem(PW_KEY)){showStatus("現在のパスワードが違います","err");return;}
   if(nw.length<4){showStatus("新しいパスワードは4文字以上にしてください","err");return;}
-  localStorage.setItem(PW_KEY,simpleHash(nw));
+  localStorage.setItem(PW_KEY,h(nw));
   document.getElementById("set-pw-old").value="";document.getElementById("set-pw-new").value="";
   showStatus("パスワードを変更しました","ok");
 }
-
-function clearAll(){
-  if(!confirm("全データを削除しますか？この操作は元に戻せません。"))return;
-  localStorage.removeItem(COLS_KEY);localStorage.removeItem(PW_KEY);location.reload();
-}
+function clearAll(){if(!confirm("全データを削除しますか？"))return;localStorage.removeItem(COLS_KEY);localStorage.removeItem(PW_KEY);location.reload();}
 
 /* ── ステータス ── */
-function showStatus(msg,type){
-  var el=document.getElementById("status-msg");
-  el.textContent=msg;el.className="status "+type;el.style.display="block";
-  if(type==="ok"||type==="warn")setTimeout(function(){el.style.display="none";},5000);
-}
+function showStatus(msg,type){var e=document.getElementById("status-msg");e.textContent=msg;e.className="status "+type;e.style.display="block";if(type==="ok")setTimeout(function(){e.style.display="none";},5000);}
 
 /* ── 初期化 ── */
-if(sessionStorage.getItem("admin_authed")==="1"&&localStorage.getItem(PW_KEY)){enterAdmin();}
+if(sessionStorage.getItem("admin_authed")==="1"&&localStorage.getItem(PW_KEY))enter();
 </script>
 </body>
 </html>
