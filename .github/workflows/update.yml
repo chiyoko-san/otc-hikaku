@@ -1,129 +1,86 @@
 name: Weekly PMDA Update
-
 on:
   schedule:
     - cron: "0 17 * * 6"
   workflow_dispatch:
     inputs:
       group:
-        description: "取得グループ (hira/kata/alpha/clean)"
+        description: "取得グループ (hira/kata/alpha/clean/functional)"
         required: false
         default: "hira"
         type: choice
-        options: ["hira","kata","alpha","clean"]
+        options: ["hira","kata","alpha","clean","functional"]
       limit:
-        description: "取得件数上限（0=無制限、テスト時は300など）"
+        description: "取得件数上限（0=無制限）"
         required: false
         default: "0"
-
 jobs:
   scrape:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Chrome インストール
+      - name: Chrome インストール（PMDA用）
+        if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' }}
         run: |
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
           sudo apt-get update -q && sudo apt-get install -y google-chrome-stable
-
       - name: 依存インストール
-        run: pip install selenium webdriver-manager
-
-      - name: git 設定
+        run: pip install selenium webdriver-manager requests
+      - name: git設定
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: medicines.json 確認・修復
+      - name: PMDAスクレイピング
+        if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' }}
         run: |
-          python3 - << 'PYEOF'
-          import json
-          from pathlib import Path
-          p = Path('scraper/medicines.json')
-          try:
-              d = json.loads(p.read_text())
-              meds = d.get('medicines', [])
-              d['total'] = len(meds)
-              if 'updated_at' not in d:
-                  d['updated_at'] = ''
-              p.write_text(json.dumps(d, ensure_ascii=False, indent=2))
-              print(f'medicines.json OK: {len(meds)}件')
-          except Exception as e:
-              print(f'修復: {e}')
-              p.write_text('{"medicines":[],"updated_at":"","total":0}')
-          PYEOF
-
-      - name: ゴミデータ除去
-        if: ${{ github.event.inputs.group == 'clean' }}
-        run: |
-          python3 - << 'PYEOF'
-          import json, re
-          from pathlib import Path
-          p = Path('scraper/medicines.json')
-          d = json.loads(p.read_text())
-          meds = d.get('medicines', [])
-          before = len(meds)
-          clean = [m for m in meds if (
-              m.get('name','') and len(m.get('name','')) >= 2 and
-              not re.match(r'^PDF\s*[\(\（]', m.get('name','')) and
-              not re.match(r'^\d{4}年', m.get('name','')) and
-              not re.match(r'^\d+$', m.get('name',''))
-          )]
-          d['medicines'] = clean
-          d['total'] = len(clean)
-          p.write_text(json.dumps(d, ensure_ascii=False, indent=2))
-          print(f'クリーニング: {before}件 → {len(clean)}件')
-          PYEOF
-
-      - name: スクレイピング
-        if: ${{ github.event.inputs.group != 'clean' }}
-        run: |
-          LIMIT=${{ github.event.inputs.limit || '0' }}
           python scraper/pmda_selenium.py \
             --group "${{ github.event.inputs.group || 'hira' }}" \
             --resume \
-            --limit $LIMIT
+            --limit ${{ github.event.inputs.limit || '0' }}
         timeout-minutes: 245
         continue-on-error: true
-
-      - name: ゴミデータ自動除去
-        if: ${{ github.event.inputs.group != 'clean' }}
+      - name: 機能性表示食品スクレイピング
+        if: ${{ github.event.inputs.group == 'functional' }}
+        run: |
+          python scraper/fld_scraper.py \
+            --merge \
+            --limit ${{ github.event.inputs.limit || '0' }} \
+            --output scraper/medicines.json
+        timeout-minutes: 60
+        continue-on-error: true
+      - name: ゴミデータ除去
         run: |
           python3 - << 'PYEOF'
           import json, re
           from pathlib import Path
           p = Path('scraper/medicines.json')
           d = json.loads(p.read_text())
-          meds = d.get('medicines', [])
-          before = len(meds)
-          clean = [m for m in meds if (
-              m.get('name','') and len(m.get('name','')) >= 2 and
-              not re.match(r'^PDF\s*[\(\（]', m.get('name','')) and
-              not re.match(r'^\d{4}年', m.get('name','')) and
-              not re.match(r'^\d+$', m.get('name',''))
-          )]
+          m = d.get('medicines', [])
+          clean = [x for x in m
+            if x.get('name','') and len(x.get('name','')) >= 2
+            and not re.match(r'^PDF\s*[\(\（]', x.get('name',''))
+            and not re.match(r'^\d{4}年', x.get('name',''))]
           d['medicines'] = clean
           d['total'] = len(clean)
           p.write_text(json.dumps(d, ensure_ascii=False, indent=2))
-          print(f'クリーニング: {before}件 → {len(clean)}件')
+          otc  = sum(1 for x in clean if not x.get('itype') or x.get('itype')=='otc')
+          func = sum(1 for x in clean if x.get('itype')=='functional')
+          quas = sum(1 for x in clean if x.get('itype')=='quasi')
+          print(f'合計{len(clean)}件 (OTC:{otc} 機能性:{func} 医薬部外品:{quas})')
           PYEOF
-
       - name: index.html ビルド
         run: python scraper/build.py --output index.html
-
-      - name: 最終コミット＆プッシュ
+      - name: コミット
         run: |
           git pull --rebase 2>/dev/null || true
           git add index.html scraper/medicines.json
-          COUNT=$(python3 -c "import json; d=json.load(open('scraper/medicines.json')); print(d.get('total',0))")
-          git diff --staged --quiet || git commit -m "PMDA update (${{ github.event.inputs.group }}): ${COUNT}件"
+          COUNT=$(python3 -c "import json;d=json.load(open('scraper/medicines.json'));print(d.get('total',0))")
+          GROUP="${{ github.event.inputs.group || 'scheduled' }}"
+          git diff --staged --quiet || git commit -m "update(${GROUP}): ${COUNT}件"
           git push
