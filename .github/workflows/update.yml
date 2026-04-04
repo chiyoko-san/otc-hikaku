@@ -5,11 +5,11 @@ on:
   workflow_dispatch:
     inputs:
       group:
-        description: "取得グループ (hira/kata/alpha/clean/functional)"
+        description: "取得グループ (hira/kata/alpha/clean/functional/reprocess)"
         required: false
         default: "hira"
         type: choice
-        options: ["hira","kata","alpha","clean","functional"]
+        options: ["hira","kata","alpha","clean","functional","reprocess"]
       limit:
         description: "取得件数上限（0=無制限）"
         required: false
@@ -21,12 +21,11 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Chrome インストール（PMDA用）
+      - name: Chrome インストール
         if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' }}
         run: |
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -41,9 +40,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # ── PMDA（ひらがな/カタカナ/英字） ──
+      # ── PMDAスクレイピング（通常） ──
       - name: PMDAスクレイピング
-        if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' }}
+        if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' && github.event.inputs.group != 'reprocess' }}
         run: |
           python scraper/pmda_selenium.py \
             --group "${{ github.event.inputs.group || 'hira' }}" \
@@ -52,7 +51,17 @@ jobs:
         timeout-minutes: 245
         continue-on-error: true
 
-      # ── 機能性表示食品（消費者庁） ──
+      # ── 既存データの詳細再取得 ──
+      - name: 詳細再取得（reprocess）
+        if: ${{ github.event.inputs.group == 'reprocess' }}
+        run: |
+          python scraper/pmda_selenium.py \
+            --reprocess \
+            --limit ${{ github.event.inputs.limit || '500' }}
+        timeout-minutes: 245
+        continue-on-error: true
+
+      # ── 機能性表示食品 ──
       - name: 機能性表示食品スクレイピング
         if: ${{ github.event.inputs.group == 'functional' }}
         run: |
@@ -83,10 +92,12 @@ jobs:
           otc  = sum(1 for x in clean if not x.get('itype') or x.get('itype')=='otc')
           func = sum(1 for x in clean if x.get('itype')=='functional')
           quas = sum(1 for x in clean if x.get('itype')=='quasi')
+          has_detail = sum(1 for x in clean if x.get('effect') or x.get('ings'))
           print(f'合計{len(clean)}件 (OTC:{otc} 機能性:{func} 医薬部外品:{quas})')
+          print(f'詳細取得済み: {has_detail}件 ({has_detail/len(clean)*100:.1f}%)')
           PYEOF
 
-      # ── index.html ビルド ──
+      # ── index.htmlビルド ──
       - name: index.html ビルド
         run: python scraper/build.py --output index.html
 
