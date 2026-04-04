@@ -595,7 +595,7 @@ function buildCats(){
     b.type="button";
     b.className="cbtn"+(c.id==="all"?" on":"");
     b.dataset.cat=c.id;
-    b.innerHTML='<span class="ci">'+c.i+'</span>'+c.l+'<span class="ck">'+cnt+'</span>';
+    b.innerHTML=c.l+'<span class="ck">'+cnt+'</span>';
     b.addEventListener("click",function(){
       document.querySelectorAll(".cbtn").forEach(function(x){x.classList.remove("on");});
       b.classList.add("on");
@@ -612,7 +612,7 @@ function buildSymp(){
   SYMS.forEach(function(grp){
     var div=document.createElement("div");div.className="sg";
     var h=document.createElement("div");h.className="sgh";
-    h.innerHTML="<span>"+grp.i+"</span>"+grp.g+'<span class="gar">▼</span>';
+    h.innerHTML=grp.g+'<span class="gar">▼</span>';
     var t=document.createElement("div");t.className="stags hide";
     grp.s.forEach(function(sym){
       var cnt=MEDS.filter(function(m){return m.symptoms&&m.symptoms.indexOf(sym)>-1;}).length;
@@ -945,7 +945,7 @@ function buildGuide(){
   if(el.children.length)return;
   SYMS.forEach(function(g){
     var div=document.createElement("div");div.className="gcard";
-    div.innerHTML='<div class="gico">'+g.i+'</div><div class="gname">'+g.g+'</div><div class="gsub">'+g.s.slice(0,3).join(" / ")+"…</div>";
+    div.innerHTML='<div class="gname">'+g.g+'</div><div class="gsub">'+g.s.slice(0,3).join(" / ")+"…</div>";
     (function(name){div.addEventListener("click",function(){filterGuide(name);});})(g.g);
     el.appendChild(div);
   });
@@ -957,12 +957,12 @@ function filterGuide(name){
   if(!grp)return;
   var meds=MEDS.filter(function(m){return m.symptoms&&grp.s.some(function(s){return m.symptoms.indexOf(s)>-1;});});
   document.getElementById("gresult").innerHTML='<div style="margin-top:16px">'
-    +'<div class="ptitle" style="font-size:15px">'+grp.i+" "+name+"（"+meds.length+"件）</div>"
+    +'<div class="ptitle" style="font-size:15px">'+name+"（"+meds.length+"件）</div>"
     +'<div class="grid" style="margin-top:10px">'+meds.slice(0,20).map(function(m){
       var cat=null;for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}cat=cat||{i:"",l:m.cat};
       return '<div class="card"><div class="chard"><div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
         +'<div class="cprice">'+(m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div>':'<div class="cpval np">価格要確認</div>')+'</div></div>'
-        +'<div class="badges"><span class="badge bc">'+cat.i+" "+cat.l+'</span><span class="badge '+(RCLS[m.risk]||"r25")+'">'+(RLBL[m.risk]||"")+'</span></div>'
+        +'<div class="badges"><span class="badge bc">'+cat.l+'</span><span class="badge '+(RCLS[m.risk]||"r25")+'">'+(RLBL[m.risk]||"")+'</span></div>'
         +'<div class="cef">'+(m.effect||"")+"</div></div>";
     }).join("")+"</div>"
     +(meds.length>20?'<p style="font-size:12px;color:var(--txl);margin-top:8px">他'+(meds.length-20)+'件は検索ページで症状を選択してください。</p>':"")
