@@ -1,39 +1,31 @@
 #!/usr/bin/env python3
 """
-pmda_selenium.py - PMDA OTC添付文書スクレイパー
-グループ別（ひらがな/カタカナ/英字）に分割して実行可能。
-PMDAは政府公開情報（著作権法第13条）→ 商用利用可
+PMDA OTC医薬品スクレイパー v2
+- GeneralListページ + HTML添付文書ページの2段階取得
+- リスク区分・メーカーはGeneralListページから確実に取得
+- 効能・成分はHTML添付文書ページから取得（存在する場合）
 """
-
-import json, re, time, argparse, hashlib, sys
+import json, time, re, argparse, os
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime
 
-try:
-    from selenium import webdriver
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.chrome.options import Options
-    from selenium.common.exceptions import NoSuchElementException, UnexpectedAlertPresentException
-    try:
-        from webdriver_manager.chrome import ChromeDriverManager
-        from selenium.webdriver.chrome.service import Service
-        USE_WDM = True
-    except ImportError:
-        USE_WDM = False
-except ImportError:
-    print("ERROR: pip install selenium webdriver-manager"); sys.exit(1)
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 
-DATA_DIR  = Path(__file__).parent
-OUTPUT    = DATA_DIR / "medicines.json"
-CACHE_DIR = DATA_DIR / "pmda_cache"
-CACHE_DIR.mkdir(exist_ok=True)
-LOG_PATH  = DATA_DIR / "scraper.log"
-
+DATA_DIR    = Path(__file__).parent
+OUTPUT      = DATA_DIR / "medicines.json"
+CACHE_DIR   = DATA_DIR / "pmda_cache"
+LOG_FILE    = DATA_DIR / "scraper.log"
 PMDA_SEARCH = "https://www.pmda.go.jp/PmdaSearch/otcSearch"
-PAGE_DELAY  = 3.0
+PAGE_DELAY  = 2.5
 DET_DELAY   = 2.0
+HTML_DELAY  = 1.5
 
-# グループ別キーワード
 GROUPS = {
     "hira":  list("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん"),
     "kata":  list("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"),
@@ -46,102 +38,364 @@ DROWSY_CHECK = ["クロルフェニラミン","ジフェンヒドラミン","プ
                 "ジフェニルピラリン","コデイン","ジヒドロコデイン"]
 
 CAT_MAP = [
-    ("cold",["解熱","鎮痛","かぜ","感冒","発熱"]),
-    ("stomach",["胃","腸","整腸","下痢","便秘","消化","胸やけ","H2"]),
-    ("allergy",["アレルギー","花粉","蕁麻疹"]),
-    ("cough",["鎮咳","去痰","せき","咳","含嗽"]),
-    ("nose",["鼻炎","鼻水","鼻づまり"]),
-    ("eye",["点眼","眼科","目薬"]),
-    ("ext_pain",["湿布","貼付","肩こり","腰痛","筋肉痛","消炎鎮痛"]),
-    ("ext_skin",["皮膚","湿疹","かぶれ","殺菌","しもやけ"]),
-    ("foot",["水虫","白癬","抗真菌"]),
-    ("hair",["育毛","発毛","脱毛","ミノキシジル"]),
-    ("women",["更年期","月経","婦人"]),
-    ("sleep",["催眠","不眠","睡眠"]),
-    ("vitamin",["ビタミン","滋養","強壮","保健"]),
-    ("kampo",["漢方","生薬"]),
-    ("smoking",["禁煙","ニコチン"]),
-    ("motion",["乗物酔","乗り物"]),
-    ("skin_oral",["シミ","そばかす","美白","肝斑"]),
-    ("anal",["痔","肛門"]),
-    ("disinfect",["消毒","殺菌消毒","エタノール"]),
-    ("test",["検査薬","妊娠","排卵"]),
-    ("circu",["強心","センソ","循環器"]),
-    ("oral",["口腔","咽喉","口内炎","歯痛","歯槽"]),
-    ("joint",["関節","コンドロイチン","グルコサミン"]),
-]
-SYM_MAP = [
-    ("頭痛",["頭痛"]),("発熱",["発熱","解熱"]),("月経痛",["月経痛","生理痛"]),
-    ("腰痛",["腰痛"]),("関節痛",["関節痛"]),("筋肉痛",["筋肉痛"]),
-    ("神経痛",["神経痛"]),("のど痛",["咽喉痛","のどの痛み"]),
-    ("鼻水",["鼻水"]),("くしゃみ",["くしゃみ"]),("鼻づまり",["鼻づまり"]),
-    ("花粉症",["花粉症","アレルギー性鼻炎"]),
-    ("目のかゆみ",["目のかゆみ"]),("充血",["充血"]),
-    ("目の疲れ",["眼精疲労","目の疲れ"]),("乾き目",["乾き目"]),
-    ("せき",["せき","咳"]),("たん",["たん","痰"]),
-    ("胃痛",["胃痛"]),("胸やけ",["胸やけ"]),("胃もたれ",["胃もたれ"]),
-    ("食べ過ぎ",["食べ過ぎ"]),("飲み過ぎ",["飲み過ぎ","二日酔"]),
-    ("吐き気",["吐き気","悪心"]),("下痢",["下痢"]),("便秘",["便秘"]),
-    ("整腸",["整腸"]),("湿疹・かぶれ",["湿疹","かぶれ","皮膚炎"]),
-    ("かゆみ",["かゆみ"]),("水虫",["水虫","白癬"]),("不眠",["不眠"]),
-    ("更年期障害",["更年期"]),("月経不順",["月経不順"]),
-    ("乗物酔い",["乗物酔い","乗り物酔"]),("肉体疲労",["肉体疲労","疲労"]),
-    ("眼精疲労",["眼精疲労"]),("手足のしびれ",["しびれ"]),("冷え",["冷え"]),
-    ("シミ・そばかす",["シミ","そばかす","肝斑"]),
-    ("薄毛・脱毛",["脱毛","薄毛","育毛"]),
-    ("禁煙",["禁煙"]),("痔",["痔"]),("消毒",["消毒","殺菌"]),
-    ("肌荒れ",["肌荒れ"]),("にきび",["にきび"]),("口内炎",["口内炎"]),
+    ("cold",    ["解熱","鎮痛","かぜ","感冒","発熱","咽喉","のど痛","総合感冒"]),
+    ("stomach", ["胃","腸","整腸","下痢","便秘","消化","胸やけ","H2ブロッカー","ファモチジン","制酸"]),
+    ("allergy", ["アレルギー","花粉","蕁麻疹","鼻炎","抗ヒスタミン"]),
+    ("cough",   ["鎮咳","去痰","咳","痰","気管支","コデイン","ジヒドロコデイン"]),
+    ("nose",    ["鼻炎","鼻水","鼻づまり","アレルギー性鼻炎"]),
+    ("eye",     ["点眼","目","眼","ビタミンA","眼疲労"]),
+    ("ext_pain",["消炎鎮痛","貼付","外皮","ロキソプロフェン","インドメタシン","テープ","パッチ"]),
+    ("ext_skin",["皮膚","湿疹","かぶれ","かゆみ","虫さされ","じんましん","にきび"]),
+    ("foot",    ["水虫","白癬","抗真菌","テルビナフィン","ミコナゾール"]),
+    ("hair",    ["発毛","育毛","脱毛","ミノキシジル"]),
+    ("skin_oral",["シミ","そばかす","トラネキサム","肝斑","美白"]),
+    ("women",   ["更年期","女性","月経","生理不順","婦人"]),
+    ("sleep",   ["催眠","不眠","睡眠"]),
+    ("smoking", ["禁煙","ニコチン"]),
+    ("motion",  ["乗物酔い","動揺病"]),
+    ("oral",    ["口腔","歯","口内炎","殺菌","含嗽"]),
+    ("anal",    ["痔","痔疾"]),
+    ("circu",   ["循環器","血流","血圧"]),
+    ("test",    ["検査","妊娠","排卵"]),
+    ("disinfect",["消毒","殺菌","ポビドンヨード","エタノール"]),
+    ("kampo",   ["漢方","エキス錠","エキス顆粒","エキス細粒","湯エキス"]),
+    ("joint",   ["関節","筋肉","神経痛","骨","グルコサミン","コンドロイチン"]),
 ]
 
+SYM_MAP = [
+    ("頭痛",        ["頭痛"]),
+    ("発熱",        ["発熱","解熱"]),
+    ("のど痛",      ["咽喉痛","のど痛","口腔内"]),
+    ("月経痛",      ["月経痛","生理痛"]),
+    ("鼻水",        ["鼻水","鼻汁"]),
+    ("鼻づまり",    ["鼻づまり","鼻閉"]),
+    ("目のかゆみ",  ["目のかゆみ","眼のかゆみ"]),
+    ("せき",        ["咳","せき"]),
+    ("たん",        ["痰","たん"]),
+    ("胃痛",        ["胃痛","胃部不快感"]),
+    ("胸やけ",      ["胸やけ"]),
+    ("下痢",        ["下痢"]),
+    ("便秘",        ["便秘"]),
+    ("肌荒れ",      ["肌荒れ","皮膚炎"]),
+    ("かゆみ",      ["かゆみ","掻痒"]),
+    ("虫刺され",    ["虫さされ","虫刺"]),
+    ("水虫",        ["水虫","白癬"]),
+    ("肉体疲労",    ["疲労","滋養強壮","体力"]),
+    ("眼精疲労",    ["眼精疲労","目の疲れ"]),
+    ("不眠",        ["不眠","寝つき"]),
+    ("乗物酔い",    ["乗物酔い","動揺病"]),
+    ("口内炎",      ["口内炎"]),
+    ("腰痛",        ["腰痛"]),
+    ("関節痛",      ["関節痛","関節炎"]),
+    ("筋肉痛",      ["筋肉痛","筋痛"]),
+    ("神経痛",      ["神経痛"]),
+]
+
+# ── ユーティリティ ──────────────────────────────
 def log(msg):
     ts = datetime.now().strftime("%H:%M:%S")
     line = f"[{ts}] {msg}"
-    print(line, flush=True)
-    with open(LOG_PATH, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
+    print(line)
+    try:
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+    except Exception:
+        pass
 
 def make_driver():
     opts = Options()
-    opts.add_argument("--headless=new")
+    opts.add_argument("--headless")
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--disable-gpu")
     opts.add_argument("--window-size=1280,900")
-    opts.add_argument("--lang=ja-JP")
-    opts.add_argument("user-agent=Mozilla/5.0 (compatible; OTC-Hikaku/2.0)")
-    if USE_WDM:
-        service = Service(ChromeDriverManager().install())
-        return webdriver.Chrome(service=service, options=opts)
-    return webdriver.Chrome(options=opts)
+    opts.add_argument("--lang=ja")
+    opts.add_argument("user-agent=Mozilla/5.0 (X11; Linux x86_64) Chrome/120 Safari/537.36")
+    try:
+        svc = Service(ChromeDriverManager().install())
+        return webdriver.Chrome(service=svc, options=opts)
+    except Exception:
+        return webdriver.Chrome(options=opts)
 
 def cache_path(url):
-    return CACHE_DIR / (hashlib.md5(url.encode()).hexdigest() + ".json")
+    CACHE_DIR.mkdir(exist_ok=True)
+    key = re.sub(r'[^\w]', '_', url)[-120:]
+    return CACHE_DIR / f"{key}.json"
 
 def read_cache(url):
     p = cache_path(url)
-    if not p.exists(): return None
-    try:
-        d = json.loads(p.read_text(encoding="utf-8"))
-        age = (datetime.now() - datetime.fromisoformat(d.get("_at","2000-01-01"))).days
-        return d if age < 30 else None
-    except Exception: return None
+    if p.exists():
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return None
 
 def write_cache(url, data):
-    data["_at"] = datetime.now().isoformat()
-    cache_path(url).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-
-def dismiss_alert(driver):
     try:
-        driver.switch_to.alert.accept()
-        time.sleep(0.5)
+        cache_path(url).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     except Exception:
         pass
 
-def search_keyword(driver, keyword):
-    """1キーワードで検索し、全ページのリンクを返す"""
-    all_items = []
+def dismiss_alert(driver):
+    try:
+        WebDriverWait(driver, 2).until(EC.alert_is_present())
+        driver.switch_to.alert.dismiss()
+    except Exception:
+        pass
 
-    # 検索ページを開く
+def extract_between(text, starts, ends):
+    for s in starts:
+        idx = text.find(s)
+        if idx < 0: continue
+        rest = text[idx+len(s):]
+        ep = len(rest)
+        for e in ends:
+            p = rest.find(e)
+            if 0 < p < ep: ep = p
+        c = rest[:ep].strip()
+        if c: return c
+    return ""
+
+# ── パース ──────────────────────────────────────
+def parse_risk(body):
+    if "要指導"    in body: return 0
+    if "指定第２類" in body or "指定第2類" in body: return 2
+    if "第１類"    in body or "第1類" in body: return 1
+    if "第２類"    in body or "第2類" in body: return 2.5
+    if "第３類"    in body or "第3類" in body: return 3
+    return None
+
+def parse_ings(driver, body):
+    ings = []
+    # テーブルから成分・分量を取得
+    try:
+        for table in driver.find_elements(By.TAG_NAME, "table"):
+            in_ing = False
+            for row in table.find_elements(By.TAG_NAME, "tr"):
+                ths = [c.text.strip() for c in row.find_elements(By.TAG_NAME, "th")]
+                tds = [c.text.strip() for c in row.find_elements(By.TAG_NAME, "td")]
+                if any("成分" in t or "分量" in t for t in ths):
+                    in_ing = True; continue
+                if in_ing:
+                    val = tds[0] if tds else ""
+                    if not val: break
+                    if not any(s in val for s in ["添加物","合計","注","備考"]):
+                        ings.append(val)
+    except Exception:
+        pass
+
+    # テーブルで取れなければテキストから抽出
+    if not ings:
+        sec = extract_between(body,
+            ["成分及び分量","成分・分量","有効成分","成分と分量"],
+            ["【用法","添加物","次の注意","用法及び用量"])
+        for line in sec.splitlines():
+            line = line.strip()
+            if line and len(line) > 2 and not line.startswith("【"):
+                # 「成分名　量mg」形式をパース
+                m = re.match(r'^(.+?)\s+([\d.]+\s*(?:mg|g|μg|μL|mL|IU|万|億|%)[^　\s]*)(.*)$', line)
+                if m:
+                    ing_name = m.group(1).strip()
+                    amount = m.group(2).strip()
+                    ings.append(f"{ing_name}({amount})")
+                elif len(line) < 60:
+                    ings.append(line)
+    return [i for i in ings if len(i) < 80][:15]
+
+def parse_maker(body):
+    for label in ["販売会社名","製造販売元","会社名","販売元","製造元"]:
+        val = extract_between(body, [label], ["\n\n","\n※","\n【","\n〒"])
+        if val and len(val) < 80:
+            return val.strip()
+    return ""
+
+def enrich(d):
+    ings = d.get("ings", [])
+    effect = d.get("effect", "")
+    name = d.get("name", "")
+    ing_str = " ".join(ings)
+
+    warn_ings = [w for w in WARN_CHECK if w in ing_str]
+    drowsy = any(k in ing_str for k in DROWSY_CHECK)
+
+    text = f"{effect} {ing_str} {name}"
+    cat = "vitamin"
+    for cid, kws in CAT_MAP:
+        if any(k in text for k in kws):
+            cat = cid; break
+
+    syms = [sym for sym, kws in SYM_MAP if any(k in effect for k in kws)]
+
+    notes = []
+    for w in warn_ings:
+        if "アリルイソプロピルアセチル尿素" in w:
+            notes.append("⚠ア尿素含有：2023年AU全面規制・2025年KR麻薬類指定。依存リスクあり。")
+        elif "コデイン" in w or "ジヒドロコデイン" in w:
+            notes.append("⚠コデイン系：12歳未満禁忌。依存リスクあり。")
+        elif "ブロムワレリル" in w:
+            notes.append("⚠ブロム尿素含有：依存性成分。連用注意。")
+
+    note_type = "danger" if any("禁忌" in n or "依存" in n for n in notes) \
+                else "warn" if notes else "nn"
+    note = " ".join(notes) if notes else ""
+
+    d.update({
+        "cat":      cat,
+        "drowsy":   drowsy,
+        "warnIngs": warn_ings,
+        "symptoms": syms,
+        "note":     note,
+        "noteType": note_type,
+    })
+    return d
+
+# ── 詳細取得（修正版） ───────────────────────────
+def get_html_detail_url(driver, generallist_url):
+    """GeneralListページからHTML添付文書URLを取得"""
+    try:
+        links = driver.find_elements(By.TAG_NAME, "a")
+        for link in links:
+            href = link.get_attribute("href") or ""
+            text = link.text.strip()
+            # HTML添付文書リンクを探す
+            if ("DetailWithHtml" in href or "otcDetail/Detail/" in href) and "DetailWithHtml" in href:
+                return href
+            if text in ["HTML", "html"] and ("pmda.go.jp" in href or href.startswith("/")):
+                return href if href.startswith("http") else f"https://www.pmda.go.jp{href}"
+    except Exception:
+        pass
+    return None
+
+def get_detail(driver, item):
+    url = item["url"]
+    cached = read_cache(url)
+    if cached:
+        cached.pop("_at", None)
+        return cached
+
+    result = {"name": item["name"], "pmda_url": url}
+
+    try:
+        driver.get(url)
+        time.sleep(DET_DELAY)
+        body = driver.find_element(By.TAG_NAME, "body").text
+
+        # GeneralListページから基本情報取得
+        risk = parse_risk(body)
+        maker = parse_maker(body)
+
+        if risk is not None:
+            result["risk"] = risk
+        if maker:
+            result["maker"] = maker
+
+        # HTML添付文書リンクを探す
+        html_url = get_html_detail_url(driver, url)
+
+        if html_url:
+            # HTML添付文書ページから効能・成分取得
+            try:
+                log(f"    HTML添付文書: {html_url[:60]}")
+                driver.get(html_url)
+                time.sleep(HTML_DELAY)
+                html_body = driver.find_element(By.TAG_NAME, "body").text
+
+                effect = extract_between(html_body,
+                    ["効能又は効果", "効能・効果", "効能効果", "【効能・効果】"],
+                    ["用法及び用量", "用法・用量", "【用法", "＜用法"])
+                ings = parse_ings(driver, html_body)
+                if not maker:
+                    maker = parse_maker(html_body)
+                if risk is None:
+                    risk = parse_risk(html_body)
+
+                result.update({
+                    "effect": effect[:300] if effect else "",
+                    "ings":   ings,
+                    "risk":   risk,
+                    "maker":  maker,
+                })
+                log(f"    取得成功: 効能={bool(effect)} 成分={len(ings)}件")
+            except Exception as e:
+                log(f"    HTML詳細エラー: {e}")
+        else:
+            # HTML版なし → GeneralListからテキスト抽出を試みる
+            effect = extract_between(body,
+                ["効能又は効果", "効能・効果"],
+                ["用法及び用量", "用法・用量"])
+            ings_text = extract_between(body,
+                ["成分及び分量", "成分・分量"],
+                ["用法及び用量", "添加物"])
+
+            result.update({
+                "effect": effect[:300] if effect else "",
+                "ings":   parse_ings(driver, body) if ings_text else [],
+                "risk":   risk,
+                "maker":  maker,
+            })
+
+    except Exception as e:
+        log(f"  詳細エラー [{item['name']}]: {e}")
+
+    result = enrich(result)
+    write_cache(url, result)
+    return result
+
+# ── 検索・一覧取得 ──────────────────────────────
+def go_next(driver):
+    try:
+        nxt = driver.find_element(By.LINK_TEXT, "次へ")
+        if nxt:
+            nxt.click()
+            time.sleep(PAGE_DELAY)
+            return True
+    except Exception:
+        pass
+    try:
+        links = driver.find_elements(By.TAG_NAME, "a")
+        for lnk in links:
+            if lnk.text.strip() in ["次へ", ">", "次ページ", "→"]:
+                lnk.click()
+                time.sleep(PAGE_DELAY)
+                return True
+    except Exception:
+        pass
+    return False
+
+def extract_items(driver):
+    raw = driver.execute_script("""
+        var out=[];
+        document.querySelectorAll('a[href]').forEach(function(a){
+            var h=a.getAttribute('href')||'', t=a.textContent.trim();
+            if(t.length>1 && (
+                h.indexOf('otcDetail')>-1 ||
+                h.indexOf('GeneralList')>-1 ||
+                h.indexOf('rdDetail')>-1
+            ))
+                out.push({name:t, href:h});
+        });
+        return out;
+    """) or []
+    items, seen = [], set()
+    for r in raw:
+        href = r["href"]
+        name = r["name"].strip()
+        if not name or len(name) < 2: continue
+        if not href.startswith("http"):
+            href = "https://www.pmda.go.jp" + href
+        # 不要なリンクを除外（PDF直リンク、"次へ"ボタンなど）
+        if any(x in name for x in ["次へ","前へ","先頭","最後","PDF","HTML","添付"]):
+            continue
+        if name in seen: continue
+        seen.add(name)
+        # GeneralListかDetailのURLのみ
+        if "GeneralList" in href or "otcDetail" in href or "rdDetail" in href:
+            items.append({"name": name, "url": href})
+    return items
+
+def search_keyword(driver, keyword):
+    all_items = []
     driver.get(PMDA_SEARCH)
     time.sleep(1.5)
     dismiss_alert(driver)
@@ -154,9 +408,10 @@ def search_keyword(driver, keyword):
             });
         """)
         time.sleep(0.8)
-    except Exception: pass
+    except Exception:
+        pass
 
-    # 名称欄に入力
+    # キーワード入力
     try:
         inp = driver.find_element(By.ID, "txtName")
         inp.clear()
@@ -165,7 +420,7 @@ def search_keyword(driver, keyword):
         log(f"  入力エラー: {e}")
         return []
 
-    # 検索ボタンクリック（別ウィンドウが開く）
+    # 検索ボタン
     original_handles = set(driver.window_handles)
     try:
         btn = driver.find_element(By.CSS_SELECTOR, "input[type='image'][name='btnA']")
@@ -177,14 +432,10 @@ def search_keyword(driver, keyword):
     time.sleep(PAGE_DELAY)
     dismiss_alert(driver)
 
-    # 新ウィンドウに切り替え
     new_handles = set(driver.window_handles) - original_handles
-    result_driver = driver  # デフォルトは同じウィンドウ
     if new_handles:
         driver.switch_to.window(new_handles.pop())
-        log(f"  新ウィンドウ: {driver.current_url[:60]}")
 
-    # 全ページのリンクを収集
     page = 1
     while True:
         items = extract_items(driver)
@@ -192,202 +443,55 @@ def search_keyword(driver, keyword):
         log(f"  p{page}: {len(items)}件")
         if not go_next(driver): break
         page += 1
+        if page > 50: break  # 無限ループ防止
 
-    # 新ウィンドウを閉じて元に戻る
-    if new_handles or len(driver.window_handles) > 1:
+    if len(driver.window_handles) > 1:
         try:
             driver.close()
             driver.switch_to.window(list(driver.window_handles)[0])
-        except Exception: pass
+        except Exception:
+            pass
 
     return all_items
 
-def extract_items(driver):
-    raw = driver.execute_script("""
-        var out=[];
-        document.querySelectorAll('a[href]').forEach(function(a){
-            var h=a.getAttribute('href')||'', t=a.textContent.trim();
-            if(t.length>1&&(h.indexOf('otcDetail')>-1||h.indexOf('Detail')>-1||h.indexOf('rdDetail')>-1))
-                out.push({name:t,href:h});
-        });
-        return out;
-    """) or []
-    items, seen = [], set()
-    for r in raw:
-        href = r["href"]; name = r["name"].strip()
-        if not name or len(name)<2: continue
-        if not href.startswith("http"): href = "https://www.pmda.go.jp" + href
-        if href not in seen: seen.add(href); items.append({"name":name,"url":href})
-    return items
-
-def go_next(driver):
-    try:
-        driver.find_element(By.XPATH,"//a[text()='次へ' or text()='次ページ']").click()
-        time.sleep(PAGE_DELAY); return True
-    except NoSuchElementException: return False
-
-def get_detail(driver, item):
-    url = item["url"]
-    cached = read_cache(url)
-    if cached: cached.pop("_at",None); return cached
-    result = {"name":item["name"],"pmda_url":url}
-    try:
-        driver.get(url); time.sleep(DET_DELAY)
-        body = driver.find_element(By.TAG_NAME,"body").text
-        result.update({
-            "ings":   parse_ings(driver, body),
-            "effect": extract_between(body,["効能又は効果","効能・効果","効能効果"],["用法及び用量","用法・用量","【用法"])[:400],
-            "risk":   parse_risk(body),
-            "maker":  extract_between(body,["販売会社名","製造販売元","会社名"],["\n\n","\n※","\n【"])[:80],
-        })
-    except Exception as e: log(f"  詳細エラー [{item['name']}]: {e}")
-    result = enrich(result)
-    write_cache(url, result)
-    return result
-
-def parse_risk(body):
-    if "要指導" in body: return 0
-    if "指定第２類" in body or "指定第2類" in body: return 2
-    if "第１類" in body or "第1類" in body: return 1
-    if "第２類" in body or "第2類" in body: return 2.5
-    if "第３類" in body or "第3類" in body: return 3
-    return 2.5
-
-def parse_ings(driver, body):
-    ings = []
-    try:
-        for table in driver.find_elements(By.TAG_NAME,"table"):
-            in_ing = False
-            for row in table.find_elements(By.TAG_NAME,"tr"):
-                ths = [c.text.strip() for c in row.find_elements(By.TAG_NAME,"th")]
-                tds = [c.text.strip() for c in row.find_elements(By.TAG_NAME,"td")]
-                if any("成分" in t or "分量" in t for t in ths): in_ing=True; continue
-                if in_ing:
-                    val = tds[0] if tds else ""
-                    if not val: break
-                    if not any(s in val for s in ["添加物","合計","注","備考"]): ings.append(val)
-    except Exception: pass
-    if not ings:
-        sec = extract_between(body,["成分及び分量","成分・分量","有効成分"],["【用法","添加物","次の注意"])
-        for line in re.split(r"[\n、，,/]", sec or ""):
-            line=line.strip()
-            if 2<=len(line)<=60 and not line[0].isdigit():
-                n2=re.split(r"\s+\d|\(|\（",line)[0].strip()
-                if n2 and n2 not in ings: ings.append(n2)
-    return ings[:20]
-
-def extract_between(text, starts, ends):
-    for s in starts:
-        idx=text.find(s)
-        if idx<0: continue
-        rest=text[idx+len(s):]; ep=len(rest)
-        for e in ends:
-            p=rest.find(e)
-            if 0<p<ep: ep=p
-        c=rest[:ep].strip()
-        if c: return c
-    return ""
-
-def enrich(d):
-    ings=d.get("ings",[]); effect=d.get("effect",""); ing_str=" ".join(ings)
-    warn_ings=[w for w in WARN_CHECK if w in ing_str]
-    drowsy=any(k in ing_str for k in DROWSY_CHECK)
-    text=f"{effect} {ing_str} {d.get('name','')}"
-    cat="vitamin"
-    for cid,kws in CAT_MAP:
-        if any(k in text for k in kws): cat=cid; break
-    syms=[sym for sym,kws in SYM_MAP if any(k in effect for k in kws)]
-    notes=[]
-    for w in warn_ings:
-        if "アリルイソプロピルアセチル尿素" in w: notes.append("⚠ア尿素含有：2023年AU全面規制・2025年KR麻薬類指定。依存リスクあり。")
-        elif "コデイン" in w or "ジヒドロコデイン" in w: notes.append("⚠コデイン系：12歳未満禁忌・依存リスク。眠気・運転不可。")
-        elif "ブロムワレリル" in w: notes.append("⚠ブ尿素含有：海外規制済・依存リスク。")
-    if drowsy and not notes: notes.append("眠気が出ることあり。自動車運転注意。")
-    d.update({"cat":cat,"symptoms":syms[:8],"warnIngs":warn_ings,"drowsy":drowsy,
-              "noteType":"danger" if warn_ings else ("warn" if drowsy else ""),
-              "note":" ".join(notes),"source":"pmda",
-              "asin":d.get("asin",""),"rakuten_url":d.get("rakuten_url",""),"price":d.get("price")})
-    if "id" not in d:
-        d["id"]=int(hashlib.md5(d["name"].encode()).hexdigest()[:8],16)%1000000
-    return d
-
+# ── データ管理 ──────────────────────────────────
 def load_existing():
-    if not OUTPUT.exists(): return []
-    try: return json.loads(OUTPUT.read_text(encoding="utf-8")).get("medicines",[])
-    except Exception: return []
+    if OUTPUT.exists():
+        try:
+            d = json.loads(OUTPUT.read_text(encoding="utf-8"))
+            return d.get("medicines", [])
+        except Exception:
+            pass
+    return []
 
 def save(meds):
-    import subprocess, os
-    data={"medicines":meds,"updated_at":datetime.now(timezone.utc).isoformat(),
-          "total":len(meds),"source":"pmda_selenium"}
-    OUTPUT.write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding="utf-8")
-    log(f"保存: {len(meds)}件")
-    if os.environ.get("GITHUB_ACTIONS"):
-        try:
-            subprocess.run(["git","pull","--rebase"],capture_output=True,timeout=30)
-            subprocess.run(["git","add",str(OUTPUT)],capture_output=True,timeout=10)
-            r=subprocess.run(["git","diff","--staged","--quiet"],capture_output=True)
-            if r.returncode!=0:
-                subprocess.run(["git","commit","-m",f"PMDA自動保存:{len(meds)}件"],
-                               capture_output=True,timeout=30)
-                subprocess.run(["git","push"],capture_output=True,timeout=60)
-                log(f"Gitコミット: {len(meds)}件")
-        except Exception as e:
-            log(f"コミットエラー(続行): {e}")
+    data = {
+        "total":      len(meds),
+        "updated_at": datetime.now().isoformat(),
+        "medicines":  meds,
+    }
+    OUTPUT.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def _merge(existing, new_items):
-    seen,out=set(),[]
-    for m in (existing+new_items):
-        n=m.get("name","")
-        if n and n not in seen: seen.add(n); out.append(m)
-    return out
-
-def run(group="hira", resume=False, limit=0):
-    keywords = GROUPS.get(group, GROUPS["hira"])
-    log(f"PMDA スクレイパー開始 group={group} keywords={len(keywords)}個 resume={resume}")
-
-    existing       = load_existing()
-    existing_names = {m["name"] for m in existing}
-    log(f"既存: {len(existing)}件")
-
-    driver    = make_driver()
-    new_items = []
-
-    try:
-        for i, kw in enumerate(keywords):
-            log(f"キーワード [{i+1}/{len(keywords)}]: 「{kw}」")
-            try:
-                kw_items = search_keyword(driver, kw)
-            except Exception as e:
-                log(f"  検索エラー「{kw}」: {e}"); continue
-
-            for item in kw_items:
-                if item["name"] in existing_names: continue
-                if limit and len(new_items) >= limit:
-                    log(f"limit={limit}件に達したため終了")
-                    break
-                log(f"  取得: {item['name']}")
-                det = get_detail(driver, item)
-                new_items.append(det)
-                existing_names.add(item["name"])
-                if len(new_items) % 100 == 0:
-                    save(_merge(existing, new_items))
-            if limit and len(new_items) >= limit:
-                break
-
-            time.sleep(0.5)
-
-    except KeyboardInterrupt:
-        log("中断")
-    finally:
-        driver.quit()
-
-    merged = _merge(existing if resume else [], new_items)
-    save(merged)
-    log(f"完了: 新規{len(new_items)}件 / 合計{len(merged)}件")
+    seen = {m["name"] for m in existing}
+    merged = list(existing)
+    next_id = max((m.get("id", 0) for m in existing), default=0) + 1
+    for item in new_items:
+        if item["name"] not in seen:
+            if "id" not in item:
+                item["id"] = next_id
+                next_id += 1
+            # デフォルト値補完
+            item.setdefault("price", None)
+            item.setdefault("asin", "")
+            item.setdefault("rakuten_url", "")
+            item.setdefault("amazon_tag", "")
+            item.setdefault("price_updated_at", "")
+            merged.append(item)
+            seen.add(item["name"])
+    return merged
 
 def git_commit(msg):
-    """途中データをgitコミット"""
     import subprocess
     try:
         subprocess.run(["git", "pull", "--rebase"], capture_output=True)
@@ -398,32 +502,125 @@ def git_commit(msg):
             subprocess.run(["git", "push"], capture_output=True)
             log(f"自動コミット: {msg}")
     except Exception as e:
-        log(f"コミットエラー（続行）: {e}")
+        log(f"コミットエラー: {e}")
+
+# ── メイン ──────────────────────────────────────
+def run(group="hira", resume=False, limit=0, reprocess=False):
+    """
+    reprocess=True: 既存のeffect/ingsが空のものを再取得
+    """
+    keywords = GROUPS.get(group, GROUPS["hira"])
+    log(f"PMDA スクレイパー v2 開始 group={group} keywords={len(keywords)}個 resume={resume} reprocess={reprocess}")
+
+    existing = load_existing()
+    existing_names = {m["name"] for m in existing}
+    log(f"既存: {len(existing)}件")
+
+    # reprocessモード: effectもingsもない商品のURLリストを作成
+    reprocess_items = []
+    if reprocess:
+        for m in existing:
+            if (not m.get('itype') or m.get('itype') == 'otc') and \
+               not m.get('effect') and not m.get('ings') and m.get('pmda_url'):
+                reprocess_items.append({"name": m["name"], "url": m["pmda_url"]})
+        log(f"再取得対象: {len(reprocess_items)}件")
+
+    driver = make_driver()
+    new_items = []
+    updated_items = {}  # name → updated data
+
+    try:
+        if reprocess and reprocess_items:
+            # 再取得モード
+            targets = reprocess_items[:limit] if limit else reprocess_items
+            for i, item in enumerate(targets):
+                log(f"再取得 [{i+1}/{len(targets)}]: {item['name']}")
+                # キャッシュを削除して再取得
+                cp = cache_path(item["url"])
+                if cp.exists():
+                    cp.unlink()
+                det = get_detail(driver, item)
+                if det.get('effect') or det.get('ings'):
+                    updated_items[item['name']] = det
+                    log(f"  → 取得成功: 効能={bool(det.get('effect'))} 成分={len(det.get('ings',[]))}件")
+                if (i+1) % 50 == 0:
+                    # 中間コミット
+                    merged = _apply_updates(existing, updated_items)
+                    save(merged)
+                    if os.environ.get("GITHUB_ACTIONS"):
+                        git_commit(f"reprocess中間: {len(updated_items)}件更新")
+        else:
+            # 通常スクレイピング
+            for i, kw in enumerate(keywords):
+                log(f"キーワード [{i+1}/{len(keywords)}]: 「{kw}」")
+                try:
+                    kw_items = search_keyword(driver, kw)
+                except Exception as e:
+                    log(f"  検索エラー「{kw}」: {e}"); continue
+
+                for item in kw_items:
+                    if item["name"] in existing_names: continue
+                    if limit and len(new_items) >= limit:
+                        log(f"limit={limit}件に達したため終了")
+                        break
+                    log(f"  取得: {item['name']}")
+                    det = get_detail(driver, item)
+                    new_items.append(det)
+                    existing_names.add(item["name"])
+                    if len(new_items) % 100 == 0:
+                        merged = _merge(existing if resume else [], new_items)
+                        save(merged)
+                        if os.environ.get("GITHUB_ACTIONS"):
+                            git_commit(f"中間コミット: {len(new_items)}件")
+
+                if limit and len(new_items) >= limit:
+                    break
+                time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        log("中断")
+    finally:
+        driver.quit()
+
+    if reprocess:
+        merged = _apply_updates(existing, updated_items)
+        log(f"再取得完了: {len(updated_items)}件更新")
+    else:
+        merged = _merge(existing if resume else [], new_items)
+        log(f"完了: 新規{len(new_items)}件 / 合計{len(merged)}件")
+
+    save(merged)
+    return len(updated_items) if reprocess else len(new_items)
+
+def _apply_updates(existing, updated_items):
+    """既存データに更新を適用"""
+    result = []
+    for m in existing:
+        if m["name"] in updated_items:
+            upd = updated_items[m["name"]]
+            m_copy = dict(m)
+            m_copy.update({
+                "effect":   upd.get("effect", m.get("effect", "")),
+                "ings":     upd.get("ings",   m.get("ings", [])),
+                "risk":     upd.get("risk",   m.get("risk")),
+                "maker":    upd.get("maker",  m.get("maker", "")),
+                "cat":      upd.get("cat",    m.get("cat", "vitamin")),
+                "drowsy":   upd.get("drowsy", m.get("drowsy", False)),
+                "warnIngs": upd.get("warnIngs", m.get("warnIngs", [])),
+                "symptoms": upd.get("symptoms", m.get("symptoms", [])),
+                "note":     upd.get("note",    m.get("note", "")),
+                "noteType": upd.get("noteType", m.get("noteType", "nn")),
+            })
+            result.append(m_copy)
+        else:
+            result.append(m)
+    return result
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--group",  default="hira",
-                   choices=["hira","kata","alpha"],
-                   help="取得グループ: hira(ひらがな) / kata(カタカナ) / alpha(英字・数字)")
-    p.add_argument("--resume", action="store_true", help="既存データを保持")
-    p.add_argument("--limit",  type=int, default=0, help="取得件数上限（0=無制限）")
-    p.add_argument("--auto-commit", action="store_true", help="200件ごとに自動gitコミット")
+    p.add_argument("--group",      default="hira", choices=list(GROUPS.keys()))
+    p.add_argument("--resume",     action="store_true")
+    p.add_argument("--limit",      type=int, default=0)
+    p.add_argument("--reprocess",  action="store_true", help="effect/ingsが空の既存データを再取得")
     a = p.parse_args()
-
-    # auto-commit用にrun関数をラップ
-    if a.auto_commit:
-        import functools
-        _orig_save = save
-        _commit_count = [0]
-        def _save_with_commit(meds):
-            _orig_save(meds)
-            _commit_count[0] += 1
-            if _commit_count[0] % 2 == 0:  # 2回保存(=200件)ごとにコミット
-                git_commit(f"PMDA 中間保存: {len(meds)}件")
-        import builtins
-        # saveをモンキーパッチ
-        import sys
-        this_module = sys.modules[__name__]
-        setattr(this_module, 'save', _save_with_commit)
-
-    run(group=a.group, resume=a.resume, limit=a.limit)
+    run(group=a.group, resume=a.resume, limit=a.limit, reprocess=a.reprocess)
