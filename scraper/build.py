@@ -49,50 +49,50 @@ COLUMNS = [
 ]
 
 SYMP_GROUPS = [
-    {"g":"痛み・熱","i":"🔥","s":["頭痛","偏頭痛","歯痛","のど痛","月経痛","腰痛","関節痛","筋肉痛","神経痛","打撲・ねんざ","発熱"]},
-    {"g":"鼻・目・のど","i":"👃","s":["鼻水","くしゃみ","鼻づまり","目のかゆみ","充血","目の疲れ","乾き目","花粉症","のどの炎症","のど痛"]},
-    {"g":"咳・痰","i":"😮‍💨","s":["せき","たん","声がれ","口腔殺菌"]},
-    {"g":"胃腸・お腹","i":"🫃","s":["胃痛","胸やけ","胃もたれ","食べ過ぎ","飲み過ぎ","吐き気","下痢","便秘","腹部膨満","整腸"]},
-    {"g":"皮膚・かゆみ","i":"🧴","s":["湿疹・かぶれ","かゆみ","虫刺され","乾燥肌","にきび","口内炎","水虫","肌荒れ"]},
-    {"g":"疲労・神経","i":"💪","s":["肉体疲労","眼精疲労","手足のしびれ","冷え","めまい・立ちくらみ","動悸"]},
-    {"g":"美容","i":"✨","s":["シミ・そばかす","肝斑","肌荒れ","薄毛・脱毛"]},
-    {"g":"女性・メンタル","i":"🌙","s":["更年期障害","月経不順","不眠","乗物酔い"]},
-    {"g":"その他","i":"💊","s":["禁煙","痔","排卵確認","妊娠確認","消毒"]},
+    {"g":"痛み・熱","s":["頭痛","偏頭痛","歯痛","のど痛","月経痛","腰痛","関節痛","筋肉痛","神経痛","打撲・ねんざ","発熱"]},
+    {"g":"鼻・目・のど","s":["鼻水","くしゃみ","鼻づまり","目のかゆみ","充血","目の疲れ","乾き目","花粉症","のどの炎症","のど痛"]},
+    {"g":"咳・痰","s":["せき","たん","声がれ","口腔殺菌"]},
+    {"g":"胃腸・お腹","s":["胃痛","胸やけ","胃もたれ","食べ過ぎ","飲み過ぎ","吐き気","下痢","便秘","腹部膨満","整腸"]},
+    {"g":"皮膚・かゆみ","s":["湿疹・かぶれ","かゆみ","虫刺され","乾燥肌","にきび","口内炎","水虫","肌荒れ"]},
+    {"g":"疲労・神経","s":["肉体疲労","眼精疲労","手足のしびれ","冷え","めまい・立ちくらみ","動悸"]},
+    {"g":"美容","s":["シミ・そばかす","肝斑","肌荒れ","薄毛・脱毛"]},
+    {"g":"女性・メンタル","s":["更年期障害","月経不順","不眠","乗物酔い"]},
+    {"g":"その他","s":["禁煙","痔","排卵確認","妊娠確認","消毒"]},
 ]
 
 CATS = [
-    {"id":"all","l":"すべて","i":"💊"},
-    {"id":"cold","l":"かぜ薬・解熱鎮痛","i":"🤒"},
-    {"id":"stomach","l":"消化器官用薬","i":"🫃"},
-    {"id":"allergy","l":"アレルギー用薬","i":"🌸"},
-    {"id":"cough","l":"鎮咳・去痰・含嗽薬","i":"😮‍💨"},
-    {"id":"nose","l":"鼻炎用薬","i":"👃"},
-    {"id":"ext_pain","l":"外皮用薬（鎮痛）","i":"🩹"},
-    {"id":"ext_skin","l":"外皮用薬（皮膚）","i":"🧴"},
-    {"id":"eye","l":"眼科用薬","i":"👁"},
-    {"id":"joint","l":"関節・筋肉（内服）","i":"🦴"},
-    {"id":"skin_oral","l":"皮膚科・シミ（内服）","i":"✨"},
-    {"id":"hair","l":"育毛・発毛薬","i":"💈"},
-    {"id":"women","l":"女性用薬","i":"🌙"},
-    {"id":"sleep","l":"催眠鎮静薬","i":"😴"},
-    {"id":"vitamin","l":"ビタミン・滋養強壮","i":"💪"},
-    {"id":"kampo","l":"漢方製剤","i":"🌿"},
-    {"id":"foot","l":"水虫・皮膚感染","i":"🦶"},
-    {"id":"oral","l":"歯科口腔用薬","i":"🦷"},
-    {"id":"anal","l":"痔疾用薬","i":"🔴"},
-    {"id":"circu","l":"循環器・血液用薬","i":"❤️"},
-    {"id":"smoking","l":"禁煙補助剤","i":"🚭"},
-    {"id":"motion","l":"乗物酔い","i":"🚢"},
-    {"id":"test","l":"一般用検査薬","i":"🔬"},
-    {"id":"disinfect","l":"消毒薬","i":"🧪"},
-    {"id":"quasi_skin","l":"医薬部外品（スキンケア）","i":"🧴"},
-    {"id":"quasi_oral","l":"医薬部外品（オーラルケア）","i":"🦷"},
-    {"id":"quasi_hair","l":"医薬部外品（育毛）","i":"💈"},
-    {"id":"func_gut","l":"機能性表示（腸内環境）","i":"🦠"},
-    {"id":"func_eye","l":"機能性表示（目の健康）","i":"👁"},
-    {"id":"func_joint","l":"機能性表示（関節・骨）","i":"🦴"},
-    {"id":"func_stress","l":"機能性表示（ストレス・睡眠）","i":"😴"},
-    {"id":"func_fat","l":"機能性表示（体脂肪・血糖）","i":"📉"},
+    {"id":"all","l":"すべて"},
+    {"id":"cold","l":"かぜ薬・解熱鎮痛"},
+    {"id":"stomach","l":"消化器官用薬"},
+    {"id":"allergy","l":"アレルギー用薬"},
+    {"id":"cough","l":"鎮咳・去痰・含嗽薬"},
+    {"id":"nose","l":"鼻炎用薬"},
+    {"id":"ext_pain","l":"外皮用薬（鎮痛）"},
+    {"id":"ext_skin","l":"外皮用薬（皮膚）"},
+    {"id":"eye","l":"眼科用薬"},
+    {"id":"joint","l":"関節・筋肉（内服）"},
+    {"id":"skin_oral","l":"皮膚科・シミ（内服）"},
+    {"id":"hair","l":"育毛・発毛薬"},
+    {"id":"women","l":"女性用薬"},
+    {"id":"sleep","l":"催眠鎮静薬"},
+    {"id":"vitamin","l":"ビタミン・滋養強壮"},
+    {"id":"kampo","l":"漢方製剤"},
+    {"id":"foot","l":"水虫・皮膚感染"},
+    {"id":"oral","l":"歯科口腔用薬"},
+    {"id":"anal","l":"痔疾用薬"},
+    {"id":"circu","l":"循環器・血液用薬"},
+    {"id":"smoking","l":"禁煙補助剤"},
+    {"id":"motion","l":"乗物酔い"},
+    {"id":"test","l":"一般用検査薬"},
+    {"id":"disinfect","l":"消毒薬"},
+    {"id":"quasi_skin","l":"医薬部外品（スキンケア）"},
+    {"id":"quasi_oral","l":"医薬部外品（オーラルケア）"},
+    {"id":"quasi_hair","l":"医薬部外品（育毛）"},
+    {"id":"func_gut","l":"機能性表示（腸内環境）"},
+    {"id":"func_eye","l":"機能性表示（目の健康）"},
+    {"id":"func_joint","l":"機能性表示（関節・骨）"},
+    {"id":"func_stress","l":"機能性表示（ストレス・睡眠）"},
+    {"id":"func_fat","l":"機能性表示（体脂肪・血糖）"},
 ]
 
 MD_JS = r"""function mdToHtml(src){
@@ -126,7 +126,7 @@ MD_JS = r"""function mdToHtml(src){
     var raw=lines[i],l=inl(raw);
     var callout=/^::: ?(tip|warn|danger|info)\s*(.*)$/.exec(raw);
     if(callout){close();var ctype=callout[1],ctitle=callout[2]||"";
-      var cmap={tip:{bg:"var(--tl)",bd:"var(--teal)",color:"var(--teal2)",ico:"💡"},warn:{bg:"var(--amber)",bd:"var(--amberb)",color:"#713f12",ico:"⚠️"},danger:{bg:"var(--rb)",bd:"var(--red)",color:"var(--red)",ico:"🚫"},info:{bg:"#eff6ff",bd:"#2563eb",color:"#1d4ed8",ico:"ℹ️"}};
+      var cmap={tip:{bg:"var(--tl)",bd:"var(--teal)",color:"var(--teal2)",label:"ヒント"},warn:{bg:"var(--amber)",bd:"var(--amberb)",color:"#713f12",label:"注意"},danger:{bg:"var(--rb)",bd:"var(--red)",color:"var(--red)",label:"危険"},info:{bg:"#eff6ff",bd:"#2563eb",color:"#1d4ed8",label:"情報"}};
       var cs=cmap[ctype]||cmap.info;var inner=[];i++;
       while(i<lines.length&&lines[i].trim()!==":::"){inner.push(lines[i]);i++;}
       html+='<div style="border-left:4px solid '+cs.bd+';background:'+cs.bg+';border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0">'
@@ -152,6 +152,35 @@ MD_JS = r"""function mdToHtml(src){
     html+='<p style="margin:6px 0">'+l+'</p>';}
   close();return html;}
 """
+MKEFF_JS = r"""
+function addIng(b){
+  if(!b||S.ings.indexOf(b)>-1)return;
+  S.ings.push(b);S.pg=1;buildIngs();render();updCnts();
+}
+function addSym(s){
+  if(!s||S.syms.indexOf(s)>-1)return;
+  S.syms.push(s);S.pg=1;buildSymp();render();updCnts();
+}
+function mkEffTags(effect){
+  if(!effect)return"";
+  var parts=effect.split(/[\u3002\u30FB\/\uFF0F\n]+/).map(function(p){return p.trim();}).filter(function(p){return p.length>1;});
+  if(parts.length<=1)return'<span class="eftag">'+effect+'</span>';
+  return parts.map(function(p){
+    var matched=null;
+    for(var i=0;i<SYMS.length;i++){
+      var g=SYMS[i];
+      for(var j=0;j<g.s.length;j++){
+        if(p.indexOf(g.s[j])>-1||g.s[j].indexOf(p)>-1){matched=g.s[j];break;}
+      }
+      if(matched)break;
+    }
+    if(matched){
+      return'<span class="eftag clickable" onclick="addSym(\''+matched.replace(/'/g,"")+'\')">'+p+'</span>';
+    }
+    return'<span class="eftag">'+p+'</span>';
+  }).join("");
+}
+"""
 def run(output=None):
     out = Path(output) if output else OUT_HTML
     with open(SRC_JSON, encoding="utf-8") as f:
@@ -171,12 +200,12 @@ def run(output=None):
     cats_js  = json.dumps(CATS,        ensure_ascii=False).replace("</script>", "<\\/script>")
 
     print(f"[build] {len(meds)}件 → {out}")
-    html = generate(meds_js, ing_js, col_js, sym_js, cats_js, updated_str, len(meds), MD_JS)
+    html = generate(meds_js, ing_js, col_js, sym_js, cats_js, updated_str, len(meds), MD_JS, MKEFF_JS)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     print(f"[build] 完了 {out.stat().st_size:,} bytes")
 
-def generate(meds_js, ing_js, col_js, sym_js, cats_js, updated_str, count, md_js):
+def generate(meds_js, ing_js, col_js, sym_js, cats_js, updated_str, count, md_js, mkeff_js):
     return """<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -208,7 +237,7 @@ a{color:inherit;text-decoration:none}
 .sb::-webkit-scrollbar-thumb{background:var(--bdm);border-radius:2px}
 /* SEARCH BOX */
 .sbox{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:10px}
-.sbox input{width:100%;padding:8px 8px 8px 30px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;outline:none;font-family:inherit}
+.sbox input{width:100%;padding:8px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;outline:none;font-family:inherit}
 .sbox input:focus{border-color:var(--teal)}
 .sico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--txl)}
 .srel{position:relative}
@@ -289,11 +318,22 @@ a{color:inherit;text-decoration:none}
 .bq{background:#fdf4ff;color:#6b21a8;border:1px solid #e9d5ff}
 .bf{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
 .csymp{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
-.sym{font-size:10px;padding:2px 7px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+
 .sym.hit{background:var(--amberb);color:#fff;border-color:var(--amberb);font-weight:600}
-.cef{font-size:12px;color:var(--txm);margin-bottom:7px;line-height:1.6}
+.cef{margin:5px 0;line-height:1.6}
 .ings{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}
-.itag{font-size:11px;padding:2px 7px;border-radius:4px;cursor:pointer;position:relative}
+.itag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;margin:2px 2px 2px 0;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+.itag.clickable{cursor:pointer;transition:background .15s,color .15s}
+.itag.clickable:hover{background:var(--tl);color:var(--teal2);border-color:#99d4cd}
+.itag.im{background:var(--tl);color:var(--teal2);border-color:#99d4cd;font-weight:600}
+.itag.iw{background:#fef9c3;color:#713f12;border-color:#fde047}
+.sym{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:2px 2px 2px 0;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0}
+.sym.clickable{cursor:pointer;transition:background .15s,color .15s}
+.sym.clickable:hover{background:#fef3c7;color:#92400e;border-color:#fde68a}
+.sym.hit{background:#fef3c7;color:#92400e;border-color:#fde68a;font-weight:600}
+.eftag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:6px;margin:2px 2px 2px 0;background:#f8fafc;color:#334155;border:1px solid #e2e8f0}
+.eftag.clickable{cursor:pointer;transition:background .15s,color .15s}
+.eftag.clickable:hover{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
 .in{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
 .im{background:var(--tl);color:var(--teal2);border:1px solid #99d4cd;font-weight:600}
 .iw{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
@@ -373,9 +413,9 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 <nav class="nav">
   <div class="nav-inner">
     <div class="logo">くすり成分<em>ガイド</em></div>
-    <button type="button" class="ntab on" id="t-search" onclick="showPg('search')">🔍 検索</button>
-    <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">💊 症状から選ぶ</button>
-    <button type="button" class="ntab" id="t-column" onclick="showPg('column')">📖 コラム</button>
+    <button type="button" class="ntab on" id="t-search" onclick="showPg('search')">検索</button>
+    <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">症状から選ぶ</button>
+    <button type="button" class="ntab" id="t-column" onclick="showPg('column')">コラム</button>
     <span class="nright">""" + updated_str + """</span>
   </div>
 </nav>
@@ -385,14 +425,14 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
     <aside class="sb">
       <div class="sbox">
         <div class="srel">
-          <span class="sico">🔍</span>
+          
           <input type="text" id="qinp" placeholder="商品名・成分・症状・メーカー…" autocomplete="off">
         </div>
       </div>
 
       <div class="acc">
         <button type="button" class="acc-hd" id="hd-cat" onclick="togAcc('cat')">
-          <span>💊</span> カテゴリ
+          カテゴリ
           <span class="acc-cnt" id="cnt-cat"></span>
           <span class="acc-arr">▼</span>
         </button>
@@ -403,7 +443,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 
       <div class="acc">
         <button type="button" class="acc-hd" id="hd-sym" onclick="togAcc('sym')">
-          <span>🤕</span> 症状で絞り込む
+          症状で絞り込む
           <span class="acc-cnt" id="cnt-sym"></span>
           <span class="acc-arr">▼</span>
         </button>
@@ -414,7 +454,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 
       <div class="acc">
         <button type="button" class="acc-hd" id="hd-ing" onclick="togAcc('ing')">
-          <span>⚗️</span> 成分で絞り込む
+          成分で絞り込む
           <span class="acc-cnt" id="cnt-ing"></span>
           <span class="acc-arr">▼</span>
         </button>
@@ -425,15 +465,15 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 
       <div class="acc">
         <button type="button" class="acc-hd open" id="hd-fil" onclick="togAcc('fil')">
-          <span>⚙️</span> 絞り込み・並び替え
+          絞り込み・並び替え
           <span class="acc-arr">▼</span>
         </button>
         <div class="acc-bd open" id="bd-fil">
           <select class="fsel" id="fitype" style="margin-bottom:6px">
             <option value="">種別：すべて</option>
-            <option value="otc">💊 OTC医薬品</option>
-            <option value="quasi">🧴 医薬部外品</option>
-            <option value="functional">🌿 機能性表示食品</option>
+            <option value="otc">OTC医薬品</option>
+            <option value="quasi">医薬部外品</option>
+            <option value="functional">機能性表示食品</option>
           </select>
           <select class="fsel" id="frisk">
             <option value="">リスク区分：すべて</option>
@@ -467,7 +507,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
     <main>
       <div class="cmpbar">
         <span>比較したい商品を選択 <span class="cmpcnt" id="cmpcnt">0</span>/4</span>
-        <button type="button" class="cmpbtn" id="cmpbtn" disabled onclick="openCmp()">📊 成分比較表を開く</button>
+        <button type="button" class="cmpbtn" id="cmpbtn" disabled onclick="openCmp()">成分比較表を開く</button>
       </div>
       <div class="resinfo" id="resinfo"></div>
       <div class="afchips" id="afchips"></div>
@@ -478,7 +518,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 </div>
 
 <div class="pg" id="pg-guide">
-  <div class="ptitle">💊 症状から薬を選ぶ</div>
+  <div class="ptitle">症状から薬を選ぶ</div>
   <div class="pdesc">症状グループをクリックすると該当する薬の一覧を表示します。</div>
   <div class="ggrid" id="ggrid"></div>
   <div id="gresult"></div>
@@ -486,7 +526,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 
 <div class="pg" id="pg-column">
   <div id="clist">
-    <div class="ptitle">📖 お役立ちコラム</div>
+    <div class="ptitle">お役立ちコラム</div>
     <div class="pdesc">市販薬の正しい選び方・安全な使い方を解説します。</div>
     <div class="cgrid" id="cgrid"></div>
   </div>
@@ -496,7 +536,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 <div class="mbg hide" id="cmpmodal">
   <div class="mdl">
     <div class="mhd">
-      <h2>📊 成分比較表</h2>
+      <h2>成分比較表</h2>
       <button type="button" class="mcls" onclick="closeCmp()">×</button>
     </div>
     <div class="mbd" id="cmpbody"></div>
@@ -509,6 +549,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 
 <script>
 """ + md_js + """
+""" + mkeff_js + """
 var MEDS=""" + meds_js + """;
 var ING=""" + ing_js + """;
 var COLS=""" + col_js + """;
@@ -517,10 +558,10 @@ var CATS=""" + cats_js + """;
 var RLBL={0:"要指導",1:"第1類",2:"第2類（指定）",2.5:"第２類",3:"第3類"};
 var TYPELBL={otc:"OTC医薬品",quasi:"医薬部外品",functional:"機能性表示食品"};
 var TYPECLS={otc:"",quasi:"bq",functional:"bf"};
-var TYPEICO={otc:"💊",quasi:"🧴",functional:"🌿"};
+var TYPEICO={otc:"",quasi:"",functional:""};
 var TYPELBL={otc:"OTC医薬品",quasi:"医薬部外品",functional:"機能性表示食品"};
 var TYPECLS={otc:"",quasi:"bq",functional:"bf"};
-var TYPEICO={otc:"💊",quasi:"🧴",functional:"🌿"};
+var TYPEICO={otc:"",quasi:"",functional:""};
 var RCLS={0:"r0",1:"r1",2:"r2",2.5:"r25",3:"r3"};
 
 var S={cat:"all",q:"",ings:[],syms:[],risk:"",itype:"",sort:"def",nd:false,nw:false,pg:1,pp:20};
@@ -683,6 +724,29 @@ function showTip(e,name){
 function hideTip(){tipEl.classList.remove("on");}
 
 /* カード */
+
+/* 成分タグをクリックで成分フィルターに追加 */
+function addIng(b){
+  if(!b||S.ings.indexOf(b)>-1)return;
+  S.ings.push(b);
+  S.pg=1;
+  buildIngs();
+  render();
+  updCnts();
+}
+
+/* 症状タグをクリックで症状フィルターに追加 */
+function addSym(s){
+  if(!s||S.syms.indexOf(s)>-1)return;
+  S.syms.push(s);
+  S.pg=1;
+  buildSymp();
+  render();
+  updCnts();
+}
+
+/* 効能テキストを記号・読点で分割してクリッカブルタグに変換 */
+
 function mkCard(m){
   var cat=null;
   for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}
@@ -697,13 +761,12 @@ function mkCard(m){
     var iW=!!wset[b];
     var hD=!!ING[b];
     var cls=iW?"iw":iM?"im":"in";
-    var ev="";
-    return '<span class="itag '+cls+'"'+ev+'>'+ing+'</span>';
+            return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
   }).join("");
   var sH="";
   if(m.symptoms&&m.symptoms.length){
     sH='<div class="csymp">'+m.symptoms.map(function(s){
-      return '<span class="sym'+(S.syms.indexOf(s)>-1?" hit":"")+\'">'+s+"</span>";
+      return '<span class="sym'+(S.syms.indexOf(s)>-1?' hit':'')+' clickable" data-s="'+s+'" onclick="addSym(this.dataset.s)">'+s+'</span>';
     }).join("")+"</div>";
   }
   var nc=m.noteType==="danger"?"nd":m.noteType==="warn"?"nw":"nn";
@@ -716,18 +779,18 @@ function mkCard(m){
     +'<div class="cprice">'+pr+'</div></div>'
     +'<div class="badges">'
     +(m.itype&&m.itype!=="otc"?'<span class="badge '+(TYPECLS[m.itype]||"bf")+'">'+(TYPEICO[m.itype]||"")+" "+(TYPELBL[m.itype]||m.itype)+'</span>':"")
-    +'<span class="badge bc">'+cat.i+" "+cat.l+'</span>'
+    +'<span class="badge bc">'+cat.l+'</span>'
     +(!m.itype||m.itype==="otc"?'<span class="badge '+(RCLS[m.risk]||"r25")+'">'+(RLBL[m.risk]||"")+'</span>':"")
-    +(m.drowsy?'<span class="badge bd2">🌙 眠気注意</span>':"")
-    +((m.warnIngs&&m.warnIngs.length)?'<span class="badge bw2">⚠ 要注意成分</span>':"")
+    +(m.drowsy?'<span class="badge bd2">眠気注意</span>':"")
+    +((m.warnIngs&&m.warnIngs.length)?'<span class="badge bw2">要注意成分</span>':"")
     +"</div>"+sH
-    +'<div class="cef">'+(m.effect||"")+"</div>"
+    +'<div class="cef">'+mkEffTags(m.effect||"")+"</div>"
     +'<div class="ings">'+iH+"</div>"
     +(m.note?'<div class="note '+nc+'">'+m.note+"</div>":"")
     +'<div class="cfoot"><span class="cfootl">成分数:'+(m.ings||[]).length+'</span>'
     +'<div style="display:flex;gap:8px;align-items:center">'
     +'<button type="button" class="simbtn" onclick="showSim('+m.id+')">類似商品</button>'
-    +'<a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA ↗</a>'
+    +'<a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">PMDA ↗</a>'
     +"</div></div>"
     +'<div id="sim-'+m.id+'" style="display:none"></div>'
     +"</div>";
@@ -749,7 +812,7 @@ function showSim(id){
     return{x:x,s:union?inter/union:0};
   }).filter(function(o){return o.s>0;}).sort(function(a,b){return b.s-a.s;}).slice(0,3);
   if(!sims.length){el.innerHTML='<div style="font-size:12px;color:var(--txl);padding:6px">類似商品が見つかりません</div>';el.style.display="block";return;}
-  el.innerHTML='<div class="simpnl"><h3>🔍 類似商品</h3>'
+  el.innerHTML='<div class="simpnl"><h3>類似商品</h3>'
     +sims.map(function(o){
       return '<div class="simcard"><div><div style="font-size:13px;font-weight:600">'+o.x.name+'</div>'
         +'<div style="font-size:11px;color:var(--txl)">成分一致度 '+Math.round(o.s*100)+'% | '+(o.x.maker||"")+'</div></div>'
@@ -789,7 +852,7 @@ function openCmp(){
     return "<tr><th>"+ing+"</th>"+cells+"</tr>";
   }).join("");
   var prRow="<tr><th>価格</th>"+meds.map(function(m){return "<td>"+(m.price?"¥"+m.price.toLocaleString():"不明")+"</td>";}).join("")+"</tr>";
-  var drRow="<tr><th>眠気</th>"+meds.map(function(m){return "<td>"+(m.drowsy?"🌙 あり":"✅ なし")+"</td>";}).join("")+"</tr>";
+  var drRow="<tr><th>眠気</th>"+meds.map(function(m){return "<td>"+(m.drowsy?"あり":"✅ なし")+"</td>";}).join("")+"</tr>";
   document.getElementById("cmpbody").innerHTML=
     '<table class="cmptbl"><thead><tr><th>成分</th>'+hd+'</tr></thead><tbody>'+prRow+drRow+rows+'</tbody></table>';
   document.getElementById("cmpmodal").classList.remove("hide");
@@ -810,7 +873,7 @@ function buildAfChips(){
   }
   if(S.q)add('"'+S.q+'"',function(){S.q="";document.getElementById("qinp").value="";S.pg=1;render();});
   S.syms.forEach(function(sym){
-    (function(s){add("🤕 "+s,function(){var i=S.syms.indexOf(s);if(i>-1)S.syms.splice(i,1);buildSymp();S.pg=1;render();updCnts();});})(sym);
+    (function(s){add(""+s,function(){var i=S.syms.indexOf(s);if(i>-1)S.syms.splice(i,1);buildSymp();S.pg=1;render();updCnts();});})(sym);
   });
   S.ings.forEach(function(ing){
     (function(v){add(v,function(){var i=S.ings.indexOf(v);if(i>-1)S.ings.splice(i,1);buildIngs();S.pg=1;render();updCnts();});})(ing);
@@ -850,7 +913,7 @@ function render(){
   document.getElementById("resinfo").innerHTML='<strong>'+total.toLocaleString()+'件</strong>表示中（全'+MEDS.length.toLocaleString()+'件）';
   buildAfChips();
   var start=(S.pg-1)*S.pp;var page=fl.slice(start,start+S.pp);
-  document.getElementById("grid").innerHTML=page.length===0?'<div class="nores">🔍 条件に合う医薬品が見つかりません</div>':page.map(mkCard).join("");
+  document.getElementById("grid").innerHTML=page.length===0?'<div class="nores">条件に合う医薬品が見つかりません</div>':page.map(mkCard).join("");
   buildPagi(total);
 }
 
