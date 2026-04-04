@@ -198,6 +198,27 @@ a{color:inherit;text-decoration:none}
 /* FOOTER */
 footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-size:11px;margin-top:40px}
 @media(max-width:800px){.layout{grid-template-columns:1fr}.sb{position:static}.ggrid{grid-template-columns:repeat(2,1fr)}}
+footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);border-top:1px solid var(--bd);margin-top:40px}
+.footer-links{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px}
+.footer-links a{color:var(--txm);text-decoration:none;font-size:12px}
+.footer-links a:hover{color:var(--teal);text-decoration:underline}
+.footer-note{margin-bottom:6px;line-height:1.7}
+.footer-copy{color:var(--txl);font-size:11px}
+
+.static-body{max-width:720px;margin:0 auto;padding:0 0 40px}
+.static-body h2{font-size:20px;font-weight:700;margin:0 0 16px;color:var(--navy)}
+.static-body h3{font-size:15px;font-weight:700;margin:24px 0 8px;color:var(--navy)}
+.static-body p{font-size:14px;line-height:1.8;margin-bottom:12px;color:var(--tx)}
+.static-body ul{padding-left:20px;margin-bottom:12px}
+.static-body li{font-size:14px;line-height:1.8;margin-bottom:6px}
+.static-body a{color:var(--teal2);text-decoration:underline}
+.contact-form{max-width:480px}
+.contact-form .fg{margin-bottom:14px}
+.contact-form label{display:block;font-size:12px;font-weight:600;color:var(--txm);margin-bottom:5px}
+.contact-form input,.contact-form select,.contact-form textarea{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:14px;font-family:inherit;outline:none;background:var(--wh);color:var(--tx)}
+.contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}
+.btn{padding:10px 24px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--teal2)}
 </style>
   <!-- Supabase設定（Vercelビルド時に書き換え） -->
   <meta name="sb-url" content="__SUPABASE_URL__">
@@ -207,7 +228,7 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 
 <nav class="nav">
   <div class="nav-inner">
-    <div class="logo">くすり成分<em>ガイド</em></div>
+    <div class="logo">クスリノ<em>コンパス</em></div>
     <button type="button" class="ntab on" id="t-search" onclick="showPg('search')">検索</button>
     <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">症状から選ぶ</button>
     <button type="button" class="ntab" id="t-column" onclick="showPg('column')">コラム</button>
@@ -340,7 +361,100 @@ footer{background:var(--navy);color:#475569;text-align:center;padding:20px;font-
 
 <div class="tip" id="tip"></div>
 
-<footer>本サイトはPMDA添付文書等の公開情報を元にした一般情報提供です。服用前に必ず添付文書をお読みください。広告収入を得ていません。</footer>
+<!-- ── 静的ページ ── -->
+<div class="pg" id="pg-concept">
+  <div class="ptitle">サイトのコンセプト</div>
+  <div class="static-body">
+    <h2>医薬品を、必要な人に必要な数を</h2>
+    <p>クスリノコンパスは、市販薬（OTC医薬品）・医薬部外品・機能性表示食品を成分・効能・リスク区分から比較できる情報提供サイトです。</p>
+    <h3>なぜこのサイトを作ったか</h3>
+    <p>ドラッグストアには似たような商品が並んでいます。「この薬とあの薬は何が違うの？」「同じ成分でもっと安い薬はないか？」——そんな疑問に答える場所が必要だと考えました。</p>
+    <h3>3つのこだわり</h3>
+    <ul>
+      <li><strong>広告なし</strong> — 掲載料・アフィリエイト収入を得ていません。情報の中立性を守ります。</li>
+      <li><strong>根拠に基づく情報</strong> — PMDA（医薬品医療機器総合機構）・消費者庁の公開情報を元にしています。</li>
+      <li><strong>比較しやすいUI</strong> — 最大4商品を並べて成分を比較できます。</li>
+    </ul>
+    <h3>免責事項</h3>
+    <p>本サイトの情報は一般的な情報提供を目的としており、医療アドバイスではありません。服用前に必ず添付文書をお読みいただき、不明な点は薬剤師にご相談ください。</p>
+  </div>
+</div>
+
+<div class="pg" id="pg-privacy">
+  <div class="ptitle">プライバシーポリシー</div>
+  <div class="static-body">
+    <h2>プライバシーポリシー</h2>
+    <p>最終更新：2026年4月</p>
+    <h3>収集する情報</h3>
+    <p>本サイトはユーザーの個人情報を収集しません。お問い合わせフォームからご連絡いただいた場合のみ、返信のためにメールアドレスを使用します。</p>
+    <h3>アクセス解析</h3>
+    <p>サイト改善のためVercel Analytics を使用しています。IPアドレス等の個人を特定できる情報は収集されません。</p>
+    <h3>外部リンク</h3>
+    <p>本サイトからリンクされている外部サイト（PMDA・Amazon・楽天市場等）のプライバシーポリシーについては各サイトをご確認ください。</p>
+    <h3>お問い合わせ</h3>
+    <p>プライバシーポリシーに関するご質問は<a href="/contact" onclick="showPg('contact');return false;">お問い合わせページ</a>からご連絡ください。</p>
+  </div>
+</div>
+
+<div class="pg" id="pg-terms">
+  <div class="ptitle">利用規約</div>
+  <div class="static-body">
+    <h2>利用規約</h2>
+    <p>最終更新：2026年4月</p>
+    <h3>情報の正確性</h3>
+    <p>本サイトの情報はPMDA・消費者庁の公開情報を元に作成していますが、最新情報と異なる場合があります。服用前に必ず添付文書または薬剤師にご確認ください。</p>
+    <h3>免責事項</h3>
+    <p>本サイトの情報を利用したことによる損害について、運営者は責任を負いません。医薬品の選択・使用は自己責任のもと、医師・薬剤師にご相談の上で行ってください。</p>
+    <h3>著作権</h3>
+    <p>本サイトのコンテンツの無断転載を禁じます。医薬品データはPMDA公開情報（政府標準利用規約）に基づきます。</p>
+    <h3>変更</h3>
+    <p>本規約は予告なく変更する場合があります。</p>
+  </div>
+</div>
+
+<div class="pg" id="pg-contact">
+  <div class="ptitle">お問い合わせ</div>
+  <div class="static-body">
+    <h2>お問い合わせ</h2>
+    <p>以下のフォームからお気軽にご連絡ください。通常2〜3営業日以内にご返信します。</p>
+    <div class="contact-form">
+      <div class="fg">
+        <label>お名前</label>
+        <input type="text" id="ct-name" placeholder="山田 太郎">
+      </div>
+      <div class="fg">
+        <label>メールアドレス *</label>
+        <input type="email" id="ct-email" placeholder="example@email.com">
+      </div>
+      <div class="fg">
+        <label>お問い合わせ種別</label>
+        <select id="ct-type">
+          <option>情報の誤りについて</option>
+          <option>掲載リクエスト</option>
+          <option>サイトの不具合</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>内容 *</label>
+        <textarea id="ct-body" rows="6" placeholder="お問い合わせ内容をご記入ください"></textarea>
+      </div>
+      <div id="ct-status" style="display:none;padding:10px;border-radius:7px;font-size:13px;margin-bottom:10px"></div>
+      <button type="button" class="btn" onclick="submitContact()">送信する</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="?pg=concept" onclick="showPg('concept');return false;">サイトのコンセプト</a>
+    <a href="?pg=privacy" onclick="showPg('privacy');return false;">プライバシーポリシー</a>
+    <a href="?pg=terms" onclick="showPg('terms');return false;">利用規約</a>
+    <a href="?pg=contact" onclick="showPg('contact');return false;">お問い合わせ</a>
+  </div>
+  <div class="footer-note">本サイトはPMDA添付文書等の公開情報を元にした一般情報提供です。服用前に必ず添付文書をお読みください。広告収入を得ていません。</div>
+  <div class="footer-copy">© 2026 クスリノコンパス</div>
+</footer>
 
 <script>
 /* ── Supabase 設定 ── */
@@ -564,14 +678,35 @@ var S={cat:"all",q:"",ings:[],syms:[],risk:"",itype:"",sort:"def",nd:false,nw:fa
 var CMP=[];
 
 /* ページ切替 */
-function showPg(id){
+function showPg(id, push){
   document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".ntab").forEach(function(t){t.classList.remove("on");});
   document.getElementById("pg-"+id).classList.add("on");
   document.getElementById("t-"+id).classList.add("on");
-  if(id==="guide") buildGuide();
+  if(id==="guide")  buildGuide();
   if(id==="column") buildCols();
+  if(push!==false){
+    var url=new URL(location.href);
+    url.searchParams.set("pg",id);
+    history.pushState({pg:id},"",url.toString());
+  }
 }
+
+/* URLパラメータを読んで初期ページを設定 */
+function applyURLParams(){
+  var params=new URLSearchParams(location.search);
+  var pg=params.get("pg");
+  var validPgs=["guide","column","concept","privacy","terms","contact"];
+  if(pg && validPgs.indexOf(pg)>-1) showPg(pg, false);
+  var colId=params.get("col");
+  if(colId) showColFromDB(colId);
+}
+
+/* ブラウザの戻る/進むに対応 */
+window.addEventListener("popstate",function(e){
+  if(e.state&&e.state.pg) showPg(e.state.pg, false);
+  else showPg("search", false);
+});
 
 /* アコーディオン */
 function togAcc(k){
@@ -994,6 +1129,34 @@ function backCol(){
 
 /* 初期化 */
 /* ── 初期化 ── */
+/* お問い合わせ送信（Supabaseの contact_messages テーブルに保存） */
+async function submitContact(){
+  var name  = document.getElementById('ct-name').value.trim();
+  var email = document.getElementById('ct-email').value.trim();
+  var type  = document.getElementById('ct-type').value;
+  var body  = document.getElementById('ct-body').value.trim();
+  var st    = document.getElementById('ct-status');
+
+  if(!email||!body){
+    st.style.display='block';st.style.background='#fef2f2';st.style.color='#b91c1c';
+    st.textContent='メールアドレスと内容は必須です';return;
+  }
+  try{
+    await sbFetch('contact_messages', {
+      method:'POST',
+      body: JSON.stringify({name:name,email:email,type:type,body:body,created_at:new Date().toISOString()})
+    });
+    st.style.display='block';st.style.background='#f0fdf4';st.style.color='#166534';
+    st.textContent='送信しました。ありがとうございます。';
+    document.getElementById('ct-name').value='';
+    document.getElementById('ct-email').value='';
+    document.getElementById('ct-body').value='';
+  }catch(e){
+    st.style.display='block';st.style.background='#fef2f2';st.style.color='#b91c1c';
+    st.textContent='送信に失敗しました: '+e.message;
+  }
+}
+
 (async function(){
   try{
     if(!SB_URL || SB_URL.indexOf('xxxx') > -1){
@@ -1008,6 +1171,7 @@ function backCol(){
     buildSymp();
     buildIngs();
     await render();
+    applyURLParams();
   }catch(e){
     console.error('初期化エラー:', e);
     document.getElementById('grid').innerHTML=

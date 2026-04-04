@@ -278,6 +278,14 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
   <!-- 設定 -->
   <div class="tab-pane" id="tab-settings">
     <div class="setting-item">
+      <label>Supabase 接続設定</label>
+      <input type="text" id="set-sb-url" placeholder="https://xxxx.supabase.co" style="margin-bottom:8px">
+      <input type="password" id="set-sb-key" placeholder="anon public キー（eyJxxxx）">
+      <div style="font-size:11px;color:var(--txl);margin-top:4px">設定するとコラムがSupabaseに直接保存されます</div>
+      <button type="button" class="btn" onclick="saveSBConfig()" style="margin-top:8px;padding:6px 16px;font-size:13px">保存</button>
+      <button type="button" class="btn-sec" onclick="testSBConnection()" style="margin-left:8px;padding:6px 16px;font-size:13px">接続テスト</button>
+    </div>
+    <div class="setting-item">
       <label>パスワードを変更</label>
       <input type="password" id="set-pw-old" placeholder="現在のパスワード" style="margin-bottom:8px">
       <input type="password" id="set-pw-new" placeholder="新しいパスワード（4文字以上）">
@@ -313,11 +321,18 @@ document.getElementById("f-status").addEventListener("change",function(e){
   document.getElementById("btn-publish").textContent=isPublish?"公開保存":"保存";
 });
 
+function loadSBConfigUI(){
+  var cfg=getSBConfig();
+  if(cfg.url) document.getElementById('set-sb-url').value=cfg.url;
+  if(cfg.key) document.getElementById('set-sb-key').value=cfg.key;
+}
+
 function enter(){
   sessionStorage.setItem("admin_authed","1");
   document.getElementById("login-screen").style.display="none";
   document.getElementById("main-screen").style.display="block";
   loadCols();
+  loadSBConfigUI();
 }
 function doLogout(){sessionStorage.removeItem("admin_authed");location.reload();}
 
@@ -595,7 +610,9 @@ function editCol(i){
 
 function delCol(i){
   if(!confirm("「"+COLS[i].title+"」を削除しますか？"))return;
+  var colId=COLS[i].id;
   COLS.splice(i,1);saveCols();renderList();showStatus("削除しました","ok");
+  deleteColFromSB(colId);
 }
 
 function saveCol(forceStatus){
@@ -638,6 +655,13 @@ function saveCol(forceStatus){
     showStatus(msg,"ok");
   }
   saveCols();renderList();clearForm();
+  /* Supabase が設定されていれば同時に保存 */
+  var savedCol=EDIT_ID!==null?COLS[EDIT_ID]:COLS[COLS.length-1];
+  if(savedCol){
+    saveColToSB(savedCol).then(function(ok){
+      if(ok) showStatus('✅ Supabaseにも保存しました','ok');
+    });
+  }
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".tab")[0].classList.add("on");
@@ -676,6 +700,75 @@ function copyExport(){
 }
 
 /* ── パスワード変更 ── */
+/* ── Supabase設定 ── */
+function getSBConfig(){
+  return {
+    url: localStorage.getItem('sb_url')||'',
+    key: localStorage.getItem('sb_key')||'',
+  };
+}
+
+function saveSBConfig(){
+  var url=document.getElementById('set-sb-url').value.trim();
+  var key=document.getElementById('set-sb-key').value.trim();
+  if(!url||!key){showStatus('URLとキーを入力してください','err');return;}
+  localStorage.setItem('sb_url',url);
+  localStorage.setItem('sb_key',key);
+  showStatus('✅ Supabase接続設定を保存しました','ok');
+}
+
+async function testSBConnection(){
+  var cfg=getSBConfig();
+  if(!cfg.url||!cfg.key){showStatus('先にURLとキーを設定してください','err');return;}
+  try{
+    showStatus('接続確認中...','warn');
+    var res=await fetch(cfg.url+'/rest/v1/columns?limit=1',{
+      headers:{'apikey':cfg.key,'Authorization':'Bearer '+cfg.key}
+    });
+    if(res.ok){showStatus('✅ 接続成功！columnsテーブルを確認しました','ok');}
+    else{showStatus('接続失敗: '+res.status,'err');}
+  }catch(e){showStatus('接続エラー: '+e.message,'err');}
+}
+
+async function saveColToSB(col){
+  var cfg=getSBConfig();
+  if(!cfg.url||!cfg.key) return false;
+  try{
+    var res=await fetch(cfg.url+'/rest/v1/columns',{
+      method:'POST',
+      headers:{
+        'apikey':cfg.key,
+        'Authorization':'Bearer '+cfg.key,
+        'Content-Type':'application/json',
+        'Prefer':'resolution=merge-duplicates',
+      },
+      body:JSON.stringify({
+        id:col.id, title:col.title, date:col.date, tag:col.tag,
+        summary:col.summary, body:col.body,
+        thumb:col.thumb||null,
+        status:col.status||'published',
+        publish_at:col.publishAt||null,
+        updated_at:new Date().toISOString().slice(0,16),
+      })
+    });
+    return res.ok;
+  }catch(e){
+    console.error('SB保存エラー:',e);
+    return false;
+  }
+}
+
+async function deleteColFromSB(id){
+  var cfg=getSBConfig();
+  if(!cfg.url||!cfg.key) return;
+  try{
+    await fetch(cfg.url+'/rest/v1/columns?id=eq.'+encodeURIComponent(id),{
+      method:'DELETE',
+      headers:{'apikey':cfg.key,'Authorization':'Bearer '+cfg.key}
+    });
+  }catch(e){}
+}
+
 function changePw(){
   var old=document.getElementById("set-pw-old").value;
   var nw=document.getElementById("set-pw-new").value;
