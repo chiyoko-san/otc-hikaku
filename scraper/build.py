@@ -85,6 +85,14 @@ CATS = [
     {"id":"motion","l":"乗物酔い","i":"🚢"},
     {"id":"test","l":"一般用検査薬","i":"🔬"},
     {"id":"disinfect","l":"消毒薬","i":"🧪"},
+    {"id":"quasi_skin","l":"医薬部外品（スキンケア）","i":"🧴"},
+    {"id":"quasi_oral","l":"医薬部外品（オーラルケア）","i":"🦷"},
+    {"id":"quasi_hair","l":"医薬部外品（育毛）","i":"💈"},
+    {"id":"func_gut","l":"機能性表示（腸内環境）","i":"🦠"},
+    {"id":"func_eye","l":"機能性表示（目の健康）","i":"👁"},
+    {"id":"func_joint","l":"機能性表示（関節・骨）","i":"🦴"},
+    {"id":"func_stress","l":"機能性表示（ストレス・睡眠）","i":"😴"},
+    {"id":"func_fat","l":"機能性表示（体脂肪・血糖）","i":"📉"},
 ]
 
 def run(output=None):
@@ -441,6 +449,9 @@ var COLS=""" + col_js + """;
 var SYMS=""" + sym_js + """;
 var CATS=""" + cats_js + """;
 var RLBL={0:"要指導",1:"第1類",2:"第2類（指定）",2.5:"第２類",3:"第3類"};
+var TYPELBL={otc:"OTC医薬品",quasi:"医薬部外品",functional:"機能性表示食品"};
+var TYPECLS={otc:"",quasi:"bq",functional:"bf"};
+var TYPEICO={otc:"💊",quasi:"🧴",functional:"🌿"};
 var RCLS={0:"r0",1:"r1",2:"r2",2.5:"r25",3:"r3"};
 
 var S={cat:"all",q:"",ings:[],syms:[],risk:"",sort:"def",nd:false,nw:false,pg:1,pp:20};
