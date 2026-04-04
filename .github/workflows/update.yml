@@ -21,21 +21,27 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Chrome インストール（PMDA用）
         if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' }}
         run: |
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
           sudo apt-get update -q && sudo apt-get install -y google-chrome-stable
+
       - name: 依存インストール
-        run: pip install selenium webdriver-manager requests
+        run: pip install selenium webdriver-manager requests beautifulsoup4
+
       - name: git設定
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # ── PMDA（ひらがな/カタカナ/英字） ──
       - name: PMDAスクレイピング
         if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' }}
         run: |
@@ -45,16 +51,21 @@ jobs:
             --limit ${{ github.event.inputs.limit || '0' }}
         timeout-minutes: 245
         continue-on-error: true
+
+      # ── 機能性表示食品（消費者庁） ──
       - name: 機能性表示食品スクレイピング
         if: ${{ github.event.inputs.group == 'functional' }}
         run: |
           python scraper/fld_scraper.py \
+            --scrape \
             --merge \
             --limit ${{ github.event.inputs.limit || '0' }} \
             --output scraper/medicines.json
         timeout-minutes: 60
         continue-on-error: true
-      - name: ゴミデータ除去
+
+      # ── データクリーニング ──
+      - name: ゴミデータ除去・集計
         run: |
           python3 - << 'PYEOF'
           import json, re
@@ -74,8 +85,12 @@ jobs:
           quas = sum(1 for x in clean if x.get('itype')=='quasi')
           print(f'合計{len(clean)}件 (OTC:{otc} 機能性:{func} 医薬部外品:{quas})')
           PYEOF
+
+      # ── index.html ビルド ──
       - name: index.html ビルド
         run: python scraper/build.py --output index.html
+
+      # ── コミット ──
       - name: コミット
         run: |
           git pull --rebase 2>/dev/null || true
