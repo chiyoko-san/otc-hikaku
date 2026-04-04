@@ -148,10 +148,10 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
 
       <!-- サムネイル -->
       <div class="fg">
-        <label>🖼️ サムネイル画像 <span style="font-size:11px;color:var(--txl)">推奨: 600×340px / JPG・PNG・WebP / 500KB以下</span></label>
+        <label>🖼️ サムネイル画像 <span style="font-size:11px;color:var(--txl)">推奨: 600×340px / JPG・PNG・WebP / 3MB以下</span></label>
         <div id="thumb-drop" class="thumb-drop" ondragover="onDrag(event,true)" ondragleave="onDrag(event,false)" ondrop="onDrop(event)">
           <input type="file" id="thumb-file" accept="image/*" onchange="onFileSelect(event)">
-          <div id="thumb-ph"><div class="d-ico">📷</div><p>クリックまたはドラッグ＆ドロップ</p><small>JPG / PNG / WebP（500KB以下）</small></div>
+          <div id="thumb-ph"><div class="d-ico">📷</div><p>クリックまたはドラッグ＆ドロップ</p><small>JPG / PNG / WebP（3MB以下）</small></div>
           <div id="thumb-pw" class="thumb-pw" style="display:none">
             <img id="thumb-img" src="" alt="">
             <button type="button" class="thumb-rm" onclick="rmThumb(event)">×</button>
@@ -405,7 +405,7 @@ function onDrop(e){e.preventDefault();document.getElementById("thumb-drop").clas
 function onFileSelect(e){var f=e.target.files[0];if(f)procThumb(f);}
 function procThumb(file){
   var ee=document.getElementById("thumb-err");ee.style.display="none";
-  if(file.size>600*1024){ee.textContent="ファイルサイズが大きすぎます（"+Math.round(file.size/1024)+"KB）。500KB以下にしてください。";ee.style.display="block";return;}
+  if(file.size>3*1024*1024){ee.textContent="ファイルサイズが大きすぎます（"+Math.round(file.size/1024)+"KB）。3MB以下にしてください。";ee.style.display="block";return;}
   var r=new FileReader();r.onload=function(ev){
     var img=new Image();img.onload=function(){
       var c=document.createElement("canvas");
