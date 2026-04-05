@@ -536,16 +536,75 @@ function mdToHtml(src){
 
 /* ── ツールバーボタン ── */
 function insImg(){
-  var url=prompt("画像URLを入力してください（https://...）","");
-  if(!url||!url.trim())return;
-  var alt=prompt("画像の説明文（alt）を入力してください（省略可）","") || "";
+  /* Supabase設定があればストレージアップロード、なければURL入力 */
+  var cfg = getSBConfig();
+  if(cfg.url && cfg.key && cfg.url.indexOf('xxxx')<0){
+    document.getElementById('img-upload-modal').style.display='flex';
+  } else {
+    var url=prompt("画像URLを入力してください（https://...）","");
+    if(!url||!url.trim())return;
+    var alt=prompt("画像の説明文（alt）を入力してください（省略可）","") || "";
+    insertImgMd(url.trim(), alt);
+  }
+}
+
+function insertImgMd(url, alt){
   var ta=document.getElementById("f-body");
   var s=ta.selectionStart,v=ta.value;
-  var md="\n!["+alt+"]("+url.trim()+")\n";
+  var md="\n!["+(alt||"")+"]("+ url+")\n";
   ta.value=v.substring(0,s)+md+v.substring(s);
   ta.selectionStart=ta.selectionEnd=s+md.length;
   ta.focus();updatePreview();
   document.getElementById("cnt-body").textContent=ta.value.length;
+}
+
+async function uploadImageToSB(){
+  var file = document.getElementById('img-file-input').files[0];
+  var alt  = document.getElementById('img-alt-input').value.trim();
+  if(!file){alert('ファイルを選択してください');return;}
+
+  var cfg = getSBConfig();
+  var ext = file.name.split('.').pop().toLowerCase();
+  var fname = 'column-images/' + Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
+
+  document.getElementById('img-upload-btn').disabled=true;
+  document.getElementById('img-upload-btn').textContent='アップロード中...';
+
+  try{
+    /* Supabase Storage にアップロード */
+    var res = await fetch(cfg.url+'/storage/v1/object/column-images/'+fname, {
+      method: 'POST',
+      headers:{
+        'apikey': cfg.key,
+        'Authorization': 'Bearer '+cfg.key,
+        'Content-Type': file.type,
+        'x-upsert': 'true',
+      },
+      body: file
+    });
+
+    if(!res.ok){
+      var err = await res.text();
+      throw new Error(err);
+    }
+
+    /* 公開URL を生成 */
+    var publicUrl = cfg.url+'/storage/v1/object/public/column-images/'+fname;
+    insertImgMd(publicUrl, alt);
+    closeImgModal();
+    showStatus('✅ 画像をアップロードしました','ok');
+  }catch(e){
+    alert('アップロードエラー: '+e.message+'\n\nSupabase Storage の「column-images」バケットが存在し、公開設定になっているか確認してください。');
+  }finally{
+    document.getElementById('img-upload-btn').disabled=false;
+    document.getElementById('img-upload-btn').textContent='アップロードして挿入';
+  }
+}
+
+function closeImgModal(){
+  document.getElementById('img-upload-modal').style.display='none';
+  document.getElementById('img-file-input').value='';
+  document.getElementById('img-alt-input').value='';
 }
 
 function insTable(){
@@ -786,5 +845,28 @@ function showStatus(msg,type){var e=document.getElementById("status-msg");e.text
 /* ── 初期化 ── */
 if(sessionStorage.getItem("admin_authed")==="1"&&localStorage.getItem(PW_KEY))enter();
 </script>
+
+<!-- 画像アップロードモーダル -->
+<div id="img-upload-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:28px;width:440px;max-width:90vw">
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:16px">画像をアップロード</h3>
+    <div style="margin-bottom:12px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px">画像ファイル（JPG/PNG/WebP・3MB以下）</label>
+      <input type="file" id="img-file-input" accept="image/*" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px">
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px">説明文（alt・省略可）</label>
+      <input type="text" id="img-alt-input" placeholder="例：No.1表示の問題を示すイラスト" style="width:100%;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px;outline:none">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button type="button" id="img-upload-btn" onclick="uploadImageToSB()" style="flex:1;padding:10px;background:#2fa18d;color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer">アップロードして挿入</button>
+      <button type="button" onclick="closeImgModal()" style="padding:10px 20px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:7px;font-size:14px;cursor:pointer">キャンセル</button>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#94a3b8;line-height:1.7">
+      SupabaseのStorageに「column-images」バケット（公開）が必要です。<br>
+      Supabase → Storage → New bucket → 「column-images」・Public にチェック
+    </div>
+  </div>
+</div>
 </body>
 </html>
