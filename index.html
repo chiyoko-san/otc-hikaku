@@ -1368,8 +1368,13 @@ async function showMedDetail(id){
   url.searchParams.set('med', id);
   history.pushState({med:id},'',url.toString());
 
-  /* アクセス記録 */
-  trackMedAccess(id, med.name, med.maker||'');
+  /* アクセス記録（LocalStorage） */
+  try{
+    var _d=JSON.parse(localStorage.getItem('med_access')||'{}');
+    _d[id]=_d[id]||{name:med.name,maker:med.maker||'',count:0};
+    _d[id].count++;
+    localStorage.setItem('med_access',JSON.stringify(_d));
+  }catch(_e){}
 
   /* 詳細HTML生成 */
   renderMedDetail(med);
