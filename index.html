@@ -705,7 +705,8 @@ function applyURLParams(){
 
 /* ブラウザの戻る/進むに対応 */
 window.addEventListener("popstate",function(e){
-  if(e.state&&e.state.pg) showPg(e.state.pg, false);
+  if(e.state&&e.state.col){ showPg('column',false); showColFromDB(e.state.col); }
+  else if(e.state&&e.state.pg) showPg(e.state.pg, false);
   else showPg("search", false);
 });
 
@@ -1091,12 +1092,22 @@ async function showColFromDB(id){
   document.getElementById('clist').style.display='none';
   document.getElementById('cdetail').innerHTML='<div style="padding:40px;text-align:center;color:var(--txl)">読み込み中...</div>';
   document.getElementById('cdetail').style.display='block';
+  /* slug または id どちらでも検索 */
   try{
-    var res = await sbFetch('columns?id=eq.'+encodeURIComponent(id)+'&limit=1');
+    var query = id.match(/^[a-z0-9_-]+$/) && !id.match(/^c\d+$/)
+      ? 'columns?slug=eq.'+encodeURIComponent(id)+'&limit=1'
+      : 'columns?id=eq.'+encodeURIComponent(id)+'&limit=1';
+    var res = await sbFetch(query);
     var data = await res.json();
     var col = data[0];
     if(!col){document.getElementById('cdetail').innerHTML='<div style="padding:40px">記事が見つかりません</div>';return;}
     var body = mdToHtml(col.body||'');
+    /* URLをslugまたはidで更新 */
+    var colKey = col.slug || col.id;
+    var url = new URL(location.href);
+    url.searchParams.set('pg','column');
+    url.searchParams.set('col', colKey);
+    history.pushState({pg:'column',col:colKey},'',url.toString());
     document.getElementById('cdetail').innerHTML=
       '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
       +'<div class="cdetail"><h1 style="font-size:26px;font-weight:700;line-height:1.5;margin-bottom:16px;color:var(--navy)">'+col.title+'</h1>'
