@@ -248,6 +248,33 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .ctop-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(15,28,53,.85))}
 .ctag{font-size:10px;padding:2px 8px;background:var(--teal);color:#fff;border-radius:10px;display:inline-block;margin-bottom:6px}
 .ctitle{font-size:14px;font-weight:700;line-height:1.5;color:#fff}
+
+/* ── コラムページ サイドバーレイアウト ── */
+.col-layout{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+.col-main{min-width:0}
+.col-sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:20px}
+.sb-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.sb-card-title{font-size:13px;font-weight:700;color:var(--wh);background:var(--navy);padding:10px 14px;display:flex;align-items:center;gap:6px}
+.sb-list{list-style:none;padding:0;margin:0}
+.sb-item{border-bottom:1px solid var(--bd)}
+.sb-item:last-child{border-bottom:none}
+.sb-item a{display:block;padding:10px 14px;text-decoration:none;color:var(--tx);font-size:12px;line-height:1.6;transition:background .15s}
+.sb-item a:hover{background:var(--sl)}
+.sb-item-tag{font-size:10px;padding:1px 7px;background:var(--tl);color:var(--teal2);border-radius:10px;margin-bottom:4px;display:inline-block}
+.sb-item-title{font-size:12px;font-weight:600;line-height:1.5;color:var(--tx)}
+.sb-item-date{font-size:10px;color:var(--txl);margin-top:2px}
+.sb-rank-num{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--sl);color:var(--txm);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-rank-num.top3{background:var(--teal);color:#fff}
+.sb-rank-item{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);text-decoration:none;color:var(--tx)}
+.sb-rank-item:last-child{border-bottom:none}
+.sb-rank-item:hover{background:var(--sl)}
+.sb-rank-name{font-size:12px;font-weight:600;line-height:1.4;flex:1}
+.sb-rank-maker{font-size:10px;color:var(--txl)}
+@media(max-width:760px){
+  .col-layout{grid-template-columns:1fr}
+  .col-sidebar{position:static}
+}
+
 </style>
 </head>
 <body>
@@ -367,12 +394,36 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 </div>
 
 <div class="pg" id="pg-column">
-  <div id="clist">
-    <div class="ptitle">お役立ちコラム</div>
-    <div class="pdesc">市販薬の正しい選び方・安全な使い方を解説します。</div>
-    <div class="cgrid" id="cgrid"></div>
+  <div class="col-layout">
+    <!-- メインエリア -->
+    <div class="col-main">
+      <div id="clist">
+        <div class="ptitle">お役立ちコラム</div>
+        <div class="pdesc">市販薬の正しい選び方・安全な使い方を解説します。</div>
+        <div class="cgrid" id="cgrid"></div>
+      </div>
+      <div id="cdetail" style="display:none"></div>
+    </div>
+    <!-- サイドバー -->
+    <aside class="col-sidebar" id="col-sidebar">
+      <!-- 人気コラム -->
+      <div class="sb-card">
+        <div class="sb-card-title">📚 人気コラム</div>
+        <ul class="sb-list" id="sb-popular-cols">
+          <li style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込み中...</li>
+        </ul>
+      </div>
+      <!-- 医薬品アクセスランキング -->
+      <div class="sb-card">
+        <div class="sb-card-title">🏆 医薬品アクセスランキング</div>
+        <div id="sb-ranking">
+          <a class="sb-rank-item" style="pointer-events:none">
+            <div style="font-size:12px;color:var(--txl);padding:2px 0">読み込み中...</div>
+          </a>
+        </div>
+      </div>
+    </aside>
   </div>
-  <div id="cdetail" style="display:none"></div>
 </div>
 
 <div class="mbg hide" id="cmpmodal">
@@ -635,7 +686,7 @@ function mdToHtml(src){
     if(/^\|.+\|/.test(raw)){if(!inTbl){close();inTbl=true;tblRows=[];}tblRows.push(raw);continue;}
     if(inTbl&&!/^\|.+\|/.test(raw)){html+=flushTable();inTbl=false;tblRows=[];}
     var imgm=/^!\[([^\]]*)\]\(([^)]+)\)$/.exec(raw);
-    if(imgm){close();html+='<figure style="margin:16px 0;text-align:center"><img src="'+imgm[2]+'" alt="'+imgm[1]+'" style="max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08)"><figcaption style="font-size:11px;color:var(--txl);margin-top:5px">'+imgm[1]+'</figcaption></figure>';continue;}
+    if(imgm){close();html+='<figure style="margin:16px 0;text-align:center"><img src="'+imgm[2]+'" alt="'+imgm[1]+'" style="max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08)">'+(imgm[1]?'<figcaption style="font-size:11px;color:var(--txl);margin-top:5px">'+imgm[1]+'</figcaption>':'')+'</figure>';continue;}
     var h3=/^### (.+)/.exec(raw),h2=/^## (.+)/.exec(raw),bq=/^> (.*)/.exec(raw),ul=/^[-*] (.*)/.exec(raw),ol=/^\d+\. (.*)/.exec(raw);
     if(h3){close();html+='<h3 style="font-size:18px;font-weight:700;color:var(--navy);margin:36px 0 12px;line-height:1.5">'+inl(h3[1])+'</h3>';continue;}
     if(h2){close();html+='<h2 style="font-size:22px;font-weight:700;color:var(--navy);margin:48px 0 16px;padding-bottom:10px;border-bottom:3px solid var(--tl);line-height:1.4">'+inl(h2[1])+'</h2>';continue;}
@@ -706,7 +757,7 @@ function showPg(id, push){
   var tabEl = document.getElementById("t-"+id);
   if(tabEl) tabEl.classList.add("on");
   if(id==="guide")  buildGuide();
-  if(id==="column") buildCols();
+  if(id==="column"){ buildCols(); buildSidebar(); }
   if(push!==false){
     var url=new URL(location.href);
     if(id==="search") url.searchParams.delete("pg");
@@ -1163,48 +1214,54 @@ function backCol(){
 
 /* 初期化 */
 /* ── 初期化 ── */
-/* お問い合わせ送信（Supabaseの contact_messages テーブルに保存） */
-async function submitContact(){
-  var name  = document.getElementById('ct-name').value.trim();
-  var email = document.getElementById('ct-email').value.trim();
-  var type  = document.getElementById('ct-type').value;
-  var body  = document.getElementById('ct-body').value.trim();
-  var st    = document.getElementById('ct-status');
+/* ── サイドバー描画 ── */
+async function buildSidebar(){
+  await buildSidebarCols();
+  buildSidebarRanking();
+}
 
-  if(!email||!body){
-    st.style.display='block';st.style.background='#fef2f2';st.style.color='#b91c1c';
-    st.textContent='メールアドレスと内容は必須です';return;
-  }
+async function buildSidebarCols(){
+  var el = document.getElementById('sb-popular-cols');
+  if(!el) return;
   try{
-    await sbFetch('contact_messages', {
-      method:'POST',
-      body: JSON.stringify({name:name,email:email,type:type,body:body,created_at:new Date().toISOString()})
+    var res = await sbFetch('columns?select=id,title,date,tag,slug,status&status=eq.published&order=date.desc&limit=6');
+    var cols = await res.json();
+    if(!cols.length){
+      el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">コラムがありません</li>';
+      return;
+    }
+    el.innerHTML = '';
+    cols.forEach(function(col){
+      var key = col.slug || col.id;
+      var li = document.createElement('li');
+      li.className = 'sb-item';
+      var a = document.createElement('a');
+      a.href = '?pg=column&col=' + encodeURIComponent(key);
+      var tag = document.createElement('div');
+      tag.className = 'sb-item-tag';
+      tag.textContent = col.tag;
+      var title = document.createElement('div');
+      title.className = 'sb-item-title';
+      title.textContent = col.title;
+      var date = document.createElement('div');
+      date.className = 'sb-item-date';
+      date.textContent = col.date;
+      a.appendChild(tag);
+      a.appendChild(title);
+      a.appendChild(date);
+      (function(k){
+        a.addEventListener('click', function(e){
+          e.preventDefault();
+          showColFromDB(k);
+          showPg('column', false);
+        });
+      })(key);
+      li.appendChild(a);
+      el.appendChild(li);
     });
-    st.style.display='block';st.style.background='#f0fdf4';st.style.color='#166534';
-    st.textContent='送信しました。ありがとうございます。';
-    document.getElementById('ct-name').value='';
-    document.getElementById('ct-email').value='';
-    document.getElementById('ct-body').value='';
   }catch(e){
-    st.style.display='block';st.style.background='#fef2f2';st.style.color='#b91c1c';
-    st.textContent='送信に失敗しました: '+e.message;
+    el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</li>';
   }
 }
 
-(async function(){
-  try{
-    
-    await buildCats();
-    buildSymp();
-    buildIngs();
-    await render();
-    applyURLParams();
-  }catch(e){
-    console.error('初期化エラー:', e);
-    document.getElementById('grid').innerHTML=
-      '<div class="nores" style="padding:30px;color:var(--red)">初期化エラー: '+e.message+'</div>';
-  }
-})();
-</script>
-</body>
-</html>
+>
