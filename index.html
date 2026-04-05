@@ -179,9 +179,9 @@ a{color:inherit;text-decoration:none}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .ccard{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer}
 .ccard:hover{box-shadow:0 4px 16px rgba(15,23,42,.12)}
-.ctop{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:20px;color:#fff}
-.ctag{font-size:10px;padding:2px 8px;background:var(--teal);border-radius:10px;display:inline-block;margin-bottom:8px}
-.ctitle{font-size:14px;font-weight:700;line-height:1.5}
+
+
+
 .cbdy{padding:14px}
 .cdate{font-size:11px;color:var(--txl);margin-bottom:6px}
 .csum{font-size:12px;color:var(--txm);line-height:1.7}
@@ -219,6 +219,13 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.12)}
 .btn{padding:10px 24px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer}
 .btn:hover{background:var(--teal2)}
+
+.ctop{position:relative;overflow:hidden;min-height:160px;background:linear-gradient(135deg,var(--navy),#1e3a5f)}
+.ctop.has-thumb img{width:100%;height:180px;object-fit:cover;display:block}
+.ctop.no-thumb{height:60px;background:linear-gradient(135deg,var(--navy),#1e3a5f)}
+.ctop-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(15,28,53,.85))}
+.ctag{font-size:10px;padding:2px 8px;background:var(--teal);color:#fff;border-radius:10px;display:inline-block;margin-bottom:6px}
+.ctitle{font-size:14px;font-weight:700;line-height:1.5;color:#fff}
 </style>
 </head>
 <body>
@@ -1153,7 +1160,14 @@ async function submitContact(){
 
 (async function(){
   try{
-    
+    if(!SB_URL || SB_URL === 'https://glxhggfxxwpfmwqoulyy.supabase.co' || SB_URL.indexOf('xxxx') > -1){
+      document.getElementById('grid').innerHTML=
+        '<div class="nores" style="padding:30px">'+
+        '<strong>設定が必要です</strong><br>'+
+        'Vercel の環境変数 NEXT_PUBLIC_SUPABASE_URL と NEXT_PUBLIC_SUPABASE_KEY を設定してください。'+
+        '</div>';
+      return;
+    }
     await buildCats();
     buildSymp();
     buildIngs();
