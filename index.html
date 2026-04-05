@@ -1259,8 +1259,9 @@ async function filterGuide(name){
 
   try{
     var symList=grp.s.slice(0,5);
+    /* PostgREST: symptomsがjsonb配列の場合 cs.["値"] */
     var orQuery=symList.map(function(s){
-      return 'symptoms.cs.{"'+s+'"}';
+      return 'symptoms.cs.["'+s+'"]';
     }).join(',');
     var res=await sbFetch(
       'medicines?or=('+encodeURIComponent(orQuery)+')&select=id,name,maker,price,risk,cat,effect&limit=20'
