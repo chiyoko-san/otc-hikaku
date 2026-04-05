@@ -193,7 +193,7 @@ a{color:inherit;text-decoration:none}
 /* COLUMN PAGE */
 .cgrid{display:flex;flex-direction:column;gap:0}
 .ccard{background:var(--wh);border-bottom:1px solid var(--bd);cursor:pointer;display:flex;gap:0;transition:background .15s}
-.ccard:first-child{border-top:1px solid var(--bd)}
+.ccard:first-child{border-top:1px solid var(--bd);border-radius:10px 10px 0 0}.ccard:last-child{border-radius:0 0 10px 10px}
 .ccard:hover{background:var(--sl)}
 .ccard:hover{box-shadow:0 4px 16px rgba(15,23,42,.12)}
 .ctop{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:20px;color:#fff}
@@ -258,7 +258,7 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .sb-rank-num.top3{background:var(--teal);color:#fff}
 .sb-rank-name{font-size:12px;font-weight:600;line-height:1.4;flex:1}
 .sb-rank-maker{font-size:10px;color:var(--txl)}
-@media(max-width:760px){.col-layout{grid-template-columns:1fr}.col-sidebar{position:static}.ctop{width:120px;min-height:90px}.ctop.has-thumb img{width:120px;height:90px}}
+@media(max-width:760px){.col-layout{grid-template-columns:1fr}.col-sidebar{position:static}.ctop{width:100px;min-width:100px;max-width:100px;height:80px}.ctop.has-thumb img{width:100px;height:80px;min-width:100px}}
 
 </style>
 </head>
