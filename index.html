@@ -260,6 +260,46 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .sb-rank-maker{font-size:10px;color:var(--txl)}
 @media(max-width:760px){.col-layout{grid-template-columns:1fr}.col-sidebar{position:static}.ctop{width:100px;min-width:100px;max-width:100px;height:80px}.ctop.has-thumb img{width:100px;height:80px;min-width:100px}}
 
+
+/* ── 医薬品詳細ページ ── */
+#med-detail{display:none;max-width:1240px;margin:0 auto;padding:16px 20px 60px}
+.med-detail-wrap{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+.med-detail-main{background:var(--wh);border-radius:12px;border:1px solid var(--bd);overflow:hidden}
+.med-detail-hero{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:28px 28px 24px}
+.med-detail-name{font-size:24px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px}
+.med-detail-maker{font-size:14px;color:#94a3b8}
+.med-detail-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.med-detail-body{padding:24px 28px}
+.med-section{margin-bottom:28px}
+.med-section-title{font-size:13px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--tl)}
+.med-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.med-info-item{background:var(--sl);border-radius:8px;padding:12px 16px}
+.med-info-label{font-size:11px;color:var(--txl);margin-bottom:4px}
+.med-info-value{font-size:15px;font-weight:600;color:var(--tx)}
+.med-ings-list{display:flex;flex-wrap:wrap;gap:8px}
+.med-ing-chip{padding:6px 12px;border-radius:20px;font-size:13px;border:1.5px solid var(--bd);background:var(--wh);cursor:pointer;transition:all .15s}
+.med-ing-chip:hover{border-color:var(--teal);color:var(--teal2)}
+.med-ing-chip.iw{background:#fef2f2;border-color:#fecaca;color:var(--red)}
+.med-ing-chip.im{background:var(--tl);border-color:#99d4cd;color:var(--teal2)}
+.med-warn-box{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:14px 16px;font-size:13px;color:#9a3412;line-height:1.8}
+.med-note-box{border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.8}
+.med-note-box.nd{background:#fef2f2;border:1px solid #fecaca;color:var(--red)}
+.med-note-box.nw{background:#fffbeb;border:1px solid #fde68a;color:#713f12}
+.med-buy-area{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.med-buy-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:none}
+.med-buy-amazon{background:#FF9900;color:#fff}
+.med-buy-amazon:hover{background:#e68900}
+.med-buy-rakuten{background:#BF0000;color:#fff}
+.med-buy-rakuten:hover{background:#a00000}
+.med-sim-list{display:flex;flex-direction:column;gap:0}
+.med-sim-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s;text-decoration:none;color:var(--tx)}
+.med-sim-item:last-child{border-bottom:none}
+.med-sim-item:hover{background:var(--sl)}
+.med-sim-score{font-size:11px;color:var(--txl)}
+.med-back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--sl);border:1px solid var(--bd);border-radius:7px;font-size:13px;color:var(--txm);cursor:pointer;margin-bottom:16px}
+.med-back-btn:hover{background:var(--bd)}
+@media(max-width:760px){.med-detail-wrap{grid-template-columns:1fr}.med-info-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -273,6 +313,20 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
     <span class="nright">2026年04月04日 更新</span>
   </div>
 </nav>
+
+<!-- 医薬品詳細ページ -->
+<div id="med-detail">
+  <button class="med-back-btn" onclick="closeMedDetail()">← 一覧に戻る</button>
+  <div class="med-detail-wrap">
+    <div class="med-detail-main" id="med-detail-main"></div>
+    <aside class="col-sidebar">
+      <div class="sb-card">
+        <div class="sb-card-title">🔁 類似商品</div>
+        <div id="med-sim-list"><div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込み中...</div></div>
+      </div>
+    </aside>
+  </div>
+</div>
 
 <div class="pg on" id="pg-search">
   <div class="layout">
@@ -753,6 +807,8 @@ function applyURLParams(){
   if(pg && validPgs.indexOf(pg)>-1) showPg(pg, false);
   var colId=params.get("col");
   if(colId){ showPg("column",false); showColFromDB(colId); }
+  var medId=params.get("med");
+  if(medId){ showMedDetail(parseInt(medId)); }
 }
 
 /* ブラウザの戻る/進むに対応 */
@@ -1278,6 +1334,179 @@ function buildSidebarRanking(){
       el.appendChild(div);
     });
   }catch(e){el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</div>';}
+}
+
+
+/* ── 医薬品詳細ページ ── */
+var CURRENT_MED = null;
+
+async function showMedDetail(id){
+  /* Supabaseから取得 */
+  var med = null;
+  try{
+    var res = await sbFetch('medicines?id=eq.'+id+'&limit=1');
+    var data = await res.json();
+    med = data[0];
+    if(med){ med.warnIngs = med.warn_ings||[]; med.noteType = med.note_type||'nn'; }
+  }catch(e){}
+
+  /* キャッシュから探す */
+  if(!med){
+    for(var i=0;i<MEDS.length;i++){ if(MEDS[i].id==id){ med=MEDS[i]; break; } }
+  }
+  if(!med) return;
+
+  CURRENT_MED = med;
+
+  /* ページ切替 */
+  document.getElementById('pg-search').style.display='none';
+  document.getElementById('med-detail').style.display='block';
+  window.scrollTo(0,0);
+
+  /* URL更新 */
+  var url = new URL(location.href);
+  url.searchParams.set('med', id);
+  history.pushState({med:id},'',url.toString());
+
+  /* アクセス記録 */
+  trackMedAccess(id, med.name, med.maker||'');
+
+  /* 詳細HTML生成 */
+  renderMedDetail(med);
+  renderMedSim(med);
+}
+
+function renderMedDetail(m){
+  var cat=null;
+  for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}
+  cat=cat||{l:m.cat||''};
+
+  var wset={};
+  (m.warnIngs||[]).forEach(function(w){
+    wset[w.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim()]=1;
+  });
+
+  var badges = '';
+  if(m.itype&&m.itype!=='otc') badges+='<span class="badge '+(TYPECLS[m.itype]||'bf')+'">'+(TYPELBL[m.itype]||m.itype)+'</span>';
+  badges+='<span class="badge bc">'+cat.l+'</span>';
+  if(!m.itype||m.itype==='otc') badges+='<span class="badge '+(RCLS[m.risk]||'r25')+'">'+(RLBL[m.risk]||'')+'</span>';
+  if(m.drowsy) badges+='<span class="badge bd2">眠気注意</span>';
+  if(m.warnIngs&&m.warnIngs.length) badges+='<span class="badge bw2">要注意成分</span>';
+
+  var ingsHtml = (m.ings||[]).map(function(ing){
+    var b=ing.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim();
+    var cls=wset[b]?'iw':S.ings.indexOf(b)>-1?'im':'';
+    var tip=ING[b]?(' title="'+ING[b].replace(/"/g,'&quot;')+'"'):'';
+        return '<span class="med-ing-chip '+cls+'"'+tip+' data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
+  }).join('');
+
+  var warnHtml = '';
+  if(m.warnIngs&&m.warnIngs.length){
+    warnHtml='<div class="med-section"><div class="med-section-title">⚠️ 要注意成分</div>'
+      +'<div class="med-warn-box">'+m.warnIngs.join('、')+'が含まれています。使用前に医師・薬剤師にご相談ください。</div></div>';
+  }
+
+  var noteHtml = '';
+  if(m.note){
+    var nc=m.noteType==='danger'?'nd':m.noteType==='warn'?'nw':'';
+    noteHtml='<div class="med-section"><div class="med-section-title">📋 注意事項</div>'
+      +'<div class="med-note-box '+nc+'">'+m.note+'</div></div>';
+  }
+
+  var buyHtml = '';
+  if(m.asin){
+    buyHtml+='<a class="med-buy-btn med-buy-amazon" href="https://www.amazon.co.jp/dp/'+m.asin+'?tag=kusuri0c-22" target="_blank" rel="nofollow">🛒 Amazonで見る</a>';
+  }
+  if(m.rakuten_url){
+    buyHtml+='<a class="med-buy-btn med-buy-rakuten" href="'+m.rakuten_url+'" target="_blank" rel="nofollow">🛒 楽天で見る</a>';
+  }
+
+  var symsHtml = '';
+  if(m.symptoms&&m.symptoms.length){
+    symsHtml='<div class="med-section"><div class="med-section-title">💊 対応症状</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px">'
+            +m.symptoms.map(function(s){return '<span class="stag" data-s="'+s+'" onclick="addSym(this.dataset.s)" style="cursor:pointer">'+s+'</span>';}).join('')
+      +'</div></div>';
+  }
+
+  document.getElementById('med-detail-main').innerHTML =
+    '<div class="med-detail-hero">'
+    +'<div class="med-detail-name">'+m.name+'</div>'
+    +'<div class="med-detail-maker">'+(m.maker||'')+'</div>'
+    +'<div class="med-detail-badges">'+badges+'</div>'
+    +'</div>'
+    +'<div class="med-detail-body">'
+    +'<div class="med-section"><div class="med-section-title">📊 基本情報</div>'
+    +'<div class="med-info-grid">'
+    +'<div class="med-info-item"><div class="med-info-label">参考価格</div><div class="med-info-value">'+(m.price?'¥'+m.price.toLocaleString():'要確認')+'</div></div>'
+    +'<div class="med-info-item"><div class="med-info-label">リスク区分</div><div class="med-info-value">'+(RLBL[m.risk]||'-')+'</div></div>'
+    +'<div class="med-info-item"><div class="med-info-label">眠気</div><div class="med-info-value">'+(m.drowsy?'⚠️ あり':'✅ なし')+'</div></div>'
+    +'<div class="med-info-item"><div class="med-info-label">成分数</div><div class="med-info-value">'+(m.ings||[]).length+'成分</div></div>'
+    +'</div></div>'
+    +(m.effect?'<div class="med-section"><div class="med-section-title">✨ 効能・効果</div><div style="font-size:14px;line-height:1.9;color:var(--tx)">'+m.effect+'</div></div>':'')
+    +symsHtml
+    +'<div class="med-section"><div class="med-section-title">🧪 成分一覧</div><div class="med-ings-list">'+ingsHtml+'</div></div>'
+    +warnHtml
+    +noteHtml
+    +(buyHtml?'<div class="med-section"><div class="med-section-title">🛒 購入</div><div class="med-buy-area">'+buyHtml+'<a class="med-buy-btn" style="background:var(--sl);color:var(--txm);border:1px solid var(--bd)" href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA添付文書</a></div></div>':'<div class="med-section"><div class="med-buy-area"><a class="med-buy-btn" style="background:var(--sl);color:var(--txm);border:1px solid var(--bd)" href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA添付文書</a></div></div>')
+    +'</div>';
+}
+
+async function renderMedSim(m){
+  var el = document.getElementById('med-sim-list');
+  el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">検索中...</div>';
+
+  try{
+    /* 同カテゴリの薬をSupabaseから取得して成分一致度で類似度計算 */
+    var res = await sbFetch('medicines?cat=eq.'+encodeURIComponent(m.cat)+'&select=id,name,maker,price,risk,ings,warn_ings&limit=100');
+    var candidates = await res.json();
+
+    var bi={};
+    (m.ings||[]).forEach(function(i){bi[i.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim()]=1;});
+
+    var sims = candidates
+      .filter(function(x){return x.id!==m.id;})
+      .map(function(x){
+        var xi={};
+        (x.ings||[]).forEach(function(i){xi[i.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim()]=1;});
+        var inter=Object.keys(bi).filter(function(k){return xi[k];}).length;
+        var union=Object.keys(Object.assign({},bi,xi)).length;
+        return {m:x, score:union?inter/union:0};
+      })
+      .filter(function(o){return o.score>0;})
+      .sort(function(a,b){return b.score-a.score;})
+      .slice(0,5);
+
+    if(!sims.length){
+      el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">類似商品が見つかりません</div>';
+      return;
+    }
+
+    el.innerHTML='<div class="med-sim-list">'
+      +sims.map(function(o){
+        var score=Math.round(o.score*100);
+        return '<div class="med-sim-item" onclick="showMedDetail('+o.m.id+')">'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:13px;font-weight:600;margin-bottom:2px">'+o.m.name+'</div>'
+          +'<div style="font-size:11px;color:var(--txl)">'+(o.m.maker||'')+'</div>'
+          +'<div class="med-sim-score">成分一致度 '+score+'%'+(o.m.price?' · ¥'+o.m.price.toLocaleString():'')+'</div>'
+          +'</div>'
+          +'<div style="font-size:20px;color:var(--bd)">›</div>'
+          +'</div>';
+      }).join('')
+      +'</div>';
+  }catch(e){
+    el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</div>';
+  }
+}
+
+function closeMedDetail(){
+  document.getElementById('med-detail').style.display='none';
+  document.getElementById('pg-search').style.display='';
+  CURRENT_MED=null;
+  var url=new URL(location.href);
+  url.searchParams.delete('med');
+  history.pushState({},'',url.toString());
 }
 
 </script>
