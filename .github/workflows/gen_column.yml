@@ -1,0 +1,42 @@
+name: Auto Generate Column
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # 毎日21:00 JST（UTC 12:00）
+  workflow_dispatch:
+    inputs:
+      theme:
+        description: "テーマ番号（0〜24、空欄=自動）"
+        required: false
+        default: ""
+      dry_run:
+        description: "dry-run（APIを呼ばずテーマ確認のみ）"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: コラム生成
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL:      ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY:      ${{ secrets.SUPABASE_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          if [ -n "${{ github.event.inputs.theme }}" ]; then
+            ARGS="$ARGS --theme ${{ github.event.inputs.theme }}"
+          fi
+          python scraper/gen_column.py $ARGS
