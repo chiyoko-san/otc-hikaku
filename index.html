@@ -1597,16 +1597,21 @@ function goHome(){
   window.scrollTo(0,0);
 }
 
-function doHomeSearch(q){
+async function doHomeSearch(q){
   var val = q || document.getElementById('home-qinp').value.trim();
-  /* ホームを隠して検索ページへ */
   document.getElementById('pg-home').style.display='none';
+  /* buildCatsが未実行なら初期化 */
+  if(!document.getElementById('catlist').children.length){
+    await buildCats();
+    buildSymp();
+    buildIngs();
+  }
   showPg('search');
   if(val){
     S.q = val;
     document.getElementById('qinp').value = val;
-    render();
   }
+  await render();
 }
 
 </script>
