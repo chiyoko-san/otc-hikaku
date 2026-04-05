@@ -185,10 +185,10 @@ a{color:inherit;text-decoration:none}
 .cbdy{padding:14px}
 .cdate{font-size:11px;color:var(--txl);margin-bottom:6px}
 .csum{font-size:12px;color:var(--txm);line-height:1.7}
-.cdetail{background:var(--wh);border-radius:10px;padding:24px;max-width:760px;margin:0 auto}
+.cdetail{background:var(--wh);border-radius:10px;padding:32px 40px;max-width:780px;margin:0 auto}
 .cdetail h1{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px}
 .cmeta{font-size:12px;color:var(--txl);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
-.cbody{font-size:14px;line-height:1.9}
+.cbody{font-size:16px;line-height:2.0;color:var(--tx)}
 .cbody p{margin-bottom:12px}
 .cbody strong{font-weight:700}
 .bkbtn{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--teal);background:none;border:none;cursor:pointer;margin-bottom:16px}
@@ -605,7 +605,7 @@ function mdToHtml(src){
       while(i<lines.length&&lines[i].trim()!==":::"){inner.push(lines[i]);i++;}
       html+='<div style="border-left:4px solid '+cs.bd+';background:'+cs.bg+';border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0">'
         +'<div style="font-weight:700;color:'+cs.color+';margin-bottom:4px">'+cs.ico+(ctitle?" "+ctitle:"")+'</div>'
-        +'<div style="color:'+cs.color+';font-size:13px;line-height:1.8">'+inner.map(function(ln){return inl(ln);}).join("<br>")+'</div></div>';continue;}
+        +'<div style="color:'+cs.color+';font-size:15px;line-height:1.9">'+inner.map(function(ln){return inl(ln);}).join("<br>")+'</div></div>';continue;}
     l=l.replace(/\[!(緑|赤|青|黄)\]\s*(.+)/g,function(_,color,text){
       var cs={緑:{bg:"#f0fdf4",bd:"#bbf7d0",tx:"#166534"},赤:{bg:"var(--rb)",bd:"#fecaca",tx:"var(--red)"},青:{bg:"#eff6ff",bd:"#bfdbfe",tx:"#1d4ed8"},黄:{bg:"var(--amber)",bd:"#fde68a",tx:"#713f12"}};
       var c=cs[color]||cs.青;
@@ -615,17 +615,17 @@ function mdToHtml(src){
     var imgm=/^!\[([^\]]*)\]\(([^)]+)\)$/.exec(raw);
     if(imgm){close();html+='<figure style="margin:16px 0;text-align:center"><img src="'+imgm[2]+'" alt="'+imgm[1]+'" style="max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08)"><figcaption style="font-size:11px;color:var(--txl);margin-top:5px">'+imgm[1]+'</figcaption></figure>';continue;}
     var h3=/^### (.+)/.exec(raw),h2=/^## (.+)/.exec(raw),bq=/^> (.*)/.exec(raw),ul=/^[-*] (.*)/.exec(raw),ol=/^\d+\. (.*)/.exec(raw);
-    if(h3){close();html+='<h3 style="font-size:15px;font-weight:700;color:var(--navy);margin:16px 0 5px">'+inl(h3[1])+'</h3>';continue;}
-    if(h2){close();html+='<h2 style="font-size:17px;font-weight:700;color:var(--navy);margin:22px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--tl)">'+inl(h2[1])+'</h2>';continue;}
-    if(/^---+$/.test(raw)){close();html+='<hr style="border:none;border-top:1px solid var(--bd);margin:16px 0">';continue;}
-    if(bq){if(!inBq){close();html+='<blockquote style="border-left:4px solid var(--teal);padding:8px 16px;background:var(--tl);border-radius:0 6px 6px 0;margin:10px 0;color:var(--teal2)">';inBq=true;}html+='<p style="margin:3px 0">'+inl(bq[1])+'</p>';continue;}
+    if(h3){close();html+='<h3 style="font-size:18px;font-weight:700;color:var(--navy);margin:36px 0 12px;line-height:1.5">'+inl(h3[1])+'</h3>';continue;}
+    if(h2){close();html+='<h2 style="font-size:22px;font-weight:700;color:var(--navy);margin:48px 0 16px;padding-bottom:10px;border-bottom:3px solid var(--tl);line-height:1.4">'+inl(h2[1])+'</h2>';continue;}
+    if(/^---+$/.test(raw)){close();html+='<hr style="border:none;border-top:1px solid var(--bd);margin:40px 0">';continue;}
+    if(bq){if(!inBq){close();html+='<blockquote style="border-left:4px solid var(--teal);padding:16px 20px;background:var(--tl);border-radius:0 8px 8px 0;margin:24px 0;color:var(--teal2);font-size:15px;line-height:1.9">';inBq=true;}html+='<p style="margin:4px 0">'+inl(bq[1])+'</p>';continue;}
     if(inBq&&!bq){html+="</blockquote>";inBq=false;}
-    if(ul){if(!inUl){if(inOl){html+="</ol>";inOl=false;}html+='<ul style="padding-left:20px;margin:8px 0">';inUl=true;}html+='<li style="margin:3px 0">'+inl(ul[1])+'</li>';continue;}
+    if(ul){if(!inUl){if(inOl){html+="</ol>";inOl=false;}html+='<ul style="padding-left:24px;margin:8px 0 20px">';inUl=true;}html+='<li style="margin:8px 0;font-size:16px;line-height:1.9">'+inl(ul[1])+'</li>';continue;}
     if(inUl&&!ul){html+="</ul>";inUl=false;}
-    if(ol){if(!inOl){if(inUl){html+="</ul>";inUl=false;}html+='<ol style="padding-left:20px;margin:8px 0">';inOl=true;}html+='<li style="margin:3px 0">'+inl(ol[1])+'</li>';continue;}
+    if(ol){if(!inOl){if(inUl){html+="</ul>";inUl=false;}html+='<ol style="padding-left:24px;margin:8px 0 20px">';inOl=true;}html+='<li style="margin:8px 0;font-size:16px;line-height:1.9">'+inl(ol[1])+'</li>';continue;}
     if(inOl&&!ol){html+="</ol>";inOl=false;}
     if(!raw.trim()){close();continue;}
-    html+='<p style="margin:6px 0">'+l+'</p>';}
+    html+='<p style="margin:0 0 18px 0;font-size:16px;line-height:2.0;color:var(--tx)">'+l+'</p>';}
   close();return html;}
 
 
@@ -1099,8 +1099,8 @@ async function showColFromDB(id){
     var body = mdToHtml(col.body||'');
     document.getElementById('cdetail').innerHTML=
       '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
-      +'<div class="cdetail"><h1>'+col.title+'</h1>'
-      +'<div class="cmeta">'+col.date+' | '+col.tag+'</div>'
+      +'<div class="cdetail"><h1 style="font-size:26px;font-weight:700;line-height:1.5;margin-bottom:16px;color:var(--navy)">'+col.title+'</h1>'
+      +'<div class="cmeta" style="font-size:13px;color:var(--txl);margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--bd)">'+col.date+' | '+col.tag+'</div>'
       +'<div class="cbody">'+body+'</div></div>';
   }catch(e){
     document.getElementById('cdetail').innerHTML='<div style="padding:40px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
