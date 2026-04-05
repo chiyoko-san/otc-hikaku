@@ -300,14 +300,36 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .med-back-btn:hover{background:var(--bd)}
 @media(max-width:760px){.med-detail-wrap{grid-template-columns:1fr}.med-info-grid{grid-template-columns:1fr}}
 
+
+/* ── ホームページ ── */
+#pg-home{display:none;min-height:calc(100vh - 52px);background:linear-gradient(160deg,#0f1c35 0%,#1a3a5f 50%,#0f2a3a 100%)}
+.home-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 60px;text-align:center}
+.home-title{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:10px;line-height:1.2}
+.home-title em{color:var(--teal);font-style:normal}
+.home-sub{font-size:16px;color:#94a3b8;margin-bottom:48px;line-height:1.7}
+.home-search-wrap{width:100%;max-width:600px;margin-bottom:32px}
+.home-search-box{display:flex;background:#fff;border-radius:50px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);padding:6px 6px 6px 24px;gap:6px}
+.home-search-box input{flex:1;border:none;outline:none;font-size:16px;color:#0f172a;background:transparent;font-family:inherit}
+.home-search-box input::placeholder{color:#94a3b8}
+.home-search-btn{padding:10px 28px;background:var(--teal);color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.home-search-btn:hover{background:var(--teal2)}
+.home-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:48px}
+.home-tag{padding:6px 16px;border:1.5px solid rgba(255,255,255,.2);border-radius:50px;color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s}
+.home-tag:hover{background:rgba(255,255,255,.1);border-color:var(--teal);color:#fff}
+.home-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.home-stat{text-align:center}
+.home-stat-num{font-size:28px;font-weight:700;color:var(--teal)}
+.home-stat-label{font-size:12px;color:#64748b;margin-top:2px}
+@media(max-width:600px){.home-title{font-size:28px}.home-sub{font-size:14px}.home-stats{gap:24px}.home-stat-num{font-size:22px}}
+
 </style>
 </head>
 <body>
 
 <nav class="nav">
   <div class="nav-inner">
-    <div class="logo">クスリノ<em>コンパス</em></div>
-    <button type="button" class="ntab on" id="t-search" onclick="showPg('search')">検索</button>
+    <div class="logo" onclick="goHome()" style="cursor:pointer">クスリノ<em>コンパス</em></div>
+    <button type="button" class="ntab" id="t-search" onclick="showPg('search')">検索</button>
     <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">症状から選ぶ</button>
     <button type="button" class="ntab" id="t-column" onclick="showPg('column')">コラム</button>
     <span class="nright">2026年04月04日 更新</span>
@@ -328,7 +350,36 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
   </div>
 </div>
 
-<div class="pg on" id="pg-search">
+<!-- ホームページ -->
+<div id="pg-home" style="display:block">
+  <div class="home-wrap">
+    <div class="home-title">市販薬を、<em>成分</em>で選ぶ。</div>
+    <div class="home-sub">7,500品以上の市販薬を成分・効能・リスク区分から比較。<br>広告なし・PMDA公開情報ベース。</div>
+    <div class="home-search-wrap">
+      <div class="home-search-box">
+        <input type="text" id="home-qinp" placeholder="商品名・成分・症状・メーカーで検索…" autocomplete="off" onkeydown="if(event.key==='Enter')doHomeSearch()">
+        <button class="home-search-btn" onclick="doHomeSearch()">検索</button>
+      </div>
+    </div>
+    <div class="home-tags" id="home-tags">
+      <span class="home-tag" onclick="doHomeSearch('ロキソプロフェン')">ロキソプロフェン</span>
+      <span class="home-tag" onclick="doHomeSearch('イブプロフェン')">イブプロフェン</span>
+      <span class="home-tag" onclick="doHomeSearch('アセトアミノフェン')">アセトアミノフェン</span>
+      <span class="home-tag" onclick="doHomeSearch('花粉症')">花粉症</span>
+      <span class="home-tag" onclick="doHomeSearch('眠気なし')">眠気なし</span>
+      <span class="home-tag" onclick="doHomeSearch('胃腸薬')">胃腸薬</span>
+      <span class="home-tag" onclick="doHomeSearch('かぜ薬')">かぜ薬</span>
+      <span class="home-tag" onclick="doHomeSearch('頭痛')">頭痛</span>
+    </div>
+    <div class="home-stats">
+      <div class="home-stat"><div class="home-stat-num">7,500+</div><div class="home-stat-label">収録医薬品</div></div>
+      <div class="home-stat"><div class="home-stat-num">0</div><div class="home-stat-label">広告・案件</div></div>
+      <div class="home-stat"><div class="home-stat-num">PMDA</div><div class="home-stat-label">データソース</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-search">
   <div class="layout">
     <aside class="sb">
       <div class="sbox">
@@ -784,6 +835,7 @@ var CMP=[];
 function showPg(id, push){
   var pgEl = document.getElementById("pg-"+id);
   if(!pgEl) return;
+  document.getElementById('pg-home').style.display='none';
   document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".ntab").forEach(function(t){t.classList.remove("on");});
   pgEl.classList.add("on");
@@ -803,12 +855,18 @@ function showPg(id, push){
 function applyURLParams(){
   var params=new URLSearchParams(location.search);
   var pg=params.get("pg");
-  var validPgs=["guide","column","concept","privacy","terms","contact"];
-  if(pg && validPgs.indexOf(pg)>-1) showPg(pg, false);
+  var validPgs=["search","guide","column","concept","privacy","terms","contact"];
+  if(pg==="search"){
+    document.getElementById('pg-home').style.display='none';
+    showPg('search',false);
+  } else if(pg && validPgs.indexOf(pg)>-1){
+    document.getElementById('pg-home').style.display='none';
+    showPg(pg, false);
+  }
   var colId=params.get("col");
-  if(colId){ showPg("column",false); showColFromDB(colId); }
+  if(colId){ document.getElementById('pg-home').style.display='none'; showPg("column",false); showColFromDB(colId); }
   var medId=params.get("med");
-  if(medId){ showMedDetail(parseInt(medId)); }
+  if(medId){ document.getElementById('pg-home').style.display='none'; showMedDetail(parseInt(medId)); }
 }
 
 /* ブラウザの戻る/進むに対応 */
@@ -1270,10 +1328,16 @@ async function submitContact(){
 
 (async function(){
   try{
-    await buildCats();
-    buildSymp();
-    buildIngs();
-    await render();
+    /* URLパラメータがあれば該当ページを表示、なければホーム */
+    var params=new URLSearchParams(location.search);
+    var hasPg=params.get('pg')||params.get('med')||params.get('col');
+    if(hasPg){
+      document.getElementById('pg-home').style.display='none';
+      await buildCats();
+      buildSymp();
+      buildIngs();
+      await render();
+    }
     applyURLParams();
   }catch(e){
     console.error('初期化エラー:', e);
@@ -1513,6 +1577,36 @@ function closeMedDetail(){
   var url=new URL(location.href);
   url.searchParams.delete('med');
   history.pushState({},'',url.toString());
+}
+
+
+/* ── ホーム ── */
+function goHome(){
+  /* 全ページ非表示 */
+  document.getElementById('pg-search').style.display='none';
+  document.getElementById('med-detail').style.display='none';
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
+  /* ホーム表示 */
+  document.getElementById('pg-home').style.display='block';
+  var url=new URL(location.href);
+  url.searchParams.delete('pg');
+  url.searchParams.delete('med');
+  url.searchParams.delete('col');
+  history.pushState({home:true},'',url.toString());
+  window.scrollTo(0,0);
+}
+
+function doHomeSearch(q){
+  var val = q || document.getElementById('home-qinp').value.trim();
+  /* ホームを隠して検索ページへ */
+  document.getElementById('pg-home').style.display='none';
+  showPg('search');
+  if(val){
+    S.q = val;
+    document.getElementById('qinp').value = val;
+    render();
+  }
 }
 
 </script>
