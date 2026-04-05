@@ -349,6 +349,14 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .report-status.err{background:#fef2f2;color:var(--red);display:block}
 
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2G7T178ZNY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-2G7T178ZNY');
+</script>
 </head>
 <body>
 
@@ -1241,24 +1249,55 @@ function buildGuide(){
 }
 
 
-function filterGuide(name){
-  var grp=null;for(var i=0;i<SYMS.length;i++){if(SYMS[i].g===name){grp=SYMS[i];break;}}
+async function filterGuide(name){
+  var grp=null;
+  for(var i=0;i<SYMS.length;i++){if(SYMS[i].g===name){grp=SYMS[i];break;}}
   if(!grp)return;
-  var meds=MEDS.filter(function(m){return m.symptoms&&grp.s.some(function(s){return m.symptoms.indexOf(s)>-1;});});
-  document.getElementById("gresult").innerHTML='<div style="margin-top:16px">'
-    +'<div class="ptitle" style="font-size:15px">'+name+"（"+meds.length+"件）</div>"
-    +'<div class="grid" style="margin-top:10px">'+meds.slice(0,20).map(function(m){
-      var cat=null;for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}cat=cat||{i:"",l:m.cat};
-      return '<div class="card"><div class="chard"><div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
+
+  var el=document.getElementById('gresult');
+  el.innerHTML='<div style="padding:20px;color:var(--txl)">読み込み中...</div>';
+
+  try{
+    var symList=grp.s.slice(0,5);
+    var orQuery=symList.map(function(s){
+      return 'symptoms.cs.{"'+s+'"}';
+    }).join(',');
+    var res=await sbFetch(
+      'medicines?or=('+encodeURIComponent(orQuery)+')&select=id,name,maker,price,risk,cat,effect&limit=20'
+    );
+    var meds=await res.json();
+
+    if(!meds||!meds.length){
+      el.innerHTML='<div style="padding:20px;color:var(--txl)">「'+name+'」に対応する商品が見つかりませんでした。</div>';
+      return;
+    }
+
+    var cards=meds.map(function(m){
+      var cat=null;
+      for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}
+      cat=cat||{l:m.cat||''};
+      return '<div class="card" style="cursor:pointer" onclick="showMedDetail('+m.id+')">'
+        +'<div class="chard"><div>'
+        +'<div class="cname" style="color:var(--teal2)">'+m.name+'</div>'
+        +'<div class="cmaker">'+(m.maker||'')+'</div></div>'
         +'<div class="cprice">'+(m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div>':'<div class="cpval np">価格要確認</div>')+'</div></div>'
-        +'<div class="badges"><span class="badge bc">'+cat.l+'</span><span class="badge '+(RCLS[m.risk]||"r25")+'">'+(RLBL[m.risk]||"")+'</span></div>'
-        +'<div class="cef">'+(m.effect||"")+"</div></div>";
-    }).join("")+"</div>"
-    +(meds.length>20?'<p style="font-size:12px;color:var(--txl);margin-top:8px">他'+(meds.length-20)+'件は検索ページで症状を選択してください。</p>':"")
-    +"</div>";
+        +'<div class="badges"><span class="badge bc">'+cat.l+'</span>'
+        +'<span class="badge '+(RCLS[m.risk]||'r25')+'">'+(RLBL[m.risk]||'')+'</span></div>'
+        +'<div class="cef">'+(m.effect||'')+'</div></div>';
+    }).join('');
+
+    el.innerHTML='<div style="margin-top:16px">'
+      +'<div class="ptitle" style="font-size:15px">'+name+'（'+meds.length+'件）</div>'
+      +'<div class="grid" style="margin-top:10px">'+cards+'</div>'
+      +'</div>';
+
+  }catch(e){
+    el.innerHTML='<div style="padding:20px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
+    console.error('filterGuide error:', e);
+  }
 }
 
-/* コラム */
+
 async function buildCols(){
   var el=document.getElementById('cgrid');
   if(el.children.length)return;
