@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>クスリノコンパス｜市販薬・成分比較サイト</title>
-<meta name="description" content="市販薬7,500品を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。花粉症・かぜ・胃腸など症状からも検索できます。">
-
-<!-- OGP（SNS・Xシェア用） -->
+<meta name="description" content="市販薬7,500品を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。">
 <meta property="og:type"        content="website">
 <meta property="og:site_name"   content="クスリノコンパス">
 <meta property="og:title"       content="クスリノコンパス｜市販薬・成分比較サイト">
@@ -16,17 +14,12 @@
 <meta property="og:image:width"  content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale"      content="ja_JP">
-
-<!-- X（Twitter）Card -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:site"        content="@kusuri_compass">
 <meta name="twitter:title"       content="クスリノコンパス｜市販薬・成分比較サイト">
 <meta name="twitter:description" content="市販薬7,500品を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。">
 <meta name="twitter:image"       content="https://kusuri-compass.com/ogp.png">
-
-<!-- ファビコン -->
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link rel="apple-touch-icon" href="/ogp.png">
 <style>
 :root{--navy:#0f1c35;--teal:#2fa18d;--teal2:#1a7f6e;--tl:#e8f5f2;--amber:#fffbeb;--amberb:#f59e0b;--red:#b91c1c;--rb:#fef2f2;--sl:#f1f5f9;--bd:#e2e8f0;--bdm:#cbd5e1;--tx:#0f172a;--txm:#475569;--txl:#94a3b8;--wh:#fff;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -201,16 +194,16 @@ a{color:inherit;text-decoration:none}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .ccard{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer}
 .ccard:hover{box-shadow:0 4px 16px rgba(15,23,42,.12)}
-
-
-
+.ctop{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:20px;color:#fff}
+.ctag{font-size:10px;padding:2px 8px;background:var(--teal);border-radius:10px;display:inline-block;margin-bottom:8px}
+.ctitle{font-size:14px;font-weight:700;line-height:1.5}
 .cbdy{padding:14px}
 .cdate{font-size:11px;color:var(--txl);margin-bottom:6px}
 .csum{font-size:12px;color:var(--txm);line-height:1.7}
-.cdetail{background:var(--wh);border-radius:10px;padding:32px 40px;max-width:780px;margin:0 auto}
+.cdetail{background:var(--wh);border-radius:10px;padding:24px;max-width:760px;margin:0 auto}
 .cdetail h1{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px}
 .cmeta{font-size:12px;color:var(--txl);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
-.cbody{font-size:16px;line-height:2.0;color:var(--tx)}
+.cbody{font-size:14px;line-height:1.9}
 .cbody p{margin-bottom:12px}
 .cbody strong{font-weight:700}
 .bkbtn{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--teal);background:none;border:none;cursor:pointer;margin-bottom:16px}
@@ -242,38 +235,27 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .btn{padding:10px 24px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer}
 .btn:hover{background:var(--teal2)}
 
-.ctop{position:relative;overflow:hidden;min-height:160px;background:linear-gradient(135deg,var(--navy),#1e3a5f)}
-.ctop.has-thumb img{width:100%;height:180px;object-fit:cover;display:block}
-.ctop.no-thumb{height:60px;background:linear-gradient(135deg,var(--navy),#1e3a5f)}
-.ctop-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(15,28,53,.85))}
-.ctag{font-size:10px;padding:2px 8px;background:var(--teal);color:#fff;border-radius:10px;display:inline-block;margin-bottom:6px}
-.ctitle{font-size:14px;font-weight:700;line-height:1.5;color:#fff}
-
-/* ── コラムページ サイドバーレイアウト ── */
 .col-layout{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
 .col-main{min-width:0}
 .col-sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:20px}
 .sb-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.sb-card-title{font-size:13px;font-weight:700;color:var(--wh);background:var(--navy);padding:10px 14px;display:flex;align-items:center;gap:6px}
+.sb-card-title{font-size:13px;font-weight:700;color:var(--wh);background:var(--navy);padding:10px 14px}
 .sb-list{list-style:none;padding:0;margin:0}
 .sb-item{border-bottom:1px solid var(--bd)}
 .sb-item:last-child{border-bottom:none}
-.sb-item a{display:block;padding:10px 14px;text-decoration:none;color:var(--tx);font-size:12px;line-height:1.6;transition:background .15s}
+.sb-item a{display:block;padding:10px 14px;text-decoration:none;color:var(--tx);font-size:12px;line-height:1.6}
 .sb-item a:hover{background:var(--sl)}
 .sb-item-tag{font-size:10px;padding:1px 7px;background:var(--tl);color:var(--teal2);border-radius:10px;margin-bottom:4px;display:inline-block}
 .sb-item-title{font-size:12px;font-weight:600;line-height:1.5;color:var(--tx)}
 .sb-item-date{font-size:10px;color:var(--txl);margin-top:2px}
-.sb-rank-num{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--sl);color:var(--txm);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb-rank-num.top3{background:var(--teal);color:#fff}
-.sb-rank-item{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);text-decoration:none;color:var(--tx)}
+.sb-rank-item{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);text-decoration:none;color:var(--tx);cursor:pointer}
 .sb-rank-item:last-child{border-bottom:none}
 .sb-rank-item:hover{background:var(--sl)}
+.sb-rank-num{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--sl);color:var(--txm);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-rank-num.top3{background:var(--teal);color:#fff}
 .sb-rank-name{font-size:12px;font-weight:600;line-height:1.4;flex:1}
 .sb-rank-maker{font-size:10px;color:var(--txl)}
-@media(max-width:760px){
-  .col-layout{grid-template-columns:1fr}
-  .col-sidebar{position:static}
-}
+@media(max-width:760px){.col-layout{grid-template-columns:1fr}.col-sidebar{position:static}}
 
 </style>
 </head>
@@ -395,7 +377,6 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 
 <div class="pg" id="pg-column">
   <div class="col-layout">
-    <!-- メインエリア -->
     <div class="col-main">
       <div id="clist">
         <div class="ptitle">お役立ちコラム</div>
@@ -404,22 +385,17 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
       </div>
       <div id="cdetail" style="display:none"></div>
     </div>
-    <!-- サイドバー -->
     <aside class="col-sidebar" id="col-sidebar">
-      <!-- 人気コラム -->
       <div class="sb-card">
         <div class="sb-card-title">📚 人気コラム</div>
         <ul class="sb-list" id="sb-popular-cols">
           <li style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込み中...</li>
         </ul>
       </div>
-      <!-- 医薬品アクセスランキング -->
       <div class="sb-card">
         <div class="sb-card-title">🏆 医薬品アクセスランキング</div>
         <div id="sb-ranking">
-          <a class="sb-rank-item" style="pointer-events:none">
-            <div style="font-size:12px;color:var(--txl);padding:2px 0">読み込み中...</div>
-          </a>
+          <div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込み中...</div>
         </div>
       </div>
     </aside>
@@ -678,7 +654,7 @@ function mdToHtml(src){
       while(i<lines.length&&lines[i].trim()!==":::"){inner.push(lines[i]);i++;}
       html+='<div style="border-left:4px solid '+cs.bd+';background:'+cs.bg+';border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0">'
         +'<div style="font-weight:700;color:'+cs.color+';margin-bottom:4px">'+cs.ico+(ctitle?" "+ctitle:"")+'</div>'
-        +'<div style="color:'+cs.color+';font-size:15px;line-height:1.9">'+inner.map(function(ln){return inl(ln);}).join("<br>")+'</div></div>';continue;}
+        +'<div style="color:'+cs.color+';font-size:13px;line-height:1.8">'+inner.map(function(ln){return inl(ln);}).join("<br>")+'</div></div>';continue;}
     l=l.replace(/\[!(緑|赤|青|黄)\]\s*(.+)/g,function(_,color,text){
       var cs={緑:{bg:"#f0fdf4",bd:"#bbf7d0",tx:"#166534"},赤:{bg:"var(--rb)",bd:"#fecaca",tx:"var(--red)"},青:{bg:"#eff6ff",bd:"#bfdbfe",tx:"#1d4ed8"},黄:{bg:"var(--amber)",bd:"#fde68a",tx:"#713f12"}};
       var c=cs[color]||cs.青;
@@ -686,19 +662,19 @@ function mdToHtml(src){
     if(/^\|.+\|/.test(raw)){if(!inTbl){close();inTbl=true;tblRows=[];}tblRows.push(raw);continue;}
     if(inTbl&&!/^\|.+\|/.test(raw)){html+=flushTable();inTbl=false;tblRows=[];}
     var imgm=/^!\[([^\]]*)\]\(([^)]+)\)$/.exec(raw);
-    if(imgm){close();html+='<figure style="margin:16px 0;text-align:center"><img src="'+imgm[2]+'" alt="'+imgm[1]+'" style="max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08)">'+(imgm[1]?'<figcaption style="font-size:11px;color:var(--txl);margin-top:5px">'+imgm[1]+'</figcaption>':'')+'</figure>';continue;}
+    if(imgm){close();html+='<figure style="margin:16px 0;text-align:center"><img src="'+imgm[2]+'" alt="'+imgm[1]+'" style="max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08)"><figcaption style="font-size:11px;color:var(--txl);margin-top:5px">'+imgm[1]+'</figcaption></figure>';continue;}
     var h3=/^### (.+)/.exec(raw),h2=/^## (.+)/.exec(raw),bq=/^> (.*)/.exec(raw),ul=/^[-*] (.*)/.exec(raw),ol=/^\d+\. (.*)/.exec(raw);
-    if(h3){close();html+='<h3 style="font-size:18px;font-weight:700;color:var(--navy);margin:36px 0 12px;line-height:1.5">'+inl(h3[1])+'</h3>';continue;}
-    if(h2){close();html+='<h2 style="font-size:22px;font-weight:700;color:var(--navy);margin:48px 0 16px;padding-bottom:10px;border-bottom:3px solid var(--tl);line-height:1.4">'+inl(h2[1])+'</h2>';continue;}
-    if(/^---+$/.test(raw)){close();html+='<hr style="border:none;border-top:1px solid var(--bd);margin:40px 0">';continue;}
-    if(bq){if(!inBq){close();html+='<blockquote style="border-left:4px solid var(--teal);padding:16px 20px;background:var(--tl);border-radius:0 8px 8px 0;margin:24px 0;color:var(--teal2);font-size:15px;line-height:1.9">';inBq=true;}html+='<p style="margin:4px 0">'+inl(bq[1])+'</p>';continue;}
+    if(h3){close();html+='<h3 style="font-size:15px;font-weight:700;color:var(--navy);margin:16px 0 5px">'+inl(h3[1])+'</h3>';continue;}
+    if(h2){close();html+='<h2 style="font-size:17px;font-weight:700;color:var(--navy);margin:22px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--tl)">'+inl(h2[1])+'</h2>';continue;}
+    if(/^---+$/.test(raw)){close();html+='<hr style="border:none;border-top:1px solid var(--bd);margin:16px 0">';continue;}
+    if(bq){if(!inBq){close();html+='<blockquote style="border-left:4px solid var(--teal);padding:8px 16px;background:var(--tl);border-radius:0 6px 6px 0;margin:10px 0;color:var(--teal2)">';inBq=true;}html+='<p style="margin:3px 0">'+inl(bq[1])+'</p>';continue;}
     if(inBq&&!bq){html+="</blockquote>";inBq=false;}
-    if(ul){if(!inUl){if(inOl){html+="</ol>";inOl=false;}html+='<ul style="padding-left:24px;margin:8px 0 20px">';inUl=true;}html+='<li style="margin:8px 0;font-size:16px;line-height:1.9">'+inl(ul[1])+'</li>';continue;}
+    if(ul){if(!inUl){if(inOl){html+="</ol>";inOl=false;}html+='<ul style="padding-left:20px;margin:8px 0">';inUl=true;}html+='<li style="margin:3px 0">'+inl(ul[1])+'</li>';continue;}
     if(inUl&&!ul){html+="</ul>";inUl=false;}
-    if(ol){if(!inOl){if(inUl){html+="</ul>";inUl=false;}html+='<ol style="padding-left:24px;margin:8px 0 20px">';inOl=true;}html+='<li style="margin:8px 0;font-size:16px;line-height:1.9">'+inl(ol[1])+'</li>';continue;}
+    if(ol){if(!inOl){if(inUl){html+="</ul>";inUl=false;}html+='<ol style="padding-left:20px;margin:8px 0">';inOl=true;}html+='<li style="margin:3px 0">'+inl(ol[1])+'</li>';continue;}
     if(inOl&&!ol){html+="</ol>";inOl=false;}
     if(!raw.trim()){close();continue;}
-    html+='<p style="margin:0 0 18px 0;font-size:16px;line-height:2.0;color:var(--tx)">'+l+'</p>';}
+    html+='<p style="margin:6px 0">'+l+'</p>';}
   close();return html;}
 
 
@@ -778,8 +754,7 @@ function applyURLParams(){
 
 /* ブラウザの戻る/進むに対応 */
 window.addEventListener("popstate",function(e){
-  if(e.state&&e.state.col){ showPg('column',false); showColFromDB(e.state.col); }
-  else if(e.state&&e.state.pg) showPg(e.state.pg, false);
+  if(e.state&&e.state.pg) showPg(e.state.pg, false);
   else showPg("search", false);
 });
 
@@ -1165,26 +1140,16 @@ async function showColFromDB(id){
   document.getElementById('clist').style.display='none';
   document.getElementById('cdetail').innerHTML='<div style="padding:40px;text-align:center;color:var(--txl)">読み込み中...</div>';
   document.getElementById('cdetail').style.display='block';
-  /* slug または id どちらでも検索 */
   try{
-    var query = id.match(/^[a-z0-9_-]+$/) && !id.match(/^c\d+$/)
-      ? 'columns?slug=eq.'+encodeURIComponent(id)+'&limit=1'
-      : 'columns?id=eq.'+encodeURIComponent(id)+'&limit=1';
-    var res = await sbFetch(query);
+    var res = await sbFetch('columns?id=eq.'+encodeURIComponent(id)+'&limit=1');
     var data = await res.json();
     var col = data[0];
     if(!col){document.getElementById('cdetail').innerHTML='<div style="padding:40px">記事が見つかりません</div>';return;}
     var body = mdToHtml(col.body||'');
-    /* URLをslugまたはidで更新 */
-    var colKey = col.slug || col.id;
-    var url = new URL(location.href);
-    url.searchParams.set('pg','column');
-    url.searchParams.set('col', colKey);
-    history.pushState({pg:'column',col:colKey},'',url.toString());
     document.getElementById('cdetail').innerHTML=
       '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
-      +'<div class="cdetail"><h1 style="font-size:26px;font-weight:700;line-height:1.5;margin-bottom:16px;color:var(--navy)">'+col.title+'</h1>'
-      +'<div class="cmeta" style="font-size:13px;color:var(--txl);margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--bd)">'+col.date+' | '+col.tag+'</div>'
+      +'<div class="cdetail"><h1>'+col.title+'</h1>'
+      +'<div class="cmeta">'+col.date+' | '+col.tag+'</div>'
       +'<div class="cbody">'+body+'</div></div>';
   }catch(e){
     document.getElementById('cdetail').innerHTML='<div style="padding:40px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
@@ -1214,54 +1179,111 @@ function backCol(){
 
 /* 初期化 */
 /* ── 初期化 ── */
-/* ── サイドバー描画 ── */
+/* お問い合わせ送信（Supabaseの contact_messages テーブルに保存） */
+async function submitContact(){
+  var name  = document.getElementById('ct-name').value.trim();
+  var email = document.getElementById('ct-email').value.trim();
+  var type  = document.getElementById('ct-type').value;
+  var body  = document.getElementById('ct-body').value.trim();
+  var st    = document.getElementById('ct-status');
+
+  if(!email||!body){
+    st.style.display='block';st.style.background='#fef2f2';st.style.color='#b91c1c';
+    st.textContent='メールアドレスと内容は必須です';return;
+  }
+  try{
+    await sbFetch('contact_messages', {
+      method:'POST',
+      body: JSON.stringify({name:name,email:email,type:type,body:body,created_at:new Date().toISOString()})
+    });
+    st.style.display='block';st.style.background='#f0fdf4';st.style.color='#166534';
+    st.textContent='送信しました。ありがとうございます。';
+    document.getElementById('ct-name').value='';
+    document.getElementById('ct-email').value='';
+    document.getElementById('ct-body').value='';
+  }catch(e){
+    st.style.display='block';st.style.background='#fef2f2';st.style.color='#b91c1c';
+    st.textContent='送信に失敗しました: '+e.message;
+  }
+}
+
+(async function(){
+  try{
+    if(!SB_URL || SB_URL === 'https://glxhggfxxwpfmwqoulyy.supabase.co' || SB_URL.indexOf('xxxx') > -1){
+      document.getElementById('grid').innerHTML=
+        '<div class="nores" style="padding:30px">'+
+        '<strong>設定が必要です</strong><br>'+
+        'Vercel の環境変数 NEXT_PUBLIC_SUPABASE_URL と NEXT_PUBLIC_SUPABASE_KEY を設定してください。'+
+        '</div>';
+      return;
+    }
+    await buildCats();
+    buildSymp();
+    buildIngs();
+    await render();
+    applyURLParams();
+  }catch(e){
+    console.error('初期化エラー:', e);
+    document.getElementById('grid').innerHTML=
+      '<div class="nores" style="padding:30px;color:var(--red)">初期化エラー: '+e.message+'</div>';
+  }
+})();
+
+/* ── サイドバー ── */
 async function buildSidebar(){
   await buildSidebarCols();
   buildSidebarRanking();
 }
 
 async function buildSidebarCols(){
-  var el = document.getElementById('sb-popular-cols');
-  if(!el) return;
+  var el=document.getElementById('sb-popular-cols');
+  if(!el)return;
   try{
-    var res = await sbFetch('columns?select=id,title,date,tag,slug,status&status=eq.published&order=date.desc&limit=6');
-    var cols = await res.json();
-    if(!cols.length){
-      el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">コラムがありません</li>';
-      return;
-    }
-    el.innerHTML = '';
+    var res=await sbFetch('columns?select=id,title,date,tag,slug,status&status=eq.published&order=date.desc&limit=6');
+    var cols=await res.json();
+    if(!cols.length){el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">コラムがありません</li>';return;}
+    el.innerHTML='';
     cols.forEach(function(col){
-      var key = col.slug || col.id;
-      var li = document.createElement('li');
-      li.className = 'sb-item';
-      var a = document.createElement('a');
-      a.href = '?pg=column&col=' + encodeURIComponent(key);
-      var tag = document.createElement('div');
-      tag.className = 'sb-item-tag';
-      tag.textContent = col.tag;
-      var title = document.createElement('div');
-      title.className = 'sb-item-title';
-      title.textContent = col.title;
-      var date = document.createElement('div');
-      date.className = 'sb-item-date';
-      date.textContent = col.date;
-      a.appendChild(tag);
-      a.appendChild(title);
-      a.appendChild(date);
-      (function(k){
-        a.addEventListener('click', function(e){
-          e.preventDefault();
-          showColFromDB(k);
-          showPg('column', false);
-        });
-      })(key);
-      li.appendChild(a);
-      el.appendChild(li);
+      var key=col.slug||col.id;
+      var li=document.createElement('li');li.className='sb-item';
+      var a=document.createElement('a');
+      a.href='?pg=column&col='+encodeURIComponent(key);
+      var tag=document.createElement('div');tag.className='sb-item-tag';tag.textContent=col.tag;
+      var title=document.createElement('div');title.className='sb-item-title';title.textContent=col.title;
+      var date=document.createElement('div');date.className='sb-item-date';date.textContent=col.date;
+      a.appendChild(tag);a.appendChild(title);a.appendChild(date);
+      (function(k){a.addEventListener('click',function(e){e.preventDefault();showColFromDB(k);showPg('column',false);});})(key);
+      li.appendChild(a);el.appendChild(li);
     });
-  }catch(e){
-    el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</li>';
-  }
+  }catch(e){el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</li>';}
 }
 
->
+function buildSidebarRanking(){
+  var el=document.getElementById('sb-ranking');
+  if(!el)return;
+  try{
+    var data=JSON.parse(localStorage.getItem('med_access')||'{}');
+    var sorted=Object.keys(data).map(function(id){return Object.assign({id:id},data[id]);})
+      .sort(function(a,b){return b.count-a.count;}).slice(0,5);
+    if(!sorted.length){
+      el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">まだ閲覧履歴がありません。<br>医薬品カードを開くと表示されます。</div>';
+      return;
+    }
+    el.innerHTML='';
+    sorted.forEach(function(m,i){
+      var div=document.createElement('div');div.className='sb-rank-item';
+      var num=document.createElement('div');num.className='sb-rank-num'+(i<3?' top3':'');num.textContent=i+1;
+      var info=document.createElement('div');
+      var name=document.createElement('div');name.className='sb-rank-name';name.textContent=m.name;
+      var maker=document.createElement('div');maker.className='sb-rank-maker';maker.textContent=m.maker||'';
+      info.appendChild(name);info.appendChild(maker);
+      div.appendChild(num);div.appendChild(info);
+      (function(id){div.addEventListener('click',function(){jumpTo(id);});})(m.id);
+      el.appendChild(div);
+    });
+  }catch(e){el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</div>';}
+}
+
+</script>
+</body>
+</html>
