@@ -962,9 +962,8 @@ function mkCard(m){
     var b=ing.replace(/[(（][^)）]*/g,"").replace(/[)）]/g,"").trim();
     var iM=S.ings.indexOf(b)>-1;
     var iW=!!wset[b];
-    var hD=!!ING[b];
     var cls=iW?"iw":iM?"im":"in";
-            return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
+    return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
   }).join("");
   var sH="";
   if(m.symptoms&&m.symptoms.length){
@@ -975,10 +974,11 @@ function mkCard(m){
   var nc=m.noteType==="danger"?"nd":m.noteType==="warn"?"nw":"nn";
   var pr=m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div><div class="cpnote">参考価格（税込）</div>':'<div class="cpval np">価格要確認</div>';
   var sel=CMP.indexOf(m.id)>-1;
+  var nameHtml='<div class="cname" style="cursor:pointer;color:var(--teal2)" onclick="showMedDetail('+m.id+')">'+m.name+'</div>';
   return '<div class="card" id="cd-'+m.id+'">'
     +'<div class="csel"><input type="checkbox"'+(sel?" checked":"")
     +' onchange="togCmp('+m.id+',this.checked)"></div>'
-    +'<div class="chard"><div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
+    +'<div class="chard"><div>'+nameHtml+'<div class="cmaker">'+(m.maker||"")+'</div></div>'
     +'<div class="cprice">'+pr+'</div></div>'
     +'<div class="badges">'
     +(m.itype&&m.itype!=="otc"?'<span class="badge '+(TYPECLS[m.itype]||"bf")+'">'+(TYPEICO[m.itype]||"")+" "+(TYPELBL[m.itype]||m.itype)+'</span>':"")
@@ -998,6 +998,7 @@ function mkCard(m){
     +'<div id="sim-'+m.id+'" style="display:none"></div>'
     +"</div>";
 }
+
 
 /* 類似商品 */
 function showSim(id){
