@@ -322,6 +322,32 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .home-stat-label{font-size:12px;color:#64748b;margin-top:2px}
 @media(max-width:600px){.home-title{font-size:28px}.home-sub{font-size:14px}.home-stats{gap:24px}.home-stat-num{font-size:22px}}
 
+
+/* ── 報告モーダル ── */
+#report-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
+#report-modal.open{display:flex}
+.report-box{background:#fff;border-radius:12px;padding:28px;width:460px;max-width:90vw}
+.report-box h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.report-box p{font-size:13px;color:var(--txm);margin-bottom:16px;line-height:1.6}
+.report-types{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.report-type{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--bd);border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s}
+.report-type:hover{border-color:var(--teal);background:var(--tl)}
+.report-type.selected{border-color:var(--teal);background:var(--tl);color:var(--teal2);font-weight:600}
+.report-type input{accent-color:var(--teal)}
+.report-detail{margin-bottom:16px}
+.report-detail label{display:block;font-size:12px;font-weight:600;color:var(--txm);margin-bottom:5px}
+.report-detail textarea{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:80px}
+.report-detail textarea:focus{border-color:var(--teal)}
+.report-actions{display:flex;gap:10px}
+.report-submit{flex:1;padding:10px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer}
+.report-submit:hover{background:var(--teal2)}
+.report-submit:disabled{background:var(--txl);cursor:not-allowed}
+.report-cancel{padding:10px 20px;background:var(--sl);color:var(--txm);border:1px solid var(--bd);border-radius:7px;font-size:14px;cursor:pointer}
+.report-cancel:hover{background:var(--bd)}
+.report-status{font-size:13px;padding:8px 12px;border-radius:6px;margin-bottom:12px;display:none}
+.report-status.ok{background:#f0fdf4;color:#166534;display:block}
+.report-status.err{background:#fef2f2;color:var(--red);display:block}
+
 </style>
 </head>
 <body>
@@ -1519,6 +1545,9 @@ function renderMedDetail(m){
     +warnHtml
     +noteHtml
     +(buyHtml?'<div class="med-section"><div class="med-section-title">🛒 購入</div><div class="med-buy-area">'+buyHtml+'<a class="med-buy-btn" style="background:var(--sl);color:var(--txm);border:1px solid var(--bd)" href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA添付文書</a></div></div>':'<div class="med-section"><div class="med-buy-area"><a class="med-buy-btn" style="background:var(--sl);color:var(--txm);border:1px solid var(--bd)" href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA添付文書</a></div></div>')
+    +'<div class="med-section" style="border-top:1px solid var(--bd);padding-top:20px;margin-top:8px">'
+    +'<button onclick="openReport()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:none;border:1px solid var(--bd);border-radius:7px;font-size:12px;color:var(--txl);cursor:pointer" onmouseover="this.style.borderColor=\'var(--red)\';this.style.color=\'var(--red)\'" onmouseout="this.style.borderColor=\'var(--bd)\';this.style.color=\'var(--txl)\'">🚩 内容の誤りを報告する</button>'
+    +'</div>'
     +'</div>';
 }
 
@@ -1614,6 +1643,115 @@ async function doHomeSearch(q){
   await render();
 }
 
+
+/* ── 報告機能 ── */
+function openReport(){
+  var m = CURRENT_MED;
+  if(!m) return;
+  document.getElementById('report-med-name').textContent = '対象：' + m.name;
+  document.getElementById('report-body').value = '';
+  document.getElementById('report-status').className = 'report-status';
+  document.getElementById('report-status').textContent = '';
+  document.querySelectorAll('input[name="report-type"]').forEach(function(r){ r.checked=false; });
+  document.querySelectorAll('.report-type').forEach(function(l){ l.classList.remove('selected'); });
+  document.getElementById('report-submit-btn').disabled = false;
+  document.getElementById('report-submit-btn').textContent = '報告する';
+  document.getElementById('report-modal').classList.add('open');
+}
+
+function closeReport(){
+  document.getElementById('report-modal').classList.remove('open');
+}
+
+async function submitReport(){
+  var m = CURRENT_MED;
+  if(!m) return;
+  var type = '';
+  document.querySelectorAll('input[name="report-type"]').forEach(function(r){ if(r.checked) type=r.value; });
+  if(!type){
+    var st = document.getElementById('report-status');
+    st.textContent = '報告の種類を選択してください';
+    st.className = 'report-status err';
+    return;
+  }
+  var body = document.getElementById('report-body').value.trim();
+  var btn = document.getElementById('report-submit-btn');
+  btn.disabled = true;
+  btn.textContent = '送信中...';
+
+  try{
+    var res = await fetch(SB_URL + '/rest/v1/reports', {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        med_id: m.id,
+        med_name: m.name,
+        type: type,
+        body: body || null,
+        created_at: new Date().toISOString()
+      })
+    });
+    if(res.ok || res.status===201){
+      var st = document.getElementById('report-status');
+      st.textContent = '✅ 報告を受け付けました。ご協力ありがとうございます。';
+      st.className = 'report-status ok';
+      btn.textContent = '送信済み';
+      setTimeout(function(){ closeReport(); }, 2000);
+    } else {
+      throw new Error('status ' + res.status);
+    }
+  }catch(e){
+    var st = document.getElementById('report-status');
+    st.textContent = '送信に失敗しました。時間をおいて再試行してください。';
+    st.className = 'report-status err';
+    btn.disabled = false;
+    btn.textContent = '報告する';
+  }
+}
+
+/* 報告タイプ選択時のビジュアルフィードバック */
+document.addEventListener('change', function(e){
+  if(e.target.name === 'report-type'){
+    document.querySelectorAll('.report-type').forEach(function(l){ l.classList.remove('selected'); });
+    if(e.target.closest('.report-type')) e.target.closest('.report-type').classList.add('selected');
+  }
+});
+
+/* モーダル背景クリックで閉じる */
+document.getElementById('report-modal').addEventListener('click', function(e){
+  if(e.target === this) closeReport();
+});
+
 </script>
+
+<!-- 報告モーダル -->
+<div id="report-modal">
+  <div class="report-box">
+    <h3>🚩 内容の報告</h3>
+    <p id="report-med-name" style="font-size:12px;color:var(--txl);margin-bottom:12px"></p>
+    <div class="report-status" id="report-status"></div>
+    <div class="report-types">
+      <label class="report-type"><input type="radio" name="report-type" value="価格が違う"> 💴 価格情報が違う・古い</label>
+      <label class="report-type"><input type="radio" name="report-type" value="成分が違う"> 🧪 成分情報が違う・不足している</label>
+      <label class="report-type"><input type="radio" name="report-type" value="効能が違う"> ✨ 効能・効果の記載が違う</label>
+      <label class="report-type"><input type="radio" name="report-type" value="商品が廃盤"> 📦 この商品は廃盤・販売終了</label>
+      <label class="report-type"><input type="radio" name="report-type" value="その他"> 💬 その他</label>
+    </div>
+    <div class="report-detail">
+      <label>詳細（任意）</label>
+      <textarea id="report-body" placeholder="具体的な内容があれば記入してください"></textarea>
+    </div>
+    <div class="report-actions">
+      <button class="report-cancel" onclick="closeReport()">キャンセル</button>
+      <button class="report-submit" id="report-submit-btn" onclick="submitReport()">報告する</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
