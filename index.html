@@ -1209,14 +1209,6 @@ async function submitContact(){
 
 (async function(){
   try{
-    if(!SB_URL || SB_URL === 'https://glxhggfxxwpfmwqoulyy.supabase.co' || SB_URL.indexOf('xxxx') > -1){
-      document.getElementById('grid').innerHTML=
-        '<div class="nores" style="padding:30px">'+
-        '<strong>設定が必要です</strong><br>'+
-        'Vercel の環境変数 NEXT_PUBLIC_SUPABASE_URL と NEXT_PUBLIC_SUPABASE_KEY を設定してください。'+
-        '</div>';
-      return;
-    }
     await buildCats();
     buildSymp();
     buildIngs();
