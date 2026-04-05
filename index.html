@@ -679,15 +679,19 @@ var CMP=[];
 
 /* ページ切替 */
 function showPg(id, push){
+  var pgEl = document.getElementById("pg-"+id);
+  if(!pgEl) return;
   document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".ntab").forEach(function(t){t.classList.remove("on");});
-  document.getElementById("pg-"+id).classList.add("on");
-  document.getElementById("t-"+id).classList.add("on");
+  pgEl.classList.add("on");
+  var tabEl = document.getElementById("t-"+id);
+  if(tabEl) tabEl.classList.add("on");
   if(id==="guide")  buildGuide();
   if(id==="column") buildCols();
   if(push!==false){
     var url=new URL(location.href);
-    url.searchParams.set("pg",id);
+    if(id==="search") url.searchParams.delete("pg");
+    else url.searchParams.set("pg",id);
     history.pushState({pg:id},"",url.toString());
   }
 }
@@ -699,7 +703,7 @@ function applyURLParams(){
   var validPgs=["guide","column","concept","privacy","terms","contact"];
   if(pg && validPgs.indexOf(pg)>-1) showPg(pg, false);
   var colId=params.get("col");
-  if(colId) showColFromDB(colId);
+  if(colId){ showPg("column",false); showColFromDB(colId); }
 }
 
 /* ブラウザの戻る/進むに対応 */
