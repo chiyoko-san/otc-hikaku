@@ -479,6 +479,13 @@ function rmThumb(e){e.stopPropagation();CUR_THUMB=null;
 
 /* ── Markdownエディタ ── */
 function updatePreview(){
+  // slugプレビュー更新
+  var slugVal = document.getElementById('f-slug') ? document.getElementById('f-slug').value : '';
+  var titleVal = document.getElementById('f-title') ? document.getElementById('f-title').value : '';
+  var preview = slugVal || autoSlug(titleVal) || '（スラッグ）';
+  var el = document.getElementById('slug-preview');
+  if(el) el.textContent = preview;
+
   var src=document.getElementById("f-body").value;
   document.getElementById("md-preview").innerHTML=mdToHtml(src)||'<span style="color:var(--txl);font-size:12px">← 左に入力するとここにプレビューが表示されます</span>';
 }
@@ -730,18 +737,25 @@ function saveCol(forceStatus){
 
   if(EDIT_ID!==null){
     var old=COLS[EDIT_ID];
+    var slugInput=document.getElementById('f-slug');
+    var slugVal=slugInput?slugInput.value.trim().toLowerCase().replace(/[^a-z0-9\-_]/g,''):'';
     COLS[EDIT_ID]={
       id:old.id,title:t,
       date:status==="published"&&old.status!=="published"?today:old.date,
       tag:tag,summary:sm,body:b,thumb:CUR_THUMB,
       status:status,publishAt:publishAt,
+      slug:slugVal||old.slug||'',
       updatedAt:new Date().toISOString().slice(0,16)
     };
     showStatus("✅ 更新しました（"+statusLabel(status)+"）","ok");
   } else {
+    var slugInput2=document.getElementById('f-slug');
+    var slugVal2=slugInput2?slugInput2.value.trim().toLowerCase().replace(/[^a-z0-9\-_]/g,''):'';
+    var newId='c'+Date.now();
     COLS.push({
-      id:"c"+Date.now(),title:t,date:today,tag:tag,summary:sm,body:b,
+      id:newId,title:t,date:today,tag:tag,summary:sm,body:b,
       thumb:CUR_THUMB,status:status,publishAt:publishAt,
+      slug:slugVal2||newId,
       updatedAt:today
     });
     var msg=status==="draft"?"✅ 下書きに保存しました":
@@ -766,6 +780,13 @@ function saveCol(forceStatus){
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".tab")[0].classList.add("on");
   document.getElementById("tab-cols").classList.add("on");
+}
+
+function autoSlug(title){
+  if(!title) return '';
+  // 日本語タイトルからIDベースのslugを生成
+  var now = Date.now().toString(36);
+  return 'col-' + now;
 }
 
 function statusLabel(s){
@@ -848,6 +869,7 @@ async function saveColToSB(col){
         summary:col.summary, body:col.body,
         thumb:col.thumb||null,
         status:col.status||'published',
+        slug:col.slug||null,
         updated_at:new Date().toISOString().slice(0,16),
       })
     });
@@ -870,6 +892,7 @@ async function saveColToSB(col){
             summary:col.summary, body:col.body,
             thumb:col.thumb||null,
             status:col.status||'published',
+            slug:col.slug||null,
             updated_at:new Date().toISOString().slice(0,16),
           })
         });

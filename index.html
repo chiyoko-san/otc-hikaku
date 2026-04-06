@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2G7T178ZNY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-2G7T178ZNY');
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>クスリノコンパス｜市販薬・成分比較サイト</title>
@@ -1347,7 +1338,7 @@ async function buildCols(){
   var el=document.getElementById('cgrid');
   if(el.children.length)return;
   try{
-    var res = await sbFetch('columns?select=id,title,date,tag,summary,thumb,status&status=eq.published&order=date.desc&limit=50');
+    var res = await sbFetch('columns?select=id,title,date,tag,summary,thumb,status,slug&status=eq.published&order=date.desc&limit=50');
     var cols = await res.json();
     cols.forEach(function(col){
       var div=document.createElement('div');div.className='ccard';
@@ -1357,7 +1348,7 @@ async function buildCols(){
         :'<div style="flex-shrink:0;width:160px;min-width:160px;height:120px;background:linear-gradient(135deg,#0f1c35,#1e3a5f)"></div>';
       div.style.cssText='display:flex;border-bottom:1px solid #e2e8f0;cursor:pointer;background:#fff';
       div.innerHTML=topHtml+'<div style="flex:1;min-width:0;padding:14px 18px"><div class="ctag">'+col.tag+'</div><div style="font-size:14px;font-weight:700;line-height:1.5;color:#0f1c35;margin:4px 0 8px">'+col.title+'</div><div style="font-size:11px;color:#94a3b8;margin-bottom:6px">'+col.date+'</div><div style="font-size:12px;color:#475569;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+col.summary+'</div></div>';
-      (function(id){div.addEventListener('click',function(){showColFromDB(id);});})(col.id);
+      (function(id, slug){div.addEventListener('click',function(){showColFromDB(slug||id);});})(col.id, col.slug);
       el.appendChild(div);
     });
   }catch(e){
@@ -1370,15 +1361,26 @@ async function showColFromDB(id){
   document.getElementById('cdetail').innerHTML='<div style="padding:40px;text-align:center;color:var(--txl)">読み込み中...</div>';
   document.getElementById('cdetail').style.display='block';
   try{
-    var res = await sbFetch('columns?id=eq.'+encodeURIComponent(id)+'&limit=1');
+    /* slugまたはidで検索 */
+    var isSlug = id && !id.match(/^c\d+$/) && id.match(/^[a-z0-9\-_]+$/);
+    var query = isSlug
+      ? 'columns?slug=eq.'+encodeURIComponent(id)+'&limit=1'
+      : 'columns?id=eq.'+encodeURIComponent(id)+'&limit=1';
+    var res = await sbFetch(query);
     var data = await res.json();
     var col = data[0];
     if(!col){document.getElementById('cdetail').innerHTML='<div style="padding:40px">記事が見つかりません</div>';return;}
+    /* URLをslugで更新 */
+    var colKey = col.slug || col.id;
+    var url = new URL(location.href);
+    url.searchParams.set('pg','column');
+    url.searchParams.set('col', colKey);
+    history.pushState({pg:'column',col:colKey},'',url.toString());
     var body = mdToHtml(col.body||'');
     document.getElementById('cdetail').innerHTML=
       '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
-      +'<div class="cdetail"><h1>'+col.title+'</h1>'
-      +'<div class="cmeta">'+col.date+' | '+col.tag+'</div>'
+      +'<div class="cdetail"><h1 style="font-size:26px;font-weight:700;line-height:1.5;margin-bottom:16px;color:var(--navy)">'+col.title+'</h1>'
+      +'<div class="cmeta" style="font-size:13px;color:var(--txl);margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--bd)">'+col.date+' | '+col.tag+'</div>'
       +'<div class="cbody">'+body+'</div></div>';
   }catch(e){
     document.getElementById('cdetail').innerHTML='<div style="padding:40px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
@@ -1466,7 +1468,7 @@ async function buildSidebarCols(){
   var el=document.getElementById('sb-popular-cols');
   if(!el)return;
   try{
-    var res=await sbFetch('columns?select=id,title,date,tag,status&status=eq.published&order=date.desc&limit=6');
+    var res=await sbFetch('columns?select=id,title,date,tag,status,slug&status=eq.published&order=date.desc&limit=6');
     var cols=await res.json();
     if(!cols.length){el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">コラムがありません</li>';return;}
     el.innerHTML='';
