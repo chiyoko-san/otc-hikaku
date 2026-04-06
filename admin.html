@@ -753,7 +753,12 @@ function saveCol(forceStatus){
   var savedCol=EDIT_ID!==null?COLS[EDIT_ID]:COLS[COLS.length-1];
   if(savedCol){
     saveColToSB(savedCol).then(function(ok){
-      if(ok) showStatus('✅ Supabaseにも保存しました','ok');
+      if(ok){
+        var lbl=statusLabel(savedCol.status);
+        showStatus('✅ Supabaseに保存しました（'+lbl+'）','ok');
+      } else {
+        showStatus('⚠️ ローカルに保存しましたがSupabase保存に失敗しました。接続設定を確認してください。','err');
+      }
     });
   }
   saveCols();renderList();clearForm();
@@ -829,8 +834,9 @@ async function saveColToSB(col){
   var cfg=getSBConfig();
   if(!cfg.url||!cfg.key) return false;
   try{
-    var res=await fetch(cfg.url+'/rest/v1/columns?on_conflict=id',{
-      method:'POST',
+    /* まず既存レコードをPATCHで更新 */
+    var patchRes=await fetch(cfg.url+'/rest/v1/columns?id=eq.'+encodeURIComponent(col.id),{
+      method:'PATCH',
       headers:{
         'apikey':cfg.key,
         'Authorization':'Bearer '+cfg.key,
@@ -838,15 +844,40 @@ async function saveColToSB(col){
         'Prefer':'return=minimal',
       },
       body:JSON.stringify({
-        id:col.id, title:col.title, date:col.date, tag:col.tag,
+        title:col.title, date:col.date, tag:col.tag,
         summary:col.summary, body:col.body,
         thumb:col.thumb||null,
         status:col.status||'published',
-        publish_at:col.publishAt||null,
         updated_at:new Date().toISOString().slice(0,16),
       })
     });
-    return res.ok;
+    /* PATCHが204なら成功、行がなければ0件更新なのでPOSTで新規作成 */
+    if(patchRes.ok){
+      var affected=patchRes.headers.get('content-range');
+      /* content-rangeが*/0の場合は行なし→POST */
+      if(affected && affected.indexOf('*/0')>-1){
+        /* 新規作成 */
+        var postRes=await fetch(cfg.url+'/rest/v1/columns',{
+          method:'POST',
+          headers:{
+            'apikey':cfg.key,
+            'Authorization':'Bearer '+cfg.key,
+            'Content-Type':'application/json',
+            'Prefer':'return=minimal',
+          },
+          body:JSON.stringify({
+            id:col.id, title:col.title, date:col.date, tag:col.tag,
+            summary:col.summary, body:col.body,
+            thumb:col.thumb||null,
+            status:col.status||'published',
+            updated_at:new Date().toISOString().slice(0,16),
+          })
+        });
+        return postRes.ok;
+      }
+      return true;
+    }
+    return false;
   }catch(e){
     console.error('SB保存エラー:',e);
     return false;
