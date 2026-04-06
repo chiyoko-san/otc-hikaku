@@ -854,7 +854,7 @@ async function saveColToSB(col){
     /* PATCHが204なら成功、行がなければ0件更新なのでPOSTで新規作成 */
     if(patchRes.ok){
       var affected=patchRes.headers.get('content-range');
-      /* content-rangeが*/0の場合は行なし→POST */
+      // content-rangeが 0件の場合は行なし→POST
       if(affected && affected.indexOf('*/0')>-1){
         /* 新規作成 */
         var postRes=await fetch(cfg.url+'/rest/v1/columns',{
