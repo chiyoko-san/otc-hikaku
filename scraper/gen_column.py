@@ -96,7 +96,7 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
         user_prompt += f"\n\n参考データ（関連OTC商品）:\n{context}"
 
     payload = json.dumps({
-        "model": "claude-opus-4-5",
+        "model": "claude-opus-4-5-20251101",
         "max_tokens": 6000,
         "system": SYSTEM_PROMPT,
         "messages": [{"role": "user", "content": user_prompt}]
@@ -120,6 +120,10 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
             m = re.search(r'\{[\s\S]+\}', text)
             if m:
                 return json.loads(m.group())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        print(f"[gen] Claude APIエラー: {e.code} {e.reason}", file=sys.stderr)
+        print(f"[gen] レスポンス: {body}", file=sys.stderr)
     except Exception as e:
         print(f"[gen] Claude APIエラー: {e}", file=sys.stderr)
     return None
