@@ -139,6 +139,7 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
     </div>
     <div class="col-list" id="col-list"></div>
     <button type="button" class="btn-sec" onclick="loadBuiltin()">📥 既存コラムを読み込む</button>
+    <button type="button" class="btn-sec" onclick="syncAllToSB()" style="margin-left:8px;background:#e1f5ee;color:#085041;border-color:#9fe1cb">☁ Supabaseに全件同期</button>
   </div>
 
   <!-- 新規追加 / 編集 -->
@@ -337,7 +338,42 @@ function enter(){
 function doLogout(){sessionStorage.removeItem("admin_authed");location.reload();}
 
 /* ── データ ── */
-function loadCols(){var r=localStorage.getItem(COLS_KEY);COLS=r?JSON.parse(r):[];renderList();showStatus("コラム"+COLS.length+"件","ok");}
+async function loadCols(){
+  /* まずLocalStorageから読む */
+  var r=localStorage.getItem(COLS_KEY);
+  COLS=r?JSON.parse(r):[];
+
+  /* Supabaseからも取得してマージ */
+  var cfg=getSBConfig();
+  if(cfg.url&&cfg.key){
+    try{
+      var res=await fetch(cfg.url+'/rest/v1/columns?select=id,title,date,tag,summary,thumb,body,status&order=date.desc&limit=100',{
+        headers:{'apikey':cfg.key,'Authorization':'Bearer '+cfg.key}
+      });
+      if(res.ok){
+        var sbCols=await res.json();
+        /* LocalStorageにないものを追加、あるものは上書き */
+        sbCols.forEach(function(sc){
+          var exists=COLS.findIndex(function(c){return c.id===sc.id;});
+          var col={
+            id:sc.id, title:sc.title||'', date:sc.date||'',
+            tag:sc.tag||'', summary:sc.summary||'',
+            thumb:sc.thumb||'', body:sc.body||'',
+            status:sc.status||'draft'
+          };
+          if(exists>-1) COLS[exists]=col;
+          else COLS.unshift(col);
+        });
+        localStorage.setItem(COLS_KEY,JSON.stringify(COLS));
+        showStatus('Supabaseから'+sbCols.length+'件取得・同期しました','ok');
+      }
+    }catch(e){
+      showStatus('Supabase読み込みエラー: '+e.message,'err');
+    }
+  }
+  renderList();
+  if(!cfg.url||!cfg.key) showStatus('コラム'+COLS.length+'件（ローカル）','ok');
+}
 function saveCols(){localStorage.setItem(COLS_KEY,JSON.stringify(COLS));}
 
 var BUILTIN=[
@@ -713,14 +749,14 @@ function saveCol(forceStatus){
             "✅ 公開しました。「エクスポート」からbuild.pyに反映できます";
     showStatus(msg,"ok");
   }
-  saveCols();renderList();clearForm();
-  /* Supabase が設定されていれば同時に保存 */
+  /* Supabase保存はclearForm/EDIT_IDリセット前に実施 */
   var savedCol=EDIT_ID!==null?COLS[EDIT_ID]:COLS[COLS.length-1];
   if(savedCol){
     saveColToSB(savedCol).then(function(ok){
       if(ok) showStatus('✅ Supabaseにも保存しました','ok');
     });
   }
+  saveCols();renderList();clearForm();
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
   document.querySelectorAll(".tab-pane").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".tab")[0].classList.add("on");
@@ -793,13 +829,13 @@ async function saveColToSB(col){
   var cfg=getSBConfig();
   if(!cfg.url||!cfg.key) return false;
   try{
-    var res=await fetch(cfg.url+'/rest/v1/columns',{
+    var res=await fetch(cfg.url+'/rest/v1/columns?on_conflict=id',{
       method:'POST',
       headers:{
         'apikey':cfg.key,
         'Authorization':'Bearer '+cfg.key,
         'Content-Type':'application/json',
-        'Prefer':'resolution=merge-duplicates',
+        'Prefer':'return=minimal',
       },
       body:JSON.stringify({
         id:col.id, title:col.title, date:col.date, tag:col.tag,
