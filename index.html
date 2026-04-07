@@ -5,20 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>クスリノコンパス｜市販薬・成分比較サイト</title>
 <meta name="description" content="市販薬7,500品を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。">
-<meta property="og:type"        content="website">
-<meta property="og:site_name"   content="クスリノコンパス">
-<meta property="og:title"       content="クスリノコンパス｜市販薬・成分比較サイト">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="クスリノコンパス">
+<meta property="og:title" content="クスリノコンパス｜市販薬・成分比較サイト">
 <meta property="og:description" content="市販薬7,500品を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。">
-<meta property="og:url"         content="https://kusuri-compass.com/">
-<meta property="og:image"       content="https://kusuri-compass.com/ogp.png">
-<meta property="og:image:width"  content="1200">
+<meta property="og:url" content="https://kusuri-compass.com/">
+<meta property="og:image" content="https://kusuri-compass.com/ogp.png">
+<meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale"      content="ja_JP">
-<meta name="twitter:card"        content="summary_large_image">
-<meta name="twitter:site"        content="@kusuri_compass">
-<meta name="twitter:title"       content="クスリノコンパス｜市販薬・成分比較サイト">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@kusuri_compass">
+<meta name="twitter:title" content="クスリノコンパス｜市販薬・成分比較サイト">
 <meta name="twitter:description" content="市販薬7,500品を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。">
-<meta name="twitter:image"       content="https://kusuri-compass.com/ogp.png">
+<meta name="twitter:image" content="https://kusuri-compass.com/ogp.png">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <style>
 :root{--navy:#0f1c35;--teal:#2fa18d;--teal2:#1a7f6e;--tl:#e8f5f2;--amber:#fffbeb;--amberb:#f59e0b;--red:#b91c1c;--rb:#fef2f2;--sl:#f1f5f9;--bd:#e2e8f0;--bdm:#cbd5e1;--tx:#0f172a;--txm:#475569;--txl:#94a3b8;--wh:#fff;}
@@ -191,18 +191,15 @@ a{color:inherit;text-decoration:none}
 .gname{font-size:13px;font-weight:600}
 .gsub{font-size:11px;color:var(--txl);margin-top:2px}
 /* COLUMN PAGE */
-.cgrid{display:flex;flex-direction:column;gap:0}
-.ccard{background:var(--wh);border-bottom:1px solid var(--bd);cursor:pointer;display:flex;gap:0;transition:background .15s}
-.ccard:first-child{border-top:1px solid var(--bd);border-radius:10px 10px 0 0}.ccard:last-child{border-radius:0 0 10px 10px}
-.ccard:hover{background:var(--sl)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.ccard{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer}
 .ccard:hover{box-shadow:0 4px 16px rgba(15,23,42,.12)}
 .ctop{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:20px;color:#fff}
 .ctag{font-size:10px;padding:2px 8px;background:var(--teal);border-radius:10px;display:inline-block;margin-bottom:8px}
 .ctitle{font-size:14px;font-weight:700;line-height:1.5}
-.cbdy{flex:1;padding:14px 18px;display:flex;flex-direction:column;justify-content:center;min-width:0}
-.ctitle-card{font-size:14px;font-weight:700;line-height:1.5;color:var(--navy);margin:4px 0 8px}
-.cdate{font-size:11px;color:var(--txl);margin-bottom:4px}
-.csum{font-size:12px;color:var(--txm);line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cbdy{padding:14px}
+.cdate{font-size:11px;color:var(--txl);margin-bottom:6px}
+.csum{font-size:12px;color:var(--txm);line-height:1.7}
 .cdetail{background:var(--wh);border-radius:10px;padding:24px;max-width:760px;margin:0 auto}
 .cdetail h1{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px}
 .cmeta{font-size:12px;color:var(--txl);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
@@ -238,117 +235,6 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .btn{padding:10px 24px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer}
 .btn:hover{background:var(--teal2)}
 
-.col-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start}
-.col-main{min-width:0}
-.col-sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:20px}
-.sb-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.sb-card-title{font-size:13px;font-weight:700;color:var(--wh);background:var(--navy);padding:10px 14px}
-.sb-list{list-style:none;padding:0;margin:0}
-.sb-item{border-bottom:1px solid var(--bd)}
-.sb-item:last-child{border-bottom:none}
-.sb-item a{display:block;padding:10px 14px;text-decoration:none;color:var(--tx);font-size:12px;line-height:1.6}
-.sb-item a:hover{background:var(--sl)}
-.sb-item-tag{font-size:10px;padding:1px 7px;background:var(--tl);color:var(--teal2);border-radius:10px;margin-bottom:4px;display:inline-block}
-.sb-item-title{font-size:12px;font-weight:600;line-height:1.5;color:var(--tx)}
-.sb-item-date{font-size:10px;color:var(--txl);margin-top:2px}
-.sb-rank-item{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);text-decoration:none;color:var(--tx);cursor:pointer}
-.sb-rank-item:last-child{border-bottom:none}
-.sb-rank-item:hover{background:var(--sl)}
-.sb-rank-num{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--sl);color:var(--txm);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb-rank-num.top3{background:var(--teal);color:#fff}
-.sb-rank-name{font-size:12px;font-weight:600;line-height:1.4;flex:1}
-.sb-rank-maker{font-size:10px;color:var(--txl)}
-@media(max-width:760px){.col-layout{grid-template-columns:1fr}.col-sidebar{position:static}.ctop{width:100px;min-width:100px;max-width:100px;height:80px}.ctop.has-thumb img{width:100px;height:80px;min-width:100px}}
-
-
-/* ── 医薬品詳細ページ ── */
-#med-detail{display:none;max-width:1240px;margin:0 auto;padding:16px 20px 60px}
-.med-detail-wrap{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
-.med-detail-main{background:var(--wh);border-radius:12px;border:1px solid var(--bd);overflow:hidden}
-.med-detail-hero{background:linear-gradient(135deg,var(--navy),#1e3a5f);padding:28px 28px 24px}
-.med-detail-name{font-size:24px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px}
-.med-detail-maker{font-size:14px;color:#94a3b8}
-.med-detail-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.med-detail-body{padding:24px 28px}
-.med-section{margin-bottom:28px}
-.med-section-title{font-size:13px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--tl)}
-.med-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.med-info-item{background:var(--sl);border-radius:8px;padding:12px 16px}
-.med-info-label{font-size:11px;color:var(--txl);margin-bottom:4px}
-.med-info-value{font-size:15px;font-weight:600;color:var(--tx)}
-.med-ings-list{display:flex;flex-wrap:wrap;gap:8px}
-.med-ing-chip{padding:6px 12px;border-radius:20px;font-size:13px;border:1.5px solid var(--bd);background:var(--wh);cursor:pointer;transition:all .15s}
-.med-ing-chip:hover{border-color:var(--teal);color:var(--teal2)}
-.med-ing-chip.iw{background:#fef2f2;border-color:#fecaca;color:var(--red)}
-.med-ing-chip.im{background:var(--tl);border-color:#99d4cd;color:var(--teal2)}
-.med-warn-box{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:14px 16px;font-size:13px;color:#9a3412;line-height:1.8}
-.med-note-box{border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.8}
-.med-note-box.nd{background:#fef2f2;border:1px solid #fecaca;color:var(--red)}
-.med-note-box.nw{background:#fffbeb;border:1px solid #fde68a;color:#713f12}
-.med-buy-area{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-.med-buy-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:none}
-.med-buy-amazon{background:#FF9900;color:#fff}
-.med-buy-amazon:hover{background:#e68900}
-.med-buy-rakuten{background:#BF0000;color:#fff}
-.med-buy-rakuten:hover{background:#a00000}
-.med-sim-list{display:flex;flex-direction:column;gap:0}
-.med-sim-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s;text-decoration:none;color:var(--tx)}
-.med-sim-item:last-child{border-bottom:none}
-.med-sim-item:hover{background:var(--sl)}
-.med-sim-score{font-size:11px;color:var(--txl)}
-.med-back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--sl);border:1px solid var(--bd);border-radius:7px;font-size:13px;color:var(--txm);cursor:pointer;margin-bottom:16px}
-.med-back-btn:hover{background:var(--bd)}
-@media(max-width:760px){.med-detail-wrap{grid-template-columns:1fr}.med-info-grid{grid-template-columns:1fr}}
-
-
-/* ── ホームページ ── */
-#pg-home{display:none;min-height:calc(100vh - 52px);background:linear-gradient(160deg,#0f1c35 0%,#1a3a5f 50%,#0f2a3a 100%)}
-.home-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 60px;text-align:center}
-.home-title{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:10px;line-height:1.2}
-.home-title em{color:var(--teal);font-style:normal}
-.home-sub{font-size:16px;color:#94a3b8;margin-bottom:48px;line-height:1.7}
-.home-search-wrap{width:100%;max-width:600px;margin-bottom:32px}
-.home-search-box{display:flex;background:#fff;border-radius:50px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);padding:6px 6px 6px 24px;gap:6px}
-.home-search-box input{flex:1;border:none;outline:none;font-size:16px;color:#0f172a;background:transparent;font-family:inherit}
-.home-search-box input::placeholder{color:#94a3b8}
-.home-search-btn{padding:10px 28px;background:var(--teal);color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.home-search-btn:hover{background:var(--teal2)}
-.home-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:48px}
-.home-tag{padding:6px 16px;border:1.5px solid rgba(255,255,255,.2);border-radius:50px;color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s}
-.home-tag:hover{background:rgba(255,255,255,.1);border-color:var(--teal);color:#fff}
-.home-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
-.home-stat{text-align:center}
-.home-stat-num{font-size:28px;font-weight:700;color:var(--teal)}
-.home-stat-label{font-size:12px;color:#64748b;margin-top:2px}
-@media(max-width:600px){.home-title{font-size:28px}.home-sub{font-size:14px}.home-stats{gap:24px}.home-stat-num{font-size:22px}}
-
-
-/* ── 報告モーダル ── */
-#report-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
-#report-modal.open{display:flex}
-.report-box{background:#fff;border-radius:12px;padding:28px;width:460px;max-width:90vw}
-.report-box h3{font-size:16px;font-weight:700;margin-bottom:6px}
-.report-box p{font-size:13px;color:var(--txm);margin-bottom:16px;line-height:1.6}
-.report-types{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.report-type{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--bd);border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s}
-.report-type:hover{border-color:var(--teal);background:var(--tl)}
-.report-type.selected{border-color:var(--teal);background:var(--tl);color:var(--teal2);font-weight:600}
-.report-type input{accent-color:var(--teal)}
-.report-detail{margin-bottom:16px}
-.report-detail label{display:block;font-size:12px;font-weight:600;color:var(--txm);margin-bottom:5px}
-.report-detail textarea{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:80px}
-.report-detail textarea:focus{border-color:var(--teal)}
-.report-actions{display:flex;gap:10px}
-.report-submit{flex:1;padding:10px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer}
-.report-submit:hover{background:var(--teal2)}
-.report-submit:disabled{background:var(--txl);cursor:not-allowed}
-.report-cancel{padding:10px 20px;background:var(--sl);color:var(--txm);border:1px solid var(--bd);border-radius:7px;font-size:14px;cursor:pointer}
-.report-cancel:hover{background:var(--bd)}
-.report-status{font-size:13px;padding:8px 12px;border-radius:6px;margin-bottom:12px;display:none}
-.report-status.ok{background:#f0fdf4;color:#166534;display:block}
-.report-status.err{background:#fef2f2;color:var(--red);display:block}
-
-
 /* ── 症状アキネーター ── */
 .aki-wrap{max-width:560px;margin:48px auto 0;padding:0 20px}
 .aki-toggle-btn{width:100%;padding:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
@@ -374,296 +260,61 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .aki-adv{font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:.75rem;padding:.75rem;background:#fff;border-radius:8px;border:1px solid var(--bd)}
 .aki-similar{font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:.75rem;padding:.75rem;background:#fffbeb;border-radius:8px;border:1px solid #fde68a}
 .aki-similar-title{font-size:11px;font-weight:700;color:#92400e;margin-bottom:.4rem}
-.aki-search-btn{display:inline-block;padding:10px 20px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;transition:background .15s}
+.aki-search-btn{display:inline-block;padding:10px 20px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none}
 .aki-search-btn:hover{background:var(--teal2)}
 .aki-restart{margin-top:.5rem;display:block;width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:none;color:var(--txl);font-size:12px;cursor:pointer;font-family:inherit}
 @media(max-width:600px){.aki-wrap{margin-top:32px}}
 
+/* ── ホームページ ── */
+#pg-home{display:none;min-height:calc(100vh - 52px);background:linear-gradient(160deg,#0f1c35 0%,#1a3a5f 50%,#0f2a3a 100%)}
+.home-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 60px;text-align:center}
+.home-title{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:10px;line-height:1.2}
+.home-title em{color:var(--teal);font-style:normal}
+.home-sub{font-size:16px;color:#94a3b8;margin-bottom:48px;line-height:1.7}
+.home-search-wrap{width:100%;max-width:600px;margin-bottom:32px}
+.home-search-box{display:flex;background:#fff;border-radius:50px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);padding:6px 6px 6px 24px;gap:6px}
+.home-search-box input{flex:1;border:none;outline:none;font-size:16px;color:#0f172a;background:transparent;font-family:inherit}
+.home-search-box input::placeholder{color:#94a3b8}
+.home-search-btn{padding:10px 28px;background:var(--teal);color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.home-search-btn:hover{background:var(--teal2)}
+.home-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:48px}
+.home-tag{padding:6px 16px;border:1.5px solid rgba(255,255,255,.2);border-radius:50px;color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s}
+.home-tag:hover{background:rgba(255,255,255,.1);border-color:var(--teal);color:#fff}
+.home-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.home-stat{text-align:center}
+.home-stat-num{font-size:28px;font-weight:700;color:var(--teal)}
+.home-stat-label{font-size:12px;color:#64748b;margin-top:2px}
+/* ── アキネーター ── */
+.aki-wrap{max-width:560px;margin:48px auto 0;padding:0 20px}
+.aki-toggle-btn{width:100%;padding:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.aki-toggle-btn:hover{background:rgba(255,255,255,.15);border-color:var(--teal)}
+.aki-box{display:none;margin-top:12px;background:#fff;border-radius:12px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.aki-box.open{display:block}
+.aki-prog-bar{height:3px;background:#e2e8f0;border-radius:2px;margin-bottom:1rem;overflow:hidden}
+.aki-prog-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .4s ease}
+.aki-step{font-size:11px;color:var(--txl);margin-bottom:.3rem;font-weight:600}
+.aki-q{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;line-height:1.5}
+.aki-choices{display:flex;flex-direction:column;gap:7px}
+.aki-btn{padding:11px 14px;border:1.5px solid var(--bd);border-radius:8px;background:#fff;color:var(--tx);font-size:14px;cursor:pointer;text-align:left;transition:all .12s;font-family:inherit;line-height:1.4}
+.aki-btn:hover{background:var(--tl);border-color:var(--teal);color:var(--teal2)}
+.aki-back{margin-top:.75rem;padding:6px 10px;border:none;background:none;color:var(--txl);font-size:13px;cursor:pointer;font-family:inherit}
+.aki-bc{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem}
+.aki-bc-item{padding:2px 8px;background:var(--sl);border-radius:10px;font-size:11px;color:var(--txm)}
+.aki-bc-sep{font-size:11px;color:var(--txl);align-self:center}
+.aki-result{background:var(--sl);border-radius:10px;padding:16px}
+.aki-result-head{font-size:12px;color:var(--txl);margin-bottom:.5rem;font-weight:600}
+.aki-kw-area{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem}
+.aki-kw{padding:3px 10px;background:var(--tl);color:var(--teal2);border-radius:20px;font-size:12px;font-weight:600}
+.aki-adv{font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:.75rem;padding:.75rem;background:#fff;border-radius:8px;border:1px solid var(--bd)}
+.aki-similar{font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:.75rem;padding:.75rem;background:#fffbeb;border-radius:8px;border:1px solid #fde68a}
+.aki-similar-title{font-size:11px;font-weight:700;color:#92400e;margin-bottom:.4rem}
+.aki-search-btn{display:inline-block;padding:10px 20px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none}
+.aki-search-btn:hover{background:var(--teal2)}
+.aki-restart{margin-top:.5rem;display:block;width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:none;color:var(--txl);font-size:12px;cursor:pointer;font-family:inherit}
+@media(max-width:600px){.home-title{font-size:28px}.home-stats{gap:24px}.aki-wrap{margin-top:32px}}
 </style>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2G7T178ZNY">
-/* ── 症状アキネーター ── */
-var AKI_SESSION = Math.random().toString(36).slice(2);
-var AKI_HIST = [];
-var AKI_CUR = null;
-var AKI_PATH = [];
-
-var AKI_TREE = {
-q:"今もっともつらい症状はどれですか？",
-choices:[
-  {l:"頭・熱・のど",next:{q:"頭・顔まわりの症状を教えてください",choices:[
-    {l:"頭が痛い",next:{q:"どんな頭痛ですか？",choices:[
-      {l:"ズキズキ・脈打つように痛い",next:{q:"他の症状はありますか？",choices:[
-        {l:"光・音が気になる",result:{kw:["頭痛","偏頭痛"],adv:"偏頭痛が疑われます。イブプロフェン・ロキソプロフェン配合薬が有効なことが多いです。暗い静かな場所で休むことも有効です。"}},
-        {l:"吐き気もある",result:{kw:["頭痛","吐き気","偏頭痛"],adv:"偏頭痛に伴う吐き気の可能性があります。服薬が難しい場合は薬剤師に相談しましょう。"}},
-        {l:"特になし",result:{kw:["頭痛","偏頭痛"],adv:"イブプロフェンやロキソプロフェン配合の鎮痛薬が適しています。"}},
-      ]}},
-      {l:"締め付けられる・重だるい",next:{q:"どんな状況で起こりますか？",choices:[
-        {l:"長時間のデスクワーク後",result:{kw:["頭痛","肩こり","眼精疲労"],adv:"緊張型頭痛です。アセトアミノフェン配合薬が穏やかに効きます。肩・首のストレッチも効果的です。"}},
-        {l:"ストレスを感じている時",result:{kw:["頭痛","肩こり","ストレス"],adv:"緊張型頭痛です。鎮痛薬とともに、ビタミンB系の栄養剤もあわせて検討しましょう。"}},
-        {l:"朝起きた時から痛い",result:{kw:["頭痛","頭重","睡眠障害"],adv:"睡眠の質が関係している可能性があります。まず鎮痛薬で対処しつつ、続く場合は医療機関へ。"}},
-      ]}},
-      {l:"熱もある",result:{kw:["頭痛","発熱","解熱"],adv:"発熱を伴う頭痛にはアセトアミノフェンが安心です。インフルエンザ疑いの場合はNSAIDsは避けましょう。"}},
-      {l:"後頭部が突然激しく痛い",result:{kw:["頭痛"],adv:"突然の激しい頭痛はくも膜下出血の可能性があります。すぐに医療機関を受診してください。"}},
-    ]}},
-    {l:"熱がある・熱っぽい",next:{q:"他の症状はありますか？",choices:[
-      {l:"関節が痛い・筋肉痛もある",result:{kw:["発熱","解熱","関節痛","悪寒"],adv:"インフルエンザの可能性があります。アセトアミノフェン配合薬が安全です。"}},
-      {l:"のどが痛い・鼻水もある",result:{kw:["発熱","解熱","のど痛","鼻水"],adv:"風邪の初期症状です。アセトアミノフェンで解熱しながら安静にしましょう。"}},
-      {l:"熱だけ・他はない",result:{kw:["発熱","解熱","悪寒"],adv:"解熱にはアセトアミノフェンが第一選択です。38.5度以上になってから服用するのが一般的です。"}},
-    ]}},
-    {l:"のどが痛い",next:{q:"のどの症状を詳しく教えてください",choices:[
-      {l:"飲み込む時に痛む・腫れている",result:{kw:["のど痛","のどの炎症","発熱"],adv:"扁桃炎の可能性があります。トラネキサム酸配合のトローチや解熱鎮痛薬を使いましょう。"}},
-      {l:"声がかすれる",result:{kw:["声がれ","のどの炎症"],adv:"声帯の炎症が考えられます。声を使わず安静にし、のど飴やトローチを活用しましょう。"}},
-      {l:"イガイガ・乾燥感",result:{kw:["のどのイガイガ","口腔殺菌"],adv:"乾燥やほこりによる刺激が考えられます。加湿とトローチで対処しましょう。"}},
-    ]}},
-    {l:"歯・口が痛い",next:{q:"どの症状ですか？",choices:[
-      {l:"歯がズキズキ痛い",result:{kw:["歯痛"],adv:"ロキソプロフェンやイブプロフェンが有効です。なるべく早く歯科を受診しましょう。"}},
-      {l:"口内炎が痛い",result:{kw:["口内炎","口腔殺菌"],adv:"ステロイド系の口内炎薬が有効です。ビタミンB2・B6の不足も原因になります。"}},
-    ]}},
-  ]}},
-  {l:"鼻・目",next:{q:"どちらが主な症状ですか？",choices:[
-    {l:"鼻水・くしゃみが多い",next:{q:"鼻水の様子を教えてください",choices:[
-      {l:"透明でサラサラ・花粉シーズン",result:{kw:["鼻水","くしゃみ","花粉症","アレルギー性鼻炎"],adv:"花粉症が疑われます。第2世代抗ヒスタミン薬が使いやすいです。シーズン前からの服用が効果的です。"}},
-      {l:"年中・ほこりやペットで悪化",result:{kw:["鼻水","くしゃみ","アレルギー性鼻炎"],adv:"通年性アレルギー性鼻炎が疑われます。抗ヒスタミン薬を継続使用しましょう。"}},
-      {l:"黄色・緑っぽい",result:{kw:["鼻水","副鼻腔炎"],adv:"細菌性の副鼻腔炎が疑われます。市販薬の効果が限られることが多く、耳鼻科への受診をおすすめします。"}},
-    ]}},
-    {l:"鼻がつまっている",next:{q:"鼻づまりの状況は？",choices:[
-      {l:"両方つまって息苦しい",result:{kw:["鼻づまり","花粉症","副鼻腔炎"],adv:"ステロイド点鼻薬が3症状に効果的です。数日の継続使用で効果を実感しやすいです。"}},
-      {l:"夜・横になると特にひどい",result:{kw:["鼻づまり","副鼻腔炎"],adv:"枕を高くする・加湿するなどの工夫と合わせてステロイド点鼻薬を使いましょう。"}},
-      {l:"片方だけ",result:{kw:["鼻づまり","副鼻腔炎"],adv:"鼻中隔弯曲や副鼻腔炎の可能性があります。血管収縮系の点鼻薬は1週間以内にとどめましょう。"}},
-    ]}},
-    {l:"目がかゆい・充血",next:{q:"目の症状を詳しく教えてください",choices:[
-      {l:"かゆくてこすってしまう",result:{kw:["目のかゆみ","充血","花粉症"],adv:"抗ヒスタミン点眼薬が有効です。こすると悪化するので冷やしタオルで冷却もおすすめです。"}},
-      {l:"充血・目やにが多い",result:{kw:["充血","結膜炎"],adv:"アレルギー性や感染性の結膜炎が疑われます。改善しなければ眼科へ。"}},
-      {l:"乾燥・ゴロゴロする",result:{kw:["乾き目","目の疲れ","眼精疲労"],adv:"ドライアイが疑われます。ヒアルロン酸配合の点眼薬が適しています。"}},
-    ]}},
-  ]}},
-  {l:"咳・痰",next:{q:"咳の様子を教えてください",choices:[
-    {l:"乾いた咳が続く",next:{q:"咳はいつから・どんな時に出ますか？",choices:[
-      {l:"風邪から2週間以上",result:{kw:["せき","長引く咳","気管支炎"],adv:"感染後咳嗽が考えられます。3週間以上続くなら受診を検討してください。"}},
-      {l:"夜〜明け方に特にひどい",result:{kw:["夜間の咳","喘息様症状"],adv:"気管支喘息の可能性があります。呼吸器科への受診をおすすめします。"}},
-      {l:"冷たい空気・運動で悪化",result:{kw:["せき","喘息様症状","気管支炎"],adv:"気道過敏の可能性があります。気管支拡張成分配合の市販薬を使い、改善しない場合は受診してください。"}},
-    ]}},
-    {l:"痰がからむ",next:{q:"痰の色は？",choices:[
-      {l:"透明・白っぽい",result:{kw:["たん","せき","気管支炎"],adv:"ウイルス性の気管支炎が考えられます。去痰薬配合の市販薬と十分な水分補給で対処しましょう。"}},
-      {l:"黄色・緑色っぽい",result:{kw:["たん","せき"],adv:"細菌感染の可能性があります。早めに受診することをおすすめします。"}},
-    ]}},
-    {l:"息苦しい",result:{kw:["息切れ","喘息様症状"],adv:"呼吸困難を伴う症状は医療機関を受診することを強くおすすめします。"}},
-  ]}},
-  {l:"胃・お腹",next:{q:"お腹のどこが気になりますか？",choices:[
-    {l:"胃が痛い・不快感",next:{q:"どんな時に症状が出ますか？",choices:[
-      {l:"食後に胃がもたれる・重い",result:{kw:["胃もたれ","食べ過ぎ"],adv:"消化酵素配合の消化薬や健胃薬が有効です。食べすぎ・早食いを見直してみましょう。"}},
-      {l:"空腹時・夜中に痛む",result:{kw:["胃痛","胃酸過多","胸やけ"],adv:"胃酸過多が疑われます。H2ブロッカー配合の胃薬が有効です。"}},
-      {l:"食後すぐ胸やけ・酸が上がる",result:{kw:["胸やけ","胃酸過多","逆流性食道炎"],adv:"逆流性食道炎が疑われます。制酸薬・H2ブロッカーが有効です。食後すぐ横にならないことも大切です。"}},
-      {l:"飲みすぎた翌朝",result:{kw:["二日酔い","吐き気","飲み過ぎ"],adv:"基本は水分補給と休養です。ウコン系サプリ・ヘパリーゼ等が用いられます。"}},
-    ]}},
-    {l:"下痢・お腹がゆるい",next:{q:"下痢の状況は？",choices:[
-      {l:"食後すぐ・緊張時に出る",result:{kw:["下痢","腹痛","過敏性腸症候群"],adv:"過敏性腸症候群（IBS）の可能性があります。整腸薬を継続服用しつつ、ストレス管理も大切です。"}},
-      {l:"水っぽい・急に来る",result:{kw:["下痢","腹痛","整腸"],adv:"急性胃腸炎が考えられます。止痢薬より整腸薬が推奨されます。脱水に注意してください。"}},
-      {l:"外食後・食中毒かも",result:{kw:["下痢","吐き気","腹痛"],adv:"食中毒の可能性があります。無理に止めず水分補給を続け、38度以上の発熱・血便があれば受診してください。"}},
-    ]}},
-    {l:"便秘・お腹が張る",next:{q:"便秘の状況を教えてください",choices:[
-      {l:"3日以上出ていない",result:{kw:["便秘","腹部膨満","整腸"],adv:"酸化マグネシウム系の緩下薬が穏やかに効きます。水分・食物繊維の摂取増加も効果的です。"}},
-      {l:"出るが残便感がある",result:{kw:["便秘","整腸"],adv:"腸の動きを助ける整腸薬や、ビフィズス菌配合の製品が有効です。"}},
-    ]}},
-    {l:"吐き気・乗り物酔い",next:{q:"吐き気のきっかけは？",choices:[
-      {l:"乗り物・移動中",result:{kw:["乗物酔い","吐き気","めまい・立ちくらみ"],adv:"乗り物酔い止めは乗車30分〜1時間前の服用が効果的です。"}},
-      {l:"ストレス・緊張時",result:{kw:["吐き気","胃の不快感","ストレス"],adv:"機能性ディスペプシアの可能性があります。六君子湯等の漢方薬が効くこともあります。"}},
-    ]}},
-  ]}},
-  {l:"皮膚・かゆみ",next:{q:"皮膚の症状を詳しく教えてください",choices:[
-    {l:"かゆみ・発疹・赤み",next:{q:"どこに出ていますか？",choices:[
-      {l:"全身にじんましんが出た",result:{kw:["じんましん","かゆみ"],adv:"アレルギー反応が疑われます。抗ヒスタミン薬（内服）が有効です。呼吸困難・顔の腫れを伴う場合はすぐに救急へ。"}},
-      {l:"特定の場所（腕・首など）",result:{kw:["湿疹・かぶれ","かゆみ"],adv:"接触性皮膚炎が疑われます。原因物質を避けつつ、ステロイド外用薬を使用しましょう。"}},
-      {l:"虫に刺された",result:{kw:["虫刺され","かゆみ"],adv:"ステロイド配合の虫刺され薬が有効です。かき壊しを防ぐため冷却も効果的です。"}},
-    ]}},
-    {l:"乾燥・肌荒れ",next:{q:"どの部位が特に気になりますか？",choices:[
-      {l:"顔・全体的な肌荒れ",result:{kw:["肌荒れ","乾燥肌","にきび"],adv:"ヘパリン類似物質配合のクリームやビタミンC・E配合の外用薬が有効です。"}},
-      {l:"手・指のひび割れ",result:{kw:["あかぎれ","手荒れ","乾燥肌"],adv:"ヘパリン類似物質または尿素配合のクリームで保湿しましょう。"}},
-    ]}},
-    {l:"にきび・吹き出物",result:{kw:["にきび","肌荒れ","皮脂過多"],adv:"イオウ配合のにきび薬やイブプロフェンピコノール配合薬が市販されています。"}},
-    {l:"水虫・爪",next:{q:"どこに症状がありますか？",choices:[
-      {l:"足の指の間・かかと",result:{kw:["水虫","たむし"],adv:"抗真菌薬配合のクリームを4週間以上継続することが重要です。"}},
-      {l:"爪が白く・分厚い",result:{kw:["爪白癬","水虫"],adv:"爪白癬は皮膚科での処方薬が有効なことが多いです。受診をおすすめします。"}},
-    ]}},
-  ]}},
-  {l:"疲れ・眠れない",next:{q:"どんな状態が続いていますか？",choices:[
-    {l:"体が重い・だるい",next:{q:"疲れのパターンを教えてください",choices:[
-      {l:"仕事・運動後の体の疲れ",result:{kw:["肉体疲労","倦怠感","滋養強壮"],adv:"ビタミンB群・アミノ酸配合の栄養ドリンクや錠剤が有効です。"}},
-      {l:"疲れているのに眠れない",result:{kw:["肉体疲労","不眠","睡眠障害"],adv:"L-テアニン配合の睡眠補助薬が市販されています。連用は避けましょう。"}},
-      {l:"2週間以上続くだるさ",result:{kw:["肉体疲労","倦怠感"],adv:"長期間のだるさは貧血・甲状腺疾患・うつ等が原因のこともあります。医療機関での検査をおすすめします。"}},
-    ]}},
-    {l:"眠れない・眠りが浅い",next:{q:"眠れない状況を教えてください",choices:[
-      {l:"布団に入っても寝付けない",result:{kw:["不眠","睡眠障害","神経の興奮"],adv:"ジフェンヒドラミン配合の睡眠改善薬が一時的に使えます。2週間以上続く場合は受診を。"}},
-      {l:"夜中に何度も目が覚める",result:{kw:["不眠","睡眠障害"],adv:"睡眠維持困難タイプの不眠です。睡眠外来の受診も検討してください。"}},
-      {l:"ストレス・考えすぎで眠れない",result:{kw:["不眠","ストレス","神経の興奮"],adv:"神経過敏を和らげる漢方（加味帰脾湯等）が有効なことがあります。"}},
-    ]}},
-    {l:"イライラ・不安感",next:{q:"主な状況を教えてください",choices:[
-      {l:"生理前・更年期ごろから",result:{kw:["更年期障害","月経前症候群","イライラ"],adv:"命の母・加味逍遙散等の漢方薬が月経前症候群や更年期の症状に用いられます。"}},
-      {l:"仕事・人間関係のストレス",result:{kw:["ストレス","不安感","神経の興奮"],adv:"抑肝散等の漢方薬が軽度の神経症状に使われます。深刻なら心療内科への受診も検討してください。"}},
-    ]}},
-  ]}},
-  {l:"肩・腰・手足",next:{q:"どこが気になりますか？",choices:[
-    {l:"肩・首がこる・痛い",next:{q:"こりの状況を教えてください",choices:[
-      {l:"デスクワーク・スマホが原因",result:{kw:["肩こり","首の痛み","眼精疲労"],adv:"血行改善成分配合の錠剤や温感シップが有効です。"}},
-      {l:"ひどい頭痛も伴う",result:{kw:["肩こり","頭痛","緊張型頭痛"],adv:"緊張型頭痛が疑われます。鎮痛薬と筋弛緩作用のある市販薬を組み合わせることがあります。"}},
-      {l:"腕がしびれる",result:{kw:["肩こり","手足のしびれ"],adv:"頸椎由来の神経症状の可能性があります。整形外科への受診をおすすめします。"}},
-    ]}},
-    {l:"腰が痛い",next:{q:"腰痛の状況を教えてください",choices:[
-      {l:"急に痛くなった・ぎっくり腰",result:{kw:["腰痛","筋肉痛","打撲・ねんざ"],adv:"急性腰痛が疑われます。48時間は冷湿布→その後温湿布が一般的です。ロキソプロフェン配合薬が有効です。"}},
-      {l:"慢性的にずっと痛い",result:{kw:["腰痛","神経痛","関節痛"],adv:"慢性腰痛は整形外科での診断が重要です。温感シップや鎮痛薬で対処しながら受診しましょう。"}},
-      {l:"足にしびれも広がる",result:{kw:["腰痛","手足のしびれ","神経痛"],adv:"坐骨神経痛・椎間板ヘルニアの可能性があります。整形外科への受診をおすすめします。"}},
-    ]}},
-    {l:"手足がしびれる・冷える",next:{q:"しびれ・冷えの状況は？",choices:[
-      {l:"末端が特に冷たい",result:{kw:["冷え","手足のしびれ","末梢血行障害"],adv:"ビタミンE・当帰等配合の漢方系薬が冷えに用いられます。当帰芍薬散等も検討を。"}},
-      {l:"長時間同じ姿勢の後",result:{kw:["手足のしびれ","血行不良","冷え"],adv:"血行不良が原因と考えられます。ビタミンB12・E配合薬が有効なことがあります。"}},
-    ]}},
-    {l:"関節・筋肉が痛む",next:{q:"どんな痛みですか？",choices:[
-      {l:"運動・スポーツ後",result:{kw:["筋肉痛","打撲・ねんざ","関節痛"],adv:"鎮痛薬と外用の消炎鎮痛薬（冷湿布）を組み合わせましょう。"}},
-      {l:"朝に関節がこわばる",result:{kw:["関節痛","こわばり","リウマチ様症状"],adv:"関節リウマチの初期症状の可能性もあります。リウマチ科・整形外科への受診をおすすめします。"}},
-      {l:"足首・膝をひねった",result:{kw:["打撲・ねんざ","関節痛"],adv:"捻挫にはRICE処置（安静・冷却・圧迫・挙上）が基本です。ロキソプロフェン配合薬と冷湿布を使いましょう。"}},
-    ]}},
-  ]}},
-]};
-
-function toggleAki(){
-  var box=document.getElementById('aki-box');
-  var btn=document.getElementById('aki-toggle-btn');
-  if(box.classList.contains('open')){
-    box.classList.remove('open');
-    btn.textContent='💊 症状から薬を探す（質問に答えるだけ）';
-  } else {
-    box.classList.add('open');
-    btn.textContent='▲ 閉じる';
-    if(!AKI_CUR){ AKI_CUR=AKI_TREE; akiRender(); }
-  }
-}
-
-function akiRender(){
-  var total=8;
-  var step=AKI_HIST.length+1;
-  var pct=Math.min(95,Math.round(step/total*100));
-  document.getElementById('aki-prog').style.width=pct+'%';
-  document.getElementById('aki-step').textContent='ステップ '+step;
-  /* パンくず */
-  var bc=document.getElementById('aki-bc');
-  bc.innerHTML=AKI_HIST.map(function(h,i){
-    return (i>0?'<span class="aki-bc-sep">›</span>':'')+
-      '<span class="aki-bc-item">'+h.chosen+'</span>';
-  }).join('');
-  var main=document.getElementById('aki-main');
-  if(AKI_CUR.result){
-    akiRenderResult(main,AKI_CUR.result);
-    return;
-  }
-  var html='<div class="aki-q">'+AKI_CUR.q+'</div><div class="aki-choices">';
-  AKI_CUR.choices.forEach(function(c,i){
-    html+='<button class="aki-btn" onclick="akiChoose('+i+')">'+c.l+'</button>';
-  });
-  html+='</div>';
-  if(AKI_HIST.length>0){
-    html+='<button class="aki-back" onclick="akiBack()">← 前の質問に戻る</button>';
-  }
-  main.innerHTML=html;
-}
-
-function akiChoose(i){
-  var c=AKI_CUR.choices[i];
-  AKI_HIST.push({node:AKI_CUR,chosen:c.l});
-  AKI_PATH.push(c.l);
-  AKI_CUR=c.next||{result:c.result};
-  akiRender();
-}
-
-function akiBack(){
-  if(!AKI_HIST.length)return;
-  var prev=AKI_HIST.pop();
-  AKI_PATH.pop();
-  AKI_CUR=prev.node;
-  akiRender();
-}
-
-async function akiLogToSB(kw, clicked){
-  try{
-    await fetch(SB_URL+'/rest/v1/symptom_logs',{
-      method:'POST',
-      headers:{
-        'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
-        'Content-Type':'application/json','Prefer':'return=minimal'
-      },
-      body:JSON.stringify({
-        session_id:AKI_SESSION,
-        path:AKI_PATH,
-        result_keywords:kw,
-        clicked_search:clicked
-      })
-    });
-  }catch(e){}
-}
-
-async function akiGetSimilar(kw){
-  try{
-    /* 同じキーワードを含むログから多く選ばれた検索キーワードを取得 */
-    var encoded=encodeURIComponent(JSON.stringify(kw[0]));
-    var res=await fetch(
-      SB_URL+'/rest/v1/symptom_logs?result_keywords=cs.'+encodeURIComponent('["'+kw[0]+'"]')+'&select=result_keywords&limit=50&order=created_at.desc',
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}
-    );
-    var logs=await res.json();
-    if(!logs||!logs.length)return null;
-    /* キーワードの出現頻度を集計 */
-    var freq={};
-    logs.forEach(function(log){
-      (log.result_keywords||[]).forEach(function(k){
-        if(kw.indexOf(k)===-1) freq[k]=(freq[k]||0)+1;
-      });
-    });
-    var sorted=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).slice(0,3);
-    if(!sorted.length)return null;
-    return {count:logs.length, extra:sorted};
-  }catch(e){return null;}
-}
-
-async function akiRenderResult(el,r){
-  document.getElementById('aki-prog').style.width='100%';
-  document.getElementById('aki-step').textContent='結果';
-  /* Supabaseにログ記録 */
-  akiLogToSB(r.kw, false);
-  /* 類似ユーザーのデータ取得 */
-  var similar=await akiGetSimilar(r.kw);
-  var kw=r.kw||[];
-  var adv=r.adv||'';
-  var q=encodeURIComponent(kw[0]||'');
-  var syms=encodeURIComponent(kw.join(','));
-  var url='/?q='+q+'&syms='+syms;
-  var tags=kw.map(function(k){return'<span class="aki-kw">'+k+'</span>';}).join('');
-  var similarHtml='';
-  if(similar&&similar.count>=3){
-    similarHtml='<div class="aki-similar">'
-      +'<div class="aki-similar-title">👥 同じ症状で来た'+similar.count+'人はこんな症状も持っていました</div>'
-      +similar.extra.map(function(k){return'<span class="aki-kw" style="background:#fef3c7;color:#92400e">'+k+'</span> ';}).join('')
-      +'</div>';
-  }
-  el.innerHTML='<div class="aki-result">'
-    +'<div class="aki-result-head">あなたの症状に関連するキーワード</div>'
-    +'<div class="aki-kw-area">'+tags+'</div>'
-    +'<div class="aki-adv">'+adv+'</div>'
-    +similarHtml
-    +'<a class="aki-search-btn" href="'+url+'" onclick="akiLogToSB('+JSON.stringify(kw)+',true)">該当する市販薬を見る</a>'
-    +'<button class="aki-restart" onclick="akiRestart()">最初からやり直す</button>'
-    +'</div>';
-}
-
-function akiRestart(){
-  AKI_HIST=[];AKI_PATH=[];AKI_CUR=AKI_TREE;
-  AKI_SESSION=Math.random().toString(36).slice(2);
-  document.getElementById('aki-prog').style.width='5%';
-  document.getElementById('aki-step').textContent='ステップ 1';
-  document.getElementById('aki-bc').innerHTML='';
-  akiRender();
-}
-
-</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2G7T178ZNY"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -683,20 +334,6 @@ function akiRestart(){
   </div>
 </nav>
 
-<!-- 医薬品詳細ページ -->
-<div id="med-detail">
-  <button class="med-back-btn" onclick="closeMedDetail()">← 一覧に戻る</button>
-  <div class="med-detail-wrap">
-    <div class="med-detail-main" id="med-detail-main"></div>
-    <aside class="col-sidebar">
-      <div class="sb-card">
-        <div class="sb-card-title">🔁 類似商品</div>
-        <div id="med-sim-list"><div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込み中...</div></div>
-      </div>
-    </aside>
-  </div>
-</div>
-
 <!-- ホームページ -->
 <div id="pg-home" style="display:block">
   <div class="home-wrap">
@@ -708,7 +345,7 @@ function akiRestart(){
         <button class="home-search-btn" onclick="doHomeSearch()">検索</button>
       </div>
     </div>
-    <div class="home-tags" id="home-tags">
+    <div class="home-tags">
       <span class="home-tag" onclick="doHomeSearch('ロキソプロフェン')">ロキソプロフェン</span>
       <span class="home-tag" onclick="doHomeSearch('イブプロフェン')">イブプロフェン</span>
       <span class="home-tag" onclick="doHomeSearch('アセトアミノフェン')">アセトアミノフェン</span>
@@ -723,11 +360,8 @@ function akiRestart(){
       <div class="home-stat"><div class="home-stat-num">0</div><div class="home-stat-label">広告・案件</div></div>
       <div class="home-stat"><div class="home-stat-num">PMDA</div><div class="home-stat-label">データソース</div></div>
     </div>
-    <!-- アキネーター -->
     <div class="aki-wrap">
-      <button class="aki-toggle-btn" onclick="toggleAki()" id="aki-toggle-btn">
-        💊 症状から薬を探す（質問に答えるだけ）
-      </button>
+      <button class="aki-toggle-btn" onclick="toggleAki()" id="aki-toggle-btn">💊 症状から薬を探す（質問に答えるだけ）</button>
       <div class="aki-box" id="aki-box">
         <div class="aki-prog-bar"><div class="aki-prog-fill" id="aki-prog" style="width:5%"></div></div>
         <div class="aki-step" id="aki-step">ステップ 1</div>
@@ -843,30 +477,12 @@ function akiRestart(){
 </div>
 
 <div class="pg" id="pg-column">
-  <div class="col-layout">
-    <div class="col-main">
-      <div id="clist">
-        <div class="ptitle">お役立ちコラム</div>
-        <div class="pdesc">市販薬の正しい選び方・安全な使い方を解説します。</div>
-        <div class="cgrid" id="cgrid"></div>
-      </div>
-      <div id="cdetail" style="display:none"></div>
-    </div>
-    <aside class="col-sidebar" id="col-sidebar">
-      <div class="sb-card">
-        <div class="sb-card-title">📚 人気コラム</div>
-        <ul class="sb-list" id="sb-popular-cols">
-          <li style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込み中...</li>
-        </ul>
-      </div>
-      <div class="sb-card">
-        <div class="sb-card-title">🏆 医薬品アクセスランキング</div>
-        <div id="sb-ranking">
-          <div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込み中...</div>
-        </div>
-      </div>
-    </aside>
+  <div id="clist">
+    <div class="ptitle">お役立ちコラム</div>
+    <div class="pdesc">市販薬の正しい選び方・安全な使い方を解説します。</div>
+    <div class="cgrid" id="cgrid"></div>
   </div>
+  <div id="cdetail" style="display:none"></div>
 </div>
 
 <div class="mbg hide" id="cmpmodal">
@@ -1176,42 +792,7 @@ function mkEffTags(effect){
 var MEDS=[];  /* Supabaseから動的取得 */
 var ING={"アセトアミノフェン": "解熱・鎮痛。胃への刺激が少なく空腹時でも服用可能。過量服用で肝障害リスク。", "イブプロフェン": "消炎・鎮痛・解熱。NSAIDs。空腹時は胃腸障害に注意。喘息・妊娠後期禁忌。", "ロキソプロフェンナトリウム": "プロドラッグ型NSAIDs。強力な消炎鎮痛。第1類（薬剤師要相談）。", "クロルフェニラミンマレイン酸塩": "第一世代抗ヒスタミン薬。鼻水・くしゃみ改善。眠気強め・運転不可。", "ジフェンヒドラミン塩酸塩": "第一世代抗ヒスタミン薬。強い鎮静作用。運転不可。耐性が出やすい。", "フェキソフェナジン塩酸塩": "第二世代抗ヒスタミン薬。眠気が出にくい。花粉症・アレルギー性鼻炎に。", "ロラタジン": "第二世代抗ヒスタミン薬。1日1回。眠気少。アレルギー性鼻炎・蕁麻疹に。", "ジヒドロコデインリン酸塩": "中枢性鎮咳薬。強力な咳止め。依存性あり・12歳未満禁忌・眠気必発。", "アリルイソプロピルアセチル尿素": "鎮静補助成分。2023年AU全面規制・2025年KR麻薬類指定。依存性あり・眠気必発。", "ブロムワレリル尿素": "鎮静補助成分。海外規制済。依存性あり・眠気必発・連用禁忌。", "ファモチジン": "H2ブロッカー。胃酸分泌抑制。胸やけ・胃痛に効果。第1類（薬剤師要相談）。", "ミノキシジル": "血管拡張で頭皮血流改善。発毛・育毛促進。要指導（薬剤師要相談）。4ヶ月以上継続必要。", "トラネキサム酸": "抗プラスミン薬。肝斑・シミの改善に特異的効果。炎症・アレルギー反応を抑制。", "フルスルチアミン": "脂溶性ビタミンB1誘導体。神経機能維持・エネルギー代謝促進。通常B1より吸収良好。", "シアノコバラミン": "ビタミンB12。神経細胞修復・DNA合成に必須。末梢神経障害・しびれに有効。", "コンドロイチン硫酸エステルナトリウム": "軟骨の主成分。関節軟骨保護・再生補助。膝・腰の関節痛緩和。", "ニコチン": "ニコチン代替療法。禁煙補助。第1類（薬剤師要相談）。喫煙との併用禁忌。", "ポビドンヨード": "ヨウ素系殺菌消毒。細菌・ウイルス・真菌に広範な効果。甲状腺疾患・妊婦注意。", "テルビナフィン塩酸塩": "アリルアミン系抗真菌薬。白癬菌の細胞膜合成阻害。水虫・たむしに有効。", "グアイフェネシン": "去痰薬。気道分泌液を増やし痰を柔らかく排出促進。水分補給で効果UP。", "ビサコジル": "大腸刺激型下剤。就寝前服用で翌朝効果。連用で依存性・妊婦注意。", "センノシド": "刺激性下剤。大腸を刺激し排便促進。連用禁忌。腹痛を伴う便秘には禁忌。"};
 var COLS=[];
-var SYMS=[
-  {"g":"頭痛・発熱","s":["頭痛","偏頭痛","発熱","解熱","悪寒","熱っぽい","頭重感"]},
-  {"g":"歯・口・のど","s":["歯痛","のど痛","のどの炎症","のどの腫れ","口内炎","口腔殺菌","声がれ","口臭","口の乾き"]},
-  {"g":"肩こり・腰痛","s":["肩こり","腰痛","背中の痛み","首の痛み","四十肩・五十肩","寝違え"]},
-  {"g":"関節・筋肉","s":["関節痛","筋肉痛","打撲・ねんざ","神経痛","リウマチ様症状","こわばり"]},
-  {"g":"生理・月経","s":["月経痛","月経不順","月経前症候群","月経過多","生理不順","骨盤痛"]},
-  {"g":"鼻・くしゃみ","s":["鼻水","くしゃみ","鼻づまり","花粉症","アレルギー性鼻炎","副鼻腔炎","鼻血"]},
-  {"g":"目","s":["目のかゆみ","充血","目の疲れ","乾き目","ものもらい","結膜炎","目やに","まぶたの腫れ"]},
-  {"g":"耳","s":["耳鳴り","耳のかゆみ","耳の詰まり感","外耳炎","耳垢"]},
-  {"g":"咳","s":["せき","長引く咳","夜間の咳","乾いた咳","湿った咳","気管支炎","喘息様症状"]},
-  {"g":"痰・のど","s":["たん","声がれ","のどのイガイガ","気管支の炎症","口腔殺菌"]},
-  {"g":"胃・食欲","s":["胃痛","胸やけ","胃もたれ","食べ過ぎ","飲み過ぎ","食欲不振","吐き気","胃酸過多","胃の不快感","膨満感"]},
-  {"g":"腸・お腹","s":["下痢","便秘","腹部膨満","腹痛","軟便","過敏性腸症候群","整腸","ガス"]},
-  {"g":"肝臓・二日酔い","s":["二日酔い","悪酔い","飲み過ぎ","吐き気","肝臓の疲れ"]},
-  {"g":"皮膚・かゆみ","s":["湿疹・かぶれ","かゆみ","虫刺され","乾燥肌","じんましん","手荒れ","あかぎれ","接触性皮膚炎"]},
-  {"g":"にきび・肌荒れ","s":["にきび","吹き出物","肌荒れ","脂性肌","毛穴の詰まり","皮脂過多"]},
-  {"g":"水虫・真菌","s":["水虫","たむし","いんきん","カンジダ","爪白癬","股部白癬"]},
-  {"g":"傷・やけど","s":["すり傷","切り傷","やけど","消毒","化膿","とげ","ひび割れ"]},
-  {"g":"疲労・滋養","s":["肉体疲労","滋養強壮","食欲不振","虚弱体質","ビタミン不足","栄養補給","倦怠感"]},
-  {"g":"眼精疲労・頭重","s":["眼精疲労","目の疲れ","頭重","肩こりからの頭痛","集中力低下","精神的疲労"]},
-  {"g":"手足のしびれ・冷え","s":["手足のしびれ","冷え","末梢血行障害","腕のしびれ","足のしびれ","血行不良","冷え性"]},
-  {"g":"足・むくみ","s":["足のむくみ","こむら返り","足がつる","静脈瘤","足の重だるさ","立ち仕事疲れ"]},
-  {"g":"めまい・乗り物酔い","s":["めまい・立ちくらみ","乗物酔い","吐き気","動揺病","船酔い","車酔い"]},
-  {"g":"動悸・息切れ","s":["動悸","息切れ","胸のドキドキ","脈の乱れ"]},
-  {"g":"睡眠・不眠","s":["不眠","睡眠障害","寝付きが悪い","夜中に目が覚める","早朝覚醒","睡眠の質"]},
-  {"g":"ストレス・神経","s":["神経の興奮","不安感","ストレス","イライラ","緊張","精神的疲労","神経過敏"]},
-  {"g":"更年期","s":["更年期障害","のぼせ","ほてり","発汗","冷え性","イライラ","不眠","動悸"]},
-  {"g":"育毛・薄毛","s":["薄毛・脱毛","男性型脱毛","育毛","抜け毛","頭皮の炎症"]},
-  {"g":"シミ・美白","s":["シミ・そばかす","肝斑","くすみ","美白","色素沈着","日焼け後"]},
-  {"g":"ダイエット・肥満","s":["肥満","食欲抑制","脂肪燃焼","むくみ","便秘","体重管理"]},
-  {"g":"頻尿・泌尿器","s":["頻尿","残尿感","排尿痛","膀胱炎様症状","尿の濁り","夜間頻尿"]},
-  {"g":"痔","s":["痔","内痔核","外痔核","切れ痔","肛門のかゆみ","肛門の痛み","出血"]},
-  {"g":"風邪の初期","s":["悪寒","発熱","頭痛","のど痛","鼻水","くしゃみ","だるさ","食欲不振"]},
-  {"g":"禁煙","s":["禁煙","ニコチン依存","喫煙欲求","禁断症状"]},
-  {"g":"検査・避妊","s":["排卵確認","妊娠確認","排卵日","基礎体温"]}
-];
+var SYMS=[{"g": "痛み・熱", "s": ["頭痛", "偏頭痛", "歯痛", "のど痛", "月経痛", "腰痛", "関節痛", "筋肉痛", "神経痛", "打撲・ねんざ", "発熱"]}, {"g": "鼻・目・のど", "s": ["鼻水", "くしゃみ", "鼻づまり", "目のかゆみ", "充血", "目の疲れ", "乾き目", "花粉症", "のどの炎症", "のど痛"]}, {"g": "咳・痰", "s": ["せき", "たん", "声がれ", "口腔殺菌"]}, {"g": "胃腸・お腹", "s": ["胃痛", "胸やけ", "胃もたれ", "食べ過ぎ", "飲み過ぎ", "吐き気", "下痢", "便秘", "腹部膨満", "整腸"]}, {"g": "皮膚・かゆみ", "s": ["湿疹・かぶれ", "かゆみ", "虫刺され", "乾燥肌", "にきび", "口内炎", "水虫", "肌荒れ"]}, {"g": "疲労・神経", "s": ["肉体疲労", "眼精疲労", "手足のしびれ", "冷え", "めまい・立ちくらみ", "動悸"]}, {"g": "美容", "s": ["シミ・そばかす", "肝斑", "肌荒れ", "薄毛・脱毛"]}, {"g": "女性・メンタル", "s": ["更年期障害", "月経不順", "不眠", "乗物酔い"]}, {"g": "その他", "s": ["禁煙", "痔", "排卵確認", "妊娠確認", "消毒"]}];
 var CATS=[{"id": "all", "l": "すべて"}, {"id": "cold", "l": "かぜ薬・解熱鎮痛"}, {"id": "stomach", "l": "消化器官用薬"}, {"id": "allergy", "l": "アレルギー用薬"}, {"id": "cough", "l": "鎮咳・去痰・含嗽薬"}, {"id": "nose", "l": "鼻炎用薬"}, {"id": "ext_pain", "l": "外皮用薬（鎮痛）"}, {"id": "ext_skin", "l": "外皮用薬（皮膚）"}, {"id": "eye", "l": "眼科用薬"}, {"id": "joint", "l": "関節・筋肉（内服）"}, {"id": "skin_oral", "l": "皮膚科・シミ（内服）"}, {"id": "hair", "l": "育毛・発毛薬"}, {"id": "women", "l": "女性用薬"}, {"id": "sleep", "l": "催眠鎮静薬"}, {"id": "vitamin", "l": "ビタミン・滋養強壮"}, {"id": "kampo", "l": "漢方製剤"}, {"id": "foot", "l": "水虫・皮膚感染"}, {"id": "oral", "l": "歯科口腔用薬"}, {"id": "anal", "l": "痔疾用薬"}, {"id": "circu", "l": "循環器・血液用薬"}, {"id": "smoking", "l": "禁煙補助剤"}, {"id": "motion", "l": "乗物酔い"}, {"id": "test", "l": "一般用検査薬"}, {"id": "disinfect", "l": "消毒薬"}, {"id": "quasi_skin", "l": "医薬部外品（スキンケア）"}, {"id": "quasi_oral", "l": "医薬部外品（オーラルケア）"}, {"id": "quasi_hair", "l": "医薬部外品（育毛）"}, {"id": "func_gut", "l": "機能性表示（腸内環境）"}, {"id": "func_eye", "l": "機能性表示（目の健康）"}, {"id": "func_joint", "l": "機能性表示（関節・骨）"}, {"id": "func_stress", "l": "機能性表示（ストレス・睡眠）"}, {"id": "func_fat", "l": "機能性表示（体脂肪・血糖）"}, {"id": "c5", "title": "WEB広告表現に騙されないために——景品表示法から読み解く市販薬・健康食品の広告リテラシー", "date": "2026-04-04", "tag": "安全情報", "thumb": null, "summary": "「売上No.1」「医師推薦」「即効」——Web広告に溢れる表現の根拠を問う。景品表示法（景表法）の仕組みから、定期購入トラブル・ステマ規制まで、広告リテラシーの基本を解説。", "body": "## そのWeb広告の「効果絶大」、根拠はあるか\n\nSNSのタイムラインや検索結果に並ぶ市販薬の広告。「即効」「医師推薦」「売上No.1」「飲むだけで解決」——こうした表現を毎日のように目にする。では、これらの言葉はどのような法律で規制されていて、消費者はどう読み解けばいいのか。**景品表示法（景表法）**を軸に、広告リテラシーの基本を整理する。\n\n---\n\n## 景品表示法とは何か\n\n景品表示法の正式名称は**「不当景品類及び不当表示防止法」**（昭和37年制定、消費者庁所管）である。\n\nこの法律が禁じる「不当表示」は大きく2種類に分けられる。\n\n- **優良誤認表示**（第5条第1号）：商品の品質・効能などが実際よりも著しく優良であると消費者に誤認させる表示\n- **有利誤認表示**（第5条第2号）：価格・取引条件などが実際よりも著しく有利であると消費者に誤認させる表示\n\n市販薬の広告で問題になるのは主に「優良誤認表示」だ。「この薬を飲めばすべての症状が消える」「副作用がまったくない」といった根拠のない主張は、消費者が商品を実際よりも優れたものだと思い込む原因になる。\n\n::: info 景表法の目的\n一般消費者が**自主的・合理的に商品を選択できる環境**を守ることを目的としている（第1条）。同法の運用主体は消費者庁で、違反には措置命令・課徴金・2024年施行の直罰規定が適用される。\n:::\n\n---\n\n## 2024年改正で「直罰制度」が導入された\n\n2024年10月に施行された改正景表法の最大の変化は、**故意の優良誤認表示に対する直罰制度**の導入だ。改正前は「措置命令→命令違反→罰則」という段階を踏む必要があったが、改正後は故意に優良誤認表示をした法人・個人に対して**措置命令なしに100万円以下の罰金**を科せるようになった。\n\nまた、課徴金制度（2016年導入）も継続して運用されており、不当表示による売上額の**3%**が課徴金として課される。これらの強化により、悪質な広告表現に対する抑止力が高まっている。\n\n::: warn 改正景表法（2024年10月施行）の主なポイント\n- 故意の優良誤認表示に**直罰（100万円以下の罰金）**\n- 確約手続制度の導入（自主的な是正措置を認定する手続）\n- デジタル広告への対応強化\n:::\n\n---\n\n## 市販薬広告でよく見られる問題表現\n\n### 「No.1」表示の落とし穴\n\n「売上No.1」「医師推薦No.1」といった表現は非常に多用されるが、景表法上は**調査の対象・時期・条件が明確でなければ有利誤認表示**にあたるリスクがある。\n\n消費者庁が公表している「No.1表示に関する実態調査」（2022年）では、No.1表示の約**6割超**が根拠となる調査の対象範囲・調査時期・調査機関のいずれかが不明確だったとされている。\n\n消費者が確認すべきポイントは次の3点だ。\n\n- 何を対象にした「No.1」なのか（商品カテゴリが極端に狭くないか）\n- いつ行った調査か（数年前のデータを「現在」のように見せていないか）\n- 誰が調査したか（調査機関が明示されているか）\n\n### 「医師推薦」「薬剤師推薦」の信頼性\n\n「医師の9割が推薦」「薬剤師の8割が選ぶ」といった表現も要注意だ。\n\nこうした表示は、推薦した医師・薬剤師の人数・専門分野・選出方法が開示されていなければ実質的に意味をなさない。たとえば「推薦医師10人中9人」でも「医師の9割が推薦」という表現は成立する。数の絶対値だけでなく、**調査規模と方法**を確認することが重要だ。\n\n### 体験談・口コミの扱い\n\n「1週間で症状がなくなった」「長年の悩みが解決した」といった体験談・口コミも、景表法の規制対象になりうる。\n\n消費者庁のガイドライン（2023年10月改定）では、**インフルエンサーや第三者が対価を受けて商品を宣伝する場合は「広告」と明示する義務**が課された（ステルスマーケティング規制）。また、体験談の内容が真実であっても、その効果が一般消費者に同様に得られるとは限らないため、**一般的なデータによる裏付けがなければ優良誤認表示**とみなされる可能性がある。\n\n::: danger ステルスマーケティングに注意\n2023年10月から、インフルエンサーへの対価提供を隠して行う宣伝（いわゆるステマ）は景表法違反となった。SNS上の「個人の感想」に見える投稿でも、**「PR」「広告」「案件」の表示がなければ違法**の可能性がある。\n:::\n\n### 「即効」「劇的改善」などの効果表現\n\n医薬品の広告については薬機法（医薬品医療機器等法）も同時に適用されるが、景表法の観点からも「即効性」や「劇的な効果」を強調する表現は合理的な根拠がなければ問題になる。\n\n根拠として認められるのは原則として次のいずれかだ。\n\n1. 試験・調査の結果（査読付き論文・臨床試験データ等）\n2. 専門家・学術機関等の見解\n\n「多くの方に実感いただいています」「飲んだその日から違う」といった表現に、上記の根拠が添付されていなければ、景表法上の「合理的根拠」とは言えない。\n\n---\n\n## 薬機法との違い\n\n市販薬に関係するもう一つの重要法規が**薬機法（医薬品医療機器等法）**だ。景表法と薬機法は目的が異なるため、両方に抵触することも多い。\n\n| 観点 | 景表法 | 薬機法 |\n|---|---|---|\n| 主な目的 | 消費者の選択の自由を守る | 医薬品の品質・安全・有効性を確保 |\n| 規制対象 | 商品・サービス全般 | 医薬品・医療機器・化粧品等 |\n| 問題となる表現 | 根拠のない優良・有利の主張 | 承認されていない効能・効果の標榜 |\n| 主管 | 消費者庁 | 厚生労働省・都道府県 |\n\n市販薬の広告で「〇〇病が治る」「〇〇に効く」と承認された効能以外を謳えば薬機法違反になる。同時に、根拠のない形で「No.1」や「医師推薦」を掲げれば景表法違反にもなりうる。\n\n---\n\n## 合理的根拠の「事前提出義務」\n\n景表法第7条第2項（旧第4条第2項）に基づき、消費者庁は広告主に対して**表示の根拠となる資料の提出を求める**ことができる。提出を求めた日から15日以内に合理的根拠が示せなければ、その表示は不当表示とみなされる（合理的根拠不提示の推定規定）。\n\nつまり「広告を出す側は、事前に根拠資料を用意しておかなければならない」のが原則だ。消費者の立場から見れば、広告表現に根拠を求めることは正当な権利といえる。\n\n---\n\n## 消費者として広告を読む7つのチェックポイント\n\n市販薬を含む健康・美容商品の広告を見たとき、以下の7点を確認する習慣をつけると騙されにくくなる。\n\n- **[!青] 1. No.1・推薦数値の根拠** — 調査対象・時期・機関が明示されているか\n- **[!青] 2. 体験談の注記** — 「個人の感想です」「効果には個人差があります」の記載があるか\n- **[!青] 3. PR表示の有無** — SNS投稿・ブログ記事に「#PR」「広告」の明示があるか\n- **[!青] 4. 効果の範囲** — 承認された効能・効果の範囲内の主張か（薬機法）\n- **[!青] 5. 価格表示の条件** — 割引・キャンペーン価格に条件・期間が明記されているか\n- **[!青] 6. 定期購入の条件** — 「お試し価格」が実は定期購入契約になっていないか\n- **[!青] 7. 成分情報のアクセス** — 配合成分・含有量が確認できるか\n\n---\n\n## まとめ\n\n景表法は消費者の「自主的・合理的な選択」を守るための法律だ。「No.1」「医師推薦」「即効」といった表現は根拠があれば問題ないが、実際には曖昧な根拠のまま使われているケースが多い。\n\n2024年の改正で直罰制度が導入され、規制は強化されているが、それでも問題のある広告がなくなることはない。最終的には**消費者自身が広告リテラシーを持ち、根拠を問う姿勢**を持つことが重要だ。\n\nおかしいと思った広告は、消費者庁の**消費者ホットライン（局番なし188）**か、最寄りの消費生活センターに相談できる。\n\n---\n\n出典：消費者庁「景品表示法」、消費者庁「No.1表示に関する実態調査報告書（2022年）」、消費者庁「令和5年度 景品表示法改正の概要」、消費者庁「比較広告に関する景品表示法上の考え方」\n\n---\n\n## 薬局・ドラッグストアでの「推奨」表示にも注意\n\n店頭のPOP広告でも同様の問題が起こりうる。「薬剤師一押し！」「スタッフのイチオシ」といった表示は景表法の適用外になることもあるが、消費者の選択に大きく影響する。\n\n特に注意が必要なのが、メーカーから小売店へのいわゆる**販売促進費（リベート）**の問題だ。メーカーが特定商品を目立つ場所に陳列したり推薦したりすることへの対価として金銭を支払う慣行は存在するが、それが「薬剤師の専門的な推薦」のように見える形で消費者に伝わることは、実態と表示が乖離している状態といえる。\n\n消費者庁は2023年の「No.1表示に関する実態調査」の中で、こうしたPOP表示についても問題意識を示している。市販薬を選ぶ際は、POPや陳列位置に影響されず、**添付文書・成分表示・リスク区分**を直接確認することが最も信頼性の高い選び方だ。\n\n---\n\n## 「定期購入」トラブルに巻き込まれないために\n\n市販薬・健康食品のWeb広告で急増しているのが、**定期購入の申込を「お試し」と誤認させる手口**だ。\n\n特定商取引法（特商法）の規制も強化されているが、「初回980円」と大きく表示しながら、定期購入契約であることを小さな文字で記載するケースが後を絶たない。消費者庁の「定期購入トラブルに関する調査」（2023年）によれば、健康食品・サプリメントの定期購入トラブルの相談件数は年間**数万件**規模に上る。\n\n::: danger 定期購入トラブルの典型パターン\n「初回お試し価格」→ 実は定期購入の申込み → 2回目以降は通常価格が自動引き落とし → 解約に電話が必要（繋がらない）——このパターンが最も多い。申込み前に**「定期購入」「最低購入回数」「解約方法」**を必ず確認すること。\n:::\n\n2022年の特商法改正により、定期購入の条件を**申込み画面で明確に表示する義務**が課されたが、依然として問題事例は多い。申込み前に必ず確認すべき事項は次の通りだ。\n\n1. 定期購入か否か\n2. 最低購入回数・縛り期間\n3. 解約・変更の連絡先と方法\n4. 2回目以降の価格\n\n---\n\n## 健康食品・機能性表示食品の広告にも同様の問題\n\n本サイトでも取り扱っている**機能性表示食品**は、事業者が消費者庁へ届出を行い、科学的根拠を示したうえで機能性を表示できる制度だ（2015年導入）。しかし、この制度を悪用した誇大な広告表現が問題になるケースもある。\n\n機能性表示食品の広告で適切な表現は「〇〇を含み、△△の機能があることが報告されています」という形だ。「必ず効く」「医薬品と同等の効果がある」といった表現は、機能性表示食品でも薬機法・景表法上の問題になる。\n\n::: warn 機能性表示食品と医薬品の違い\n機能性表示食品は**疾病の治療や予防を目的としない**。「血圧が高めの方に適している」とは言えても、「高血圧を治す」とは言えない。この差を意図的に曖昧にした広告表現には注意が必要だ。\n:::\n\n---\n\n出典（追加）：消費者庁「定期購入に関する特定商取引法の規制」（2023年）、消費者庁「機能性表示食品制度」、国民生活センター「通販の定期購入をめぐるトラブル」（2023年）\n"}];
 var RLBL={0:"要指導",1:"第1類",2:"第2類（指定）",2.5:"第２類",3:"第3類"};
 var TYPELBL={otc:"OTC医薬品",quasi:"医薬部外品",functional:"機能性表示食品"};
@@ -1229,14 +810,15 @@ var CMP=[];
 function showPg(id, push){
   var pgEl = document.getElementById("pg-"+id);
   if(!pgEl) return;
-  document.getElementById('pg-home').style.display='none';
+  var homeEl=document.getElementById('pg-home');
+  if(homeEl)homeEl.style.display='none';
   document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".ntab").forEach(function(t){t.classList.remove("on");});
   pgEl.classList.add("on");
   var tabEl = document.getElementById("t-"+id);
   if(tabEl) tabEl.classList.add("on");
   if(id==="guide")  buildGuide();
-  if(id==="column"){ buildCols(); buildSidebar(); }
+  if(id==="column") buildCols();
   if(push!==false){
     var url=new URL(location.href);
     if(id==="search") url.searchParams.delete("pg");
@@ -1249,62 +831,19 @@ function showPg(id, push){
 function applyURLParams(){
   var params=new URLSearchParams(location.search);
   var pg=params.get("pg");
-
-  /* 検索パラメータ */
-  var q=params.get("q");
-  var cat=params.get("cat");
-  var syms=params.get("syms");
-  var ings=params.get("ings");
-  var risk=params.get("risk");
-  var itype=params.get("itype");
-  var nd=params.get("nd");
-  var nw=params.get("nw");
-  var p=params.get("p");
-  var hasSearch=q||cat||syms||ings||risk||itype||nd||nw;
-
-  /* 状態を復元（render前に必ず実行） */
-  if(hasSearch){
-    if(q){ S.q=q; var qi=document.getElementById('qinp'); if(qi) qi.value=q; }
-    if(cat) S.cat=cat;
-    if(syms) S.syms=syms.split(',').filter(Boolean);
-    if(ings) S.ings=ings.split(',').filter(Boolean);
-    if(risk) S.risk=risk;
-    if(itype) S.itype=itype;
-    if(nd) S.nd=true;
-    if(nw) S.nw=true;
-    if(p) S.pg=parseInt(p)||1;
-  }
-
-  /* ページ表示 */
+  var validPgs=["guide","column","concept","privacy","terms","contact"];
+  if(pg && validPgs.indexOf(pg)>-1) showPg(pg, false);
   var colId=params.get("col");
-  var medId=params.get("med");
-
-  if(medId){
-    document.getElementById('pg-home').style.display='none';
-    showMedDetail(parseInt(medId));
-  } else if(colId){
-    document.getElementById('pg-home').style.display='none';
-    showPg("column",false);
-    showColFromDB(colId);
-  } else if(pg==="guide"||pg==="column"||pg==="concept"||pg==="privacy"||pg==="terms"||pg==="contact"){
-    document.getElementById('pg-home').style.display='none';
-    showPg(pg,false);
-  } else if(pg==="search"||hasSearch){
-    /* pg-searchを直接表示 */
-    document.getElementById('pg-home').style.display='none';
-    document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
-    document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
-    var pgEl=document.getElementById('pg-search');
-    if(pgEl) pgEl.classList.add('on');
-    var tabEl=document.getElementById('t-search');
-    if(tabEl) tabEl.classList.add('on');
-  }
+  if(colId){ showPg("column",false); showColFromDB(colId); }
 }
 
 /* ブラウザの戻る/進むに対応 */
 window.addEventListener("popstate",function(e){
-  if(e.state&&e.state.pg) showPg(e.state.pg, false);
-  else showPg("search", false);
+  if(e.state&&e.state.home){goHome();}
+  else if(e.state&&e.state.med){showMedDetail(e.state.med);}
+  else if(e.state&&e.state.col){showPg('column',false);showColFromDB(e.state.col);}
+  else if(e.state&&e.state.pg){showPg(e.state.pg,false);}
+  else{goHome();}
 });
 
 /* アコーディオン */
@@ -1452,8 +991,9 @@ function mkCard(m){
     var b=ing.replace(/[(（][^)）]*/g,"").replace(/[)）]/g,"").trim();
     var iM=S.ings.indexOf(b)>-1;
     var iW=!!wset[b];
+    var hD=!!ING[b];
     var cls=iW?"iw":iM?"im":"in";
-    return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
+            return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
   }).join("");
   var sH="";
   if(m.symptoms&&m.symptoms.length){
@@ -1464,11 +1004,10 @@ function mkCard(m){
   var nc=m.noteType==="danger"?"nd":m.noteType==="warn"?"nw":"nn";
   var pr=m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div><div class="cpnote">参考価格（税込）</div>':'<div class="cpval np">価格要確認</div>';
   var sel=CMP.indexOf(m.id)>-1;
-  var nameHtml='<div class="cname" style="cursor:pointer;color:var(--teal2)" onclick="showMedDetail('+m.id+')">'+m.name+'</div>';
   return '<div class="card" id="cd-'+m.id+'">'
     +'<div class="csel"><input type="checkbox"'+(sel?" checked":"")
     +' onchange="togCmp('+m.id+',this.checked)"></div>'
-    +'<div class="chard"><div>'+nameHtml+'<div class="cmaker">'+(m.maker||"")+'</div></div>'
+    +'<div class="chard"><div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
     +'<div class="cprice">'+pr+'</div></div>'
     +'<div class="badges">'
     +(m.itype&&m.itype!=="otc"?'<span class="badge '+(TYPECLS[m.itype]||"bf")+'">'+(TYPEICO[m.itype]||"")+" "+(TYPELBL[m.itype]||m.itype)+'</span>':"")
@@ -1488,7 +1027,6 @@ function mkCard(m){
     +'<div id="sim-'+m.id+'" style="display:none"></div>'
     +"</div>";
 }
-
 
 /* 類似商品 */
 function showSim(id){
@@ -1603,21 +1141,6 @@ function buildPagi(total){
 
 /* メインレンダリング */
 async function render(){
-  /* 検索状態をURLに反映 */
-  try{
-    var url = new URL(location.href);
-    url.searchParams.delete('pg'); /* searchページはpgなし */
-    if(S.q) url.searchParams.set('q', S.q); else url.searchParams.delete('q');
-    if(S.cat && S.cat!=='all') url.searchParams.set('cat', S.cat); else url.searchParams.delete('cat');
-    if(S.syms.length) url.searchParams.set('syms', S.syms.join(',')); else url.searchParams.delete('syms');
-    if(S.ings.length) url.searchParams.set('ings', S.ings.join(',')); else url.searchParams.delete('ings');
-    if(S.risk) url.searchParams.set('risk', S.risk); else url.searchParams.delete('risk');
-    if(S.itype) url.searchParams.set('itype', S.itype); else url.searchParams.delete('itype');
-    if(S.nd) url.searchParams.set('nd', '1'); else url.searchParams.delete('nd');
-    if(S.nw) url.searchParams.set('nw', '1'); else url.searchParams.delete('nw');
-    if(S.pg && S.pg>1) url.searchParams.set('p', S.pg); else url.searchParams.delete('p');
-    history.replaceState({pg:'search', q:S.q, cat:S.cat}, '', url.toString());
-  }catch(e){}
   /* ローディング表示 */
   document.getElementById('grid').innerHTML='<div class="nores" style="padding:40px;color:var(--txl)">読み込み中...</div>';
   document.getElementById('resinfo').innerHTML='';
@@ -1662,71 +1185,38 @@ function buildGuide(){
 }
 
 
-async function filterGuide(name){
-  var grp=null;
-  for(var i=0;i<SYMS.length;i++){if(SYMS[i].g===name){grp=SYMS[i];break;}}
+function filterGuide(name){
+  var grp=null;for(var i=0;i<SYMS.length;i++){if(SYMS[i].g===name){grp=SYMS[i];break;}}
   if(!grp)return;
-
-  var el=document.getElementById('gresult');
-  el.innerHTML='<div style="padding:20px;color:var(--txl)">読み込み中...</div>';
-
-  try{
-    var symList=grp.s.slice(0,5);
-    /* PostgREST: symptomsがjsonb配列の場合 cs.["値"] */
-    var orQuery=symList.map(function(s){
-      return 'symptoms.cs.["'+s+'"]';
-    }).join(',');
-    var res=await sbFetch(
-      'medicines?or=('+encodeURIComponent(orQuery)+')&select=id,name,maker,price,risk,cat,effect&limit=20'
-    );
-    var meds=await res.json();
-
-    if(!meds||!meds.length){
-      el.innerHTML='<div style="padding:20px;color:var(--txl)">「'+name+'」に対応する商品が見つかりませんでした。</div>';
-      return;
-    }
-
-    var cards=meds.map(function(m){
-      var cat=null;
-      for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}
-      cat=cat||{l:m.cat||''};
-      return '<div class="card" style="cursor:pointer" onclick="showMedDetail('+m.id+')">'
-        +'<div class="chard"><div>'
-        +'<div class="cname" style="color:var(--teal2)">'+m.name+'</div>'
-        +'<div class="cmaker">'+(m.maker||'')+'</div></div>'
+  var meds=MEDS.filter(function(m){return m.symptoms&&grp.s.some(function(s){return m.symptoms.indexOf(s)>-1;});});
+  document.getElementById("gresult").innerHTML='<div style="margin-top:16px">'
+    +'<div class="ptitle" style="font-size:15px">'+name+"（"+meds.length+"件）</div>"
+    +'<div class="grid" style="margin-top:10px">'+meds.slice(0,20).map(function(m){
+      var cat=null;for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}cat=cat||{i:"",l:m.cat};
+      return '<div class="card"><div class="chard"><div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
         +'<div class="cprice">'+(m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div>':'<div class="cpval np">価格要確認</div>')+'</div></div>'
-        +'<div class="badges"><span class="badge bc">'+cat.l+'</span>'
-        +'<span class="badge '+(RCLS[m.risk]||'r25')+'">'+(RLBL[m.risk]||'')+'</span></div>'
-        +'<div class="cef">'+(m.effect||'')+'</div></div>';
-    }).join('');
-
-    el.innerHTML='<div style="margin-top:16px">'
-      +'<div class="ptitle" style="font-size:15px">'+name+'（'+meds.length+'件）</div>'
-      +'<div class="grid" style="margin-top:10px">'+cards+'</div>'
-      +'</div>';
-
-  }catch(e){
-    el.innerHTML='<div style="padding:20px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
-    console.error('filterGuide error:', e);
-  }
+        +'<div class="badges"><span class="badge bc">'+cat.l+'</span><span class="badge '+(RCLS[m.risk]||"r25")+'">'+(RLBL[m.risk]||"")+'</span></div>'
+        +'<div class="cef">'+(m.effect||"")+"</div></div>";
+    }).join("")+"</div>"
+    +(meds.length>20?'<p style="font-size:12px;color:var(--txl);margin-top:8px">他'+(meds.length-20)+'件は検索ページで症状を選択してください。</p>':"")
+    +"</div>";
 }
 
-
+/* コラム */
 async function buildCols(){
   var el=document.getElementById('cgrid');
   if(el.children.length)return;
   try{
-    var res = await sbFetch('columns?select=id,title,date,tag,summary,thumb,status,slug&status=eq.published&order=date.desc&limit=50');
+    var res = await sbFetch('columns?select=id,title,date,tag,summary,thumb,status&status=eq.published&order=date.desc&limit=50');
     var cols = await res.json();
     cols.forEach(function(col){
       var div=document.createElement('div');div.className='ccard';
       var hasThumb=col.thumb&&col.thumb.length>10;
       var topHtml=hasThumb
-        ?'<div style="flex-shrink:0;width:160px;min-width:160px;height:120px;overflow:hidden"><img src="'+col.thumb+'" alt="" loading="lazy" style="width:160px;height:120px;object-fit:cover;display:block"></div>'
-        :'<div style="flex-shrink:0;width:160px;min-width:160px;height:120px;background:linear-gradient(135deg,#0f1c35,#1e3a5f)"></div>';
-      div.style.cssText='display:flex;border-bottom:1px solid #e2e8f0;cursor:pointer;background:#fff';
-      div.innerHTML=topHtml+'<div style="flex:1;min-width:0;padding:14px 18px"><div class="ctag">'+col.tag+'</div><div style="font-size:14px;font-weight:700;line-height:1.5;color:#0f1c35;margin:4px 0 8px">'+col.title+'</div><div style="font-size:11px;color:#94a3b8;margin-bottom:6px">'+col.date+'</div><div style="font-size:12px;color:#475569;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+col.summary+'</div></div>';
-      (function(id, slug){div.addEventListener('click',function(){showColFromDB(slug||id);});})(col.id, col.slug);
+        ?'<div class="ctop has-thumb"><img src="'+col.thumb+'" alt="" loading="lazy"><div class="ctop-overlay"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div></div>'
+        :'<div class="ctop no-thumb"><div class="ctop-overlay"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div></div>';
+      div.innerHTML=topHtml+'<div class="cbdy"><div class="cdate">'+col.date+'</div><div class="csum">'+col.summary+'</div></div>';
+      (function(id){div.addEventListener('click',function(){showColFromDB(id);});})(col.id);
       el.appendChild(div);
     });
   }catch(e){
@@ -1739,29 +1229,15 @@ async function showColFromDB(id){
   document.getElementById('cdetail').innerHTML='<div style="padding:40px;text-align:center;color:var(--txl)">読み込み中...</div>';
   document.getElementById('cdetail').style.display='block';
   try{
-    /* slugまたはidで検索
-       ID形式: c+数字(例:c1775356425736) または auto_日付_数字
-       slug形式: 英小文字・数字・ハイフンのみ（上記ID形式以外）
-    */
-    var isId = id && (id.match(/^c\d+$/) || id.match(/^auto_/));
-    var query = isId
-      ? 'columns?id=eq.'+encodeURIComponent(id)+'&limit=1'
-      : 'columns?slug=eq.'+encodeURIComponent(id)+'&limit=1';
-    var res = await sbFetch(query);
+    var res = await sbFetch('columns?id=eq.'+encodeURIComponent(id)+'&limit=1');
     var data = await res.json();
     var col = data[0];
     if(!col){document.getElementById('cdetail').innerHTML='<div style="padding:40px">記事が見つかりません</div>';return;}
-    /* URLをslugで更新 */
-    var colKey = col.slug || col.id;
-    var url = new URL(location.href);
-    url.searchParams.set('pg','column');
-    url.searchParams.set('col', colKey);
-    history.pushState({pg:'column',col:colKey},'',url.toString());
     var body = mdToHtml(col.body||'');
     document.getElementById('cdetail').innerHTML=
       '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
-      +'<div class="cdetail"><h1 style="font-size:26px;font-weight:700;line-height:1.5;margin-bottom:16px;color:var(--navy)">'+col.title+'</h1>'
-      +'<div class="cmeta" style="font-size:13px;color:var(--txl);margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--bd)">'+col.date+' | '+col.tag+'</div>'
+      +'<div class="cdetail"><h1>'+col.title+'</h1>'
+      +'<div class="cmeta">'+col.date+' | '+col.tag+'</div>'
       +'<div class="cbody">'+body+'</div></div>';
   }catch(e){
     document.getElementById('cdetail').innerHTML='<div style="padding:40px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
@@ -1822,62 +1298,29 @@ async function submitContact(){
 (async function(){
   try{
     var params=new URLSearchParams(location.search);
-    var q=params.get('q');
-    var cat=params.get('cat');
-    var syms=params.get('syms');
-    var ings=params.get('ings');
-    var risk=params.get('risk');
-    var itype=params.get('itype');
-    var nd=params.get('nd');
-    var nw=params.get('nw');
-    var p=params.get('p');
-    var pg=params.get('pg');
-    var colId=params.get('col');
-    var medId=params.get('med');
-    var hasSearch=q||cat||syms||ings||risk||itype||nd||nw;
-    var isSearchPg=pg==='search'||(!pg&&hasSearch);
-
-    if(medId){
-      /* 医薬品詳細 */
-      document.getElementById('pg-home').style.display='none';
-      await buildCats(); buildSymp(); buildIngs();
-      await showMedDetail(parseInt(medId));
-    } else if(colId){
-      /* コラム詳細 */
-      document.getElementById('pg-home').style.display='none';
-      showPg('column',false);
-      showColFromDB(colId);
-    } else if(pg&&pg!=='search'){
-      /* guide/concept/privacy等 */
-      document.getElementById('pg-home').style.display='none';
-      showPg(pg,false);
-    } else if(isSearchPg){
-      /* 検索ページ：S状態セット→buildCats→render の順を保証 */
-      document.getElementById('pg-home').style.display='none';
-      document.querySelectorAll('.pg').forEach(function(el){el.classList.remove('on');});
-      document.querySelectorAll('.ntab').forEach(function(el){el.classList.remove('on');});
-      var pgEl=document.getElementById('pg-search');
-      if(pgEl) pgEl.classList.add('on');
-      var tabEl=document.getElementById('t-search');
-      if(tabEl) tabEl.classList.add('on');
-      /* S状態を先にセット */
-      if(q){ S.q=q; var qi=document.getElementById('qinp'); if(qi) qi.value=q; }
-      if(cat) S.cat=cat;
-      if(syms) S.syms=syms.split(',').filter(Boolean);
-      if(ings) S.ings=ings.split(',').filter(Boolean);
-      if(risk) S.risk=risk;
-      if(itype) S.itype=itype;
-      if(nd) S.nd=true;
-      if(nw) S.nw=true;
-      if(p) S.pg=parseInt(p)||1;
-      /* buildCats完了後にrender */
-      await buildCats();
-      buildSymp();
-      buildIngs();
-      await render();
-    } else {
-      /* ホーム */
-      /* ホームは表示済みなので何もしない */
+    var hasAny=params.get('pg')||params.get('med')||params.get('col')||params.get('q')||params.get('cat')||params.get('syms');
+    if(hasAny){
+      var homeEl=document.getElementById('pg-home');
+      if(homeEl)homeEl.style.display='none';
+      var q=params.get('q'),syms=params.get('syms'),cat=params.get('cat');
+      var ings=params.get('ings'),risk=params.get('risk');
+      if(q){S.q=q;var qi=document.getElementById('qinp');if(qi)qi.value=q;}
+      if(cat)S.cat=cat;
+      if(syms)S.syms=syms.split(',').filter(Boolean);
+      if(ings)S.ings=ings.split(',').filter(Boolean);
+      if(risk)S.risk=risk;
+      await buildCats();buildSymp();buildIngs();
+      var colId=params.get('col'),medId=params.get('med'),pg=params.get('pg');
+      if(medId){await showMedDetail(parseInt(medId));}
+      else if(colId){showPg('column',false);showColFromDB(colId);}
+      else if(pg&&pg!=='search'){showPg(pg,false);}
+      else{
+        document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+        document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
+        var ps=document.getElementById('pg-search');if(ps)ps.classList.add('on');
+        var ts=document.getElementById('t-search');if(ts)ts.classList.add('on');
+        await render();
+      }
     }
   }catch(e){
     console.error('初期化エラー:', e);
@@ -1886,404 +1329,288 @@ async function submitContact(){
   }
 })();
 
-/* ── サイドバー ── */
-async function buildSidebar(){
-  await buildSidebarCols();
-  buildSidebarRanking();
-}
+/* ── 症状アキネーター ── */
+var AKI_SID=Math.random().toString(36).slice(2);
+var AKI_HIST=[];
+var AKI_CUR=null;
+var AKI_PATH=[];
+var AKI_TREE={q:"今もっともつらい症状はどれですか？",choices:[
+  {l:"頭・熱・のど",next:{q:"どの症状が一番つらいですか？",choices:[
+    {l:"頭が痛い",next:{q:"どんな頭痛ですか？",choices:[
+      {l:"ズキズキ・脈打つように痛い",next:{q:"他に気になる症状はありますか？",choices:[
+        {l:"光・音が気になる",result:{kw:["頭痛","偏頭痛"],adv:"偏頭痛が疑われます。イブプロフェン・ロキソプロフェン配合薬が有効です。暗い静かな場所で休むことも大切です。"}},
+        {l:"吐き気もある",result:{kw:["頭痛","吐き気","偏頭痛"],adv:"偏頭痛に伴う吐き気の可能性があります。服薬が難しい場合は薬剤師に相談しましょう。"}},
+        {l:"特になし",result:{kw:["頭痛","偏頭痛"],adv:"イブプロフェンやロキソプロフェン配合の鎮痛薬が適しています。"}},
+      ]}},
+      {l:"締め付けられる・重だるい",next:{q:"どんな時に悪くなりますか？",choices:[
+        {l:"デスクワーク・スマホ後",result:{kw:["頭痛","肩こり","眼精疲労"],adv:"緊張型頭痛です。アセトアミノフェン配合薬が穏やかに効きます。"}},
+        {l:"ストレスを感じている時",result:{kw:["頭痛","肩こり","ストレス"],adv:"緊張型頭痛です。鎮痛薬とビタミンB系栄養剤も検討しましょう。"}},
+        {l:"朝起きた時から",result:{kw:["頭痛","頭重","睡眠障害"],adv:"睡眠の質が関係している可能性があります。続く場合は医療機関へ。"}},
+      ]}},
+      {l:"熱もある",result:{kw:["頭痛","発熱","解熱"],adv:"発熱を伴う頭痛にはアセトアミノフェンが安心です。インフルエンザ疑いの場合はNSAIDsは避けましょう。"}},
+      {l:"突然激しく痛くなった",result:{kw:["頭痛"],adv:"突然の激しい頭痛はくも膜下出血の可能性があります。市販薬ではなくすぐ医療機関へ。"}},
+    ]}},
+    {l:"熱がある・熱っぽい",next:{q:"他の症状はありますか？",choices:[
+      {l:"関節が痛い・筋肉痛もある",result:{kw:["発熱","解熱","関節痛","悪寒"],adv:"インフルエンザの可能性があります。アセトアミノフェン配合薬が安全です。"}},
+      {l:"のどが痛い・鼻水もある",result:{kw:["発熱","解熱","のど痛","鼻水"],adv:"風邪の初期症状です。アセトアミノフェンで解熱しながら安静に。"}},
+      {l:"熱だけ・他はない",result:{kw:["発熱","解熱","悪寒"],adv:"解熱にはアセトアミノフェンが第一選択です。38.5度以上で服用するのが一般的です。"}},
+    ]}},
+    {l:"のどが痛い・イガイガする",next:{q:"のどの状態は？",choices:[
+      {l:"飲み込む時に痛い・腫れている感じ",result:{kw:["のど痛","のどの炎症","発熱"],adv:"扁桃炎の可能性があります。トラネキサム酸配合のトローチや解熱鎮痛薬を使いましょう。"}},
+      {l:"声がかすれる",result:{kw:["声がれ","のどの炎症"],adv:"声帯の炎症が考えられます。声を使わず安静に。"}},
+      {l:"イガイガ・乾燥感",result:{kw:["のどのイガイガ","口腔殺菌"],adv:"乾燥による刺激が考えられます。加湿とトローチで対処しましょう。"}},
+    ]}},
+    {l:"歯・口が痛い",next:{q:"どの症状ですか？",choices:[
+      {l:"歯がズキズキ痛い",result:{kw:["歯痛"],adv:"ロキソプロフェンやイブプロフェンが有効です。早めに歯科を受診しましょう。"}},
+      {l:"口内炎が痛い",result:{kw:["口内炎","口腔殺菌"],adv:"ステロイド系の口内炎薬が有効です。ビタミンB2・B6の不足も原因に。"}},
+    ]}},
+  ]}},
+  {l:"鼻・目",next:{q:"どちらが主な症状ですか？",choices:[
+    {l:"鼻水・くしゃみが多い",next:{q:"鼻水の様子は？",choices:[
+      {l:"透明でサラサラ・花粉シーズンに悪化",result:{kw:["鼻水","くしゃみ","花粉症","アレルギー性鼻炎"],adv:"花粉症が疑われます。第2世代抗ヒスタミン薬が使いやすいです。シーズン前からの服用が効果的です。"}},
+      {l:"年中続く・ほこりやペットで悪化",result:{kw:["鼻水","くしゃみ","アレルギー性鼻炎"],adv:"通年性アレルギー性鼻炎が疑われます。抗ヒスタミン薬を継続使用しましょう。"}},
+      {l:"黄色・緑っぽいドロッとした鼻水",result:{kw:["鼻水","副鼻腔炎"],adv:"細菌性の副鼻腔炎が疑われます。耳鼻科への受診をおすすめします。"}},
+    ]}},
+    {l:"鼻がつまっている",next:{q:"鼻づまりの状況は？",choices:[
+      {l:"両方つまって息苦しい",result:{kw:["鼻づまり","花粉症","副鼻腔炎"],adv:"ステロイド点鼻薬が3症状に効果的です。数日の継続使用で効果を実感しやすいです。"}},
+      {l:"夜・横になるとひどい",result:{kw:["鼻づまり","副鼻腔炎"],adv:"枕を高くする・加湿するなどの工夫とステロイド点鼻薬を使いましょう。"}},
+      {l:"片方だけつまる",result:{kw:["鼻づまり","副鼻腔炎"],adv:"鼻中隔弯曲や副鼻腔炎の可能性があります。血管収縮系の点鼻薬は1週間以内にとどめましょう。"}},
+    ]}},
+    {l:"目がかゆい・充血している",next:{q:"目の症状を詳しく教えてください",choices:[
+      {l:"かゆくてこすってしまう",result:{kw:["目のかゆみ","充血","花粉症"],adv:"抗ヒスタミン点眼薬が有効です。こすると悪化するので冷やしタオルで冷却もおすすめです。"}},
+      {l:"充血・目やにが多い",result:{kw:["充血","結膜炎"],adv:"アレルギー性や感染性の結膜炎が疑われます。改善しなければ眼科へ。"}},
+      {l:"乾燥・ゴロゴロする",result:{kw:["乾き目","目の疲れ","眼精疲労"],adv:"ドライアイが疑われます。ヒアルロン酸配合の人工涙液タイプが適しています。"}},
+    ]}},
+  ]}},
+  {l:"咳・痰",next:{q:"咳の様子を教えてください",choices:[
+    {l:"乾いた咳が続く",next:{q:"いつから・どんな時に出ますか？",choices:[
+      {l:"風邪から2週間以上経つ",result:{kw:["せき","長引く咳","気管支炎"],adv:"感染後咳嗽が考えられます。3週間以上続くなら受診を。"}},
+      {l:"夜〜明け方に特にひどい",result:{kw:["夜間の咳","喘息様症状"],adv:"気管支喘息の可能性があります。呼吸器科への受診をおすすめします。"}},
+      {l:"冷たい空気・運動で悪化",result:{kw:["せき","喘息様症状","気管支炎"],adv:"気道過敏の可能性があります。改善しない場合は受診してください。"}},
+    ]}},
+    {l:"痰がからむ・湿った咳",next:{q:"痰の色は？",choices:[
+      {l:"透明・白っぽい",result:{kw:["たん","せき","気管支炎"],adv:"ウイルス性の気管支炎が考えられます。去痰薬配合の市販薬と十分な水分補給で対処しましょう。"}},
+      {l:"黄色・緑色っぽい",result:{kw:["たん","せき"],adv:"細菌感染の可能性があります。早めに受診することをおすすめします。"}},
+    ]}},
+    {l:"息苦しい・胸が苦しい",result:{kw:["息切れ","喘息様症状"],adv:"呼吸困難を伴う症状は医療機関を受診することを強くおすすめします。"}},
+  ]}},
+  {l:"胃・お腹",next:{q:"お腹のどこが気になりますか？",choices:[
+    {l:"胃が痛い・不快感がある",next:{q:"どんな時に症状が出ますか？",choices:[
+      {l:"食後に胃がもたれる・重い",result:{kw:["胃もたれ","食べ過ぎ"],adv:"消化酵素配合の消化薬や健胃薬が有効です。食べすぎ・早食いを見直してみましょう。"}},
+      {l:"空腹時・夜中に痛む",result:{kw:["胃痛","胃酸過多","胸やけ"],adv:"胃酸過多が疑われます。H2ブロッカー配合の胃薬が有効です。"}},
+      {l:"食後すぐ胸やけ・酸が上がる",result:{kw:["胸やけ","胃酸過多","逆流性食道炎"],adv:"逆流性食道炎が疑われます。制酸薬・H2ブロッカーが有効です。食後すぐ横にならないことも大切です。"}},
+      {l:"飲みすぎた翌朝",result:{kw:["二日酔い","吐き気","飲み過ぎ"],adv:"基本は水分補給と休養です。"}},
+    ]}},
+    {l:"下痢・お腹がゆるい",next:{q:"下痢の状況は？",choices:[
+      {l:"食後すぐ・緊張時に出る",result:{kw:["下痢","腹痛","過敏性腸症候群"],adv:"過敏性腸症候群（IBS）の可能性があります。整腸薬を継続しつつストレス管理も大切です。"}},
+      {l:"水っぽい・急に来る",result:{kw:["下痢","腹痛","整腸"],adv:"急性胃腸炎が考えられます。止痢薬より整腸薬が推奨されます。脱水に注意してください。"}},
+      {l:"外食後・食中毒かも",result:{kw:["下痢","吐き気","腹痛"],adv:"食中毒の可能性があります。38度以上の発熱・血便があれば受診してください。"}},
+    ]}},
+    {l:"便秘・お腹が張る",next:{q:"便秘の状況を教えてください",choices:[
+      {l:"3日以上出ていない",result:{kw:["便秘","腹部膨満","整腸"],adv:"酸化マグネシウム系の緩下薬が穏やかに効きます。水分・食物繊維も大切です。"}},
+      {l:"出るが残便感がある",result:{kw:["便秘","整腸"],adv:"腸の動きを助ける整腸薬やビフィズス菌配合の製品が有効です。"}},
+    ]}},
+    {l:"吐き気・乗り物酔い",next:{q:"吐き気のきっかけは？",choices:[
+      {l:"乗り物・移動中",result:{kw:["乗物酔い","吐き気","めまい・立ちくらみ"],adv:"乗り物酔い止めは乗車30分〜1時間前の服用が効果的です。"}},
+      {l:"ストレス・緊張時",result:{kw:["吐き気","胃の不快感","ストレス"],adv:"機能性ディスペプシアの可能性があります。漢方薬（六君子湯等）が効くこともあります。"}},
+    ]}},
+  ]}},
+  {l:"皮膚・かゆみ",next:{q:"皮膚の症状を詳しく教えてください",choices:[
+    {l:"かゆみ・発疹・赤みがある",next:{q:"どこに出ていますか？",choices:[
+      {l:"全身にじんましんが出た",result:{kw:["じんましん","かゆみ"],adv:"アレルギー反応が疑われます。抗ヒスタミン薬（内服）が有効です。呼吸困難・顔の腫れを伴う場合はすぐに救急へ。"}},
+      {l:"特定の場所（腕・首など）に赤み",result:{kw:["湿疹・かぶれ","かゆみ"],adv:"接触性皮膚炎が疑われます。原因物質を避けつつステロイド外用薬を使用しましょう。"}},
+      {l:"虫に刺された",result:{kw:["虫刺され","かゆみ"],adv:"ステロイド配合の虫刺され薬が有効です。かき壊しを防ぐため冷却も効果的です。"}},
+    ]}},
+    {l:"乾燥・肌荒れ・かさつき",next:{q:"どの部位が特に気になりますか？",choices:[
+      {l:"顔・全体的な肌荒れ",result:{kw:["肌荒れ","乾燥肌","にきび"],adv:"ヘパリン類似物質配合のクリームやビタミンC・E配合の外用薬が有効です。"}},
+      {l:"手・指のひび割れ・あかぎれ",result:{kw:["あかぎれ","手荒れ","乾燥肌"],adv:"ヘパリン類似物質または尿素配合のクリームで保湿しましょう。"}},
+    ]}},
+    {l:"にきび・吹き出物",result:{kw:["にきび","肌荒れ","皮脂過多"],adv:"イオウ配合やイブプロフェンピコノール配合のにきび薬が市販されています。"}},
+    {l:"水虫・爪のトラブル",next:{q:"どこに症状がありますか？",choices:[
+      {l:"足の指の間・かかと",result:{kw:["水虫","たむし"],adv:"抗真菌薬配合のクリームを4週間以上継続することが重要です。"}},
+      {l:"爪が白く・分厚くなっている",result:{kw:["爪白癬","水虫"],adv:"爪白癬は皮膚科での処方薬が有効なことが多いです。受診をおすすめします。"}},
+    ]}},
+  ]}},
+  {l:"疲れ・眠れない",next:{q:"どんな状態が続いていますか？",choices:[
+    {l:"体が重い・だるい",next:{q:"疲れのパターンを教えてください",choices:[
+      {l:"仕事・運動後の疲れ",result:{kw:["肉体疲労","倦怠感","滋養強壮"],adv:"ビタミンB群・アミノ酸配合の栄養ドリンクや錠剤が有効です。"}},
+      {l:"疲れているのに眠れない",result:{kw:["肉体疲労","不眠","睡眠障害"],adv:"L-テアニン配合の睡眠補助薬が市販されています。連用は避けましょう。"}},
+      {l:"2週間以上続くだるさ",result:{kw:["肉体疲労","倦怠感"],adv:"長期間のだるさは貧血・甲状腺疾患・うつ等が原因のこともあります。医療機関での検査をおすすめします。"}},
+    ]}},
+    {l:"眠れない・眠りが浅い",next:{q:"眠れない状況を教えてください",choices:[
+      {l:"布団に入っても寝付けない",result:{kw:["不眠","睡眠障害","神経の興奮"],adv:"ジフェンヒドラミン配合の睡眠改善薬が一時的に使えます。2週間以上続く場合は受診を。"}},
+      {l:"夜中に何度も目が覚める",result:{kw:["不眠","睡眠障害"],adv:"睡眠維持困難タイプの不眠です。睡眠外来の受診も検討してください。"}},
+      {l:"ストレス・考えすぎで眠れない",result:{kw:["不眠","ストレス","神経の興奮"],adv:"神経過敏を和らげる漢方（加味帰脾湯等）が有効なことがあります。"}},
+    ]}},
+    {l:"イライラ・不安感がある",next:{q:"主な状況を教えてください",choices:[
+      {l:"生理前・更年期ごろから",result:{kw:["更年期障害","月経前症候群","イライラ"],adv:"命の母・加味逍遙散等の漢方薬が月経前症候群や更年期の症状に用いられます。"}},
+      {l:"仕事・人間関係のストレス",result:{kw:["ストレス","不安感","神経の興奮"],adv:"抑肝散等の漢方薬が軽度の神経症状に使われます。深刻なら心療内科の受診も検討してください。"}},
+    ]}},
+  ]}},
+  {l:"肩・腰・手足",next:{q:"どこが気になりますか？",choices:[
+    {l:"肩・首がこる・痛い",next:{q:"こりの状況を教えてください",choices:[
+      {l:"デスクワーク・スマホが原因っぽい",result:{kw:["肩こり","首の痛み","眼精疲労"],adv:"血行改善成分配合の錠剤や温感シップが有効です。"}},
+      {l:"ひどい頭痛も伴う",result:{kw:["肩こり","頭痛","緊張型頭痛"],adv:"緊張型頭痛が疑われます。鎮痛薬と筋弛緩作用のある市販薬を組み合わせることがあります。"}},
+      {l:"腕・手がしびれる",result:{kw:["肩こり","手足のしびれ"],adv:"頸椎由来の神経症状の可能性があります。整形外科への受診をおすすめします。"}},
+    ]}},
+    {l:"腰が痛い",next:{q:"腰痛の状況を教えてください",choices:[
+      {l:"急に痛くなった・ぎっくり腰",result:{kw:["腰痛","筋肉痛","打撲・ねんざ"],adv:"48時間は冷湿布→その後温湿布が一般的です。ロキソプロフェン配合薬が有効です。"}},
+      {l:"慢性的にずっと痛い",result:{kw:["腰痛","神経痛","関節痛"],adv:"慢性腰痛は整形外科での診断が重要です。温感シップや鎮痛薬で対処しながら受診しましょう。"}},
+      {l:"足にしびれも広がる",result:{kw:["腰痛","手足のしびれ","神経痛"],adv:"坐骨神経痛・椎間板ヘルニアの可能性があります。整形外科への受診をおすすめします。"}},
+    ]}},
+    {l:"手足がしびれる・冷える",next:{q:"しびれ・冷えの状況は？",choices:[
+      {l:"末端が特に冷たい・冷え性",result:{kw:["冷え","手足のしびれ","末梢血行障害"],adv:"ビタミンE・当帰等配合の漢方系薬が冷えに用いられます。当帰芍薬散等も検討を。"}},
+      {l:"長時間同じ姿勢の後",result:{kw:["手足のしびれ","血行不良","冷え"],adv:"血行不良が原因と考えられます。ビタミンB12・E配合薬が有効なことがあります。"}},
+    ]}},
+    {l:"関節・筋肉が痛む",next:{q:"どんな痛みですか？",choices:[
+      {l:"運動・スポーツ後の筋肉痛",result:{kw:["筋肉痛","打撲・ねんざ","関節痛"],adv:"鎮痛薬と外用の消炎鎮痛薬（冷湿布）を組み合わせましょう。"}},
+      {l:"朝に関節がこわばる",result:{kw:["関節痛","こわばり","リウマチ様症状"],adv:"関節リウマチの初期症状の可能性もあります。リウマチ科・整形外科への受診をおすすめします。"}},
+      {l:"足首・膝をひねった",result:{kw:["打撲・ねんざ","関節痛"],adv:"捻挫にはRICE処置（安静・冷却・圧迫・挙上）が基本です。ロキソプロフェン配合薬と冷湿布を使いましょう。"}},
+    ]}},
+  ]}},
+]};
 
-async function buildSidebarCols(){
-  var el=document.getElementById('sb-popular-cols');
-  if(!el)return;
-  try{
-    var res=await sbFetch('columns?select=id,title,date,tag,status,slug&status=eq.published&order=date.desc&limit=6');
-    var cols=await res.json();
-    if(!cols.length){el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">コラムがありません</li>';return;}
-    el.innerHTML='';
-    cols.forEach(function(col){
-      var key=col.slug||col.id;
-      var li=document.createElement('li');li.className='sb-item';
-      var a=document.createElement('a');
-      a.href='?pg=column&col='+encodeURIComponent(key);
-      var tag=document.createElement('div');tag.className='sb-item-tag';tag.textContent=col.tag;
-      var title=document.createElement('div');title.className='sb-item-title';title.textContent=col.title;
-      var date=document.createElement('div');date.className='sb-item-date';date.textContent=col.date;
-      a.appendChild(tag);a.appendChild(title);a.appendChild(date);
-      (function(k){a.addEventListener('click',function(e){e.preventDefault();showColFromDB(k);showPg('column',false);});})(key);
-      li.appendChild(a);el.appendChild(li);
-    });
-  }catch(e){el.innerHTML='<li style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</li>';}
-}
-
-function buildSidebarRanking(){
-  var el=document.getElementById('sb-ranking');
-  if(!el)return;
-  try{
-    var data=JSON.parse(localStorage.getItem('med_access')||'{}');
-    var sorted=Object.keys(data).map(function(id){return Object.assign({id:id},data[id]);})
-      .sort(function(a,b){return b.count-a.count;}).slice(0,5);
-    if(!sorted.length){
-      el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">まだ閲覧履歴がありません。<br>医薬品カードを開くと表示されます。</div>';
-      return;
-    }
-    el.innerHTML='';
-    sorted.forEach(function(m,i){
-      var div=document.createElement('div');div.className='sb-rank-item';
-      var num=document.createElement('div');num.className='sb-rank-num'+(i<3?' top3':'');num.textContent=i+1;
-      var info=document.createElement('div');
-      var name=document.createElement('div');name.className='sb-rank-name';name.textContent=m.name;
-      var maker=document.createElement('div');maker.className='sb-rank-maker';maker.textContent=m.maker||'';
-      info.appendChild(name);info.appendChild(maker);
-      div.appendChild(num);div.appendChild(info);
-      (function(id){div.addEventListener('click',function(){jumpTo(id);});})(m.id);
-      el.appendChild(div);
-    });
-  }catch(e){el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</div>';}
-}
-
-
-/* ── 医薬品詳細ページ ── */
-var CURRENT_MED = null;
-
-async function showMedDetail(id){
-  /* Supabaseから取得 */
-  var med = null;
-  try{
-    var res = await sbFetch('medicines?id=eq.'+id+'&limit=1');
-    var data = await res.json();
-    med = data[0];
-    if(med){ med.warnIngs = med.warn_ings||[]; med.noteType = med.note_type||'nn'; }
-  }catch(e){}
-
-  /* キャッシュから探す */
-  if(!med){
-    for(var i=0;i<MEDS.length;i++){ if(MEDS[i].id==id){ med=MEDS[i]; break; } }
+function toggleAki(){
+  var box=document.getElementById('aki-box');
+  var btn=document.getElementById('aki-toggle-btn');
+  if(box.classList.contains('open')){
+    box.classList.remove('open');
+    btn.textContent='💊 症状から薬を探す（質問に答えるだけ）';
+  }else{
+    box.classList.add('open');
+    btn.textContent='▲ 閉じる';
+    if(!AKI_CUR){AKI_CUR=AKI_TREE;akiRender();}
   }
-  if(!med) return;
-
-  CURRENT_MED = med;
-
-  /* ページ切替 */
-  document.getElementById('pg-search').style.display='none';
-  document.getElementById('med-detail').style.display='block';
-  window.scrollTo(0,0);
-
-  /* URL更新 */
-  var url = new URL(location.href);
-  url.searchParams.set('med', id);
-  history.pushState({med:id},'',url.toString());
-
-  /* アクセス記録（LocalStorage） */
-  try{
-    var _d=JSON.parse(localStorage.getItem('med_access')||'{}');
-    _d[id]=_d[id]||{name:med.name,maker:med.maker||'',count:0};
-    _d[id].count++;
-    localStorage.setItem('med_access',JSON.stringify(_d));
-  }catch(_e){}
-
-  /* 詳細HTML生成 */
-  renderMedDetail(med);
-  renderMedSim(med);
 }
 
-function renderMedDetail(m){
-  var cat=null;
-  for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}
-  cat=cat||{l:m.cat||''};
-
-  var wset={};
-  (m.warnIngs||[]).forEach(function(w){
-    wset[w.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim()]=1;
-  });
-
-  var badges = '';
-  if(m.itype&&m.itype!=='otc') badges+='<span class="badge '+(TYPECLS[m.itype]||'bf')+'">'+(TYPELBL[m.itype]||m.itype)+'</span>';
-  badges+='<span class="badge bc">'+cat.l+'</span>';
-  if(!m.itype||m.itype==='otc') badges+='<span class="badge '+(RCLS[m.risk]||'r25')+'">'+(RLBL[m.risk]||'')+'</span>';
-  if(m.drowsy) badges+='<span class="badge bd2">眠気注意</span>';
-  if(m.warnIngs&&m.warnIngs.length) badges+='<span class="badge bw2">要注意成分</span>';
-
-  var ingsHtml = (m.ings||[]).map(function(ing){
-    var b=ing.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim();
-    var cls=wset[b]?'iw':S.ings.indexOf(b)>-1?'im':'';
-    var tip=ING[b]?(' title="'+ING[b].replace(/"/g,'&quot;')+'"'):'';
-        return '<span class="med-ing-chip '+cls+'"'+tip+' data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
+function akiRender(){
+  var pct=Math.min(95,Math.round((AKI_HIST.length+1)/8*100));
+  document.getElementById('aki-prog').style.width=pct+'%';
+  document.getElementById('aki-step').textContent='ステップ '+(AKI_HIST.length+1);
+  var bc=document.getElementById('aki-bc');
+  bc.innerHTML=AKI_HIST.map(function(h,i){
+    return(i>0?'<span class="aki-bc-sep">›</span>':'')+
+      '<span class="aki-bc-item">'+h.chosen+'</span>';
   }).join('');
+  var main=document.getElementById('aki-main');
+  if(AKI_CUR.result){akiRenderResult(main,AKI_CUR.result);return;}
+  var html='<div class="aki-q">'+AKI_CUR.q+'</div><div class="aki-choices">';
+  AKI_CUR.choices.forEach(function(c,i){
+    html+='<button class="aki-btn" onclick="akiChoose('+i+')">'+c.l+'</button>';
+  });
+  html+='</div>';
+  if(AKI_HIST.length>0) html+='<button class="aki-back" onclick="akiBack()">← 前の質問に戻る</button>';
+  main.innerHTML=html;
+}
 
-  var warnHtml = '';
-  if(m.warnIngs&&m.warnIngs.length){
-    warnHtml='<div class="med-section"><div class="med-section-title">⚠️ 要注意成分</div>'
-      +'<div class="med-warn-box">'+m.warnIngs.join('、')+'が含まれています。使用前に医師・薬剤師にご相談ください。</div></div>';
-  }
+function akiChoose(i){
+  var c=AKI_CUR.choices[i];
+  AKI_HIST.push({node:AKI_CUR,chosen:c.l});
+  AKI_PATH.push(c.l);
+  AKI_CUR=c.next||{result:c.result};
+  akiRender();
+}
 
-  var noteHtml = '';
-  if(m.note){
-    var nc=m.noteType==='danger'?'nd':m.noteType==='warn'?'nw':'';
-    noteHtml='<div class="med-section"><div class="med-section-title">📋 注意事項</div>'
-      +'<div class="med-note-box '+nc+'">'+m.note+'</div></div>';
-  }
+function akiBack(){
+  if(!AKI_HIST.length)return;
+  var prev=AKI_HIST.pop();
+  AKI_PATH.pop();
+  AKI_CUR=prev.node;
+  akiRender();
+}
 
-  var buyHtml = '';
-  if(m.asin){
-    buyHtml+='<a class="med-buy-btn med-buy-amazon" href="https://www.amazon.co.jp/dp/'+m.asin+'?tag=kusuri0c-22" target="_blank" rel="nofollow">🛒 Amazonで見る</a>';
-  }
-  if(m.rakuten_url){
-    buyHtml+='<a class="med-buy-btn med-buy-rakuten" href="'+m.rakuten_url+'" target="_blank" rel="nofollow">🛒 楽天で見る</a>';
-  }
+async function akiLogToSB(kw,clicked){
+  try{
+    await fetch(SB_URL+'/rest/v1/symptom_logs',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({session_id:AKI_SID,path:AKI_PATH,result_keywords:kw,clicked_search:clicked})
+    });
+  }catch(e){}
+}
 
-  var symsHtml = '';
-  if(m.symptoms&&m.symptoms.length){
-    symsHtml='<div class="med-section"><div class="med-section-title">💊 対応症状</div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:8px">'
-            +m.symptoms.map(function(s){return '<span class="stag" data-s="'+s+'" onclick="addSym(this.dataset.s)" style="cursor:pointer">'+s+'</span>';}).join('')
-      +'</div></div>';
-  }
+async function akiGetSimilar(kw){
+  try{
+    var q='symptom_logs?result_keywords=cs.'+encodeURIComponent('["'+kw[0]+'"]')+'&select=result_keywords&limit=50&order=created_at.desc';
+    var res=await fetch(SB_URL+'/rest/v1/'+q,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    var logs=await res.json();
+    if(!logs||!logs.length)return null;
+    var freq={};
+    logs.forEach(function(log){
+      (log.result_keywords||[]).forEach(function(k){
+        if(kw.indexOf(k)===-1)freq[k]=(freq[k]||0)+1;
+      });
+    });
+    var sorted=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).slice(0,3);
+    return sorted.length?{count:logs.length,extra:sorted}:null;
+  }catch(e){return null;}
+}
 
-  document.getElementById('med-detail-main').innerHTML =
-    '<div class="med-detail-hero">'
-    +'<div class="med-detail-name">'+m.name+'</div>'
-    +'<div class="med-detail-maker">'+(m.maker||'')+'</div>'
-    +'<div class="med-detail-badges">'+badges+'</div>'
-    +'</div>'
-    +'<div class="med-detail-body">'
-    +'<div class="med-section"><div class="med-section-title">📊 基本情報</div>'
-    +'<div class="med-info-grid">'
-    +'<div class="med-info-item"><div class="med-info-label">参考価格</div><div class="med-info-value">'+(m.price?'¥'+m.price.toLocaleString():'要確認')+'</div></div>'
-    +'<div class="med-info-item"><div class="med-info-label">リスク区分</div><div class="med-info-value">'+(RLBL[m.risk]||'-')+'</div></div>'
-    +'<div class="med-info-item"><div class="med-info-label">眠気</div><div class="med-info-value">'+(m.drowsy?'⚠️ あり':'✅ なし')+'</div></div>'
-    +'<div class="med-info-item"><div class="med-info-label">成分数</div><div class="med-info-value">'+(m.ings||[]).length+'成分</div></div>'
-    +'</div></div>'
-    +(m.effect?'<div class="med-section"><div class="med-section-title">✨ 効能・効果</div><div style="font-size:14px;line-height:1.9;color:var(--tx)">'+m.effect+'</div></div>':'')
-    +symsHtml
-    +'<div class="med-section"><div class="med-section-title">🧪 成分一覧</div><div class="med-ings-list">'+ingsHtml+'</div></div>'
-    +warnHtml
-    +noteHtml
-    +(buyHtml?'<div class="med-section"><div class="med-section-title">🛒 購入</div><div class="med-buy-area">'+buyHtml+'<a class="med-buy-btn" style="background:var(--sl);color:var(--txm);border:1px solid var(--bd)" href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA添付文書</a></div></div>':'<div class="med-section"><div class="med-buy-area"><a class="med-buy-btn" style="background:var(--sl);color:var(--txm);border:1px solid var(--bd)" href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">📄 PMDA添付文書</a></div></div>')
-    +'<div class="med-section" style="border-top:1px solid var(--bd);padding-top:20px;margin-top:8px">'
-    +'<button onclick="openReport()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:none;border:1px solid var(--bd);border-radius:7px;font-size:12px;color:var(--txl);cursor:pointer" onmouseover="this.style.borderColor=\'var(--red)\';this.style.color=\'var(--red)\'" onmouseout="this.style.borderColor=\'var(--bd)\';this.style.color=\'var(--txl)\'">🚩 内容の誤りを報告する</button>'
-    +'</div>'
+async function akiRenderResult(el,r){
+  document.getElementById('aki-prog').style.width='100%';
+  document.getElementById('aki-step').textContent='結果';
+  akiLogToSB(r.kw,false);
+  var similar=await akiGetSimilar(r.kw);
+  var kw=r.kw||[];
+  var url='/?q='+encodeURIComponent(kw[0]||'')+'&syms='+encodeURIComponent(kw.join(','));
+  var tags=kw.map(function(k){return'<span class="aki-kw">'+k+'</span>';}).join('');
+  var simHtml='';
+  if(similar&&similar.count>=3){
+    simHtml='<div class="aki-similar"><div class="aki-similar-title">👥 同じ症状で来た'+similar.count+'人はこんな症状も持っていました</div>'
+      +similar.extra.map(function(k){return'<span class="aki-kw" style="background:#fef3c7;color:#92400e">'+k+'</span> ';}).join('')
+      +'</div>';
+  }
+  el.innerHTML='<div class="aki-result">'
+    +'<div class="aki-result-head">あなたの症状に関連するキーワード</div>'
+    +'<div class="aki-kw-area">'+tags+'</div>'
+    +'<div class="aki-adv">'+r.adv+'</div>'
+    +simHtml
+    +'<a class="aki-search-btn" href="'+url+'">該当する市販薬を見る</a>'
+    +'<button class="aki-restart" onclick="akiRestart()">最初からやり直す</button>'
     +'</div>';
 }
 
-async function renderMedSim(m){
-  var el = document.getElementById('med-sim-list');
-  el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">検索中...</div>';
-
-  try{
-    /* 同カテゴリの薬をSupabaseから取得して成分一致度で類似度計算 */
-    var res = await sbFetch('medicines?cat=eq.'+encodeURIComponent(m.cat)+'&select=id,name,maker,price,risk,ings,warn_ings&limit=100');
-    var candidates = await res.json();
-
-    var bi={};
-    (m.ings||[]).forEach(function(i){bi[i.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim()]=1;});
-
-    var sims = candidates
-      .filter(function(x){return x.id!==m.id;})
-      .map(function(x){
-        var xi={};
-        (x.ings||[]).forEach(function(i){xi[i.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim()]=1;});
-        var inter=Object.keys(bi).filter(function(k){return xi[k];}).length;
-        var union=Object.keys(Object.assign({},bi,xi)).length;
-        return {m:x, score:union?inter/union:0};
-      })
-      .filter(function(o){return o.score>0;})
-      .sort(function(a,b){return b.score-a.score;})
-      .slice(0,5);
-
-    if(!sims.length){
-      el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">類似商品が見つかりません</div>';
-      return;
-    }
-
-    el.innerHTML='<div class="med-sim-list">'
-      +sims.map(function(o){
-        var score=Math.round(o.score*100);
-        return '<div class="med-sim-item" onclick="showMedDetail('+o.m.id+')">'
-          +'<div style="flex:1;min-width:0">'
-          +'<div style="font-size:13px;font-weight:600;margin-bottom:2px">'+o.m.name+'</div>'
-          +'<div style="font-size:11px;color:var(--txl)">'+(o.m.maker||'')+'</div>'
-          +'<div class="med-sim-score">成分一致度 '+score+'%'+(o.m.price?' · ¥'+o.m.price.toLocaleString():'')+'</div>'
-          +'</div>'
-          +'<div style="font-size:20px;color:var(--bd)">›</div>'
-          +'</div>';
-      }).join('')
-      +'</div>';
-  }catch(e){
-    el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--txl)">読み込みエラー</div>';
-  }
+function akiRestart(){
+  AKI_HIST=[];AKI_PATH=[];AKI_CUR=AKI_TREE;
+  AKI_SID=Math.random().toString(36).slice(2);
+  document.getElementById('aki-prog').style.width='5%';
+  document.getElementById('aki-step').textContent='ステップ 1';
+  document.getElementById('aki-bc').innerHTML='';
+  akiRender();
 }
-
-function closeMedDetail(){
-  document.getElementById('med-detail').style.display='none';
-  document.getElementById('pg-search').style.display='';
-  CURRENT_MED=null;
-  var url=new URL(location.href);
-  url.searchParams.delete('med');
-  history.pushState({},'',url.toString());
-}
-
-
 /* ── ホーム ── */
 function goHome(){
-  /* 全ページ非表示 */
   document.getElementById('pg-search').style.display='none';
   document.getElementById('med-detail').style.display='none';
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
-  /* ホーム表示 */
   document.getElementById('pg-home').style.display='block';
   var url=new URL(location.href);
-  url.searchParams.delete('pg');
-  url.searchParams.delete('med');
-  url.searchParams.delete('col');
+  url.searchParams.delete('pg');url.searchParams.delete('med');url.searchParams.delete('col');
+  url.searchParams.delete('q');url.searchParams.delete('cat');url.searchParams.delete('syms');
   history.pushState({home:true},'',url.toString());
   window.scrollTo(0,0);
 }
 
 async function doHomeSearch(q){
-  var val = q || document.getElementById('home-qinp').value.trim();
-
-  /* ホームを隠す */
+  var val=q||document.getElementById('home-qinp').value.trim();
   document.getElementById('pg-home').style.display='none';
-
-  /* pg-searchを直接表示（showPg経由だと非同期タイミングの問題があるため） */
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
-  var pgSearch = document.getElementById('pg-search');
-  pgSearch.classList.add('on');
-  var tabSearch = document.getElementById('t-search');
-  if(tabSearch) tabSearch.classList.add('on');
-
-  /* buildCatsが未実行なら初期化 */
+  var pgEl=document.getElementById('pg-search');
+  if(pgEl)pgEl.classList.add('on');
+  var tabEl=document.getElementById('t-search');
+  if(tabEl)tabEl.classList.add('on');
   if(!document.getElementById('catlist').children.length){
-    await buildCats();
-    buildSymp();
-    buildIngs();
+    await buildCats();buildSymp();buildIngs();
   }
-
-  /* キーワードセット */
-  if(val){
-    S.q = val;
-    document.getElementById('qinp').value = val;
-  }
-
-  /* URL更新 */
-  var url = new URL(location.href);
+  if(val){S.q=val;var qi=document.getElementById('qinp');if(qi)qi.value=val;}
+  var url=new URL(location.href);
+  if(val)url.searchParams.set('q',val);else url.searchParams.delete('q');
   url.searchParams.delete('pg');
   history.pushState({pg:'search'},'',url.toString());
-
   await render();
 }
-
-
-/* ── 報告機能 ── */
-function openReport(){
-  var m = CURRENT_MED;
-  if(!m) return;
-  document.getElementById('report-med-name').textContent = '対象：' + m.name;
-  document.getElementById('report-body').value = '';
-  document.getElementById('report-status').className = 'report-status';
-  document.getElementById('report-status').textContent = '';
-  document.querySelectorAll('input[name="report-type"]').forEach(function(r){ r.checked=false; });
-  document.querySelectorAll('.report-type').forEach(function(l){ l.classList.remove('selected'); });
-  document.getElementById('report-submit-btn').disabled = false;
-  document.getElementById('report-submit-btn').textContent = '報告する';
-  document.getElementById('report-modal').classList.add('open');
-}
-
-function closeReport(){
-  document.getElementById('report-modal').classList.remove('open');
-}
-
-async function submitReport(){
-  var m = CURRENT_MED;
-  if(!m) return;
-  var type = '';
-  document.querySelectorAll('input[name="report-type"]').forEach(function(r){ if(r.checked) type=r.value; });
-  if(!type){
-    var st = document.getElementById('report-status');
-    st.textContent = '報告の種類を選択してください';
-    st.className = 'report-status err';
-    return;
-  }
-  var body = document.getElementById('report-body').value.trim();
-  var btn = document.getElementById('report-submit-btn');
-  btn.disabled = true;
-  btn.textContent = '送信中...';
-
-  try{
-    var res = await fetch(SB_URL + '/rest/v1/reports', {
-      method: 'POST',
-      headers: {
-        'apikey': SB_KEY,
-        'Authorization': 'Bearer ' + SB_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        med_id: m.id,
-        med_name: m.name,
-        type: type,
-        body: body || null,
-        created_at: new Date().toISOString()
-      })
-    });
-    if(res.ok || res.status===201){
-      var st = document.getElementById('report-status');
-      st.textContent = '✅ 報告を受け付けました。ご協力ありがとうございます。';
-      st.className = 'report-status ok';
-      btn.textContent = '送信済み';
-      setTimeout(function(){ closeReport(); }, 2000);
-    } else {
-      throw new Error('status ' + res.status);
-    }
-  }catch(e){
-    var st = document.getElementById('report-status');
-    st.textContent = '送信に失敗しました。時間をおいて再試行してください。';
-    st.className = 'report-status err';
-    btn.disabled = false;
-    btn.textContent = '報告する';
-  }
-}
-
-/* 報告タイプ選択時のビジュアルフィードバック */
-document.addEventListener('change', function(e){
-  if(e.target.name === 'report-type'){
-    document.querySelectorAll('.report-type').forEach(function(l){ l.classList.remove('selected'); });
-    if(e.target.closest('.report-type')) e.target.closest('.report-type').classList.add('selected');
-  }
-});
-
-/* モーダル背景クリックで閉じる */
-document.getElementById('report-modal').addEventListener('click', function(e){
-  if(e.target === this) closeReport();
-});
-
 </script>
-
-<!-- 報告モーダル -->
-<div id="report-modal">
-  <div class="report-box">
-    <h3>🚩 内容の報告</h3>
-    <p id="report-med-name" style="font-size:12px;color:var(--txl);margin-bottom:12px"></p>
-    <div class="report-status" id="report-status"></div>
-    <div class="report-types">
-      <label class="report-type"><input type="radio" name="report-type" value="価格が違う"> 💴 価格情報が違う・古い</label>
-      <label class="report-type"><input type="radio" name="report-type" value="成分が違う"> 🧪 成分情報が違う・不足している</label>
-      <label class="report-type"><input type="radio" name="report-type" value="効能が違う"> ✨ 効能・効果の記載が違う</label>
-      <label class="report-type"><input type="radio" name="report-type" value="商品が廃盤"> 📦 この商品は廃盤・販売終了</label>
-      <label class="report-type"><input type="radio" name="report-type" value="その他"> 💬 その他</label>
-    </div>
-    <div class="report-detail">
-      <label>詳細（任意）</label>
-      <textarea id="report-body" placeholder="具体的な内容があれば記入してください"></textarea>
-    </div>
-    <div class="report-actions">
-      <button class="report-cancel" onclick="closeReport()">キャンセル</button>
-      <button class="report-submit" id="report-submit-btn" onclick="submitReport()">報告する</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
