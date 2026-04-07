@@ -56,15 +56,20 @@ SYSTEM_PROMPT = """あなたは薬剤師・医療ライターです。
 - 最後に「出典：」を記載する
 - 一人称は使わない
 
-## 画像プロンプトの挿入ルール（重要）
-本文中に画像を入れるべき箇所（見出しの直後・重要な説明の後）に、以下の形式で画像プロンプトを挿入すること。
-実際の画像URLは後から差し替えるので、プレースホルダとして挿入する。
+## 画像の挿入ルール（重要）
+本文中に画像を入れるべき箇所（見出しの直後・重要な説明の後）に、以下の形式で画像を挿入すること。
+画像URLは {IMAGE_BASE_URL}/1.png, /2.png ... の連番で挿入する。
+{IMAGE_BASE_URL} はシステムが自動で置換するプレースホルダなのでそのまま記述すること。
 
 形式：
-![画像の説明文](IMAGE_PROMPT: Midjourney/Firefly用英語プロンプト。flat vector illustration, no text, no dates, 16:9)
+![画像の説明文]({IMAGE_BASE_URL}/1.png)
 
 例：
-![第1類医薬品の説明図](IMAGE_PROMPT: Flat vector illustration of a pharmacist behind a counter handing medicine to a customer. Teal and navy color palette, no text, no dates, no faces. 16:9 ratio.)
+![解熱鎮痛薬の比較図]({IMAGE_BASE_URL}/1.png)
+![症状別の選び方]({IMAGE_BASE_URL}/2.png)
+![注意事項のイメージ]({IMAGE_BASE_URL}/3.png)
+
+画像は本文中に3〜5枚挿入すること。番号は1から順番に振ること。
 
 ## 吹き出し記法（必ず2〜3個使うこと）
 ::: tip タイトル
@@ -91,7 +96,7 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
         print("[gen] ANTHROPIC_API_KEY が未設定", file=sys.stderr)
         return None
 
-    user_prompt = f"次のテーマでコラムを書いてください：\n\nテーマ: {theme_desc}\nタグ: {theme_tag}"
+    user_prompt = f"次のテーマでコラムを書いてください：\n\nテーマ: {theme_desc}\nタグ: {theme_tag}\n\n画像URLベース: {{IMAGE_BASE_URL}}\n（本文中の画像はすべて {{IMAGE_BASE_URL}}/1.png, /2.png ... の形式で挿入してください）"
     if context:
         user_prompt += f"\n\n参考データ（関連OTC商品）:\n{context}"
 
@@ -243,21 +248,30 @@ def run(dry_run=False, theme_index=None):
         print("[gen] コラム生成失敗", file=sys.stderr)
         return False
 
+    # IMAGE_BASE_URL を実際のSupabase StorageのURLに置換
+    sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    date_folder = today.strftime("%Y%m%d")
+    image_base_url = f"https://glxhggfxxwpfmwqoulyy.supabase.co/storage/v1/object/public/column-images/{date_folder}"
+
+    body = col_data.get("body", "")
+    body = body.replace("{IMAGE_BASE_URL}", image_base_url)
+
     col = {
         "id":      col_id,
         "title":   col_data.get("title", theme_desc[:60]),
         "date":    date_str,
         "tag":     col_data.get("tag", theme_tag),
         "summary": col_data.get("summary", "")[:200],
-        "body":    col_data.get("body", ""),
+        "body":    body,
     }
 
     print(f"[gen] タイトル: {col['title']}")
     print(f"[gen] 文字数: {len(col['body'])} 文字")
+    print(f"[gen] 画像ベースURL: {image_base_url}")
 
-    # IMAGE_PROMPT の数を表示
-    img_count = col["body"].count("IMAGE_PROMPT:")
-    print(f"[gen] 画像プロンプト: {img_count} 箇所")
+    # 画像URLの数を確認
+    img_count = col["body"].count(image_base_url)
+    print(f"[gen] 画像挿入: {img_count} 箇所")
 
     if save_to_supabase(col):
         print(f"[gen] ✅ Supabaseに下書き保存しました")
