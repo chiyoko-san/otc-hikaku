@@ -1482,18 +1482,21 @@ async function submitContact(){
 
 (async function(){
   try{
-    /* URLパラメータがあれば該当ページを表示、なければホーム */
     var params=new URLSearchParams(location.search);
     var hasPg=params.get('pg')||params.get('med')||params.get('col');
     var hasSearch=params.get('q')||params.get('cat')||params.get('syms')||params.get('ings');
+
     if(hasPg||hasSearch){
       document.getElementById('pg-home').style.display='none';
       await buildCats();
       buildSymp();
       buildIngs();
+      /* applyURLParamsを先に呼んでS状態を復元してからrender */
+      applyURLParams();
       await render();
+    } else {
+      applyURLParams();
     }
-    applyURLParams();
   }catch(e){
     console.error('初期化エラー:', e);
     document.getElementById('grid').innerHTML=
