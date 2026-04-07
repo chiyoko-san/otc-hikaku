@@ -925,8 +925,32 @@ function applyURLParams(){
   var params=new URLSearchParams(location.search);
   var pg=params.get("pg");
   var validPgs=["search","guide","column","concept","privacy","terms","contact"];
-  if(pg==="search"){
+
+  /* 検索パラメータの復元 */
+  var q=params.get("q");
+  var cat=params.get("cat");
+  var syms=params.get("syms");
+  var ings=params.get("ings");
+  var risk=params.get("risk");
+  var itype=params.get("itype");
+  var nd=params.get("nd");
+  var nw=params.get("nw");
+  var p=params.get("p");
+
+  var hasSearch = q||cat||syms||ings||risk||itype||nd||nw;
+
+  if(pg==="search" || hasSearch){
     document.getElementById('pg-home').style.display='none';
+    /* 検索状態を復元 */
+    if(q){ S.q=q; document.getElementById('qinp').value=q; }
+    if(cat){ S.cat=cat; }
+    if(syms) S.syms=syms.split(',').filter(Boolean);
+    if(ings) S.ings=ings.split(',').filter(Boolean);
+    if(risk) S.risk=risk;
+    if(itype) S.itype=itype;
+    if(nd) S.nd=true;
+    if(nw) S.nw=true;
+    if(p) S.pg=parseInt(p)||1;
     showPg('search',false);
   } else if(pg && validPgs.indexOf(pg)>-1){
     document.getElementById('pg-home').style.display='none';
@@ -1240,6 +1264,21 @@ function buildPagi(total){
 
 /* メインレンダリング */
 async function render(){
+  /* 検索状態をURLに反映 */
+  try{
+    var url = new URL(location.href);
+    url.searchParams.delete('pg'); /* searchページはpgなし */
+    if(S.q) url.searchParams.set('q', S.q); else url.searchParams.delete('q');
+    if(S.cat && S.cat!=='all') url.searchParams.set('cat', S.cat); else url.searchParams.delete('cat');
+    if(S.syms.length) url.searchParams.set('syms', S.syms.join(',')); else url.searchParams.delete('syms');
+    if(S.ings.length) url.searchParams.set('ings', S.ings.join(',')); else url.searchParams.delete('ings');
+    if(S.risk) url.searchParams.set('risk', S.risk); else url.searchParams.delete('risk');
+    if(S.itype) url.searchParams.set('itype', S.itype); else url.searchParams.delete('itype');
+    if(S.nd) url.searchParams.set('nd', '1'); else url.searchParams.delete('nd');
+    if(S.nw) url.searchParams.set('nw', '1'); else url.searchParams.delete('nw');
+    if(S.pg && S.pg>1) url.searchParams.set('p', S.pg); else url.searchParams.delete('p');
+    history.replaceState({pg:'search', q:S.q, cat:S.cat}, '', url.toString());
+  }catch(e){}
   /* ローディング表示 */
   document.getElementById('grid').innerHTML='<div class="nores" style="padding:40px;color:var(--txl)">読み込み中...</div>';
   document.getElementById('resinfo').innerHTML='';
@@ -1446,7 +1485,8 @@ async function submitContact(){
     /* URLパラメータがあれば該当ページを表示、なければホーム */
     var params=new URLSearchParams(location.search);
     var hasPg=params.get('pg')||params.get('med')||params.get('col');
-    if(hasPg){
+    var hasSearch=params.get('q')||params.get('cat')||params.get('syms')||params.get('ings');
+    if(hasPg||hasSearch){
       document.getElementById('pg-home').style.display='none';
       await buildCats();
       buildSymp();
