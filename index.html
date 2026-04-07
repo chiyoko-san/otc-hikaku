@@ -348,9 +348,322 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
 .report-status.ok{background:#f0fdf4;color:#166534;display:block}
 .report-status.err{background:#fef2f2;color:var(--red);display:block}
 
+
+/* ── 症状アキネーター ── */
+.aki-wrap{max-width:560px;margin:48px auto 0;padding:0 20px}
+.aki-toggle-btn{width:100%;padding:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.aki-toggle-btn:hover{background:rgba(255,255,255,.15);border-color:var(--teal)}
+.aki-box{display:none;margin-top:12px;background:#fff;border-radius:12px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.aki-box.open{display:block}
+.aki-prog-bar{height:3px;background:#e2e8f0;border-radius:2px;margin-bottom:1rem;overflow:hidden}
+.aki-prog-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .4s ease}
+.aki-step{font-size:11px;color:var(--txl);margin-bottom:.3rem;font-weight:600;letter-spacing:.04em}
+.aki-q{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;line-height:1.5}
+.aki-choices{display:flex;flex-direction:column;gap:7px}
+.aki-btn{padding:11px 14px;border:1.5px solid var(--bd);border-radius:8px;background:#fff;color:var(--tx);font-size:14px;cursor:pointer;text-align:left;transition:all .12s;font-family:inherit;line-height:1.4}
+.aki-btn:hover{background:var(--tl);border-color:var(--teal);color:var(--teal2)}
+.aki-back{margin-top:.75rem;padding:6px 10px;border:none;background:none;color:var(--txl);font-size:13px;cursor:pointer;font-family:inherit}
+.aki-back:hover{color:var(--tx)}
+.aki-bc{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem}
+.aki-bc-item{padding:2px 8px;background:var(--sl);border-radius:10px;font-size:11px;color:var(--txm)}
+.aki-bc-sep{font-size:11px;color:var(--txl);align-self:center}
+.aki-result{background:var(--sl);border-radius:10px;padding:16px}
+.aki-result-head{font-size:12px;color:var(--txl);margin-bottom:.5rem;font-weight:600}
+.aki-kw-area{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem}
+.aki-kw{padding:3px 10px;background:var(--tl);color:var(--teal2);border-radius:20px;font-size:12px;font-weight:600}
+.aki-adv{font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:.75rem;padding:.75rem;background:#fff;border-radius:8px;border:1px solid var(--bd)}
+.aki-similar{font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:.75rem;padding:.75rem;background:#fffbeb;border-radius:8px;border:1px solid #fde68a}
+.aki-similar-title{font-size:11px;font-weight:700;color:#92400e;margin-bottom:.4rem}
+.aki-search-btn{display:inline-block;padding:10px 20px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;transition:background .15s}
+.aki-search-btn:hover{background:var(--teal2)}
+.aki-restart{margin-top:.5rem;display:block;width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:none;color:var(--txl);font-size:12px;cursor:pointer;font-family:inherit}
+@media(max-width:600px){.aki-wrap{margin-top:32px}}
+
 </style>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2G7T178ZNY"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2G7T178ZNY">
+/* ── 症状アキネーター ── */
+var AKI_SESSION = Math.random().toString(36).slice(2);
+var AKI_HIST = [];
+var AKI_CUR = null;
+var AKI_PATH = [];
+
+var AKI_TREE = {
+q:"今もっともつらい症状はどれですか？",
+choices:[
+  {l:"頭・熱・のど",next:{q:"頭・顔まわりの症状を教えてください",choices:[
+    {l:"頭が痛い",next:{q:"どんな頭痛ですか？",choices:[
+      {l:"ズキズキ・脈打つように痛い",next:{q:"他の症状はありますか？",choices:[
+        {l:"光・音が気になる",result:{kw:["頭痛","偏頭痛"],adv:"偏頭痛が疑われます。イブプロフェン・ロキソプロフェン配合薬が有効なことが多いです。暗い静かな場所で休むことも有効です。"}},
+        {l:"吐き気もある",result:{kw:["頭痛","吐き気","偏頭痛"],adv:"偏頭痛に伴う吐き気の可能性があります。服薬が難しい場合は薬剤師に相談しましょう。"}},
+        {l:"特になし",result:{kw:["頭痛","偏頭痛"],adv:"イブプロフェンやロキソプロフェン配合の鎮痛薬が適しています。"}},
+      ]}},
+      {l:"締め付けられる・重だるい",next:{q:"どんな状況で起こりますか？",choices:[
+        {l:"長時間のデスクワーク後",result:{kw:["頭痛","肩こり","眼精疲労"],adv:"緊張型頭痛です。アセトアミノフェン配合薬が穏やかに効きます。肩・首のストレッチも効果的です。"}},
+        {l:"ストレスを感じている時",result:{kw:["頭痛","肩こり","ストレス"],adv:"緊張型頭痛です。鎮痛薬とともに、ビタミンB系の栄養剤もあわせて検討しましょう。"}},
+        {l:"朝起きた時から痛い",result:{kw:["頭痛","頭重","睡眠障害"],adv:"睡眠の質が関係している可能性があります。まず鎮痛薬で対処しつつ、続く場合は医療機関へ。"}},
+      ]}},
+      {l:"熱もある",result:{kw:["頭痛","発熱","解熱"],adv:"発熱を伴う頭痛にはアセトアミノフェンが安心です。インフルエンザ疑いの場合はNSAIDsは避けましょう。"}},
+      {l:"後頭部が突然激しく痛い",result:{kw:["頭痛"],adv:"突然の激しい頭痛はくも膜下出血の可能性があります。すぐに医療機関を受診してください。"}},
+    ]}},
+    {l:"熱がある・熱っぽい",next:{q:"他の症状はありますか？",choices:[
+      {l:"関節が痛い・筋肉痛もある",result:{kw:["発熱","解熱","関節痛","悪寒"],adv:"インフルエンザの可能性があります。アセトアミノフェン配合薬が安全です。"}},
+      {l:"のどが痛い・鼻水もある",result:{kw:["発熱","解熱","のど痛","鼻水"],adv:"風邪の初期症状です。アセトアミノフェンで解熱しながら安静にしましょう。"}},
+      {l:"熱だけ・他はない",result:{kw:["発熱","解熱","悪寒"],adv:"解熱にはアセトアミノフェンが第一選択です。38.5度以上になってから服用するのが一般的です。"}},
+    ]}},
+    {l:"のどが痛い",next:{q:"のどの症状を詳しく教えてください",choices:[
+      {l:"飲み込む時に痛む・腫れている",result:{kw:["のど痛","のどの炎症","発熱"],adv:"扁桃炎の可能性があります。トラネキサム酸配合のトローチや解熱鎮痛薬を使いましょう。"}},
+      {l:"声がかすれる",result:{kw:["声がれ","のどの炎症"],adv:"声帯の炎症が考えられます。声を使わず安静にし、のど飴やトローチを活用しましょう。"}},
+      {l:"イガイガ・乾燥感",result:{kw:["のどのイガイガ","口腔殺菌"],adv:"乾燥やほこりによる刺激が考えられます。加湿とトローチで対処しましょう。"}},
+    ]}},
+    {l:"歯・口が痛い",next:{q:"どの症状ですか？",choices:[
+      {l:"歯がズキズキ痛い",result:{kw:["歯痛"],adv:"ロキソプロフェンやイブプロフェンが有効です。なるべく早く歯科を受診しましょう。"}},
+      {l:"口内炎が痛い",result:{kw:["口内炎","口腔殺菌"],adv:"ステロイド系の口内炎薬が有効です。ビタミンB2・B6の不足も原因になります。"}},
+    ]}},
+  ]}},
+  {l:"鼻・目",next:{q:"どちらが主な症状ですか？",choices:[
+    {l:"鼻水・くしゃみが多い",next:{q:"鼻水の様子を教えてください",choices:[
+      {l:"透明でサラサラ・花粉シーズン",result:{kw:["鼻水","くしゃみ","花粉症","アレルギー性鼻炎"],adv:"花粉症が疑われます。第2世代抗ヒスタミン薬が使いやすいです。シーズン前からの服用が効果的です。"}},
+      {l:"年中・ほこりやペットで悪化",result:{kw:["鼻水","くしゃみ","アレルギー性鼻炎"],adv:"通年性アレルギー性鼻炎が疑われます。抗ヒスタミン薬を継続使用しましょう。"}},
+      {l:"黄色・緑っぽい",result:{kw:["鼻水","副鼻腔炎"],adv:"細菌性の副鼻腔炎が疑われます。市販薬の効果が限られることが多く、耳鼻科への受診をおすすめします。"}},
+    ]}},
+    {l:"鼻がつまっている",next:{q:"鼻づまりの状況は？",choices:[
+      {l:"両方つまって息苦しい",result:{kw:["鼻づまり","花粉症","副鼻腔炎"],adv:"ステロイド点鼻薬が3症状に効果的です。数日の継続使用で効果を実感しやすいです。"}},
+      {l:"夜・横になると特にひどい",result:{kw:["鼻づまり","副鼻腔炎"],adv:"枕を高くする・加湿するなどの工夫と合わせてステロイド点鼻薬を使いましょう。"}},
+      {l:"片方だけ",result:{kw:["鼻づまり","副鼻腔炎"],adv:"鼻中隔弯曲や副鼻腔炎の可能性があります。血管収縮系の点鼻薬は1週間以内にとどめましょう。"}},
+    ]}},
+    {l:"目がかゆい・充血",next:{q:"目の症状を詳しく教えてください",choices:[
+      {l:"かゆくてこすってしまう",result:{kw:["目のかゆみ","充血","花粉症"],adv:"抗ヒスタミン点眼薬が有効です。こすると悪化するので冷やしタオルで冷却もおすすめです。"}},
+      {l:"充血・目やにが多い",result:{kw:["充血","結膜炎"],adv:"アレルギー性や感染性の結膜炎が疑われます。改善しなければ眼科へ。"}},
+      {l:"乾燥・ゴロゴロする",result:{kw:["乾き目","目の疲れ","眼精疲労"],adv:"ドライアイが疑われます。ヒアルロン酸配合の点眼薬が適しています。"}},
+    ]}},
+  ]}},
+  {l:"咳・痰",next:{q:"咳の様子を教えてください",choices:[
+    {l:"乾いた咳が続く",next:{q:"咳はいつから・どんな時に出ますか？",choices:[
+      {l:"風邪から2週間以上",result:{kw:["せき","長引く咳","気管支炎"],adv:"感染後咳嗽が考えられます。3週間以上続くなら受診を検討してください。"}},
+      {l:"夜〜明け方に特にひどい",result:{kw:["夜間の咳","喘息様症状"],adv:"気管支喘息の可能性があります。呼吸器科への受診をおすすめします。"}},
+      {l:"冷たい空気・運動で悪化",result:{kw:["せき","喘息様症状","気管支炎"],adv:"気道過敏の可能性があります。気管支拡張成分配合の市販薬を使い、改善しない場合は受診してください。"}},
+    ]}},
+    {l:"痰がからむ",next:{q:"痰の色は？",choices:[
+      {l:"透明・白っぽい",result:{kw:["たん","せき","気管支炎"],adv:"ウイルス性の気管支炎が考えられます。去痰薬配合の市販薬と十分な水分補給で対処しましょう。"}},
+      {l:"黄色・緑色っぽい",result:{kw:["たん","せき"],adv:"細菌感染の可能性があります。早めに受診することをおすすめします。"}},
+    ]}},
+    {l:"息苦しい",result:{kw:["息切れ","喘息様症状"],adv:"呼吸困難を伴う症状は医療機関を受診することを強くおすすめします。"}},
+  ]}},
+  {l:"胃・お腹",next:{q:"お腹のどこが気になりますか？",choices:[
+    {l:"胃が痛い・不快感",next:{q:"どんな時に症状が出ますか？",choices:[
+      {l:"食後に胃がもたれる・重い",result:{kw:["胃もたれ","食べ過ぎ"],adv:"消化酵素配合の消化薬や健胃薬が有効です。食べすぎ・早食いを見直してみましょう。"}},
+      {l:"空腹時・夜中に痛む",result:{kw:["胃痛","胃酸過多","胸やけ"],adv:"胃酸過多が疑われます。H2ブロッカー配合の胃薬が有効です。"}},
+      {l:"食後すぐ胸やけ・酸が上がる",result:{kw:["胸やけ","胃酸過多","逆流性食道炎"],adv:"逆流性食道炎が疑われます。制酸薬・H2ブロッカーが有効です。食後すぐ横にならないことも大切です。"}},
+      {l:"飲みすぎた翌朝",result:{kw:["二日酔い","吐き気","飲み過ぎ"],adv:"基本は水分補給と休養です。ウコン系サプリ・ヘパリーゼ等が用いられます。"}},
+    ]}},
+    {l:"下痢・お腹がゆるい",next:{q:"下痢の状況は？",choices:[
+      {l:"食後すぐ・緊張時に出る",result:{kw:["下痢","腹痛","過敏性腸症候群"],adv:"過敏性腸症候群（IBS）の可能性があります。整腸薬を継続服用しつつ、ストレス管理も大切です。"}},
+      {l:"水っぽい・急に来る",result:{kw:["下痢","腹痛","整腸"],adv:"急性胃腸炎が考えられます。止痢薬より整腸薬が推奨されます。脱水に注意してください。"}},
+      {l:"外食後・食中毒かも",result:{kw:["下痢","吐き気","腹痛"],adv:"食中毒の可能性があります。無理に止めず水分補給を続け、38度以上の発熱・血便があれば受診してください。"}},
+    ]}},
+    {l:"便秘・お腹が張る",next:{q:"便秘の状況を教えてください",choices:[
+      {l:"3日以上出ていない",result:{kw:["便秘","腹部膨満","整腸"],adv:"酸化マグネシウム系の緩下薬が穏やかに効きます。水分・食物繊維の摂取増加も効果的です。"}},
+      {l:"出るが残便感がある",result:{kw:["便秘","整腸"],adv:"腸の動きを助ける整腸薬や、ビフィズス菌配合の製品が有効です。"}},
+    ]}},
+    {l:"吐き気・乗り物酔い",next:{q:"吐き気のきっかけは？",choices:[
+      {l:"乗り物・移動中",result:{kw:["乗物酔い","吐き気","めまい・立ちくらみ"],adv:"乗り物酔い止めは乗車30分〜1時間前の服用が効果的です。"}},
+      {l:"ストレス・緊張時",result:{kw:["吐き気","胃の不快感","ストレス"],adv:"機能性ディスペプシアの可能性があります。六君子湯等の漢方薬が効くこともあります。"}},
+    ]}},
+  ]}},
+  {l:"皮膚・かゆみ",next:{q:"皮膚の症状を詳しく教えてください",choices:[
+    {l:"かゆみ・発疹・赤み",next:{q:"どこに出ていますか？",choices:[
+      {l:"全身にじんましんが出た",result:{kw:["じんましん","かゆみ"],adv:"アレルギー反応が疑われます。抗ヒスタミン薬（内服）が有効です。呼吸困難・顔の腫れを伴う場合はすぐに救急へ。"}},
+      {l:"特定の場所（腕・首など）",result:{kw:["湿疹・かぶれ","かゆみ"],adv:"接触性皮膚炎が疑われます。原因物質を避けつつ、ステロイド外用薬を使用しましょう。"}},
+      {l:"虫に刺された",result:{kw:["虫刺され","かゆみ"],adv:"ステロイド配合の虫刺され薬が有効です。かき壊しを防ぐため冷却も効果的です。"}},
+    ]}},
+    {l:"乾燥・肌荒れ",next:{q:"どの部位が特に気になりますか？",choices:[
+      {l:"顔・全体的な肌荒れ",result:{kw:["肌荒れ","乾燥肌","にきび"],adv:"ヘパリン類似物質配合のクリームやビタミンC・E配合の外用薬が有効です。"}},
+      {l:"手・指のひび割れ",result:{kw:["あかぎれ","手荒れ","乾燥肌"],adv:"ヘパリン類似物質または尿素配合のクリームで保湿しましょう。"}},
+    ]}},
+    {l:"にきび・吹き出物",result:{kw:["にきび","肌荒れ","皮脂過多"],adv:"イオウ配合のにきび薬やイブプロフェンピコノール配合薬が市販されています。"}},
+    {l:"水虫・爪",next:{q:"どこに症状がありますか？",choices:[
+      {l:"足の指の間・かかと",result:{kw:["水虫","たむし"],adv:"抗真菌薬配合のクリームを4週間以上継続することが重要です。"}},
+      {l:"爪が白く・分厚い",result:{kw:["爪白癬","水虫"],adv:"爪白癬は皮膚科での処方薬が有効なことが多いです。受診をおすすめします。"}},
+    ]}},
+  ]}},
+  {l:"疲れ・眠れない",next:{q:"どんな状態が続いていますか？",choices:[
+    {l:"体が重い・だるい",next:{q:"疲れのパターンを教えてください",choices:[
+      {l:"仕事・運動後の体の疲れ",result:{kw:["肉体疲労","倦怠感","滋養強壮"],adv:"ビタミンB群・アミノ酸配合の栄養ドリンクや錠剤が有効です。"}},
+      {l:"疲れているのに眠れない",result:{kw:["肉体疲労","不眠","睡眠障害"],adv:"L-テアニン配合の睡眠補助薬が市販されています。連用は避けましょう。"}},
+      {l:"2週間以上続くだるさ",result:{kw:["肉体疲労","倦怠感"],adv:"長期間のだるさは貧血・甲状腺疾患・うつ等が原因のこともあります。医療機関での検査をおすすめします。"}},
+    ]}},
+    {l:"眠れない・眠りが浅い",next:{q:"眠れない状況を教えてください",choices:[
+      {l:"布団に入っても寝付けない",result:{kw:["不眠","睡眠障害","神経の興奮"],adv:"ジフェンヒドラミン配合の睡眠改善薬が一時的に使えます。2週間以上続く場合は受診を。"}},
+      {l:"夜中に何度も目が覚める",result:{kw:["不眠","睡眠障害"],adv:"睡眠維持困難タイプの不眠です。睡眠外来の受診も検討してください。"}},
+      {l:"ストレス・考えすぎで眠れない",result:{kw:["不眠","ストレス","神経の興奮"],adv:"神経過敏を和らげる漢方（加味帰脾湯等）が有効なことがあります。"}},
+    ]}},
+    {l:"イライラ・不安感",next:{q:"主な状況を教えてください",choices:[
+      {l:"生理前・更年期ごろから",result:{kw:["更年期障害","月経前症候群","イライラ"],adv:"命の母・加味逍遙散等の漢方薬が月経前症候群や更年期の症状に用いられます。"}},
+      {l:"仕事・人間関係のストレス",result:{kw:["ストレス","不安感","神経の興奮"],adv:"抑肝散等の漢方薬が軽度の神経症状に使われます。深刻なら心療内科への受診も検討してください。"}},
+    ]}},
+  ]}},
+  {l:"肩・腰・手足",next:{q:"どこが気になりますか？",choices:[
+    {l:"肩・首がこる・痛い",next:{q:"こりの状況を教えてください",choices:[
+      {l:"デスクワーク・スマホが原因",result:{kw:["肩こり","首の痛み","眼精疲労"],adv:"血行改善成分配合の錠剤や温感シップが有効です。"}},
+      {l:"ひどい頭痛も伴う",result:{kw:["肩こり","頭痛","緊張型頭痛"],adv:"緊張型頭痛が疑われます。鎮痛薬と筋弛緩作用のある市販薬を組み合わせることがあります。"}},
+      {l:"腕がしびれる",result:{kw:["肩こり","手足のしびれ"],adv:"頸椎由来の神経症状の可能性があります。整形外科への受診をおすすめします。"}},
+    ]}},
+    {l:"腰が痛い",next:{q:"腰痛の状況を教えてください",choices:[
+      {l:"急に痛くなった・ぎっくり腰",result:{kw:["腰痛","筋肉痛","打撲・ねんざ"],adv:"急性腰痛が疑われます。48時間は冷湿布→その後温湿布が一般的です。ロキソプロフェン配合薬が有効です。"}},
+      {l:"慢性的にずっと痛い",result:{kw:["腰痛","神経痛","関節痛"],adv:"慢性腰痛は整形外科での診断が重要です。温感シップや鎮痛薬で対処しながら受診しましょう。"}},
+      {l:"足にしびれも広がる",result:{kw:["腰痛","手足のしびれ","神経痛"],adv:"坐骨神経痛・椎間板ヘルニアの可能性があります。整形外科への受診をおすすめします。"}},
+    ]}},
+    {l:"手足がしびれる・冷える",next:{q:"しびれ・冷えの状況は？",choices:[
+      {l:"末端が特に冷たい",result:{kw:["冷え","手足のしびれ","末梢血行障害"],adv:"ビタミンE・当帰等配合の漢方系薬が冷えに用いられます。当帰芍薬散等も検討を。"}},
+      {l:"長時間同じ姿勢の後",result:{kw:["手足のしびれ","血行不良","冷え"],adv:"血行不良が原因と考えられます。ビタミンB12・E配合薬が有効なことがあります。"}},
+    ]}},
+    {l:"関節・筋肉が痛む",next:{q:"どんな痛みですか？",choices:[
+      {l:"運動・スポーツ後",result:{kw:["筋肉痛","打撲・ねんざ","関節痛"],adv:"鎮痛薬と外用の消炎鎮痛薬（冷湿布）を組み合わせましょう。"}},
+      {l:"朝に関節がこわばる",result:{kw:["関節痛","こわばり","リウマチ様症状"],adv:"関節リウマチの初期症状の可能性もあります。リウマチ科・整形外科への受診をおすすめします。"}},
+      {l:"足首・膝をひねった",result:{kw:["打撲・ねんざ","関節痛"],adv:"捻挫にはRICE処置（安静・冷却・圧迫・挙上）が基本です。ロキソプロフェン配合薬と冷湿布を使いましょう。"}},
+    ]}},
+  ]}},
+]};
+
+function toggleAki(){
+  var box=document.getElementById('aki-box');
+  var btn=document.getElementById('aki-toggle-btn');
+  if(box.classList.contains('open')){
+    box.classList.remove('open');
+    btn.textContent='💊 症状から薬を探す（質問に答えるだけ）';
+  } else {
+    box.classList.add('open');
+    btn.textContent='▲ 閉じる';
+    if(!AKI_CUR){ AKI_CUR=AKI_TREE; akiRender(); }
+  }
+}
+
+function akiRender(){
+  var total=8;
+  var step=AKI_HIST.length+1;
+  var pct=Math.min(95,Math.round(step/total*100));
+  document.getElementById('aki-prog').style.width=pct+'%';
+  document.getElementById('aki-step').textContent='ステップ '+step;
+  /* パンくず */
+  var bc=document.getElementById('aki-bc');
+  bc.innerHTML=AKI_HIST.map(function(h,i){
+    return (i>0?'<span class="aki-bc-sep">›</span>':'')+
+      '<span class="aki-bc-item">'+h.chosen+'</span>';
+  }).join('');
+  var main=document.getElementById('aki-main');
+  if(AKI_CUR.result){
+    akiRenderResult(main,AKI_CUR.result);
+    return;
+  }
+  var html='<div class="aki-q">'+AKI_CUR.q+'</div><div class="aki-choices">';
+  AKI_CUR.choices.forEach(function(c,i){
+    html+='<button class="aki-btn" onclick="akiChoose('+i+')">'+c.l+'</button>';
+  });
+  html+='</div>';
+  if(AKI_HIST.length>0){
+    html+='<button class="aki-back" onclick="akiBack()">← 前の質問に戻る</button>';
+  }
+  main.innerHTML=html;
+}
+
+function akiChoose(i){
+  var c=AKI_CUR.choices[i];
+  AKI_HIST.push({node:AKI_CUR,chosen:c.l});
+  AKI_PATH.push(c.l);
+  AKI_CUR=c.next||{result:c.result};
+  akiRender();
+}
+
+function akiBack(){
+  if(!AKI_HIST.length)return;
+  var prev=AKI_HIST.pop();
+  AKI_PATH.pop();
+  AKI_CUR=prev.node;
+  akiRender();
+}
+
+async function akiLogToSB(kw, clicked){
+  try{
+    await fetch(SB_URL+'/rest/v1/symptom_logs',{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
+        'Content-Type':'application/json','Prefer':'return=minimal'
+      },
+      body:JSON.stringify({
+        session_id:AKI_SESSION,
+        path:AKI_PATH,
+        result_keywords:kw,
+        clicked_search:clicked
+      })
+    });
+  }catch(e){}
+}
+
+async function akiGetSimilar(kw){
+  try{
+    /* 同じキーワードを含むログから多く選ばれた検索キーワードを取得 */
+    var encoded=encodeURIComponent(JSON.stringify(kw[0]));
+    var res=await fetch(
+      SB_URL+'/rest/v1/symptom_logs?result_keywords=cs.'+encodeURIComponent('["'+kw[0]+'"]')+'&select=result_keywords&limit=50&order=created_at.desc',
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}
+    );
+    var logs=await res.json();
+    if(!logs||!logs.length)return null;
+    /* キーワードの出現頻度を集計 */
+    var freq={};
+    logs.forEach(function(log){
+      (log.result_keywords||[]).forEach(function(k){
+        if(kw.indexOf(k)===-1) freq[k]=(freq[k]||0)+1;
+      });
+    });
+    var sorted=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).slice(0,3);
+    if(!sorted.length)return null;
+    return {count:logs.length, extra:sorted};
+  }catch(e){return null;}
+}
+
+async function akiRenderResult(el,r){
+  document.getElementById('aki-prog').style.width='100%';
+  document.getElementById('aki-step').textContent='結果';
+  /* Supabaseにログ記録 */
+  akiLogToSB(r.kw, false);
+  /* 類似ユーザーのデータ取得 */
+  var similar=await akiGetSimilar(r.kw);
+  var kw=r.kw||[];
+  var adv=r.adv||'';
+  var q=encodeURIComponent(kw[0]||'');
+  var syms=encodeURIComponent(kw.join(','));
+  var url='/?q='+q+'&syms='+syms;
+  var tags=kw.map(function(k){return'<span class="aki-kw">'+k+'</span>';}).join('');
+  var similarHtml='';
+  if(similar&&similar.count>=3){
+    similarHtml='<div class="aki-similar">'
+      +'<div class="aki-similar-title">👥 同じ症状で来た'+similar.count+'人はこんな症状も持っていました</div>'
+      +similar.extra.map(function(k){return'<span class="aki-kw" style="background:#fef3c7;color:#92400e">'+k+'</span> ';}).join('')
+      +'</div>';
+  }
+  el.innerHTML='<div class="aki-result">'
+    +'<div class="aki-result-head">あなたの症状に関連するキーワード</div>'
+    +'<div class="aki-kw-area">'+tags+'</div>'
+    +'<div class="aki-adv">'+adv+'</div>'
+    +similarHtml
+    +'<a class="aki-search-btn" href="'+url+'" onclick="akiLogToSB('+JSON.stringify(kw)+',true)">該当する市販薬を見る</a>'
+    +'<button class="aki-restart" onclick="akiRestart()">最初からやり直す</button>'
+    +'</div>';
+}
+
+function akiRestart(){
+  AKI_HIST=[];AKI_PATH=[];AKI_CUR=AKI_TREE;
+  AKI_SESSION=Math.random().toString(36).slice(2);
+  document.getElementById('aki-prog').style.width='5%';
+  document.getElementById('aki-step').textContent='ステップ 1';
+  document.getElementById('aki-bc').innerHTML='';
+  akiRender();
+}
+
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -409,6 +722,18 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
       <div class="home-stat"><div class="home-stat-num">7,500+</div><div class="home-stat-label">収録医薬品</div></div>
       <div class="home-stat"><div class="home-stat-num">0</div><div class="home-stat-label">広告・案件</div></div>
       <div class="home-stat"><div class="home-stat-num">PMDA</div><div class="home-stat-label">データソース</div></div>
+    </div>
+    <!-- アキネーター -->
+    <div class="aki-wrap">
+      <button class="aki-toggle-btn" onclick="toggleAki()" id="aki-toggle-btn">
+        💊 症状から薬を探す（質問に答えるだけ）
+      </button>
+      <div class="aki-box" id="aki-box">
+        <div class="aki-prog-bar"><div class="aki-prog-fill" id="aki-prog" style="width:5%"></div></div>
+        <div class="aki-step" id="aki-step">ステップ 1</div>
+        <div id="aki-bc" class="aki-bc"></div>
+        <div id="aki-main"></div>
+      </div>
     </div>
   </div>
 </div>
