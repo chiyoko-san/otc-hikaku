@@ -1497,23 +1497,62 @@ async function submitContact(){
 (async function(){
   try{
     var params=new URLSearchParams(location.search);
-    var hasPg=params.get('pg')||params.get('med')||params.get('col');
-    var hasSearch=params.get('q')||params.get('cat')||params.get('syms')||params.get('ings');
-    var needSearch=hasPg==='search'||(!hasPg&&hasSearch);
+    var q=params.get('q');
+    var cat=params.get('cat');
+    var syms=params.get('syms');
+    var ings=params.get('ings');
+    var risk=params.get('risk');
+    var itype=params.get('itype');
+    var nd=params.get('nd');
+    var nw=params.get('nw');
+    var p=params.get('p');
+    var pg=params.get('pg');
+    var colId=params.get('col');
+    var medId=params.get('med');
+    var hasSearch=q||cat||syms||ings||risk||itype||nd||nw;
+    var isSearchPg=pg==='search'||(!pg&&hasSearch);
 
-    if(hasPg||hasSearch){
+    if(medId){
+      /* 医薬品詳細 */
       document.getElementById('pg-home').style.display='none';
-      /* 1. 状態復元（S.qなどをセット） */
-      applyURLParams();
-      /* 2. 検索ページの場合はbuildCats+render */
-      if(needSearch||hasSearch){
-        await buildCats();
-        buildSymp();
-        buildIngs();
-        await render();
-      }
+      await buildCats(); buildSymp(); buildIngs();
+      await showMedDetail(parseInt(medId));
+    } else if(colId){
+      /* コラム詳細 */
+      document.getElementById('pg-home').style.display='none';
+      showPg('column',false);
+      showColFromDB(colId);
+    } else if(pg&&pg!=='search'){
+      /* guide/concept/privacy等 */
+      document.getElementById('pg-home').style.display='none';
+      showPg(pg,false);
+    } else if(isSearchPg){
+      /* 検索ページ：S状態セット→buildCats→render の順を保証 */
+      document.getElementById('pg-home').style.display='none';
+      document.querySelectorAll('.pg').forEach(function(el){el.classList.remove('on');});
+      document.querySelectorAll('.ntab').forEach(function(el){el.classList.remove('on');});
+      var pgEl=document.getElementById('pg-search');
+      if(pgEl) pgEl.classList.add('on');
+      var tabEl=document.getElementById('t-search');
+      if(tabEl) tabEl.classList.add('on');
+      /* S状態を先にセット */
+      if(q){ S.q=q; var qi=document.getElementById('qinp'); if(qi) qi.value=q; }
+      if(cat) S.cat=cat;
+      if(syms) S.syms=syms.split(',').filter(Boolean);
+      if(ings) S.ings=ings.split(',').filter(Boolean);
+      if(risk) S.risk=risk;
+      if(itype) S.itype=itype;
+      if(nd) S.nd=true;
+      if(nw) S.nw=true;
+      if(p) S.pg=parseInt(p)||1;
+      /* buildCats完了後にrender */
+      await buildCats();
+      buildSymp();
+      buildIngs();
+      await render();
     } else {
-      applyURLParams();
+      /* ホーム */
+      /* ホームは表示済みなので何もしない */
     }
   }catch(e){
     console.error('初期化エラー:', e);
