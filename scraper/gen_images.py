@@ -147,12 +147,14 @@ def extract_prompts(body: str) -> list[dict]:
                 "already_uploaded": False,
             })
         elif "supabase" in url and "column-images" in url:
+            # URLが入っていても実ファイルが存在するか確認
             results.append({
                 "alt": alt,
                 "prompt": None,
                 "original": m.group(0),
-                "already_uploaded": True,
+                "already_uploaded": False,  # HEADリクエストで確認
                 "url": url,
+                "existing_url": url,  # 既存URLは保持
             })
     return results
 
@@ -174,6 +176,24 @@ def run(col_id: str, dry_run: bool = False):
 
     prompts = extract_prompts(body)
     total = len(prompts)
+    # 実際にファイルが存在するか確認
+    def file_exists(url):
+        try:
+            req = urllib.request.Request(url, method="HEAD")
+            with urllib.request.urlopen(req, timeout=10) as r:
+                return r.status == 200
+        except Exception:
+            return False
+
+    for p in prompts:
+        if p.get("existing_url"):
+            if file_exists(p["existing_url"]):
+                p["already_uploaded"] = True
+                print(f"[img]   既存ファイル確認済み: {p['existing_url'].split('/')[-1]}")
+            else:
+                p["already_uploaded"] = False
+                print(f"[img]   ファイル未存在（再生成します）: {p['existing_url'].split('/')[-1]}")
+
     need_gen = [p for p in prompts if not p["already_uploaded"]]
     already = [p for p in prompts if p["already_uploaded"]]
 
@@ -199,16 +219,28 @@ def run(col_id: str, dry_run: bool = False):
 
     for i, p in enumerate(need_gen, 1):
         print(f"\n[img] 生成中 {i}/{len(need_gen)}: {p['alt'][:40]}")
-        print(f"      prompt: {p['prompt'][:80]}...")
+
+        # プロンプトがない場合（既存URLのみ）は汎用プロンプトで生成
+        prompt = p.get("prompt") or (
+            f"Flat vector illustration for a Japanese health information article. "
+            f"Topic: {p['alt']}. Clean minimal design, teal and navy color palette, "
+            f"no text, no dates, no faces. 16:9 ratio."
+        )
+        print(f"      prompt: {prompt[:80]}...")
 
         try:
-            image_bytes = generate_image(p["prompt"])
+            image_bytes = generate_image(prompt)
             print(f"      → 生成完了 ({len(image_bytes)//1024}KB)")
         except Exception as e:
             print(f"      → 生成失敗: {e}", file=sys.stderr)
             continue
 
-        storage_path = f"{date_folder}/{i}.png"
+        # 既存URLがあればそのパスを使う、なければ番号ベース
+        if p.get("existing_url"):
+            # https://.../column-images/20260408/1.png → 20260408/1.png
+            storage_path = "/".join(p["existing_url"].split("/")[-2:])
+        else:
+            storage_path = f"{date_folder}/{i}.png"
         try:
             public_url = upload_to_storage(image_bytes, storage_path)
             print(f"      → アップロード完了: {public_url}")
@@ -216,7 +248,7 @@ def run(col_id: str, dry_run: bool = False):
             print(f"      → アップロード失敗: {e}", file=sys.stderr)
             continue
 
-        # 本文のIMAGE_PROMPTを実際のURLに置換
+        # 本文を更新（IMAGE_PROMPTまたは既存URLを新URLに置換）
         new_body = new_body.replace(
             p["original"],
             f'![{p["alt"]}]({public_url})',
