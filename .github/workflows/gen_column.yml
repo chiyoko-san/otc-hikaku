@@ -15,6 +15,12 @@ on:
         default: "false"
         type: choice
         options: ["false", "true"]
+      skip_images:
+        description: "画像生成をスキップする"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
 
 jobs:
   generate:
@@ -27,6 +33,7 @@ jobs:
           python-version: "3.11"
 
       - name: コラム生成
+        id: gen_col
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SUPABASE_URL:      ${{ secrets.SUPABASE_URL }}
@@ -40,3 +47,19 @@ jobs:
             ARGS="$ARGS --theme ${{ github.event.inputs.theme }}"
           fi
           python scraper/gen_column.py $ARGS
+
+          # コラムIDを出力（画像生成に使う）
+          TODAY=$(python3 -c "from datetime import datetime,timezone,timedelta; now=datetime.now(timezone(timedelta(hours=9))); slot=0 if now.hour<15 else 1; print(f'auto_{now.strftime(\"%Y%m%d\")}_{slot}')")
+          echo "col_id=$TODAY" >> $GITHUB_OUTPUT
+          echo "[workflow] コラムID: $TODAY"
+
+      - name: 画像生成
+        if: ${{ github.event.inputs.dry_run != 'true' && github.event.inputs.skip_images != 'true' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SUPABASE_URL:   ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY:   ${{ secrets.SUPABASE_KEY }}
+        run: |
+          COL_ID="${{ steps.gen_col.outputs.col_id }}"
+          echo "[workflow] 画像生成開始: $COL_ID"
+          python scraper/gen_images.py --col-id "$COL_ID" || echo "[workflow] 画像生成でエラーが発生しましたが続行します"
