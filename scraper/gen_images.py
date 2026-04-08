@@ -92,11 +92,12 @@ def upload_to_storage(image_bytes: bytes, storage_path: str) -> str:
 # ── Gemini Imagen ─────────────────────────────────────────
 
 def generate_image(prompt: str) -> bytes:
-    """Gemini Imagen 3でpngバイト列を返す"""
+    """Gemini 2.5 Flash Image でpngバイト列を返す（generateContent API使用）"""
     api_key = os.environ["GEMINI_API_KEY"]
+    # generateContent APIを使用（imagen-4.0 or gemini-2.5-flash-image-preview）
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"imagen-3.0-generate-002:predict?key={api_key}"
+        f"imagen-4.0-generate-001:predict?key={api_key}"
     )
     payload = json.dumps({
         "instances": [{"prompt": prompt}],
@@ -116,12 +117,40 @@ def generate_image(prompt: str) -> bytes:
     try:
         with urllib.request.urlopen(req, timeout=120) as r:
             resp = json.loads(r.read().decode("utf-8"))
+        b64 = resp["predictions"][0]["bytesBase64Encoded"]
+        return base64.b64decode(b64)
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        # imagen-4がダメならgemini-2.5-flash-image-previewにフォールバック
+        print(f"[img]   imagen-4失敗、gemini-2.5-flash-imageにフォールバック: {e.code}")
+
+    # フォールバック: gemini-2.5-flash-image-preview（generateContent）
+    url2 = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"gemini-2.5-flash-image-preview:generateContent?key={api_key}"
+    )
+    payload2 = json.dumps({
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
+    }).encode("utf-8")
+    req2 = urllib.request.Request(
+        url2,
+        data=payload2,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req2, timeout=120) as r:
+            resp2 = json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8")
         raise RuntimeError(f"Gemini API error {e.code}: {body}")
 
-    b64 = resp["predictions"][0]["bytesBase64Encoded"]
-    return base64.b64decode(b64)
+    # inlineDataからバイト列を取得
+    for part in resp2.get("candidates", [{}])[0].get("content", {}).get("parts", []):
+        if "inlineData" in part:
+            return base64.b64decode(part["inlineData"]["data"])
+    raise RuntimeError("Gemini APIから画像データが返りませんでした")
 
 
 # ── プロンプト抽出 ────────────────────────────────────────
