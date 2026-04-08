@@ -820,10 +820,10 @@ function showPg(id, push){
   if(id==="guide")  buildGuide();
   if(id==="column") buildCols();
   if(push!==false){
-    var url=new URL(location.href);
-    if(id==="search") url.searchParams.delete("pg");
-    else url.searchParams.set("pg",id);
-    history.pushState({pg:id},"",url.toString());
+    /* URLを完全にリセットしてからページ指定のみ付与 */
+    var newUrl=location.pathname;
+    if(id!=="search") newUrl+='?pg='+id;
+    history.pushState({pg:id},'',newUrl);
   }
 }
 
@@ -1141,6 +1141,20 @@ function buildPagi(total){
 
 /* メインレンダリング */
 async function render(){
+  /* URLをゼロから組み立て（パラメータが蓄積しないように） */
+  try{
+    var parts=[];
+    if(S.q) parts.push('q='+encodeURIComponent(S.q));
+    if(S.cat&&S.cat!=='all') parts.push('cat='+encodeURIComponent(S.cat));
+    if(S.syms&&S.syms.length) parts.push('syms='+encodeURIComponent(S.syms.join(',')));
+    if(S.ings&&S.ings.length) parts.push('ings='+encodeURIComponent(S.ings.join(',')));
+    if(S.risk) parts.push('risk='+encodeURIComponent(S.risk));
+    if(S.itype) parts.push('itype='+encodeURIComponent(S.itype));
+    if(S.nd) parts.push('nd=1');
+    if(S.nw) parts.push('nw=1');
+    if(S.pg&&S.pg>1) parts.push('p='+S.pg);
+    history.replaceState({pg:'search'},'',location.pathname+(parts.length?'?'+parts.join('&'):''));
+  }catch(e){}
   /* ローディング表示 */
   document.getElementById('grid').innerHTML='<div class="nores" style="padding:40px;color:var(--txl)">読み込み中...</div>';
   document.getElementById('resinfo').innerHTML='';
@@ -1585,10 +1599,7 @@ function goHome(){
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
   document.getElementById('pg-home').style.display='block';
-  var url=new URL(location.href);
-  url.searchParams.delete('pg');url.searchParams.delete('med');url.searchParams.delete('col');
-  url.searchParams.delete('q');url.searchParams.delete('cat');url.searchParams.delete('syms');
-  history.pushState({home:true},'',url.toString());
+  history.pushState({home:true},'',location.pathname);
   window.scrollTo(0,0);
 }
 
@@ -1605,10 +1616,8 @@ async function doHomeSearch(q){
     await buildCats();buildSymp();buildIngs();
   }
   if(val){S.q=val;var qi=document.getElementById('qinp');if(qi)qi.value=val;}
-  var url=new URL(location.href);
-  if(val)url.searchParams.set('q',val);else url.searchParams.delete('q');
-  url.searchParams.delete('pg');
-  history.pushState({pg:'search'},'',url.toString());
+  var newUrl=val?location.pathname+'?q='+encodeURIComponent(val):location.pathname;
+  history.pushState({pg:'search'},'',newUrl);
   await render();
 }
 </script>
