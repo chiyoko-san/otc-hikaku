@@ -152,8 +152,8 @@ def save_to_supabase(col: dict) -> bool:
         with urllib.request.urlopen(req_check, timeout=30) as r:
             existing = json.loads(r.read().decode("utf-8"))
             if existing:
-                print(f"[gen] ID重複: {col['id']} → スキップ")
-                return False
+              print(f"[gen] ID重複: {col['id']} → 生成済みです（正常終了）")
+              return True
     except Exception as e:
         print(f"[gen] 重複チェックエラー: {e}", file=sys.stderr)
 
