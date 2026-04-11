@@ -973,7 +973,7 @@ function buildColPopular(cols){
       ?'<div class="cside-thumb"><img src="'+col.thumb+'" alt="" loading="lazy"></div>'
       :'<div class="cside-thumb"></div>';
     var sid=col.slug||col.id;
-    return '<div class="cside-item" onclick="showColFromDB(\"'+sid+'\")">'
+    return '<div class="cside-item" data-sid="'+sid+'" onclick="showColFromDB(this.dataset.sid)">'
       +'<div class="cside-num">'+(i+1)+'</div>'
       +thumb
       +'<div class="cside-item-body">'
@@ -988,19 +988,94 @@ async function showColFromDB(id){
   document.getElementById('cdetail').innerHTML='<div style="padding:40px;text-align:center;color:var(--txl)">読み込み中...</div>';
   document.getElementById('cdetail').style.display='block';
   try{
-    var res = await sbFetch('columns?id=eq.'+encodeURIComponent(id)+'&limit=1');
-    var data = await res.json();
-    var col = data[0];
+    var isId=id&&(id.match(/^c\d+$/)||id.match(/^auto_/));
+    var query=isId?'columns?id=eq.'+encodeURIComponent(id)+'&limit=1'
+                  :'columns?slug=eq.'+encodeURIComponent(id)+'&limit=1';
+    var res=await sbFetch(query);
+    var data=await res.json();
+    var col=data[0];
     if(!col){document.getElementById('cdetail').innerHTML='<div style="padding:40px">記事が見つかりません</div>';return;}
-    var body = mdToHtml(col.body||'');
+    /* URLをslugで更新 */
+    var colKey=col.slug||col.id;
+    history.pushState({pg:'column',col:colKey},'',location.pathname+'?pg=column&col='+encodeURIComponent(colKey));
+    var body=mdToHtml(col.body||'');
+    /* サイドバー用人気コラム取得 */
+    var sideHtml=await buildColDetailSide(col.id);
+    /* コラム本文CTA */
+    var ctaTag=col.tag||'';
+    var ctaHtml='<div class="col-cta">'
+      +'<div class="col-cta-title">この記事を読んだ方へ</div>'
+      +'<div class="col-cta-items">'
+      +'<button class="col-cta-item" id="cta-search">'
+        +'<div class="col-cta-icon">&#128138;</div>'
+        +'<div class="col-cta-label">薬を検索する</div>'
+        +'<div class="col-cta-desc">'+ctaTag+'関連の市販薬を探す</div>'
+      +'</button>'
+      +'<button class="col-cta-item" id="cta-guide">'
+        +'<div class="col-cta-icon">&#128269;</div>'
+        +'<div class="col-cta-label">症状から探す</div>'
+        +'<div class="col-cta-desc">症状グループから市販薬を探す</div>'
+      +'</button>'
+      +'<button class="col-cta-item" id="cta-aki">'
+        +'<div class="col-cta-icon">&#128172;</div>'
+        +'<div class="col-cta-label">質問に答えて薬を探す</div>'
+        +'<div class="col-cta-desc">3〜4つの質問で薬を絞り込む</div>'
+      +'</button>'
+      +'</div>'
+    +'</div>';
+    /* CTAのイベントを後から付与 */
+    setTimeout(function(){
+      var bs=document.getElementById('cta-search');
+      var bg=document.getElementById('cta-guide');
+      var ba=document.getElementById('cta-aki');
+      if(bs) bs.addEventListener('click',function(){doHomeSearch(ctaTag);});
+      if(bg) bg.addEventListener('click',function(){showPg('guide');});
+      if(ba) ba.addEventListener('click',function(){
+        showPg('column',false);
+        document.getElementById('pg-home').style.display='block';
+        toggleAki();
+      });
+    },100);
     document.getElementById('cdetail').innerHTML=
-      '<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
-      +'<div class="cdetail"><h1>'+col.title+'</h1>'
-      +'<div class="cmeta">'+col.date+' | '+col.tag+'</div>'
-      +'<div class="cbody">'+body+'</div></div>';
+      '<div class="col-detail-layout">'
+        +'<div class="col-detail-main">'
+          +'<button type="button" class="bkbtn" onclick="backCol()">← コラム一覧に戻る</button>'
+          +'<div class="cdetail">'
+            +'<h1>'+col.title+'</h1>'
+            +'<div class="cmeta">'+col.date+' | '+col.tag+'</div>'
+            +'<div class="cbody">'+body+'</div>'
+          +'</div>'
+          +ctaHtml
+        +'</div>'
+        +'<aside class="col-detail-side">'+sideHtml+'</aside>'
+      +'</div>';
   }catch(e){
     document.getElementById('cdetail').innerHTML='<div style="padding:40px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
   }
+}
+
+async function buildColDetailSide(currentId){
+  try{
+    var res=await sbFetch('columns?select=id,title,date,tag,thumb,slug&status=eq.published&order=date.desc&limit=6');
+    var cols=await res.json();
+    var others=cols.filter(function(c){return c.id!==currentId;}).slice(0,5);
+    if(!others.length) return '';
+    var items=others.map(function(c,i){
+      var thumb=c.thumb&&c.thumb.length>10
+        ?'<div class="cside-thumb"><img src="'+c.thumb+'" alt="" loading="lazy"></div>'
+        :'<div class="cside-thumb"></div>';
+      var sid=c.slug||c.id;
+      return '<div class="cside-item" data-sid="'+sid+'" onclick="showColFromDB(this.dataset.sid)">'
+        +'<div class="cside-num">'+(i+1)+'</div>'
+        +thumb
+        +'<div class="cside-item-body">'
+          +'<div class="cside-item-title">'+c.title+'</div>'
+          +'<div class="cside-item-date">'+c.date+'</div>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+    return '<div class="cside-box"><div class="cside-title">他のコラム</div>'+items+'</div>';
+  }catch(e){return '';}
 }
 
 function showCol(id){
