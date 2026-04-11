@@ -415,3 +415,13 @@ footer a:hover{color:#fff}
 .d-input-mode{display:flex;gap:6px;margin-bottom:10px}
 .d-mode-btn{padding:6px 14px;border:1px solid var(--bd);border-radius:20px;background:var(--wh);color:var(--txm);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
 .d-mode-btn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* 被害報告フォーム - 追加項目 */
+.d-form-section-title{font-size:13px;font-weight:700;color:var(--navy);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px}
+.d-form-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.d-consult-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin-top:6px}
+.d-upload-area{border:2px dashed var(--bd);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--sl)}
+.d-upload-area:hover{border-color:var(--teal);background:var(--tl)}
+.d-upload-icon{font-size:28px;margin-bottom:8px}
+.d-upload-text{font-size:14px;color:var(--txm);line-height:1.6}
+@media(max-width:600px){.d-form-row{grid-template-columns:1fr}}

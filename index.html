@@ -371,12 +371,96 @@
           <label>詳細（任意）</label>
           <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法など（個人情報は含めないでください）" rows="4"></textarea>
         </div>
+
+        <div class="d-form-section-title">📸 証拠・スクリーンショット（任意）</div>
         <div class="fg">
-          <label>メールアドレス（任意・非公開）</label>
-          <input type="email" id="d-email" placeholder="返信が必要な場合のみ">
-          <div style="font-size:11px;color:var(--txl);margin-top:4px">公開されません。運営からの返信が必要な場合のみ入力してください。</div>
+          <label>購入画面・広告・やり取りのスクリーンショット</label>
+          <div class="d-upload-area" id="d-upload-area" onclick="document.getElementById('d-screenshot').click()">
+            <div id="d-upload-placeholder">
+              <div class="d-upload-icon">📎</div>
+              <div class="d-upload-text">クリックして画像を選択<br><span style="font-size:11px;color:var(--txl)">PNG・JPG・GIF（最大5MB）</span></div>
+            </div>
+            <div id="d-upload-preview" style="display:none"></div>
+          </div>
+          <input type="file" id="d-screenshot" accept="image/*" style="display:none" onchange="previewScreenshot(this)">
+          <button type="button" id="d-screenshot-clear" style="display:none;margin-top:6px;background:none;border:none;color:var(--txl);font-size:12px;cursor:pointer" onclick="clearScreenshot()">✕ 画像を削除</button>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+
+        <div class="d-form-section-title">👤 投稿者情報（任意・集計のみ使用）</div>
+        <div class="d-form-row">
+          <div class="fg">
+            <label>ニックネーム</label>
+            <input type="text" id="d-nickname" placeholder="例：匿名希望" maxlength="30">
+          </div>
+          <div class="fg">
+            <label>年齢</label>
+            <select id="d-age">
+              <option value="">選択しない</option>
+              <option value="10">10代</option>
+              <option value="20">20代</option>
+              <option value="30">30代</option>
+              <option value="40">40代</option>
+              <option value="50">50代</option>
+              <option value="60">60代以上</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>性別</label>
+            <select id="d-gender">
+              <option value="">選択しない</option>
+              <option value="male">男性</option>
+              <option value="female">女性</option>
+              <option value="other">その他</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="d-form-section-title">🛒 購入・対処情報（任意・集計のみ使用）</div>
+        <div class="d-form-row">
+          <div class="fg">
+            <label>購入経路</label>
+            <select id="d-route">
+              <option value="">選択しない</option>
+              <option value="sns_ad">SNS広告</option>
+              <option value="search_ad">検索広告</option>
+              <option value="tv">テレビ・雑誌</option>
+              <option value="store">店頭</option>
+              <option value="word_of_mouth">知人紹介</option>
+              <option value="other">その他</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>購入時期</label>
+            <input type="month" id="d-purchase-date">
+          </div>
+          <div class="fg">
+            <label>解決状況</label>
+            <select id="d-resolve">
+              <option value="unresolved">未解決</option>
+              <option value="negotiating">交渉中</option>
+              <option value="resolved">解決済み</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>相談先（複数選択可）</label>
+          <div class="d-consult-items">
+            <label class="dtype-item"><input type="checkbox" value="none"> まだ相談していない</label>
+            <label class="dtype-item"><input type="checkbox" value="consumer_center"> 消費生活センター（188）</label>
+            <label class="dtype-item"><input type="checkbox" value="credit_card"> クレジットカード会社</label>
+            <label class="dtype-item"><input type="checkbox" value="lawyer"> 弁護士・法テラス</label>
+            <label class="dtype-item"><input type="checkbox" value="police"> 警察</label>
+            <label class="dtype-item"><input type="checkbox" value="other"> その他</label>
+          </div>
+        </div>
+
+        <div class="d-form-section-title">📧 連絡先（任意）</div>
+        <div class="fg">
+          <label>メールアドレス</label>
+          <input type="email" id="d-email" placeholder="運営からの連絡を希望する場合のみ入力">
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
           <button type="button" class="btn" onclick="submitDamageReport()">報告を投稿する</button>
           <div style="font-size:12px;color:var(--txl)">投稿内容は即時公開されます</div>
         </div>
@@ -1669,69 +1753,135 @@ function clearDamageMed(){
 }
 
 /* ── 投稿 ── */
+
+/* ── スクリーンショット ── */
+function previewScreenshot(input){
+  if(!input.files||!input.files[0]) return;
+  var file=input.files[0];
+  if(file.size>5*1024*1024){ alert('5MB以下の画像を選択してください'); input.value=''; return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById('d-upload-placeholder').style.display='none';
+    var prev=document.getElementById('d-upload-preview');
+    prev.innerHTML='<img src="'+e.target.result+'" style="max-width:100%;max-height:200px;border-radius:8px;display:block;margin:0 auto">';
+    prev.style.display='block';
+    document.getElementById('d-screenshot-clear').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearScreenshot(){
+  document.getElementById('d-screenshot').value='';
+  document.getElementById('d-upload-placeholder').style.display='block';
+  document.getElementById('d-upload-preview').style.display='none';
+  document.getElementById('d-upload-preview').innerHTML='';
+  document.getElementById('d-screenshot-clear').style.display='none';
+}
+
+async function uploadDamageScreenshot(file){
+  try{
+    var sb=getSBConf();
+    var ext=file.name.split('.').pop()||'png';
+    var path='reports/'+Date.now()+'.'+ext;
+    var res=await fetch(sb.url+'/storage/v1/object/damage-screenshots/'+path,{
+      method:'POST',
+      headers:{
+        'apikey':sb.key,'Authorization':'Bearer '+sb.key,
+        'Content-Type':file.type,'x-upsert':'true'
+      },
+      body: file
+    });
+    if(!res.ok) return null;
+    return sb.url+'/storage/v1/object/public/damage-screenshots/'+path;
+  }catch(e){ console.error('upload error',e); return null; }
+}
+
 async function submitDamageReport(){
   /* DBモード or 手入力モード */
-  var dbBtn = document.getElementById('d-mode-db');
-  var isManual = !dbBtn.classList.contains('on');
+  var dbBtn=document.getElementById('d-mode-db');
+  var isManual=!dbBtn.classList.contains('on');
   var medName, maker;
   if(isManual){
-    medName = document.getElementById('d-med-name-manual').value.trim();
-    maker   = document.getElementById('d-med-maker-manual').value.trim();
-    if(!medName){ showDStatus('商品名を入力してください','err'); return; }
-    /* 手入力の値をhiddenにセット */
-    document.getElementById('d-med-name').value  = medName;
-    document.getElementById('d-med-maker').value = maker;
-    document.getElementById('d-med-id').value    = '';
+    medName=document.getElementById('d-med-name-manual').value.trim();
+    maker  =document.getElementById('d-med-maker-manual').value.trim();
+    if(!medName){showDStatus('商品名を入力してください','err');return;}
+    document.getElementById('d-med-name').value =medName;
+    document.getElementById('d-med-maker').value=maker;
+    document.getElementById('d-med-id').value   ='';
   } else {
-    medName = document.getElementById('d-med-name').value.trim();
-    maker   = document.getElementById('d-med-maker').value.trim();
-    if(!medName){ showDStatus('商品名を入力してください','err'); return; }
+    medName=document.getElementById('d-med-name').value.trim();
+    maker  =document.getElementById('d-med-maker').value.trim();
+    if(!medName){showDStatus('商品名を入力してください','err');return;}
   }
-  var types = [];
-  document.querySelectorAll('.damage-types input:checked').forEach(function(cb){ types.push(cb.value); });
-  if(!types.length){ showDStatus('被害の種類を1つ以上選択してください','err'); return; }
-  var amount  = parseInt(document.getElementById('d-amount').value)||null;
-  var detail  = document.getElementById('d-detail').value.trim();
-  var email   = document.getElementById('d-email').value.trim();
-  var medId   = parseInt(document.getElementById('d-med-id').value)||null;
+  var types=[];
+  document.querySelectorAll('.damage-types input:checked').forEach(function(cb){types.push(cb.value);});
+  if(!types.length){showDStatus('被害の種類を1つ以上選択してください','err');return;}
+  var amount  =parseInt(document.getElementById('d-amount').value)||null;
+  var detail  =document.getElementById('d-detail').value.trim();
+  var email   =document.getElementById('d-email').value.trim();
+  var medId   =parseInt(document.getElementById('d-med-id').value)||null;
+  var nickname=document.getElementById('d-nickname').value.trim()||null;
+  var age     =parseInt(document.getElementById('d-age').value)||null;
+  var gender  =document.getElementById('d-gender').value||null;
+  var route   =document.getElementById('d-route').value||null;
+  var pdate   =document.getElementById('d-purchase-date').value||null;
+  var resolve_status=document.getElementById('d-resolve').value||'unresolved';
+  var consulted=[];
+  document.querySelectorAll('.d-consult-items input:checked').forEach(function(cb){consulted.push(cb.value);});
 
-  var btn = document.querySelector('#damage-form-box .btn');
+  var btn=document.querySelector('#damage-form-box .btn');
   btn.disabled=true; btn.textContent='送信中...';
   showDStatus('','');
 
   try{
-    var sb = getSBConf();
-    var res = await fetch(sb.url+'/rest/v1/damage_reports',{
+    var screenshotUrl=null;
+    var fileInput=document.getElementById('d-screenshot');
+    if(fileInput.files&&fileInput.files[0]){
+      screenshotUrl=await uploadDamageScreenshot(fileInput.files[0]);
+    }
+    var sb=getSBConf();
+    var res=await fetch(sb.url+'/rest/v1/damage_reports',{
       method:'POST',
       headers:{
         'apikey':sb.key,'Authorization':'Bearer '+sb.key,
         'Content-Type':'application/json','Prefer':'return=minimal'
       },
-      body: JSON.stringify({
-        medicine_id:   medId,
-        medicine_name: medName,
-        maker:         maker||null,
-        damage_types:  types,
-        damage_amount: amount,
-        detail:        detail||null,
-        email:         email||null,
-        resolved:      false
+      body:JSON.stringify({
+        medicine_id:    medId,
+        medicine_name:  medName,
+        maker:          maker||null,
+        damage_types:   types,
+        damage_amount:  amount,
+        detail:         detail||null,
+        email:          email||null,
+        nickname:       nickname,
+        age:            age,
+        gender:         gender,
+        purchase_route: route,
+        purchase_date:  pdate,
+        resolve_status: resolve_status,
+        consulted:      consulted.length?consulted:null,
+        screenshot_url: screenshotUrl,
+        resolved:       resolve_status==='resolved'
       })
     });
     if(res.ok){
       showDStatus('✅ 報告を投稿しました。ありがとうございます。','ok');
-      /* フォームリセット */
       clearDamageMed();
       document.querySelectorAll('.damage-types input').forEach(function(cb){cb.checked=false;});
-      document.getElementById('d-amount').value='';
-      document.getElementById('d-detail').value='';
-      document.getElementById('d-email').value='';
-      /* 一覧・集計再読み込み */
+      document.querySelectorAll('.d-consult-items input').forEach(function(cb){cb.checked=false;});
+      ['d-amount','d-detail','d-email','d-nickname','d-purchase-date'].forEach(function(id){
+        document.getElementById(id).value='';
+      });
+      ['d-age','d-gender','d-route'].forEach(function(id){
+        document.getElementById(id).value='';
+      });
+      document.getElementById('d-resolve').value='unresolved';
+      clearScreenshot();
       DAMAGE_OFFSET=0;
       loadDamageReports(true);
       loadDamageStats();
     } else {
-      var body=await res.text();
       showDStatus('送信に失敗しました: '+res.status,'err');
     }
   }catch(e){
@@ -1740,11 +1890,6 @@ async function submitDamageReport(){
   btn.disabled=false; btn.textContent='報告を投稿する';
 }
 
-function showDStatus(msg, type){
-  var el=document.getElementById('d-status');
-  el.textContent=msg;
-  el.style.color = type==='ok'?'var(--teal2)':type==='err'?'var(--red)':'var(--txl)';
-}
 
 /* ── 一覧読み込み ── */
 async function loadDamageReports(reset){
