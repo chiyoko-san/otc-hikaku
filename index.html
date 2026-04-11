@@ -347,7 +347,7 @@
           </div>
         </div>
 
-        <!-- STEP 2 -->
+        <!-- STEP 2: 被害の種類 -->
         <div class="d-step">
           <div class="d-step-head"><span class="d-step-num">2</span>被害の種類<span class="d-req">必須</span><span class="d-hint-inline">複数選択可</span></div>
           <div class="d-step-body">
@@ -366,28 +366,47 @@
                 <label class="d-ck-item"><input type="checkbox" value="no_effect" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 効果がなかった</label>
                 <label class="d-ck-item"><input type="checkbox" value="side_effect" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 副作用・体調不良があった</label>
                 <label class="d-ck-item"><input type="checkbox" value="false_ad" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 広告と実物が違った</label>
-                <label class="d-ck-item"><input type="checkbox" value="other" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> その他</label>
+                <label class="d-ck-item"><input type="checkbox" value="other" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel');toggleOtherInput('d-types-other','d-types-dropdown')"> その他</label>
               </div>
             </div>
+            <input type="text" id="d-types-other" placeholder="その他の被害内容を入力してください" style="display:none;margin-top:8px">
             <select id="d-damage-types-sel" multiple style="display:none"></select>
           </div>
         </div>
 
-        <!-- STEP 3 -->
+        <!-- STEP 3: 被害金額・詳細・ニックネーム -->
         <div class="d-step">
-          <div class="d-step-head"><span class="d-step-num">3</span>被害金額・詳細<span class="d-opt">任意</span></div>
+          <div class="d-step-head"><span class="d-step-num">3</span>被害内容・投稿者<span class="d-opt">任意</span></div>
           <div class="d-step-body">
-            <label class="d-field-label">被害金額</label>
-            <div class="d-amount-group">
-              <input type="number" id="d-amount" placeholder="例：19800" min="0">
-              <span class="d-unit">円</span>
+            <div class="d-3col">
+              <div class="fg">
+                <label class="d-field-label">ニックネーム</label>
+                <input type="text" id="d-nickname" placeholder="例：匿名希望" maxlength="30">
+              </div>
+              <div class="fg">
+                <label class="d-field-label">被害金額</label>
+                <div class="d-amount-group">
+                  <input type="number" id="d-amount" placeholder="例：19800" min="0">
+                  <span class="d-unit">円</span>
+                </div>
+              </div>
+              <div class="fg">
+                <label class="d-field-label">解決状況</label>
+                <select id="d-resolve">
+                  <option value="unresolved">未解決</option>
+                  <option value="negotiating">交渉中</option>
+                  <option value="resolved">解決済み</option>
+                </select>
+              </div>
             </div>
-            <label class="d-field-label" style="margin-top:14px">詳細・経緯</label>
-            <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法などを自由に記載してください。&#10;※個人情報（氏名・住所・電話番号等）は含めないでください" rows="5"></textarea>
+            <div class="fg" style="margin-top:12px">
+              <label class="d-field-label">詳細・経緯</label>
+              <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法などを自由に記載してください。&#10;※個人情報（氏名・住所・電話番号等）は含めないでください" rows="5"></textarea>
+            </div>
           </div>
         </div>
 
-        <!-- STEP 4 -->
+        <!-- STEP 4: スクリーンショット -->
         <div class="d-step">
           <div class="d-step-head"><span class="d-step-num">4</span>スクリーンショット<span class="d-opt">任意</span></div>
           <div class="d-step-body">
@@ -400,17 +419,17 @@
             </div>
             <input type="file" id="d-screenshot" accept="image/*" style="display:none" onchange="previewScreenshot(this)">
             <button type="button" id="d-screenshot-clear" style="display:none;margin-top:6px;background:none;border:none;color:var(--txl);font-size:12px;cursor:pointer" onclick="clearScreenshot()">✕ 画像を削除</button>
-            <div class="d-hint">購入画面・広告・やり取りのスクリーンショットを添付できます</div>
+            <div class="d-hint" style="margin-top:6px">購入画面・広告・やり取りのスクリーンショットを添付できます</div>
           </div>
         </div>
 
-        <!-- STEP 5 -->
+        <!-- STEP 5: 属性・購入情報 -->
         <div class="d-step">
-          <div class="d-step-head"><span class="d-step-num">5</span>投稿者・購入情報<span class="d-opt">任意・集計のみ使用</span></div>
+          <div class="d-step-head"><span class="d-step-num">5</span>属性・購入情報<span class="d-opt">任意・集計のみ使用</span></div>
           <div class="d-step-body">
-            <div class="d-2col">
-              <div class="fg"><label>ニックネーム</label><input type="text" id="d-nickname" placeholder="例：匿名希望" maxlength="30"></div>
-              <div class="fg"><label>年齢</label>
+            <div class="d-3col">
+              <div class="fg">
+                <label class="d-field-label">年齢</label>
                 <select id="d-age">
                   <option value="">選択しない</option>
                   <option value="10">10代</option><option value="20">20代</option>
@@ -418,31 +437,31 @@
                   <option value="50">50代</option><option value="60">60代以上</option>
                 </select>
               </div>
-              <div class="fg"><label>性別</label>
+              <div class="fg">
+                <label class="d-field-label">性別</label>
                 <select id="d-gender">
                   <option value="">選択しない</option>
                   <option value="male">男性</option><option value="female">女性</option><option value="other">その他</option>
                 </select>
               </div>
-              <div class="fg"><label>購入経路</label>
-                <select id="d-route">
+              <div class="fg">
+                <label class="d-field-label">購入経路</label>
+                <select id="d-route" onchange="toggleOtherInputBySelect('d-route','d-route-other')">
                   <option value="">選択しない</option>
                   <option value="sns_ad">SNS広告</option><option value="search_ad">検索広告</option>
                   <option value="tv">テレビ・雑誌</option><option value="store">店頭</option>
-                  <option value="word_of_mouth">知人紹介</option><option value="other">その他</option>
+                  <option value="word_of_mouth">知人紹介</option>
+                  <option value="other" onchange="toggleOtherInput('d-route-other','d-route-select')">その他</option>
                 </select>
               </div>
-              <div class="fg"><label>購入時期</label><input type="month" id="d-purchase-date"></div>
-              <div class="fg"><label>解決状況</label>
-                <select id="d-resolve">
-                  <option value="unresolved">未解決</option>
-                  <option value="negotiating">交渉中</option>
-                  <option value="resolved">解決済み</option>
-                </select>
+              <div class="fg">
+                <label class="d-field-label">購入時期</label>
+                <input type="month" id="d-purchase-date">
               </div>
             </div>
+            <input type="text" id="d-route-other" placeholder="購入経路を入力してください" style="display:none;margin-top:8px">
             <div class="fg" style="margin-top:12px">
-              <label>相談先<span class="d-hint-inline">複数選択可</span></label>
+              <label class="d-field-label">相談先<span class="d-hint-inline">複数選択可</span></label>
               <div class="d-dropdown" id="d-consult-dropdown">
                 <button type="button" class="d-dropdown-btn" onclick="toggleDropdown('d-consult-dropdown')">
                   <span id="d-consult-label">選択してください</span>
@@ -454,25 +473,32 @@
                   <label class="d-ck-item"><input type="checkbox" value="credit_card" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> クレジットカード会社</label>
                   <label class="d-ck-item"><input type="checkbox" value="lawyer" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> 弁護士・法テラス</label>
                   <label class="d-ck-item"><input type="checkbox" value="police" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> 警察</label>
-                  <label class="d-ck-item"><input type="checkbox" value="other" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> その他</label>
+                  <label class="d-ck-item"><input type="checkbox" value="other" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel');toggleOtherInput('d-consult-other','d-consult-dropdown')"> その他</label>
                 </div>
               </div>
+              <input type="text" id="d-consult-other" placeholder="その他の相談先を入力してください" style="display:none;margin-top:8px">
               <select id="d-consult-sel" multiple style="display:none"></select>
             </div>
           </div>
         </div>
 
-        <!-- STEP 6 -->
+        <!-- STEP 6: 連絡先・公開設定 -->
         <div class="d-step">
           <div class="d-step-head"><span class="d-step-num">6</span>連絡先・公開設定</div>
           <div class="d-step-body">
-            <div class="fg"><label>メールアドレス<span class="d-opt">任意</span></label><input type="email" id="d-email"></div>
-            <div class="fg"><label>公開設定<span class="d-req">必須</span></label>
-              <select id="d-public">
-                <option value="1">公開する（投稿内容を一覧に表示する）</option>
-                <option value="0">公開しない（運営のみ閲覧・集計のみに使用）</option>
-              </select>
-              <div class="d-hint">「公開しない」を選択した場合、内容は集計データにのみ反映されます</div>
+            <div class="d-2col">
+              <div class="fg">
+                <label class="d-field-label">メールアドレス<span class="d-opt">任意</span></label>
+                <input type="email" id="d-email">
+              </div>
+              <div class="fg">
+                <label class="d-field-label">公開設定<span class="d-req">必須</span></label>
+                <select id="d-public">
+                  <option value="1">公開する</option>
+                  <option value="0">公開しない（集計のみ）</option>
+                </select>
+                <div class="d-hint">「公開しない」の場合、内容は集計データにのみ反映されます</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1698,6 +1724,30 @@ var DAMAGE_MED_TIMER = null;
 /* ── 商品検索 ── */
 
 /* ── カスタムチェックボックスドロップダウン ── */
+function toggleOtherInput(inputId, triggerId){
+  var dd = document.getElementById(triggerId);
+  var otherCb = dd ? Array.from(dd.querySelectorAll('input[value="other"]')).find(function(cb){return cb.checked;}) : null;
+  /* select要素の場合 */
+  if(!dd){
+    var sel = document.getElementById(triggerId);
+    otherCb = sel && sel.value === 'other';
+  }
+  var inp = document.getElementById(inputId);
+  if(!inp) return;
+  var show = otherCb ? (typeof otherCb === 'boolean' ? otherCb : otherCb.checked) : false;
+  inp.style.display = show ? 'block' : 'none';
+  if(!show) inp.value = '';
+}
+
+function toggleOtherInputBySelect(selectId, inputId){
+  var sel = document.getElementById(selectId);
+  var inp = document.getElementById(inputId);
+  if(!sel||!inp) return;
+  var show = sel.value === 'other';
+  inp.style.display = show ? 'block' : 'none';
+  if(!show) inp.value = '';
+}
+
 function toggleDropdown(id){
   var dd=document.getElementById(id);
   var list=dd.querySelector('.d-dropdown-list');
@@ -1894,6 +1944,19 @@ async function submitDamageReport(){
   if(!types.length){showDStatus('被害の種類を1つ以上選択してください','err');return;}
   var amount  =parseInt(document.getElementById('d-amount').value)||null;
   var detail  =document.getElementById('d-detail').value.trim();
+  /* その他の自由入力を追記 */
+  var typesOther=document.getElementById('d-types-other');
+  if(typesOther&&typesOther.style.display!=='none'&&typesOther.value.trim()){
+    detail=detail?(detail+'\n【その他の被害】'+typesOther.value.trim()):('【その他の被害】'+typesOther.value.trim());
+  }
+  var routeOther=document.getElementById('d-route-other');
+  if(routeOther&&routeOther.style.display!=='none'&&routeOther.value.trim()){
+    detail=detail?(detail+'\n【購入経路詳細】'+routeOther.value.trim()):('【購入経路詳細】'+routeOther.value.trim());
+  }
+  var consultOther=document.getElementById('d-consult-other');
+  if(consultOther&&consultOther.style.display!=='none'&&consultOther.value.trim()){
+    detail=detail?(detail+'\n【相談先詳細】'+consultOther.value.trim()):('【相談先詳細】'+consultOther.value.trim());
+  }
   var email   =document.getElementById('d-email').value.trim();
   var medId   =parseInt(document.getElementById('d-med-id').value)||null;
   var nickname=document.getElementById('d-nickname').value.trim()||null;
@@ -1957,6 +2020,9 @@ async function submitDamageReport(){
       ['d-types-label','d-consult-label'].forEach(function(id){
         var el=document.getElementById(id);
         if(el){el.textContent='選択してください';el.style.color='var(--txl)';}
+      });
+      ['d-types-other','d-route-other','d-consult-other'].forEach(function(id){
+        var el=document.getElementById(id); if(el){el.value='';el.style.display='none';}
       });
       ['d-amount','d-detail','d-email','d-nickname','d-purchase-date'].forEach(function(id){
         document.getElementById(id).value='';
