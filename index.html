@@ -356,7 +356,7 @@
                 <span id="d-types-label">選択してください</span>
                 <span class="d-dropdown-arrow">▼</span>
               </button>
-              <div class="d-dropdown-list" style="display:none">
+              <div class="d-dropdown-list d-accordion" style="display:none">
                 <label class="d-ck-item"><input type="checkbox" value="subscription" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 知らないうちに定期購入になっていた</label>
                 <label class="d-ck-item"><input type="checkbox" value="cancel_difficult" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 解約できない・電話が繋がらない</label>
                 <label class="d-ck-item"><input type="checkbox" value="min_purchase" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 最低購入回数の縛りがあった</label>
@@ -377,11 +377,13 @@
         <div class="d-step">
           <div class="d-step-head"><span class="d-step-num">3</span>被害金額・詳細<span class="d-opt">任意</span></div>
           <div class="d-step-body">
-            <div class="d-inline-group">
-              <input type="number" id="d-amount" placeholder="被害金額（例：19800）" min="0">
+            <label class="d-field-label">被害金額</label>
+            <div class="d-amount-group">
+              <input type="number" id="d-amount" placeholder="例：19800" min="0">
               <span class="d-unit">円</span>
             </div>
-            <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法など&#10;（個人情報は含めないでください）" rows="4" style="margin-top:8px"></textarea>
+            <label class="d-field-label" style="margin-top:14px">詳細・経緯</label>
+            <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法などを自由に記載してください。&#10;※個人情報（氏名・住所・電話番号等）は含めないでください" rows="5"></textarea>
           </div>
         </div>
 
@@ -446,7 +448,7 @@
                   <span id="d-consult-label">選択してください</span>
                   <span class="d-dropdown-arrow">▼</span>
                 </button>
-                <div class="d-dropdown-list" style="display:none">
+                <div class="d-dropdown-list d-accordion" style="display:none">
                   <label class="d-ck-item"><input type="checkbox" value="none" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> まだ相談していない</label>
                   <label class="d-ck-item"><input type="checkbox" value="consumer_center" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> 消費生活センター（188）</label>
                   <label class="d-ck-item"><input type="checkbox" value="credit_card" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> クレジットカード会社</label>
@@ -1702,15 +1704,15 @@ function toggleDropdown(id){
   var arrow=dd.querySelector('.d-dropdown-arrow');
   var isOpen=list.style.display!=='none';
   /* 他のドロップダウンを閉じる */
-  document.querySelectorAll('.d-dropdown-list').forEach(function(el){
-    el.style.display='none';
-  });
-  document.querySelectorAll('.d-dropdown-arrow').forEach(function(el){
-    el.textContent='▼';
+  document.querySelectorAll('.d-dropdown').forEach(function(el){
+    el.classList.remove('open');
+    el.querySelector('.d-dropdown-list').style.display='none';
+    el.querySelector('.d-dropdown-arrow').textContent='▼';
   });
   if(!isOpen){
     list.style.display='block';
     arrow.textContent='▲';
+    dd.classList.add('open');
   }
 }
 
