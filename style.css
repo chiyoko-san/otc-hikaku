@@ -425,3 +425,9 @@ footer a:hover{color:#fff}
 .d-upload-icon{font-size:28px;margin-bottom:8px}
 .d-upload-text{font-size:14px;color:var(--txm);line-height:1.6}
 @media(max-width:600px){.d-form-row{grid-template-columns:1fr}}
+
+/* 複数選択ドロップダウン */
+.d-multi-select{width:100%;border:1px solid var(--bd);border-radius:8px;font-size:14px;font-family:inherit;color:var(--tx);padding:4px;outline:none;background:var(--wh)}
+.d-multi-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.1)}
+.d-multi-select option{padding:7px 10px;border-radius:4px;cursor:pointer}
+.d-multi-select option:checked{background:var(--teal);color:#fff}

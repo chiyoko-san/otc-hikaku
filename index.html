@@ -347,18 +347,19 @@
         </div>
         <div class="fg">
           <label>被害の種類（複数選択可） <span class="req">*</span></label>
-          <div class="damage-types">
-            <label class="dtype-item"><input type="checkbox" value="subscription"> 知らないうちに定期購入になっていた</label>
-            <label class="dtype-item"><input type="checkbox" value="cancel_difficult"> 解約できない・電話が繋がらない</label>
-            <label class="dtype-item"><input type="checkbox" value="min_purchase"> 最低購入回数の縛りがあった</label>
-            <label class="dtype-item"><input type="checkbox" value="price_hidden"> 2回目以降の価格が隠されていた</label>
-            <label class="dtype-item"><input type="checkbox" value="charge_continue"> 解約後も請求が続いた</label>
-            <label class="dtype-item"><input type="checkbox" value="hard_to_return"> 返品・返金に応じてもらえなかった</label>
-            <label class="dtype-item"><input type="checkbox" value="no_effect"> 効果がなかった</label>
-            <label class="dtype-item"><input type="checkbox" value="side_effect"> 副作用・体調不良があった</label>
-            <label class="dtype-item"><input type="checkbox" value="false_ad"> 広告と実物が違った</label>
-            <label class="dtype-item"><input type="checkbox" value="other"> その他</label>
-          </div>
+          <select id="d-damage-types-sel" multiple size="6" class="d-multi-select">
+            <option value="subscription">知らないうちに定期購入になっていた</option>
+            <option value="cancel_difficult">解約できない・電話が繋がらない</option>
+            <option value="min_purchase">最低購入回数の縛りがあった</option>
+            <option value="price_hidden">2回目以降の価格が隠されていた</option>
+            <option value="charge_continue">解約後も請求が続いた</option>
+            <option value="hard_to_return">返品・返金に応じてもらえなかった</option>
+            <option value="no_effect">効果がなかった</option>
+            <option value="side_effect">副作用・体調不良があった</option>
+            <option value="false_ad">広告と実物が違った</option>
+            <option value="other">その他</option>
+          </select>
+          <div style="font-size:11px;color:var(--txl);margin-top:4px">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
         </div>
         <div class="fg">
           <label>被害金額（任意）</label>
@@ -387,7 +388,7 @@
         </div>
 
         <div class="d-form-section-title">👤 投稿者情報（任意・集計のみ使用）</div>
-        <div class="d-form-row">
+        <div>
           <div class="fg">
             <label>ニックネーム</label>
             <input type="text" id="d-nickname" placeholder="例：匿名希望" maxlength="30">
@@ -416,7 +417,7 @@
         </div>
 
         <div class="d-form-section-title">🛒 購入・対処情報（任意・集計のみ使用）</div>
-        <div class="d-form-row">
+        <div>
           <div class="fg">
             <label>購入経路</label>
             <select id="d-route">
@@ -444,14 +445,15 @@
         </div>
         <div class="fg">
           <label>相談先（複数選択可）</label>
-          <div class="d-consult-items">
-            <label class="dtype-item"><input type="checkbox" value="none"> まだ相談していない</label>
-            <label class="dtype-item"><input type="checkbox" value="consumer_center"> 消費生活センター（188）</label>
-            <label class="dtype-item"><input type="checkbox" value="credit_card"> クレジットカード会社</label>
-            <label class="dtype-item"><input type="checkbox" value="lawyer"> 弁護士・法テラス</label>
-            <label class="dtype-item"><input type="checkbox" value="police"> 警察</label>
-            <label class="dtype-item"><input type="checkbox" value="other"> その他</label>
-          </div>
+          <select id="d-consult-sel" multiple size="5" class="d-multi-select">
+            <option value="none">まだ相談していない</option>
+            <option value="consumer_center">消費生活センター（188）</option>
+            <option value="credit_card">クレジットカード会社</option>
+            <option value="lawyer">弁護士・法テラス</option>
+            <option value="police">警察</option>
+            <option value="other">その他</option>
+          </select>
+          <div style="font-size:11px;color:var(--txl);margin-top:4px">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
         </div>
 
         <div class="d-form-section-title">📧 連絡先（任意）</div>
@@ -1822,7 +1824,8 @@ async function submitDamageReport(){
     if(!medName){showDStatus('商品名を入力してください','err');return;}
   }
   var types=[];
-  document.querySelectorAll('.damage-types input:checked').forEach(function(cb){types.push(cb.value);});
+  var typesSel=document.getElementById('d-damage-types-sel');
+  Array.from(typesSel.selectedOptions).forEach(function(o){types.push(o.value);});
   if(!types.length){showDStatus('被害の種類を1つ以上選択してください','err');return;}
   var amount  =parseInt(document.getElementById('d-amount').value)||null;
   var detail  =document.getElementById('d-detail').value.trim();
@@ -1836,7 +1839,8 @@ async function submitDamageReport(){
   var resolve_status=document.getElementById('d-resolve').value||'unresolved';
   var is_public=document.getElementById('d-public').value==='1';
   var consulted=[];
-  document.querySelectorAll('.d-consult-items input:checked').forEach(function(cb){consulted.push(cb.value);});
+  var consultSel=document.getElementById('d-consult-sel');
+  if(consultSel) Array.from(consultSel.selectedOptions).forEach(function(o){consulted.push(o.value);});
 
   var btn=document.querySelector('#damage-form-box .btn');
   btn.disabled=true; btn.textContent='送信中...';
@@ -1878,8 +1882,10 @@ async function submitDamageReport(){
     if(res.ok){
       showDStatus('✅ 報告を投稿しました。ありがとうございます。','ok');
       clearDamageMed();
-      document.querySelectorAll('.damage-types input').forEach(function(cb){cb.checked=false;});
-      document.querySelectorAll('.d-consult-items input').forEach(function(cb){cb.checked=false;});
+      var ts=document.getElementById('d-damage-types-sel');
+      if(ts) Array.from(ts.options).forEach(function(o){o.selected=false;});
+      var cs=document.getElementById('d-consult-sel');
+      if(cs) Array.from(cs.options).forEach(function(o){o.selected=false;});
       ['d-amount','d-detail','d-email','d-nickname','d-purchase-date'].forEach(function(id){
         document.getElementById(id).value='';
       });
@@ -1910,7 +1916,7 @@ async function loadDamageReports(reset){
   if(DAMAGE_OFFSET===0) el.innerHTML='<div style="padding:20px;color:var(--txl)">読み込み中...</div>';
 
   var query = 'damage_reports?select=id,medicine_name,maker,damage_types,damage_amount,detail,resolved,created_at,nickname&is_public=eq.true&order=created_at.desc&limit='+(DAMAGE_LIMIT+1)+'&offset='+DAMAGE_OFFSET;
-  if(filter) query += '&damage_types=cs.{'+filter+'}';
+  if(filter) query += '&damage_types=cs.{"'+filter+'"}';
 
   try{
     var r = await sbFetch(query);
