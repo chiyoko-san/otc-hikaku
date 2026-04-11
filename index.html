@@ -480,7 +480,17 @@ footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--txl);borde
   <div id="clist">
     <div class="ptitle">お役立ちコラム</div>
     <div class="pdesc">市販薬の正しい選び方・安全な使い方を解説します。</div>
-    <div class="cgrid" id="cgrid"></div>
+    <div class="col-layout">
+      <div class="col-main">
+        <div id="cgrid"></div>
+      </div>
+      <aside class="col-side">
+        <div class="cside-box" id="col-popular">
+          <div class="cside-title">人気記事</div>
+          <div id="col-popular-list"><div style="color:var(--txl);font-size:13px">読み込み中...</div></div>
+        </div>
+      </aside>
+    </div>
   </div>
   <div id="cdetail" style="display:none"></div>
 </div>
@@ -1221,22 +1231,57 @@ async function buildCols(){
   var el=document.getElementById('cgrid');
   if(el.children.length)return;
   try{
-    var res = await sbFetch('columns?select=id,title,date,tag,summary,thumb,status&status=eq.published&order=date.desc&limit=50');
-    var cols = await res.json();
+    var res=await sbFetch('columns?select=id,title,date,tag,summary,thumb,status,slug&status=eq.published&order=date.desc&limit=50');
+    var cols=await res.json();
+    if(!cols.length){
+      el.innerHTML='<div style="padding:20px;color:var(--txl)">コラムはまだありません</div>';
+      return;
+    }
     cols.forEach(function(col){
       var div=document.createElement('div');div.className='ccard';
-      var hasThumb=col.thumb&&col.thumb.length>10;
-      var topHtml=hasThumb
-        ?'<div class="ctop has-thumb"><img src="'+col.thumb+'" alt="" loading="lazy"><div class="ctop-overlay"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div></div>'
-        :'<div class="ctop no-thumb"><div class="ctop-overlay"><div class="ctag">'+col.tag+'</div><div class="ctitle">'+col.title+'</div></div></div>';
-      div.innerHTML=topHtml+'<div class="cbdy"><div class="cdate">'+col.date+'</div><div class="csum">'+col.summary+'</div></div>';
-      (function(id){div.addEventListener('click',function(){showColFromDB(id);});})(col.id);
+      var thumb=col.thumb&&col.thumb.length>10
+        ?'<img src="'+col.thumb+'" alt="" loading="lazy">'
+        :'';
+      div.innerHTML=
+        '<div class="ccard-thumb">'+thumb+'</div>'
+        +'<div class="ccard-body">'
+          +'<div>'
+            +'<div class="ccard-tags"><span class="ccard-tag">'+col.tag+'</span></div>'
+            +'<div class="ccard-title">'+col.title+'</div>'
+          +'</div>'
+          +'<div>'
+            +'<div class="ccard-date">'+col.date+'</div>'
+            +'<div class="ccard-sum">'+(col.summary||'')+'</div>'
+          +'</div>'
+        +'</div>';
+      (function(id,slug){div.addEventListener('click',function(){showColFromDB(slug||id);});})(col.id,col.slug);
       el.appendChild(div);
     });
+    buildColPopular(cols);
   }catch(e){
     el.innerHTML='<div style="padding:20px;color:var(--txl)">コラムの読み込みに失敗しました</div>';
-    console.error('buildCols error:', e);
+    console.error('buildCols error:',e);
   }
+}
+
+function buildColPopular(cols){
+  var el=document.getElementById('col-popular-list');
+  if(!el)return;
+  var top=cols.slice(0,5);
+  el.innerHTML=top.map(function(col,i){
+    var thumb=col.thumb&&col.thumb.length>10
+      ?'<div class="cside-thumb"><img src="'+col.thumb+'" alt="" loading="lazy"></div>'
+      :'<div class="cside-thumb"></div>';
+    var sid=col.slug||col.id;
+    return '<div class="cside-item" onclick="showColFromDB(\"'+sid+'\")">'
+      +'<div class="cside-num">'+(i+1)+'</div>'
+      +thumb
+      +'<div class="cside-item-body">'
+        +'<div class="cside-item-title">'+col.title+'</div>'
+        +'<div class="cside-item-date">'+col.date+'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
 }
 async function showColFromDB(id){
   document.getElementById('clist').style.display='none';
