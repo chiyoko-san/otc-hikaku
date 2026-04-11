@@ -92,68 +92,146 @@ def upload_to_storage(image_bytes: bytes, storage_path: str) -> str:
 # ── Gemini Imagen ─────────────────────────────────────────
 
 def generate_image(prompt: str) -> bytes:
-    """Gemini 2.5 Flash Image でpngバイト列を返す（generateContent API使用）"""
+    """gemini-3.1-flash-image-preview でpngバイト列を返す"""
     api_key = os.environ["GEMINI_API_KEY"]
-    # generateContent APIを使用（imagen-4.0 or gemini-2.5-flash-image-preview）
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"imagen-4.0-generate-001:predict?key={api_key}"
+        f"gemini-3.1-flash-image-preview:generateContent?key={api_key}"
     )
     payload = json.dumps({
-        "instances": [{"prompt": prompt}],
-        "parameters": {
-            "sampleCount": 1,
-            "aspectRatio": "16:9",
-            "safetyFilterLevel": "block_only_high",
-            "personGeneration": "dont_allow",
-        },
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
     }).encode("utf-8")
     req = urllib.request.Request(
-        url,
-        data=payload,
+        url, data=payload,
         headers={"Content-Type": "application/json"},
         method="POST",
     )
     try:
         with urllib.request.urlopen(req, timeout=120) as r:
             resp = json.loads(r.read().decode("utf-8"))
-        b64 = resp["predictions"][0]["bytesBase64Encoded"]
-        return base64.b64decode(b64)
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8")
-        # imagen-4がダメならgemini-2.5-flash-image-previewにフォールバック
-        print(f"[img]   imagen-4失敗、gemini-2.5-flash-imageにフォールバック: {e.code}")
-
-    # フォールバック: gemini-2.5-flash-image-preview（generateContent）
-    url2 = (
-        "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-2.5-flash-image-preview:generateContent?key={api_key}"
-    )
-    payload2 = json.dumps({
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
-    }).encode("utf-8")
-    req2 = urllib.request.Request(
-        url2,
-        data=payload2,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req2, timeout=120) as r:
-            resp2 = json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8")
         raise RuntimeError(f"Gemini API error {e.code}: {body}")
 
-    # inlineDataからバイト列を取得
-    for part in resp2.get("candidates", [{}])[0].get("content", {}).get("parts", []):
+    for part in resp.get("candidates", [{}])[0].get("content", {}).get("parts", []):
         if "inlineData" in part:
             return base64.b64decode(part["inlineData"]["data"])
     raise RuntimeError("Gemini APIから画像データが返りませんでした")
 
 
+def fetch_prompts_from_storage(col_id: str) -> list | None:
+    """Supabase StorageのcolumnsIDフォルダからprompts.jsonを取得"""
+    import re
+    sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    sb_key = os.environ.get("SUPABASE_KEY", "")
+    date_folder = re.search(r'(\d{8})', col_id)
+    if not date_folder:
+        return None
+    date_folder = date_folder.group(1)
+    url = f"{sb_url}/storage/v1/object/public/column-images/{date_folder}/prompts.json"
+    try:
+        req = urllib.request.Request(url, headers={"apikey": sb_key}, method="GET")
+        with urllib.request.urlopen(req, timeout=15) as r:
+            prompts = json.loads(r.read().decode("utf-8"))
+            print(f"[img] プロンプトJSON取得: {len(prompts)}件 ({date_folder}/prompts.json)")
+            return prompts
+    except Exception as e:
+        print(f"[img] プロンプトJSON取得失敗: {e}")
+        return None
+
+
 # ── プロンプト抽出 ────────────────────────────────────────
+
+def run_from_prompts(col_id: str, col: dict, prompts: list, dry_run: bool = False) -> bool:
+    """プロンプトJSONを使って画像生成・アップロード・サムネイル更新"""
+    import re
+    date_folder = re.search(r'(\d{8})', col_id)
+    date_folder = date_folder.group(1) if date_folder else datetime.now(JST).strftime("%Y%m%d")
+
+    total = len(prompts)
+    print(f"[img] プロンプトJSONから{total}枚生成します")
+
+    if dry_run:
+        for i, p in enumerate(prompts):
+            print(f"  [{i+1}] {p.get('label','')}: {p.get('prompt','')[:80]}...")
+        return True
+
+    success = 0
+    thumb_url = None
+    new_body = col.get("body", "")
+
+    for i, item in enumerate(prompts):
+        label    = item.get("label", f"画像{i+1}")
+        prompt   = item.get("prompt", "")
+        is_thumb = item.get("is_thumb", False)
+        filename = item.get("filename", f"{i+1}.png")
+
+        if not prompt:
+            continue
+
+        print(f"\n[img] 生成中 [{i+1}/{total}]: {label}")
+        print(f"      prompt: {prompt[:80]}...")
+
+        try:
+            image_bytes = generate_image(prompt)
+            print(f"      → 生成完了 ({len(image_bytes)//1024}KB)")
+        except Exception as e:
+            print(f"      → 生成失敗: {e}", file=sys.stderr)
+            continue
+
+        storage_path = f"{date_folder}/{filename}"
+        try:
+            public_url = upload_to_storage(image_bytes, storage_path)
+            print(f"      → アップロード完了: {public_url}")
+            success += 1
+        except Exception as e:
+            print(f"      → アップロード失敗: {e}", file=sys.stderr)
+            continue
+
+        if is_thumb:
+            thumb_url = public_url
+
+        # 本文のURLも更新（番号.pngのURLを置換）
+        if not is_thumb:
+            old_img_url = f"https://glxhggfxxwpfmwqoulyy.supabase.co/storage/v1/object/public/column-images/{date_folder}/{filename}"
+            if old_img_url in new_body:
+                new_body = new_body.replace(old_img_url, public_url, 1)
+
+        import time
+        time.sleep(2)
+
+    print(f"\n[img] 生成完了: {success}/{total}枚")
+
+    # サムネイル更新
+    if thumb_url:
+        try:
+            update_col_thumb(col_id, thumb_url)
+            print(f"[img] ✅ サムネイル更新: {thumb_url}")
+        except Exception as e:
+            print(f"[img] サムネイル更新失敗: {e}", file=sys.stderr)
+
+    return success > 0
+
+
+def update_col_thumb(col_id: str, thumb_url: str):
+    sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    sb_key = os.environ.get("SUPABASE_KEY", "")
+    payload = json.dumps({"thumb": thumb_url}).encode("utf-8")
+    req = urllib.request.Request(
+        f"{sb_url}/rest/v1/columns?id=eq.{urllib.parse.quote(col_id)}",
+        data=payload,
+        headers={
+            "apikey": sb_key,
+            "Authorization": f"Bearer {sb_key}",
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal",
+        },
+        method="PATCH",
+    )
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.status in (200, 204)
+
 
 def extract_prompts(body: str) -> list[dict]:
     """
@@ -192,8 +270,20 @@ def extract_prompts(body: str) -> list[dict]:
 
 import urllib.parse
 
-def run(col_id: str, dry_run: bool = False):
+def run(col_id: str, dry_run: bool = False, prompts_file: str = None):
     print(f"[img] コラムID: {col_id}")
+
+    # プロンプトJSONがあれば先に手動プロンプトで生成
+    if prompts_file and not dry_run:
+        import json as _json
+        from pathlib import Path as _Path
+        pf = _Path(prompts_file)
+        if pf.exists():
+            print(f"[img] プロンプトJSONを使用: {pf.name}")
+            from gen_manual_images import run as manual_run
+            manual_run(col_id, _json.loads(pf.read_text(encoding="utf-8")))
+            print(f"[img] 手動プロンプト画像生成完了")
+            return True
 
     col = get_col(col_id)
     if not col:
@@ -203,6 +293,14 @@ def run(col_id: str, dry_run: bool = False):
     print(f"[img] タイトル: {col['title']}")
     body = col.get("body", "")
 
+    # まずStorageからプロンプトJSONを取得（gen_column.pyが自動生成したもの）
+    storage_prompts = fetch_prompts_from_storage(col_id)
+
+    if storage_prompts:
+        # プロンプトJSONがある場合はそれを使って画像生成
+        return run_from_prompts(col_id, col, storage_prompts, dry_run)
+
+    # フォールバック: 本文からIMAGE_PROMPTを抽出
     prompts = extract_prompts(body)
     total = len(prompts)
     # 実際にファイルが存在するか確認
@@ -301,6 +399,7 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--col-id", required=True, help="コラムID（例: auto_20260407_1）")
     p.add_argument("--dry-run", action="store_true", help="プロンプト確認のみ（画像生成しない）")
+    p.add_argument("--prompts", default=None, help="プロンプトJSONファイルのパス（省略時はコラム本文から抽出）")
     args = p.parse_args()
 
     for env in ["SUPABASE_URL", "SUPABASE_KEY"]:
@@ -311,5 +410,5 @@ if __name__ == "__main__":
         print("[img] 環境変数 GEMINI_API_KEY が未設定", file=sys.stderr)
         sys.exit(1)
 
-    ok = run(args.col_id, dry_run=args.dry_run)
+    ok = run(args.col_id, dry_run=args.dry_run, prompts_file=args.prompts)
     sys.exit(0 if ok else 1)
