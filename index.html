@@ -351,19 +351,25 @@
         <div class="d-step">
           <div class="d-step-head"><span class="d-step-num">2</span>被害の種類<span class="d-req">必須</span><span class="d-hint-inline">複数選択可</span></div>
           <div class="d-step-body">
-            <select id="d-damage-types-sel" multiple size="6" class="d-multi-select">
-              <option value="subscription">知らないうちに定期購入になっていた</option>
-              <option value="cancel_difficult">解約できない・電話が繋がらない</option>
-              <option value="min_purchase">最低購入回数の縛りがあった</option>
-              <option value="price_hidden">2回目以降の価格が隠されていた</option>
-              <option value="charge_continue">解約後も請求が続いた</option>
-              <option value="hard_to_return">返品・返金に応じてもらえなかった</option>
-              <option value="no_effect">効果がなかった</option>
-              <option value="side_effect">副作用・体調不良があった</option>
-              <option value="false_ad">広告と実物が違った</option>
-              <option value="other">その他</option>
-            </select>
-            <div class="d-hint">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
+            <div class="d-dropdown" id="d-types-dropdown">
+              <button type="button" class="d-dropdown-btn" onclick="toggleDropdown('d-types-dropdown')">
+                <span id="d-types-label">選択してください</span>
+                <span class="d-dropdown-arrow">▼</span>
+              </button>
+              <div class="d-dropdown-list" style="display:none">
+                <label class="d-ck-item"><input type="checkbox" value="subscription" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 知らないうちに定期購入になっていた</label>
+                <label class="d-ck-item"><input type="checkbox" value="cancel_difficult" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 解約できない・電話が繋がらない</label>
+                <label class="d-ck-item"><input type="checkbox" value="min_purchase" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 最低購入回数の縛りがあった</label>
+                <label class="d-ck-item"><input type="checkbox" value="price_hidden" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 2回目以降の価格が隠されていた</label>
+                <label class="d-ck-item"><input type="checkbox" value="charge_continue" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 解約後も請求が続いた</label>
+                <label class="d-ck-item"><input type="checkbox" value="hard_to_return" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 返品・返金に応じてもらえなかった</label>
+                <label class="d-ck-item"><input type="checkbox" value="no_effect" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 効果がなかった</label>
+                <label class="d-ck-item"><input type="checkbox" value="side_effect" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 副作用・体調不良があった</label>
+                <label class="d-ck-item"><input type="checkbox" value="false_ad" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> 広告と実物が違った</label>
+                <label class="d-ck-item"><input type="checkbox" value="other" onchange="updateDropdownLabel('d-types-dropdown','d-types-label','d-damage-types-sel')"> その他</label>
+              </div>
+            </div>
+            <select id="d-damage-types-sel" multiple style="display:none"></select>
           </div>
         </div>
 
@@ -435,15 +441,21 @@
             </div>
             <div class="fg" style="margin-top:12px">
               <label>相談先<span class="d-hint-inline">複数選択可</span></label>
-              <select id="d-consult-sel" multiple size="5" class="d-multi-select">
-                <option value="none">まだ相談していない</option>
-                <option value="consumer_center">消費生活センター（188）</option>
-                <option value="credit_card">クレジットカード会社</option>
-                <option value="lawyer">弁護士・法テラス</option>
-                <option value="police">警察</option>
-                <option value="other">その他</option>
-              </select>
-              <div class="d-hint">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
+              <div class="d-dropdown" id="d-consult-dropdown">
+                <button type="button" class="d-dropdown-btn" onclick="toggleDropdown('d-consult-dropdown')">
+                  <span id="d-consult-label">選択してください</span>
+                  <span class="d-dropdown-arrow">▼</span>
+                </button>
+                <div class="d-dropdown-list" style="display:none">
+                  <label class="d-ck-item"><input type="checkbox" value="none" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> まだ相談していない</label>
+                  <label class="d-ck-item"><input type="checkbox" value="consumer_center" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> 消費生活センター（188）</label>
+                  <label class="d-ck-item"><input type="checkbox" value="credit_card" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> クレジットカード会社</label>
+                  <label class="d-ck-item"><input type="checkbox" value="lawyer" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> 弁護士・法テラス</label>
+                  <label class="d-ck-item"><input type="checkbox" value="police" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> 警察</label>
+                  <label class="d-ck-item"><input type="checkbox" value="other" onchange="updateDropdownLabel('d-consult-dropdown','d-consult-label','d-consult-sel')"> その他</label>
+                </div>
+              </div>
+              <select id="d-consult-sel" multiple style="display:none"></select>
             </div>
           </div>
         </div>
@@ -1682,6 +1694,60 @@ var DAMAGE_LIMIT  = 20;
 var DAMAGE_MED_TIMER = null;
 
 /* ── 商品検索 ── */
+
+/* ── カスタムチェックボックスドロップダウン ── */
+function toggleDropdown(id){
+  var dd=document.getElementById(id);
+  var list=dd.querySelector('.d-dropdown-list');
+  var arrow=dd.querySelector('.d-dropdown-arrow');
+  var isOpen=list.style.display!=='none';
+  /* 他のドロップダウンを閉じる */
+  document.querySelectorAll('.d-dropdown-list').forEach(function(el){
+    el.style.display='none';
+  });
+  document.querySelectorAll('.d-dropdown-arrow').forEach(function(el){
+    el.textContent='▼';
+  });
+  if(!isOpen){
+    list.style.display='block';
+    arrow.textContent='▲';
+  }
+}
+
+function updateDropdownLabel(dropdownId, labelId, selectId){
+  var dd=document.getElementById(dropdownId);
+  var checked=Array.from(dd.querySelectorAll('input:checked'));
+  var labelEl=document.getElementById(labelId);
+  /* hidden selectも同期 */
+  var sel=document.getElementById(selectId);
+  Array.from(sel.options).forEach(function(o){o.selected=false;});
+  checked.forEach(function(cb){
+    var opt=Array.from(sel.options).find(function(o){return o.value===cb.value;});
+    if(!opt){
+      var o=document.createElement('option');
+      o.value=cb.value; o.text=cb.value;
+      sel.appendChild(o);
+    }
+    var target=Array.from(sel.options).find(function(o){return o.value===cb.value;});
+    if(target) target.selected=true;
+  });
+  if(checked.length===0){
+    labelEl.textContent='選択してください';
+    labelEl.style.color='var(--txl)';
+  } else {
+    labelEl.textContent=checked.length+'件選択中';
+    labelEl.style.color='var(--teal2)';
+  }
+}
+
+/* ドロップダウン外クリックで閉じる */
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.d-dropdown')){
+    document.querySelectorAll('.d-dropdown-list').forEach(function(el){el.style.display='none';});
+    document.querySelectorAll('.d-dropdown-arrow').forEach(function(el){el.textContent='▼';});
+  }
+});
+
 function setDamageMode(mode){
   var dbArea = document.getElementById('d-mode-db-area');
   var manualArea = document.getElementById('d-mode-manual-area');
@@ -1816,8 +1882,13 @@ async function submitDamageReport(){
     if(!medName){showDStatus('商品名を入力してください','err');return;}
   }
   var types=[];
-  var typesSel=document.getElementById('d-damage-types-sel');
-  Array.from(typesSel.selectedOptions).forEach(function(o){types.push(o.value);});
+  var typesDd=document.getElementById('d-types-dropdown');
+  if(typesDd){
+    typesDd.querySelectorAll('input:checked').forEach(function(cb){types.push(cb.value);});
+  } else {
+    var typesSel=document.getElementById('d-damage-types-sel');
+    Array.from(typesSel.selectedOptions).forEach(function(o){types.push(o.value);});
+  }
   if(!types.length){showDStatus('被害の種類を1つ以上選択してください','err');return;}
   var amount  =parseInt(document.getElementById('d-amount').value)||null;
   var detail  =document.getElementById('d-detail').value.trim();
@@ -1831,8 +1902,13 @@ async function submitDamageReport(){
   var resolve_status=document.getElementById('d-resolve').value||'unresolved';
   var is_public=document.getElementById('d-public').value==='1';
   var consulted=[];
-  var consultSel=document.getElementById('d-consult-sel');
-  if(consultSel) Array.from(consultSel.selectedOptions).forEach(function(o){consulted.push(o.value);});
+  var consultDd=document.getElementById('d-consult-dropdown');
+  if(consultDd){
+    consultDd.querySelectorAll('input:checked').forEach(function(cb){consulted.push(cb.value);});
+  } else {
+    var consultSel=document.getElementById('d-consult-sel');
+    if(consultSel) Array.from(consultSel.selectedOptions).forEach(function(o){consulted.push(o.value);});
+  }
 
   var btn=document.querySelector('#damage-form-box .btn');
   btn.disabled=true; btn.textContent='送信中...';
@@ -1874,10 +1950,12 @@ async function submitDamageReport(){
     if(res.ok){
       showDStatus('✅ 報告を投稿しました。ありがとうございます。','ok');
       clearDamageMed();
-      var ts=document.getElementById('d-damage-types-sel');
-      if(ts) Array.from(ts.options).forEach(function(o){o.selected=false;});
-      var cs=document.getElementById('d-consult-sel');
-      if(cs) Array.from(cs.options).forEach(function(o){o.selected=false;});
+      /* チェックボックスドロップダウンリセット */
+      document.querySelectorAll('#d-types-dropdown input,#d-consult-dropdown input').forEach(function(cb){cb.checked=false;});
+      ['d-types-label','d-consult-label'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el){el.textContent='選択してください';el.style.color='var(--txl)';}
+      });
       ['d-amount','d-detail','d-email','d-nickname','d-purchase-date'].forEach(function(id){
         document.getElementById(id).value='';
       });

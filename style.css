@@ -446,3 +446,14 @@ footer a:hover{color:#fff}
 @media(max-width:560px){
   .d-2col{grid-template-columns:1fr}
 }
+/* カスタムチェックボックスドロップダウン */
+.d-dropdown{position:relative;width:100%}
+.d-dropdown-btn{width:100%;padding:8px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--wh);color:var(--txl);font-size:14px;font-family:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;transition:border-color .15s}
+.d-dropdown-btn:hover{border-color:var(--teal)}
+.d-dropdown-arrow{font-size:10px;color:var(--txl);flex-shrink:0;margin-left:8px}
+.d-dropdown-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--wh);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:100;overflow:hidden}
+.d-ck-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-size:14px;color:var(--txm);border-bottom:1px solid var(--bd);transition:background .1s}
+.d-ck-item:last-child{border-bottom:none}
+.d-ck-item:hover{background:var(--tl)}
+.d-ck-item input{width:16px;height:16px;accent-color:var(--teal);flex-shrink:0;cursor:pointer}
+.d-ck-item:has(input:checked){background:var(--tl);color:var(--teal2);font-weight:600}
