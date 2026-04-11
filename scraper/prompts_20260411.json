@@ -1,0 +1,63 @@
+[
+  {
+    "label": "サムネイル",
+    "is_thumb": true,
+    "filename": "thumb.png",
+    "prompt": "Flat vector illustration of two medicine pill bottles side by side, one labeled with a moon symbol (first generation, sleepy) and one with a sun symbol (second generation, alert). Clean teal and navy color palette, minimal design, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "本文①：抗ヒスタミン薬の作用メカニズム",
+    "filename": "1.png",
+    "prompt": "Flat vector medical illustration showing histamine receptor blocking mechanism. Abstract cell receptor icons with H1 blocker shield symbol preventing allergic reaction chain. Teal and navy palette, clean minimal style, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "本文②：第1世代の副作用（眠気・口の渇きなど）",
+    "filename": "2.png",
+    "prompt": "Flat vector illustration of side effect icons: a drowsy moon icon, a dry mouth water drop with X mark, and a car with prohibited symbol. Warm amber and navy palette, warning concept, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "本文③：第2世代抗ヒスタミン薬の特徴（眠くなりにくい）",
+    "filename": "3.png",
+    "prompt": "Flat vector illustration of a person at a desk working actively with a sun icon overhead and a shield with checkmark. A small pill capsule with green checkmark floating nearby. Teal and light green palette, alert and productive concept, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "本文④：症状別の抗ヒスタミン薬の選び方",
+    "filename": "4.png",
+    "prompt": "Flat vector illustration of a decision tree flowchart with branching paths: daytime sun path leading to one pill bottle, nighttime moon path leading to another. Simple icons for driving, sleeping, and seasonal allergies. Teal and navy palette, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "本文⑤：薬剤師への相談",
+    "filename": "5.png",
+    "prompt": "Flat vector illustration of a pharmacy counter scene with a pharmacist silhouette and a customer silhouette, speech bubble icons between them, and a medication bottle on the counter. Teal and warm white palette, helpful consultation concept, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "追加⑥：第1世代と第2世代の比較（比較表イメージ）",
+    "filename": "6.png",
+    "prompt": "Flat vector illustration of two columns comparison concept: left column with moon, heavy eyelid, clock showing short duration; right column with sun, alert eye, clock showing long duration. Navy and teal split palette, balanced comparison design, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "追加⑦：花粉症シーズン対策（シーズン前から服用）",
+    "filename": "7.png",
+    "prompt": "Flat vector illustration of a calendar with a pollen season indicator bar and a pill capsule icon with an early-start arrow. Floating pollen grain particles in the background. Soft green and teal palette, seasonal allergy prevention concept, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "追加⑧：薬の重複・飲み合わせ注意",
+    "filename": "8.png",
+    "prompt": "Flat vector illustration of two pill bottles with a warning triangle and X symbol between them indicating dangerous combination. A prohibition circle overlay. Red and amber accent on navy background, drug interaction warning concept, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "追加⑨：運転と抗ヒスタミン薬（第1世代は運転禁止）",
+    "filename": "9.png",
+    "prompt": "Flat vector illustration of a car steering wheel with a red prohibition symbol overlapping a first-generation pill bottle, contrasted with a green checkmark next to a second-generation pill bottle. Clean minimal design, teal and red accent palette, no text, no faces, no dates. 16:9 ratio."
+  },
+  {
+    "label": "追加⑩：服用を避けるべき方（前立腺・緑内障・妊娠中など）",
+    "filename": "10.png",
+    "prompt": "Flat vector illustration of three warning silhouette icons representing caution groups: elderly person, pregnant figure, and eye with pressure indicator. Each with a caution shield symbol. Amber and navy palette, medical caution concept, no text, no dates. 16:9 ratio."
+  },
+  {
+    "label": "追加⑪：アレルギー反応の仕組み（ヒスタミン放出）",
+    "filename": "11.png",
+    "prompt": "Flat vector illustration of an allergy immune response: abstract mast cell releasing histamine molecules represented as small hexagon icons, causing sneeze and eye watering reaction icons. Teal and coral color palette, immunology concept visualization, no text, no faces, no dates. 16:9 ratio."
+  }
+]
