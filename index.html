@@ -30,6 +30,7 @@
     <button type="button" class="ntab" id="t-search" onclick="showPg('search')">検索</button>
     <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">症状から選ぶ</button>
     <button type="button" class="ntab" id="t-column" onclick="showPg('column')">コラム</button>
+    <button type="button" class="ntab" id="t-damage" onclick="showPg('damage')">被害報告</button>
     <span class="nright">2026年04月04日 更新</span>
   </div>
 </nav>
@@ -308,12 +309,130 @@
   </div>
 </div>
 
+
+<div class="pg" id="pg-damage">
+  <div class="damage-layout">
+    <!-- 左：投稿フォーム + 一覧 -->
+    <div class="damage-main">
+      <div class="ptitle">被害報告掲示板</div>
+      <div class="pdesc">市販薬・健康食品・サプリの購入トラブルを報告してください。集計データは被害防止のために公開します。</div>
+
+      <!-- 投稿フォーム -->
+      <div class="damage-form-box" id="damage-form-box">
+        <div class="damage-form-title">📝 被害を報告する</div>
+        <div class="fg">
+          <label>商品名・会社名 <span class="req">*</span></label>
+          <!-- DB検索 or 手入力の切り替え -->
+          <div class="d-input-mode">
+            <button type="button" class="d-mode-btn on" id="d-mode-db" onclick="setDamageMode('db')">DBから検索</button>
+            <button type="button" class="d-mode-btn" id="d-mode-manual" onclick="setDamageMode('manual')">DBにない商品</button>
+          </div>
+          <!-- DBモード -->
+          <div id="d-mode-db-area">
+            <div class="damage-search-wrap">
+              <input type="text" id="d-med-search" placeholder="商品名・メーカー名・会社名で検索…" autocomplete="off" oninput="searchDamageMed(this.value)">
+              <div id="d-med-results" class="damage-search-results" style="display:none"></div>
+            </div>
+            <div id="d-med-selected" class="damage-selected" style="display:none"></div>
+          </div>
+          <!-- 手入力モード -->
+          <div id="d-mode-manual-area" style="display:none">
+            <input type="text" id="d-med-name-manual" placeholder="商品名（例：〇〇サプリ）">
+            <input type="text" id="d-med-maker-manual" placeholder="会社名・販売元（例：〇〇株式会社）" style="margin-top:8px">
+            <div style="font-size:11px;color:var(--txl);margin-top:4px">DBに登録されていない商品・サプリ・健康食品はこちらから入力してください</div>
+          </div>
+          <input type="hidden" id="d-med-id">
+          <input type="hidden" id="d-med-name">
+          <input type="hidden" id="d-med-maker">
+        </div>
+        <div class="fg">
+          <label>被害の種類（複数選択可） <span class="req">*</span></label>
+          <div class="damage-types">
+            <label class="dtype-item"><input type="checkbox" value="subscription"> 知らないうちに定期購入になっていた</label>
+            <label class="dtype-item"><input type="checkbox" value="cancel_difficult"> 解約できない・電話が繋がらない</label>
+            <label class="dtype-item"><input type="checkbox" value="min_purchase"> 最低購入回数の縛りがあった</label>
+            <label class="dtype-item"><input type="checkbox" value="price_hidden"> 2回目以降の価格が隠されていた</label>
+            <label class="dtype-item"><input type="checkbox" value="charge_continue"> 解約後も請求が続いた</label>
+            <label class="dtype-item"><input type="checkbox" value="hard_to_return"> 返品・返金に応じてもらえなかった</label>
+            <label class="dtype-item"><input type="checkbox" value="no_effect"> 効果がなかった</label>
+            <label class="dtype-item"><input type="checkbox" value="side_effect"> 副作用・体調不良があった</label>
+            <label class="dtype-item"><input type="checkbox" value="false_ad"> 広告と実物が違った</label>
+            <label class="dtype-item"><input type="checkbox" value="other"> その他</label>
+          </div>
+        </div>
+        <div class="fg">
+          <label>被害金額（任意）</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" id="d-amount" placeholder="例：19800" style="width:160px" min="0">
+            <span style="font-size:14px;color:var(--txm)">円</span>
+          </div>
+        </div>
+        <div class="fg">
+          <label>詳細（任意）</label>
+          <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法など（個人情報は含めないでください）" rows="4"></textarea>
+        </div>
+        <div class="fg">
+          <label>メールアドレス（任意・非公開）</label>
+          <input type="email" id="d-email" placeholder="返信が必要な場合のみ">
+          <div style="font-size:11px;color:var(--txl);margin-top:4px">公開されません。運営からの返信が必要な場合のみ入力してください。</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button type="button" class="btn" onclick="submitDamageReport()">報告を投稿する</button>
+          <div style="font-size:12px;color:var(--txl)">投稿内容は即時公開されます</div>
+        </div>
+        <div id="d-status" style="margin-top:10px;font-size:13px"></div>
+      </div>
+
+      <!-- 投稿一覧 -->
+      <div class="damage-list-head">
+        <div class="damage-list-title">最新の報告</div>
+        <select id="d-filter-type" onchange="loadDamageReports()" style="font-size:12px;padding:4px 8px;border:1px solid var(--bd);border-radius:6px;font-family:inherit">
+          <option value="">すべての被害種別</option>
+          <option value="subscription">定期購入</option>
+          <option value="cancel_difficult">解約困難</option>
+          <option value="min_purchase">購入縛り</option>
+          <option value="price_hidden">価格隠し</option>
+          <option value="charge_continue">解約後請求</option>
+          <option value="hard_to_return">返品拒否</option>
+          <option value="no_effect">効果なし</option>
+          <option value="side_effect">副作用</option>
+          <option value="false_ad">虚偽広告</option>
+          <option value="other">その他</option>
+        </select>
+      </div>
+      <div id="damage-list">
+        <div style="padding:20px;color:var(--txl)">読み込み中...</div>
+      </div>
+      <div id="damage-list-more" style="text-align:center;margin-top:12px;display:none">
+        <button class="btn" onclick="loadMoreDamage()" style="background:none;border:1px solid var(--bd);color:var(--txm)">さらに読み込む</button>
+      </div>
+    </div>
+
+    <!-- 右：集計サイドバー -->
+    <aside class="damage-side">
+      <div class="cside-box">
+        <div class="cside-title">被害集計</div>
+        <div id="damage-stats"><div style="font-size:13px;color:var(--txl)">読み込み中...</div></div>
+      </div>
+      <div class="cside-box">
+        <div class="cside-title">被害種別ランキング</div>
+        <div id="damage-type-rank"><div style="font-size:13px;color:var(--txl)">読み込み中...</div></div>
+      </div>
+      <div class="cside-box">
+        <div class="cside-title">被害商品ランキング</div>
+        <div id="damage-med-rank"><div style="font-size:13px;color:var(--txl)">読み込み中...</div></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
 <footer>
   <div class="footer-links">
     <a href="?pg=concept" onclick="showPg('concept');return false;">サイトのコンセプト</a>
     <a href="?pg=privacy" onclick="showPg('privacy');return false;">プライバシーポリシー</a>
     <a href="?pg=terms" onclick="showPg('terms');return false;">利用規約</a>
     <a href="?pg=contact" onclick="showPg('contact');return false;">お問い合わせ</a>
+    <a href="?pg=damage" onclick="showPg('damage');return false;">被害報告</a>
   </div>
   <div class="footer-note">本サイトはPMDA添付文書等の公開情報を元にした一般情報提供です。服用前に必ず添付文書をお読みください。広告収入を得ていません。</div>
   <div class="footer-copy">© 2026 クスリノコンパス</div>
@@ -1457,6 +1576,292 @@ async function doHomeSearch(q){
   history.pushState({pg:'search'},'',newUrl);
   await render();
 }
+/* ══════════════════════════════════════
+   被害報告掲示板
+══════════════════════════════════════ */
+var DAMAGE_TYPE_LABELS = {
+  subscription:     '定期購入',
+  cancel_difficult: '解約困難',
+  min_purchase:     '購入縛り',
+  price_hidden:     '価格隠し',
+  charge_continue:  '解約後請求',
+  hard_to_return:   '返品拒否',
+  no_effect:        '効果なし',
+  side_effect:      '副作用',
+  false_ad:         '虚偽広告',
+  other:            'その他'
+};
+var DAMAGE_OFFSET = 0;
+var DAMAGE_LIMIT  = 20;
+var DAMAGE_MED_TIMER = null;
+
+/* ── 商品検索 ── */
+function setDamageMode(mode){
+  var dbArea = document.getElementById('d-mode-db-area');
+  var manualArea = document.getElementById('d-mode-manual-area');
+  var dbBtn = document.getElementById('d-mode-db');
+  var manualBtn = document.getElementById('d-mode-manual');
+  if(mode==='db'){
+    dbArea.style.display='block';
+    manualArea.style.display='none';
+    dbBtn.classList.add('on');
+    manualBtn.classList.remove('on');
+    /* 手入力フォームをクリア */
+    document.getElementById('d-med-name-manual').value='';
+    document.getElementById('d-med-maker-manual').value='';
+  } else {
+    dbArea.style.display='none';
+    manualArea.style.display='block';
+    dbBtn.classList.remove('on');
+    manualBtn.classList.add('on');
+    /* DB選択をクリア */
+    clearDamageMed();
+  }
+}
+
+async function searchDamageMed(q){
+  clearTimeout(DAMAGE_MED_TIMER);
+  var resEl = document.getElementById('d-med-results');
+  if(!q || q.length < 2){ resEl.style.display='none'; return; }
+  DAMAGE_MED_TIMER = setTimeout(async function(){
+    try{
+      var r = await sbFetch(
+        'medicines?select=id,name,maker&or=(name.ilike.*'+encodeURIComponent(q)+'*,maker.ilike.*'+encodeURIComponent(q)+'*)&limit=8'
+      );
+      var meds = await r.json();
+      if(!meds.length){ resEl.style.display='none'; return; }
+      resEl.innerHTML='';
+      meds.forEach(function(m){
+        var div=document.createElement('div');
+        div.className='d-med-opt';
+        div.innerHTML='<span style="font-weight:600">'+m.name+'</span>'
+          +(m.maker?'<span style="font-size:11px;color:var(--txl);margin-left:6px">'+m.maker+'</span>':'');
+        div.addEventListener('click', (function(id,name,maker){
+          return function(){ selectDamageMed(id,name,maker); };
+        })(m.id, m.name, m.maker||''));
+        resEl.appendChild(div);
+      });
+      resEl.style.display='block';
+    }catch(e){}
+  }, 300);
+}
+function selectDamageMedEl(el){
+  selectDamageMed(el.dataset.id, el.dataset.name, el.dataset.maker);
+}
+function selectDamageMed(id, name, maker){
+  document.getElementById('d-med-id').value   = id;
+  document.getElementById('d-med-name').value = name;
+  document.getElementById('d-med-maker').value= maker;
+  document.getElementById('d-med-search').value = name;
+  document.getElementById('d-med-results').style.display='none';
+  var sel = document.getElementById('d-med-selected');
+  sel.innerHTML = '<span style="font-size:12px;color:var(--teal2);font-weight:600">✓ '+name+(maker?' ('+maker+')':'')+'</span>'
+    +' <button onclick="clearDamageMed()" style="background:none;border:none;color:var(--txl);cursor:pointer;font-size:12px">✕</button>';
+  sel.style.display='block';
+}
+
+function clearDamageMed(){
+  document.getElementById('d-med-id').value='';
+  document.getElementById('d-med-name').value='';
+  document.getElementById('d-med-maker').value='';
+  document.getElementById('d-med-search').value='';
+  document.getElementById('d-med-selected').style.display='none';
+}
+
+/* ── 投稿 ── */
+async function submitDamageReport(){
+  /* DBモード or 手入力モード */
+  var dbBtn = document.getElementById('d-mode-db');
+  var isManual = !dbBtn.classList.contains('on');
+  var medName, maker;
+  if(isManual){
+    medName = document.getElementById('d-med-name-manual').value.trim();
+    maker   = document.getElementById('d-med-maker-manual').value.trim();
+    if(!medName){ showDStatus('商品名を入力してください','err'); return; }
+    /* 手入力の値をhiddenにセット */
+    document.getElementById('d-med-name').value  = medName;
+    document.getElementById('d-med-maker').value = maker;
+    document.getElementById('d-med-id').value    = '';
+  } else {
+    medName = document.getElementById('d-med-name').value.trim();
+    maker   = document.getElementById('d-med-maker').value.trim();
+    if(!medName){ showDStatus('商品名を入力してください','err'); return; }
+  }
+  var types = [];
+  document.querySelectorAll('.damage-types input:checked').forEach(function(cb){ types.push(cb.value); });
+  if(!types.length){ showDStatus('被害の種類を1つ以上選択してください','err'); return; }
+  var amount  = parseInt(document.getElementById('d-amount').value)||null;
+  var detail  = document.getElementById('d-detail').value.trim();
+  var email   = document.getElementById('d-email').value.trim();
+  var medId   = parseInt(document.getElementById('d-med-id').value)||null;
+
+  var btn = document.querySelector('#damage-form-box .btn');
+  btn.disabled=true; btn.textContent='送信中...';
+  showDStatus('','');
+
+  try{
+    var sb = getSBConf();
+    var res = await fetch(sb.url+'/rest/v1/damage_reports',{
+      method:'POST',
+      headers:{
+        'apikey':sb.key,'Authorization':'Bearer '+sb.key,
+        'Content-Type':'application/json','Prefer':'return=minimal'
+      },
+      body: JSON.stringify({
+        medicine_id:   medId,
+        medicine_name: medName,
+        maker:         maker||null,
+        damage_types:  types,
+        damage_amount: amount,
+        detail:        detail||null,
+        email:         email||null,
+        resolved:      false
+      })
+    });
+    if(res.ok){
+      showDStatus('✅ 報告を投稿しました。ありがとうございます。','ok');
+      /* フォームリセット */
+      clearDamageMed();
+      document.querySelectorAll('.damage-types input').forEach(function(cb){cb.checked=false;});
+      document.getElementById('d-amount').value='';
+      document.getElementById('d-detail').value='';
+      document.getElementById('d-email').value='';
+      /* 一覧・集計再読み込み */
+      DAMAGE_OFFSET=0;
+      loadDamageReports(true);
+      loadDamageStats();
+    } else {
+      var body=await res.text();
+      showDStatus('送信に失敗しました: '+res.status,'err');
+    }
+  }catch(e){
+    showDStatus('エラー: '+e.message,'err');
+  }
+  btn.disabled=false; btn.textContent='報告を投稿する';
+}
+
+function showDStatus(msg, type){
+  var el=document.getElementById('d-status');
+  el.textContent=msg;
+  el.style.color = type==='ok'?'var(--teal2)':type==='err'?'var(--red)':'var(--txl)';
+}
+
+/* ── 一覧読み込み ── */
+async function loadDamageReports(reset){
+  if(reset) DAMAGE_OFFSET=0;
+  var filter = document.getElementById('d-filter-type').value;
+  var el = document.getElementById('damage-list');
+  if(DAMAGE_OFFSET===0) el.innerHTML='<div style="padding:20px;color:var(--txl)">読み込み中...</div>';
+
+  var query = 'damage_reports?select=id,medicine_name,maker,damage_types,damage_amount,detail,resolved,created_at&order=created_at.desc&limit='+(DAMAGE_LIMIT+1)+'&offset='+DAMAGE_OFFSET;
+  if(filter) query += '&damage_types=cs.{'+filter+'}';
+
+  try{
+    var r = await sbFetch(query);
+    var rows = await r.json();
+    var hasMore = rows.length > DAMAGE_LIMIT;
+    if(hasMore) rows = rows.slice(0,DAMAGE_LIMIT);
+
+    if(DAMAGE_OFFSET===0) el.innerHTML='';
+    if(!rows.length && DAMAGE_OFFSET===0){
+      el.innerHTML='<div style="padding:20px;color:var(--txl)">まだ報告がありません</div>';
+      document.getElementById('damage-list-more').style.display='none';
+      return;
+    }
+
+    rows.forEach(function(r){
+      var tags=(r.damage_types||[]).map(function(t){
+        return '<span class="dtype-tag">'+( DAMAGE_TYPE_LABELS[t]||t)+'</span>';
+      }).join('');
+      var amount = r.damage_amount?'<span class="d-amount">被害額: ¥'+r.damage_amount.toLocaleString()+'</span>':'';
+      var date = r.created_at?r.created_at.slice(0,10):'';
+      var resolved = r.resolved?'<span class="d-resolved">解決済み</span>':'';
+      var div=document.createElement('div'); div.className='damage-item';
+      div.innerHTML=
+        '<div class="di-head">'
+          +'<div class="di-name">'+r.medicine_name+(r.maker?'<span class="di-maker">'+r.maker+'</span>':'')+'</div>'
+          +'<div class="di-date">'+date+resolved+'</div>'
+        +'</div>'
+        +'<div class="di-tags">'+tags+'</div>'
+        +(amount?'<div class="di-amount">'+amount+'</div>':'')
+        +(r.detail?'<div class="di-detail">'+r.detail+'</div>':'');
+      el.appendChild(div);
+    });
+
+    DAMAGE_OFFSET += rows.length;
+    document.getElementById('damage-list-more').style.display = hasMore?'block':'none';
+  }catch(e){
+    el.innerHTML='<div style="padding:20px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
+  }
+}
+
+function loadMoreDamage(){
+  loadDamageReports(false);
+}
+
+/* ── 集計 ── */
+async function loadDamageStats(){
+  try{
+    var r = await sbFetch('damage_reports?select=damage_types,damage_amount,medicine_name&limit=1000');
+    var rows = await r.json();
+    var total = rows.length;
+    var totalAmt = rows.reduce(function(s,r){ return s+(r.damage_amount||0);},0);
+
+    /* 集計カード */
+    document.getElementById('damage-stats').innerHTML=
+      '<div class="d-stat-row">'
+        +'<div class="d-stat"><div class="d-stat-num">'+total+'</div><div class="d-stat-label">報告件数</div></div>'
+        +'<div class="d-stat"><div class="d-stat-num">¥'+totalAmt.toLocaleString()+'</div><div class="d-stat-label">被害総額</div></div>'
+      +'</div>';
+
+    /* 被害種別カウント */
+    var typeCount={};
+    rows.forEach(function(r){
+      (r.damage_types||[]).forEach(function(t){ typeCount[t]=(typeCount[t]||0)+1; });
+    });
+    var sorted = Object.keys(typeCount).sort(function(a,b){return typeCount[b]-typeCount[a];});
+    var max = sorted.length?typeCount[sorted[0]]:1;
+    document.getElementById('damage-type-rank').innerHTML = sorted.slice(0,8).map(function(t,i){
+      var pct = Math.round(typeCount[t]/max*100);
+      return '<div class="d-rank-item">'
+        +'<div class="d-rank-label"><span class="d-rank-num">'+(i+1)+'</span>'+(DAMAGE_TYPE_LABELS[t]||t)+'</div>'
+        +'<div class="d-rank-bar-wrap"><div class="d-rank-bar" style="width:'+pct+'%"></div></div>'
+        +'<div class="d-rank-count">'+typeCount[t]+'件</div>'
+      +'</div>';
+    }).join('') || '<div style="font-size:13px;color:var(--txl)">データなし</div>';
+
+    /* 被害商品ランキング */
+    var medCount={};
+    rows.forEach(function(r){ medCount[r.medicine_name]=(medCount[r.medicine_name]||0)+1; });
+    var sortedMed=Object.keys(medCount).sort(function(a,b){return medCount[b]-medCount[a];});
+    document.getElementById('damage-med-rank').innerHTML = sortedMed.slice(0,5).map(function(m,i){
+      return '<div class="d-rank-item">'
+        +'<div class="d-rank-label"><span class="d-rank-num">'+(i+1)+'</span>'+m+'</div>'
+        +'<div class="d-rank-count">'+medCount[m]+'件</div>'
+      +'</div>';
+    }).join('') || '<div style="font-size:13px;color:var(--txl)">データなし</div>';
+
+  }catch(e){ console.error('damage stats error',e); }
+}
+
+/* ── SB設定取得ヘルパー ── */
+function getSBConf(){
+  return { url: SB_URL, key: SB_KEY };
+}
+
+/* エスケープ */
+function esc(s){ return (s||'').replace(/'/g,"\'").replace(/"/g,'&quot;'); }
+
+/* showPgフック：damageページ表示時にデータ読み込み */
+var _origShowPg = showPg;
+showPg = function(id, push){
+  _origShowPg(id, push);
+  if(id==='damage'){
+    loadDamageReports(true);
+    loadDamageStats();
+  }
+};
+
 </script>
 </body>
 </html>

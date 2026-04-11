@@ -351,3 +351,67 @@ footer a:hover{color:#fff}
 .col-side-cta-btn:hover{background:var(--tl);border-color:var(--teal)}
 .col-side-cta-icon{font-size:18px;flex-shrink:0}
 .col-side-cta-label{font-size:13px;font-weight:600;color:var(--navy)}
+
+/* ══════════════════════════════════════
+   被害報告掲示板
+══════════════════════════════════════ */
+.damage-layout{display:grid;grid-template-columns:1fr 280px;gap:28px;align-items:start;max-width:100%}
+.damage-main{min-width:0}
+.damage-side{position:sticky;top:68px;min-width:0}
+
+/* フォーム */
+.damage-form-box{background:var(--wh);border:1px solid var(--bd);border-radius:12px;padding:20px;margin-bottom:20px}
+.damage-form-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.req{color:var(--red);font-size:12px}
+.damage-search-wrap{position:relative}
+.damage-search-results{position:absolute;top:100%;left:0;right:0;background:var(--wh);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:50;max-height:240px;overflow-y:auto}
+.d-med-opt{padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid var(--bd)}
+.d-med-opt:last-child{border-bottom:none}
+.d-med-opt:hover{background:var(--tl)}
+.damage-selected{margin-top:6px;padding:6px 10px;background:var(--tl);border-radius:6px;display:flex;align-items:center;justify-content:space-between}
+
+/* 被害種別チェックボックス */
+.damage-types{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-top:6px}
+.dtype-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;font-size:13px;color:var(--txm);transition:all .12s}
+.dtype-item:hover{background:var(--tl);border-color:var(--teal)}
+.dtype-item input{width:15px;height:15px;accent-color:var(--teal);flex-shrink:0}
+.dtype-item:has(input:checked){background:var(--tl);border-color:var(--teal);color:var(--teal2);font-weight:600}
+
+/* 一覧 */
+.damage-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.damage-list-title{font-size:15px;font-weight:700;color:var(--navy)}
+.damage-item{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.di-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.di-name{font-size:15px;font-weight:700;color:var(--navy);flex:1;min-width:0}
+.di-maker{font-size:11px;font-weight:400;color:var(--txl);margin-left:6px}
+.di-date{font-size:11px;color:var(--txl);white-space:nowrap;flex-shrink:0}
+.di-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.dtype-tag{padding:2px 8px;background:var(--rb);color:var(--red);border-radius:20px;font-size:11px;font-weight:600}
+.di-amount{font-size:12px;color:var(--txm);margin-bottom:6px;font-weight:600}
+.di-detail{font-size:13px;color:var(--txm);line-height:1.7;padding-top:6px;border-top:1px solid var(--bd);margin-top:6px}
+.d-resolved{margin-left:6px;padding:1px 6px;background:#f0fdf4;color:#16a34a;border-radius:10px;font-size:10px;font-weight:600}
+
+/* 集計サイドバー */
+.d-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.d-stat{background:var(--sl);border-radius:8px;padding:12px;text-align:center}
+.d-stat-num{font-size:18px;font-weight:700;color:var(--teal2);line-height:1.2}
+.d-stat-label{font-size:11px;color:var(--txl);margin-top:2px}
+.d-rank-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)}
+.d-rank-item:last-child{border-bottom:none;padding-bottom:0}
+.d-rank-num{font-size:14px;font-weight:700;color:var(--teal);min-width:18px;flex-shrink:0}
+.d-rank-label{flex:1;font-size:12px;color:var(--tx);display:flex;align-items:center;gap:4px}
+.d-rank-bar-wrap{width:60px;height:6px;background:var(--bd);border-radius:3px;overflow:hidden;flex-shrink:0}
+.d-rank-bar{height:100%;background:var(--teal);border-radius:3px;transition:width .4s}
+.d-rank-count{font-size:11px;color:var(--txl);min-width:28px;text-align:right;flex-shrink:0}
+
+/* レスポンシブ */
+@media(max-width:860px){
+  .damage-layout{grid-template-columns:1fr}
+  .damage-side{display:none}
+  .damage-types{grid-template-columns:1fr}
+}
+
+/* 被害報告フォーム - モード切り替え */
+.d-input-mode{display:flex;gap:6px;margin-bottom:10px}
+.d-mode-btn{padding:6px 14px;border:1px solid var(--bd);border-radius:20px;background:var(--wh);color:var(--txm);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.d-mode-btn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
