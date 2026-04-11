@@ -1,0 +1,70 @@
+name: Auto Generate Images
+
+on:
+  schedule:
+    - cron: "30 12 * * *"   # 毎日21:30 JST（UTC 12:30）コラム生成の30分後
+  workflow_dispatch:
+    inputs:
+      col_id:
+        description: "コラムID（空欄=当日分を自動検出）"
+        required: false
+        default: ""
+      dry_run:
+        description: "dry-run（プロンプト確認のみ）"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+jobs:
+  generate-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: コラムIDを決定
+        id: resolve_id
+        run: |
+          if [ -n "${{ github.event.inputs.col_id }}" ]; then
+            echo "col_id=${{ github.event.inputs.col_id }}" >> $GITHUB_OUTPUT
+            echo "[images] 指定コラムID: ${{ github.event.inputs.col_id }}"
+          else
+            COL_ID=$(python3 -c "
+from datetime import datetime, timezone, timedelta
+JST = timezone(timedelta(hours=9))
+now = datetime.now(JST)
+slot = 0 if now.hour < 15 else 1
+print(f'auto_{now.strftime(\"%Y%m%d\")}_{slot}')
+")
+            echo "col_id=$COL_ID" >> $GITHUB_OUTPUT
+            echo "[images] 当日コラムID: $COL_ID"
+          fi
+
+      - name: 画像生成
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SUPABASE_URL:   ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY:   ${{ secrets.SUPABASE_KEY }}
+        run: |
+          COL_ID="${{ steps.resolve_id.outputs.col_id }}"
+          ARGS="--col-id $COL_ID"
+
+          # gen_column.pyが生成したプロンプトJSONがあれば使用
+          PROMPTS_FILE="scraper/prompts_${COL_ID}.json"
+          if [ -f "$PROMPTS_FILE" ]; then
+            echo "[images] プロンプトJSON検出: $PROMPTS_FILE"
+            ARGS="$ARGS --prompts $PROMPTS_FILE"
+          else
+            echo "[images] プロンプトJSONなし → コラム本文から抽出"
+          fi
+
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+
+          echo "[images] 実行: python scraper/gen_images.py $ARGS"
+          python scraper/gen_images.py $ARGS
