@@ -88,3 +88,26 @@ body{font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;background
 .setting-item input{width:100%;padding:8px 12px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;font-family:inherit;outline:none}
 .setting-item input:focus{border-color:var(--teal)}
 @media(max-width:700px){.form-row{grid-template-columns:1fr}.md-pane{grid-template-columns:1fr}.md-input{border-right:none;border-bottom:1px solid var(--bd)}.col-item-acts{flex-direction:row}}
+
+/* 被害報告管理 */
+.damage-admin-item{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.damage-admin-item.flagged{border-color:#ef4444;background:#fff5f5}
+.dai-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.dai-title{font-size:15px;font-weight:700;color:var(--navy);flex:1}
+.dai-badges{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.dai-date{font-size:11px;color:var(--txl)}
+.dai-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.dtype-tag-adm{padding:2px 8px;background:#fee2e2;color:#991b1b;border-radius:20px;font-size:11px;font-weight:600}
+.dai-meta{font-size:12px;color:var(--txm);margin-bottom:3px}
+.dai-detail{font-size:13px;color:var(--txm);line-height:1.7;padding:8px 10px;background:var(--sl);border-radius:6px;margin:6px 0}
+.dai-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.dai-btn{padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid;font-family:inherit;transition:all .15s}
+.dai-btn-hide{border-color:var(--bd);background:var(--sl);color:var(--txm)}
+.dai-btn-hide:hover{background:#fff7ed;border-color:#f97316;color:#f97316}
+.dai-btn-show{border-color:var(--teal);background:var(--tl);color:var(--teal2)}
+.dai-btn-del{border-color:#ef4444;background:#fff5f5;color:#ef4444}
+.dai-btn-del:hover{background:#ef4444;color:#fff}
+.d-pub-badge{padding:1px 7px;background:#f0fdf4;color:#16a34a;border-radius:10px;font-size:11px;font-weight:600}
+.d-hidden-badge{padding:1px 7px;background:#f1f5f9;color:var(--txl);border-radius:10px;font-size:11px;font-weight:600}
+.d-report-badge{padding:1px 7px;background:#fee2e2;color:#991b1b;border-radius:10px;font-size:11px;font-weight:600}
+.d-report-badge.warn{background:#ef4444;color:#fff}

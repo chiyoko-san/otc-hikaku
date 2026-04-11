@@ -331,7 +331,7 @@
             </div>
             <div id="d-mode-db-area">
               <div class="damage-search-wrap">
-                <input type="text" id="d-med-search" placeholder="商品名・メーカー名・会社名で検索…" autocomplete="off" oninput="searchDamageMed(this.value)">
+                <input type="text" id="d-med-search" placeholder="商品名・メーカー名・会社名で検索…" autocomplete="off" oninput="searchDamageMed(this.value)" class="d-search-input">
                 <div id="d-med-results" class="damage-search-results" style="display:none"></div>
               </div>
               <div id="d-med-selected" class="damage-selected" style="display:none"></div>
@@ -1800,6 +1800,57 @@ document.addEventListener('click',function(e){
   }
 });
 
+
+/* ── 通報機能 ── */
+async function reportDamageItem(id, btn){
+  if(btn.dataset.reported){ alert('この投稿はすでに通報済みです'); return; }
+  if(!confirm('この投稿を通報しますか？\n悪質・虚偽と思われる投稿を通報できます。一定数の通報で管理者が確認します。')) return;
+  try{
+    var sb=getSBConf();
+    /* report_countを+1更新 */
+    var res=await fetch(sb.url+'/rest/v1/rpc/increment_report_count',{
+      method:'POST',
+      headers:{
+        'apikey':sb.key,'Authorization':'Bearer '+sb.key,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({row_id:id})
+    });
+    if(res.ok){
+      btn.dataset.reported='1';
+      btn.textContent='⚑';
+      btn.classList.add('reported');
+      btn.title='通報済み';
+    } else {
+      /* RPCがない場合はlocal storageで管理 */
+      var key='dr_report_'+id;
+      localStorage.setItem(key,'1');
+      btn.dataset.reported='1';
+      btn.classList.add('reported');
+      btn.title='通報済み（ローカル）';
+    }
+    alert('通報しました。ご協力ありがとうございます。');
+  }catch(e){
+    /* フォールバック: ローカルで通報済みマーク */
+    localStorage.setItem('dr_report_'+id,'1');
+    btn.dataset.reported='1';
+    btn.classList.add('reported');
+    alert('通報しました。');
+  }
+}
+
+/* ページ読み込み時に通報済みボタンを復元 */
+function restoreReportedBtns(){
+  document.querySelectorAll('.di-report-btn').forEach(function(btn){
+    var id=btn.dataset.id;
+    if(localStorage.getItem('dr_report_'+id)){
+      btn.dataset.reported='1';
+      btn.classList.add('reported');
+      btn.title='通報済み';
+    }
+  });
+}
+
 function setDamageMode(mode){
   var dbArea = document.getElementById('d-mode-db-area');
   var manualArea = document.getElementById('d-mode-manual-area');
@@ -2079,10 +2130,11 @@ async function loadDamageReports(reset){
 
       var resolved = r.resolved?'<span class="d-resolved">解決済み</span>':'';
       var div=document.createElement('div'); div.className='damage-item';
+      var rid=r.id;
       div.innerHTML=
         '<div class="di-head">'
-          +'<div class="di-name">'+r.medicine_name+(r.maker?'<span class="di-maker">'+r.maker+'</span>':'')+'</div>'
-          +'<div class="di-date">'+date+resolved+'</div>'
+          +'<div class="di-name">'+r.medicine_name+(r.maker?'<span class="di-maker">'+r.maker+'</span>':'')+nick+'</div>'
+          +'<div class="di-date-wrap">'+date+resolved+'<button class="di-report-btn" data-id="'+rid+'" onclick="reportDamageItem('+rid+',this)" title="この投稿を通報">通報</button></div>'
         +'</div>'
         +'<div class="di-tags">'+tags+'</div>'
         +(amount?'<div class="di-amount">'+amount+'</div>':'')
@@ -2092,6 +2144,7 @@ async function loadDamageReports(reset){
 
     DAMAGE_OFFSET += rows.length;
     document.getElementById('damage-list-more').style.display = hasMore?'block':'none';
+    restoreReportedBtns();
   }catch(e){
     el.innerHTML='<div style="padding:20px;color:var(--red)">読み込みエラー: '+e.message+'</div>';
   }

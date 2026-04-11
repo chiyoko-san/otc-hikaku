@@ -466,3 +466,15 @@ footer a:hover{color:#fff}
 .d-amount-group{display:flex;align-items:center;gap:8px}
 .d-amount-group input{width:200px;flex-shrink:0}
 .d-unit{font-size:14px;color:var(--txm)}
+
+/* 検索フィールド修正 */
+.d-search-input{width:100%;padding:10px 14px;border:1px solid var(--bd);border-radius:8px;font-size:14px;font-family:inherit;color:var(--tx);outline:none;transition:border-color .15s,box-shadow .15s}
+.d-search-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.1)}
+.d-search-input::placeholder{color:var(--txl)}
+
+/* 通報ボタン */
+.di-date-wrap{display:flex;align-items:center;gap:8px;white-space:nowrap;flex-shrink:0}
+.di-report-btn{padding:2px 8px;border:1px solid var(--bd);border-radius:4px;background:none;color:var(--txl);font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.di-report-btn:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2}
+.di-report-btn.reported{border-color:#ef4444;color:#ef4444;opacity:.5;cursor:not-allowed}
+.di-nick{font-size:11px;color:var(--teal2);font-weight:600;margin-left:6px;padding:1px 6px;background:var(--tl);border-radius:10px}

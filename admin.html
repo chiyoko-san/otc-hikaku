@@ -35,6 +35,7 @@
   <div class="tabs">
     <button type="button" class="tab on" onclick="switchTab('cols',this)">📖 コラム一覧</button>
     <button type="button" class="tab" onclick="switchTab('add',this)">➕ 新規追加</button>
+    <button type="button" class="tab" onclick="switchTab('damage',this);loadDamageAdmin()">🚨 被害報告</button>
     <button type="button" class="tab" onclick="switchTab('export',this)">📤 エクスポート</button>
     <button type="button" class="tab" onclick="switchTab('settings',this)">⚙️ 設定</button>
   </div>
@@ -207,6 +208,28 @@
       <button type="button" class="btn-del" onclick="clearAll()">⚠ 全データを削除</button>
     </div>
   </div>
+
+  <!-- 被害報告管理タブ -->
+  <div class="tab-pane" id="tab-damage">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div style="font-size:15px;font-weight:700;color:var(--navy)">被害報告一覧</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <label style="font-size:13px;color:var(--txm)">通報数フィルター：
+          <select id="d-admin-report-filter" onchange="loadDamageAdmin()" style="font-size:13px;padding:4px 8px;border:1px solid var(--bd);border-radius:6px;font-family:inherit">
+            <option value="0">すべて表示</option>
+            <option value="1">1件以上</option>
+            <option value="3">3件以上</option>
+            <option value="5">5件以上</option>
+          </select>
+        </label>
+        <label style="font-size:13px;color:var(--txm)">
+          <input type="checkbox" id="d-admin-show-hidden" onchange="loadDamageAdmin()"> 非公開も表示
+        </label>
+      </div>
+    </div>
+    <div id="damage-admin-list"><div style="color:var(--txl);padding:20px">読み込み中...</div></div>
+  </div>
+
 </div>
 
 <script>
@@ -848,6 +871,103 @@ function showStatus(msg,type){var e=document.getElementById("status-msg");e.text
 
 /* ── 初期化 ── */
 if(sessionStorage.getItem("admin_authed")==="1"&&localStorage.getItem(PW_KEY))enter();
+/* ══ 被害報告管理 ══ */
+var DAMAGE_TYPE_LABELS_ADM = {
+  subscription:'定期購入',cancel_difficult:'解約困難',min_purchase:'購入縛り',
+  price_hidden:'価格隠し',charge_continue:'解約後請求',hard_to_return:'返品拒否',
+  no_effect:'効果なし',side_effect:'副作用',false_ad:'虚偽広告',other:'その他'
+};
+
+async function loadDamageAdmin(){
+  var el=document.getElementById('damage-admin-list');
+  el.innerHTML='<div style="color:var(--txl);padding:20px">読み込み中...</div>';
+  var minReport=parseInt(document.getElementById('d-admin-report-filter').value)||0;
+  var showHidden=document.getElementById('d-admin-show-hidden').checked;
+  try{
+    var query='damage_reports?select=*&order=created_at.desc&limit=100';
+    if(!showHidden) query+='&is_public=eq.true';
+    if(minReport>0) query+='&report_count=gte.'+minReport;
+    var res=await sbFetch(query);
+    var rows=await res.json();
+    if(!rows.length){el.innerHTML='<div style="color:var(--txl);padding:20px">報告がありません</div>';return;}
+    el.innerHTML='';
+    rows.forEach(function(r){
+      var tags=(r.damage_types||[]).map(function(t){return'<span class="dtype-tag-adm">'+(DAMAGE_TYPE_LABELS_ADM[t]||t)+'</span>';}).join('');
+      var reportBadge=r.report_count>0?'<span class="d-report-badge'+(r.report_count>=3?' warn':'')+'">通報 '+r.report_count+'件</span>':'';
+      var pubBadge=r.is_public===false?'<span class="d-hidden-badge">非公開</span>':'<span class="d-pub-badge">公開</span>';
+      var div=document.createElement('div'); div.className='damage-admin-item'+(r.report_count>=5?' flagged':'');
+      div.innerHTML=
+        '<div class="dai-head">'
+          +'<div class="dai-title">'+r.medicine_name+(r.maker?' / '+r.maker:'')+'</div>'
+          +'<div class="dai-badges">'+pubBadge+reportBadge+'<span class="dai-date">'+(r.created_at||'').slice(0,10)+'</span></div>'
+        +'</div>'
+        +'<div class="dai-tags">'+tags+'</div>'
+        +(r.nickname?'<div class="dai-meta">投稿者: '+r.nickname+'</div>':'')
+        +(r.damage_amount?'<div class="dai-meta">被害額: ¥'+r.damage_amount.toLocaleString()+'</div>':'')
+        +(r.detail?'<div class="dai-detail">'+r.detail+'</div>':'')
+        +(r.screenshot_url?'<div class="dai-meta"><a href="'+r.screenshot_url+'" target="_blank" style="color:var(--teal2);font-size:12px">📎 スクリーンショットを確認</a></div>':'')
+        +(r.email?'<div class="dai-meta">メール: '+r.email+'</div>':'')
+        +'<div class="dai-actions">'
+          +(r.is_public!==false
+            ?'<button class="dai-btn dai-btn-hide" onclick="toggleDamagePublic('+r.id+',false,this)">非公開にする</button>'
+            :'<button class="dai-btn dai-btn-show" onclick="toggleDamagePublic('+r.id+',true,this)">公開に戻す</button>')
+          +'<button class="dai-btn dai-btn-del" onclick="deleteDamageReport('+r.id+',this)">削除</button>'
+        +'</div>';
+      el.appendChild(div);
+    });
+  }catch(e){el.innerHTML='<div style="color:var(--red);padding:20px">エラー: '+e.message+'</div>';}
+}
+
+async function toggleDamagePublic(id, pub, btn){
+  try{
+    var res=await sbPatch('damage_reports?id=eq.'+id,{is_public:pub});
+    if(res.ok){
+      var item=btn.closest('.damage-admin-item');
+      var badge=item.querySelector('.d-pub-badge,.d-hidden-badge');
+      if(pub){badge.className='d-pub-badge';badge.textContent='公開';}
+      else{badge.className='d-hidden-badge';badge.textContent='非公開';}
+      btn.textContent=pub?'非公開にする':'公開に戻す';
+      btn.className=pub?'dai-btn dai-btn-hide':'dai-btn dai-btn-show';
+      btn.onclick=function(){toggleDamagePublic(id,!pub,btn);};
+    }
+  }catch(e){alert('更新失敗: '+e.message);}
+}
+
+async function deleteDamageReport(id, btn){
+  if(!confirm('この報告を完全に削除しますか？この操作は取り消せません。')) return;
+  try{
+    var sb=getSBConf();
+    var res=await fetch(sb.url+'/rest/v1/damage_reports?id=eq.'+id,{
+      method:'DELETE',
+      headers:{
+        'apikey':sb.key,'Authorization':'Bearer '+sb.key,
+        'Content-Type':'application/json'
+      }
+    });
+    if(res.ok){
+      btn.closest('.damage-admin-item').remove();
+    } else {
+      alert('削除失敗: '+res.status);
+    }
+  }catch(e){alert('削除失敗: '+e.message);}
+}
+
+function getSBConf(){
+  return {url:SB_URL, key:SB_KEY};
+}
+
+async function sbPatch(path, data){
+  var sb=getSBConf();
+  return fetch(sb.url+'/rest/v1/'+path,{
+    method:'PATCH',
+    headers:{
+      'apikey':sb.key,'Authorization':'Bearer '+sb.key,
+      'Content-Type':'application/json','Prefer':'return=minimal'
+    },
+    body:JSON.stringify(data)
+  });
+}
+
 </script>
 
 <!-- 画像アップロードモーダル -->
