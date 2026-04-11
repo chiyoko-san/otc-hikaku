@@ -320,162 +320,154 @@
       <!-- 投稿フォーム -->
       <div class="damage-form-box" id="damage-form-box">
         <div class="damage-form-title">📝 被害を報告する</div>
-        <div class="fg">
-          <label>商品名・会社名 <span class="req">*</span></label>
-          <!-- DB検索 or 手入力の切り替え -->
-          <div class="d-input-mode">
-            <button type="button" class="d-mode-btn on" id="d-mode-db" onclick="setDamageMode('db')">DBから検索</button>
-            <button type="button" class="d-mode-btn" id="d-mode-manual" onclick="setDamageMode('manual')">DBにない商品</button>
-          </div>
-          <!-- DBモード -->
-          <div id="d-mode-db-area">
-            <div class="damage-search-wrap">
-              <input type="text" id="d-med-search" placeholder="商品名・メーカー名・会社名で検索…" autocomplete="off" oninput="searchDamageMed(this.value)">
-              <div id="d-med-results" class="damage-search-results" style="display:none"></div>
+
+        <!-- STEP 1 -->
+        <div class="d-step">
+          <div class="d-step-head"><span class="d-step-num">1</span>商品・会社名<span class="d-req">必須</span></div>
+          <div class="d-step-body">
+            <div class="d-input-mode">
+              <button type="button" class="d-mode-btn on" id="d-mode-db" onclick="setDamageMode('db')">データベースから検索</button>
+              <button type="button" class="d-mode-btn" id="d-mode-manual" onclick="setDamageMode('manual')">DBにない商品を入力</button>
             </div>
-            <div id="d-med-selected" class="damage-selected" style="display:none"></div>
+            <div id="d-mode-db-area">
+              <div class="damage-search-wrap">
+                <input type="text" id="d-med-search" placeholder="商品名・メーカー名・会社名で検索…" autocomplete="off" oninput="searchDamageMed(this.value)">
+                <div id="d-med-results" class="damage-search-results" style="display:none"></div>
+              </div>
+              <div id="d-med-selected" class="damage-selected" style="display:none"></div>
+            </div>
+            <div id="d-mode-manual-area" style="display:none">
+              <input type="text" id="d-med-name-manual" placeholder="商品名（例：〇〇サプリ）">
+              <input type="text" id="d-med-maker-manual" placeholder="会社名・販売元（例：〇〇株式会社）" style="margin-top:8px">
+              <div class="d-hint">DBに登録されていない商品・サプリ・健康食品はこちらから入力してください</div>
+            </div>
+            <input type="hidden" id="d-med-id">
+            <input type="hidden" id="d-med-name">
+            <input type="hidden" id="d-med-maker">
           </div>
-          <!-- 手入力モード -->
-          <div id="d-mode-manual-area" style="display:none">
-            <input type="text" id="d-med-name-manual" placeholder="商品名（例：〇〇サプリ）">
-            <input type="text" id="d-med-maker-manual" placeholder="会社名・販売元（例：〇〇株式会社）" style="margin-top:8px">
-            <div style="font-size:11px;color:var(--txl);margin-top:4px">DBに登録されていない商品・サプリ・健康食品はこちらから入力してください</div>
-          </div>
-          <input type="hidden" id="d-med-id">
-          <input type="hidden" id="d-med-name">
-          <input type="hidden" id="d-med-maker">
-        </div>
-        <div class="fg">
-          <label>被害の種類（複数選択可） <span class="req">*</span></label>
-          <select id="d-damage-types-sel" multiple size="6" class="d-multi-select">
-            <option value="subscription">知らないうちに定期購入になっていた</option>
-            <option value="cancel_difficult">解約できない・電話が繋がらない</option>
-            <option value="min_purchase">最低購入回数の縛りがあった</option>
-            <option value="price_hidden">2回目以降の価格が隠されていた</option>
-            <option value="charge_continue">解約後も請求が続いた</option>
-            <option value="hard_to_return">返品・返金に応じてもらえなかった</option>
-            <option value="no_effect">効果がなかった</option>
-            <option value="side_effect">副作用・体調不良があった</option>
-            <option value="false_ad">広告と実物が違った</option>
-            <option value="other">その他</option>
-          </select>
-          <div style="font-size:11px;color:var(--txl);margin-top:4px">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
-        </div>
-        <div class="fg">
-          <label>被害金額（任意）</label>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input type="number" id="d-amount" placeholder="例：19800" style="width:160px" min="0">
-            <span style="font-size:14px;color:var(--txm)">円</span>
-          </div>
-        </div>
-        <div class="fg">
-          <label>詳細（任意）</label>
-          <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法など（個人情報は含めないでください）" rows="4"></textarea>
         </div>
 
-        <div class="d-form-section-title">📸 証拠・スクリーンショット（任意）</div>
-        <div class="fg">
-          <label>購入画面・広告・やり取りのスクリーンショット</label>
-          <div class="d-upload-area" id="d-upload-area" onclick="document.getElementById('d-screenshot').click()">
-            <div id="d-upload-placeholder">
-              <div class="d-upload-icon">📎</div>
-              <div class="d-upload-text">クリックして画像を選択<br><span style="font-size:11px;color:var(--txl)">PNG・JPG・GIF（最大5MB）</span></div>
-            </div>
-            <div id="d-upload-preview" style="display:none"></div>
-          </div>
-          <input type="file" id="d-screenshot" accept="image/*" style="display:none" onchange="previewScreenshot(this)">
-          <button type="button" id="d-screenshot-clear" style="display:none;margin-top:6px;background:none;border:none;color:var(--txl);font-size:12px;cursor:pointer" onclick="clearScreenshot()">✕ 画像を削除</button>
-        </div>
-
-        <div class="d-form-section-title">👤 投稿者情報（任意・集計のみ使用）</div>
-        <div>
-          <div class="fg">
-            <label>ニックネーム</label>
-            <input type="text" id="d-nickname" placeholder="例：匿名希望" maxlength="30">
-          </div>
-          <div class="fg">
-            <label>年齢</label>
-            <select id="d-age">
-              <option value="">選択しない</option>
-              <option value="10">10代</option>
-              <option value="20">20代</option>
-              <option value="30">30代</option>
-              <option value="40">40代</option>
-              <option value="50">50代</option>
-              <option value="60">60代以上</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label>性別</label>
-            <select id="d-gender">
-              <option value="">選択しない</option>
-              <option value="male">男性</option>
-              <option value="female">女性</option>
+        <!-- STEP 2 -->
+        <div class="d-step">
+          <div class="d-step-head"><span class="d-step-num">2</span>被害の種類<span class="d-req">必須</span><span class="d-hint-inline">複数選択可</span></div>
+          <div class="d-step-body">
+            <select id="d-damage-types-sel" multiple size="6" class="d-multi-select">
+              <option value="subscription">知らないうちに定期購入になっていた</option>
+              <option value="cancel_difficult">解約できない・電話が繋がらない</option>
+              <option value="min_purchase">最低購入回数の縛りがあった</option>
+              <option value="price_hidden">2回目以降の価格が隠されていた</option>
+              <option value="charge_continue">解約後も請求が続いた</option>
+              <option value="hard_to_return">返品・返金に応じてもらえなかった</option>
+              <option value="no_effect">効果がなかった</option>
+              <option value="side_effect">副作用・体調不良があった</option>
+              <option value="false_ad">広告と実物が違った</option>
               <option value="other">その他</option>
             </select>
+            <div class="d-hint">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
           </div>
         </div>
 
-        <div class="d-form-section-title">🛒 購入・対処情報（任意・集計のみ使用）</div>
-        <div>
-          <div class="fg">
-            <label>購入経路</label>
-            <select id="d-route">
-              <option value="">選択しない</option>
-              <option value="sns_ad">SNS広告</option>
-              <option value="search_ad">検索広告</option>
-              <option value="tv">テレビ・雑誌</option>
-              <option value="store">店頭</option>
-              <option value="word_of_mouth">知人紹介</option>
-              <option value="other">その他</option>
-            </select>
+        <!-- STEP 3 -->
+        <div class="d-step">
+          <div class="d-step-head"><span class="d-step-num">3</span>被害金額・詳細<span class="d-opt">任意</span></div>
+          <div class="d-step-body">
+            <div class="d-inline-group">
+              <input type="number" id="d-amount" placeholder="被害金額（例：19800）" min="0">
+              <span class="d-unit">円</span>
+            </div>
+            <textarea id="d-detail" placeholder="具体的な状況・経緯・対処法など&#10;（個人情報は含めないでください）" rows="4" style="margin-top:8px"></textarea>
           </div>
-          <div class="fg">
-            <label>購入時期</label>
-            <input type="month" id="d-purchase-date">
-          </div>
-          <div class="fg">
-            <label>解決状況</label>
-            <select id="d-resolve">
-              <option value="unresolved">未解決</option>
-              <option value="negotiating">交渉中</option>
-              <option value="resolved">解決済み</option>
-            </select>
-          </div>
-        </div>
-        <div class="fg">
-          <label>相談先（複数選択可）</label>
-          <select id="d-consult-sel" multiple size="5" class="d-multi-select">
-            <option value="none">まだ相談していない</option>
-            <option value="consumer_center">消費生活センター（188）</option>
-            <option value="credit_card">クレジットカード会社</option>
-            <option value="lawyer">弁護士・法テラス</option>
-            <option value="police">警察</option>
-            <option value="other">その他</option>
-          </select>
-          <div style="font-size:11px;color:var(--txl);margin-top:4px">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
         </div>
 
-        <div class="d-form-section-title">📧 連絡先（任意）</div>
-        <div class="fg">
-          <label>メールアドレス</label>
-          <input type="email" id="d-email">
+        <!-- STEP 4 -->
+        <div class="d-step">
+          <div class="d-step-head"><span class="d-step-num">4</span>スクリーンショット<span class="d-opt">任意</span></div>
+          <div class="d-step-body">
+            <div class="d-upload-area" id="d-upload-area" onclick="document.getElementById('d-screenshot').click()">
+              <div id="d-upload-placeholder">
+                <div class="d-upload-icon">📎</div>
+                <div class="d-upload-text">クリックして画像を選択<br><span style="font-size:11px;color:var(--txl)">PNG・JPG・GIF（最大5MB）</span></div>
+              </div>
+              <div id="d-upload-preview" style="display:none"></div>
+            </div>
+            <input type="file" id="d-screenshot" accept="image/*" style="display:none" onchange="previewScreenshot(this)">
+            <button type="button" id="d-screenshot-clear" style="display:none;margin-top:6px;background:none;border:none;color:var(--txl);font-size:12px;cursor:pointer" onclick="clearScreenshot()">✕ 画像を削除</button>
+            <div class="d-hint">購入画面・広告・やり取りのスクリーンショットを添付できます</div>
+          </div>
         </div>
 
-        <div class="fg">
-          <label>公開設定 <span class="req">*</span></label>
-          <select id="d-public">
-            <option value="1">公開する（投稿内容を一覧に表示する）</option>
-            <option value="0">公開しない（運営のみ閲覧・集計のみに使用）</option>
-          </select>
-          <div style="font-size:11px;color:var(--txl);margin-top:4px">「公開しない」を選択した場合、内容は集計データにのみ反映されます</div>
+        <!-- STEP 5 -->
+        <div class="d-step">
+          <div class="d-step-head"><span class="d-step-num">5</span>投稿者・購入情報<span class="d-opt">任意・集計のみ使用</span></div>
+          <div class="d-step-body">
+            <div class="d-2col">
+              <div class="fg"><label>ニックネーム</label><input type="text" id="d-nickname" placeholder="例：匿名希望" maxlength="30"></div>
+              <div class="fg"><label>年齢</label>
+                <select id="d-age">
+                  <option value="">選択しない</option>
+                  <option value="10">10代</option><option value="20">20代</option>
+                  <option value="30">30代</option><option value="40">40代</option>
+                  <option value="50">50代</option><option value="60">60代以上</option>
+                </select>
+              </div>
+              <div class="fg"><label>性別</label>
+                <select id="d-gender">
+                  <option value="">選択しない</option>
+                  <option value="male">男性</option><option value="female">女性</option><option value="other">その他</option>
+                </select>
+              </div>
+              <div class="fg"><label>購入経路</label>
+                <select id="d-route">
+                  <option value="">選択しない</option>
+                  <option value="sns_ad">SNS広告</option><option value="search_ad">検索広告</option>
+                  <option value="tv">テレビ・雑誌</option><option value="store">店頭</option>
+                  <option value="word_of_mouth">知人紹介</option><option value="other">その他</option>
+                </select>
+              </div>
+              <div class="fg"><label>購入時期</label><input type="month" id="d-purchase-date"></div>
+              <div class="fg"><label>解決状況</label>
+                <select id="d-resolve">
+                  <option value="unresolved">未解決</option>
+                  <option value="negotiating">交渉中</option>
+                  <option value="resolved">解決済み</option>
+                </select>
+              </div>
+            </div>
+            <div class="fg" style="margin-top:12px">
+              <label>相談先<span class="d-hint-inline">複数選択可</span></label>
+              <select id="d-consult-sel" multiple size="5" class="d-multi-select">
+                <option value="none">まだ相談していない</option>
+                <option value="consumer_center">消費生活センター（188）</option>
+                <option value="credit_card">クレジットカード会社</option>
+                <option value="lawyer">弁護士・法テラス</option>
+                <option value="police">警察</option>
+                <option value="other">その他</option>
+              </select>
+              <div class="d-hint">Ctrl（Mac: ⌘）を押しながらクリックで複数選択できます</div>
+            </div>
+          </div>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
+
+        <!-- STEP 6 -->
+        <div class="d-step">
+          <div class="d-step-head"><span class="d-step-num">6</span>連絡先・公開設定</div>
+          <div class="d-step-body">
+            <div class="fg"><label>メールアドレス<span class="d-opt">任意</span></label><input type="email" id="d-email"></div>
+            <div class="fg"><label>公開設定<span class="d-req">必須</span></label>
+              <select id="d-public">
+                <option value="1">公開する（投稿内容を一覧に表示する）</option>
+                <option value="0">公開しない（運営のみ閲覧・集計のみに使用）</option>
+              </select>
+              <div class="d-hint">「公開しない」を選択した場合、内容は集計データにのみ反映されます</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-submit-area">
           <button type="button" class="btn" onclick="submitDamageReport()">報告を投稿する</button>
-          <div style="font-size:12px;color:var(--txl)">投稿前に公開設定をご確認ください</div>
+          <div class="d-hint" style="margin-top:6px">投稿前に公開設定をご確認ください</div>
         </div>
         <div id="d-status" style="margin-top:10px;font-size:13px"></div>
-      </div>
 
       <!-- 投稿一覧 -->
       <div class="damage-list-head">

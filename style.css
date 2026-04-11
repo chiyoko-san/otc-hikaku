@@ -359,10 +359,37 @@ footer a:hover{color:#fff}
 .damage-main{min-width:0}
 .damage-side{position:sticky;top:68px;min-width:0}
 
-/* フォーム */
-.damage-form-box{background:var(--wh);border:1px solid var(--bd);border-radius:12px;padding:20px;margin-bottom:20px}
-.damage-form-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.req{color:var(--red);font-size:12px}
+/* フォーム外枠 */
+.damage-form-box{background:var(--wh);border:1px solid var(--bd);border-radius:12px;padding:24px;margin-bottom:20px}
+.damage-form-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:20px}
+.d-req{display:inline-block;padding:1px 7px;background:var(--rb);color:var(--red);border-radius:10px;font-size:11px;font-weight:600;margin-left:6px;vertical-align:middle}
+.d-opt{display:inline-block;padding:1px 7px;background:var(--sl);color:var(--txl);border-radius:10px;font-size:11px;font-weight:400;margin-left:6px;vertical-align:middle}
+.d-hint{font-size:11px;color:var(--txl);margin-top:4px;line-height:1.6}
+.d-hint-inline{font-size:11px;color:var(--txl);font-weight:400;margin-left:6px}
+
+/* ステップ形式 */
+.d-step{border:1px solid var(--bd);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.d-step-head{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--sl);font-size:14px;font-weight:700;color:var(--navy);border-bottom:1px solid var(--bd)}
+.d-step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--teal);color:#fff;border-radius:50%;font-size:12px;font-weight:700;flex-shrink:0}
+.d-step-body{padding:16px}
+.d-step-body .fg{margin-bottom:12px}
+.d-step-body .fg:last-child{margin-bottom:0}
+.d-step-body label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px}
+
+/* 2カラムグリッド（投稿者情報） */
+.d-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* インライングループ（金額） */
+.d-inline-group{display:flex;align-items:center;gap:8px}
+.d-inline-group input{flex:1}
+.d-unit{font-size:14px;color:var(--txm);white-space:nowrap}
+
+/* DBモード切り替えボタン */
+.d-input-mode{display:flex;gap:6px;margin-bottom:10px}
+.d-mode-btn{padding:6px 14px;border:1px solid var(--bd);border-radius:20px;background:var(--wh);color:var(--txm);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.d-mode-btn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* 商品選択・検索 */
 .damage-search-wrap{position:relative}
 .damage-search-results{position:absolute;top:100%;left:0;right:0;background:var(--wh);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:50;max-height:240px;overflow-y:auto}
 .d-med-opt{padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid var(--bd)}
@@ -370,12 +397,20 @@ footer a:hover{color:#fff}
 .d-med-opt:hover{background:var(--tl)}
 .damage-selected{margin-top:6px;padding:6px 10px;background:var(--tl);border-radius:6px;display:flex;align-items:center;justify-content:space-between}
 
-/* 被害種別チェックボックス */
-.damage-types{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-top:6px}
-.dtype-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;font-size:13px;color:var(--txm);transition:all .12s}
-.dtype-item:hover{background:var(--tl);border-color:var(--teal)}
-.dtype-item input{width:15px;height:15px;accent-color:var(--teal);flex-shrink:0}
-.dtype-item:has(input:checked){background:var(--tl);border-color:var(--teal);color:var(--teal2);font-weight:600}
+/* アップロードエリア */
+.d-upload-area{border:2px dashed var(--bd);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .15s;background:var(--sl)}
+.d-upload-area:hover{border-color:var(--teal);background:var(--tl)}
+.d-upload-icon{font-size:24px;margin-bottom:6px}
+.d-upload-text{font-size:14px;color:var(--txm);line-height:1.6}
+
+/* 複数選択ドロップダウン */
+.d-multi-select{width:100%;border:1px solid var(--bd);border-radius:8px;font-size:14px;font-family:inherit;color:var(--tx);padding:4px;outline:none;background:var(--wh)}
+.d-multi-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.1)}
+.d-multi-select option{padding:7px 10px;border-radius:4px;cursor:pointer}
+.d-multi-select option:checked{background:var(--teal);color:#fff}
+
+/* 送信エリア */
+.d-submit-area{margin-top:16px;padding:16px;background:var(--sl);border-radius:10px;text-align:center}
 
 /* 一覧 */
 .damage-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -387,7 +422,6 @@ footer a:hover{color:#fff}
 .di-date{font-size:11px;color:var(--txl);white-space:nowrap;flex-shrink:0}
 .di-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
 .dtype-tag{padding:2px 8px;background:var(--rb);color:var(--red);border-radius:20px;font-size:11px;font-weight:600}
-.di-amount{font-size:12px;color:var(--txm);margin-bottom:6px;font-weight:600}
 .di-detail{font-size:13px;color:var(--txm);line-height:1.7;padding-top:6px;border-top:1px solid var(--bd);margin-top:6px}
 .d-resolved{margin-left:6px;padding:1px 6px;background:#f0fdf4;color:#16a34a;border-radius:10px;font-size:10px;font-weight:600}
 
@@ -408,26 +442,7 @@ footer a:hover{color:#fff}
 @media(max-width:860px){
   .damage-layout{grid-template-columns:1fr}
   .damage-side{display:none}
-  .damage-types{grid-template-columns:1fr}
 }
-
-/* 被害報告フォーム - モード切り替え */
-.d-input-mode{display:flex;gap:6px;margin-bottom:10px}
-.d-mode-btn{padding:6px 14px;border:1px solid var(--bd);border-radius:20px;background:var(--wh);color:var(--txm);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
-.d-mode-btn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
-
-/* 被害報告フォーム - 追加項目 */
-.d-form-section-title{font-size:13px;font-weight:700;color:var(--navy);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px}
-.d-form-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.d-consult-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin-top:6px}
-.d-upload-area{border:2px dashed var(--bd);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--sl)}
-.d-upload-area:hover{border-color:var(--teal);background:var(--tl)}
-.d-upload-icon{font-size:28px;margin-bottom:8px}
-.d-upload-text{font-size:14px;color:var(--txm);line-height:1.6}
-@media(max-width:600px){.d-form-row{grid-template-columns:1fr}}
-
-/* 複数選択ドロップダウン */
-.d-multi-select{width:100%;border:1px solid var(--bd);border-radius:8px;font-size:14px;font-family:inherit;color:var(--tx);padding:4px;outline:none;background:var(--wh)}
-.d-multi-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.1)}
-.d-multi-select option{padding:7px 10px;border-radius:4px;cursor:pointer}
-.d-multi-select option:checked{background:var(--teal);color:#fff}
+@media(max-width:560px){
+  .d-2col{grid-template-columns:1fr}
+}
