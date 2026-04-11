@@ -345,3 +345,9 @@ footer a:hover{color:#fff}
   .col-detail-side{display:none}
   .col-cta-items{grid-template-columns:1fr}
 }
+/* ── コラム一覧サイドバーCTA ── */
+.col-side-cta{display:flex;flex-direction:column;gap:8px}
+.col-side-cta-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:var(--sl);border:1px solid var(--bd);border-radius:8px;cursor:pointer;font-family:inherit;text-align:left;transition:all .15s}
+.col-side-cta-btn:hover{background:var(--tl);border-color:var(--teal)}
+.col-side-cta-icon{font-size:18px;flex-shrink:0}
+.col-side-cta-label{font-size:13px;font-weight:600;color:var(--navy)}
