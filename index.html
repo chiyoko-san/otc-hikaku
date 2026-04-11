@@ -457,12 +457,20 @@
         <div class="d-form-section-title">📧 連絡先（任意）</div>
         <div class="fg">
           <label>メールアドレス</label>
-          <input type="email" id="d-email" placeholder="運営からの連絡を希望する場合のみ入力">
+          <input type="email" id="d-email">
         </div>
 
+        <div class="fg">
+          <label>公開設定 <span class="req">*</span></label>
+          <select id="d-public">
+            <option value="1">公開する（投稿内容を一覧に表示する）</option>
+            <option value="0">公開しない（運営のみ閲覧・集計のみに使用）</option>
+          </select>
+          <div style="font-size:11px;color:var(--txl);margin-top:4px">「公開しない」を選択した場合、内容は集計データにのみ反映されます</div>
+        </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
           <button type="button" class="btn" onclick="submitDamageReport()">報告を投稿する</button>
-          <div style="font-size:12px;color:var(--txl)">投稿内容は即時公開されます</div>
+          <div style="font-size:12px;color:var(--txl)">投稿前に公開設定をご確認ください</div>
         </div>
         <div id="d-status" style="margin-top:10px;font-size:13px"></div>
       </div>
@@ -1826,6 +1834,7 @@ async function submitDamageReport(){
   var route   =document.getElementById('d-route').value||null;
   var pdate   =document.getElementById('d-purchase-date').value||null;
   var resolve_status=document.getElementById('d-resolve').value||'unresolved';
+  var is_public=document.getElementById('d-public').value==='1';
   var consulted=[];
   document.querySelectorAll('.d-consult-items input:checked').forEach(function(cb){consulted.push(cb.value);});
 
@@ -1862,7 +1871,8 @@ async function submitDamageReport(){
         resolve_status: resolve_status,
         consulted:      consulted.length?consulted:null,
         screenshot_url: screenshotUrl,
-        resolved:       resolve_status==='resolved'
+        resolved:       resolve_status==='resolved',
+        is_public:      is_public
       })
     });
     if(res.ok){
@@ -1877,6 +1887,7 @@ async function submitDamageReport(){
         document.getElementById(id).value='';
       });
       document.getElementById('d-resolve').value='unresolved';
+      document.getElementById('d-public').value='1';
       clearScreenshot();
       DAMAGE_OFFSET=0;
       loadDamageReports(true);
@@ -1898,7 +1909,7 @@ async function loadDamageReports(reset){
   var el = document.getElementById('damage-list');
   if(DAMAGE_OFFSET===0) el.innerHTML='<div style="padding:20px;color:var(--txl)">読み込み中...</div>';
 
-  var query = 'damage_reports?select=id,medicine_name,maker,damage_types,damage_amount,detail,resolved,created_at&order=created_at.desc&limit='+(DAMAGE_LIMIT+1)+'&offset='+DAMAGE_OFFSET;
+  var query = 'damage_reports?select=id,medicine_name,maker,damage_types,damage_amount,detail,resolved,created_at,nickname&is_public=eq.true&order=created_at.desc&limit='+(DAMAGE_LIMIT+1)+'&offset='+DAMAGE_OFFSET;
   if(filter) query += '&damage_types=cs.{'+filter+'}';
 
   try{
@@ -1920,6 +1931,8 @@ async function loadDamageReports(reset){
       }).join('');
       var amount = r.damage_amount?'<span class="d-amount">被害額: ¥'+r.damage_amount.toLocaleString()+'</span>':'';
       var date = r.created_at?r.created_at.slice(0,10):'';
+      var nick = r.nickname?'<span style="font-size:11px;color:var(--teal2);font-weight:600;margin-left:6px">'+r.nickname+'</span>':'';
+
       var resolved = r.resolved?'<span class="d-resolved">解決済み</span>':'';
       var div=document.createElement('div'); div.className='damage-item';
       div.innerHTML=
