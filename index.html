@@ -1665,6 +1665,9 @@ async function submitContact(){
         /* 検索以外の明示的なページ遷移 */
         if(pg==='damage-list'||pg==='damage-report'){
           showPg(pg,false);
+          /* showPgフックはこのIIFEより後に定義されるため、URL直打ち時は明示的に呼び出す */
+          if(pg==='damage-list'){ loadDamageReports(true); loadDamageStats(); }
+          if(pg==='damage-report'){ loadDamageStats(); }
         } else {
           await buildCats();buildSymp();buildIngs();
           showPg(pg,false);
