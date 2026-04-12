@@ -910,6 +910,12 @@ async function loadDamageAdmin(){
       var tags=(r.damage_types||[]).map(function(t){return'<span class="dtype-tag-adm">'+(DAMAGE_TYPE_LABELS_ADM[t]||t)+'</span>';}).join('');
       var reportBadge=r.report_count>0?'<span class="d-report-badge'+(r.report_count>=3?' warn':'')+'">通報 '+r.report_count+'件</span>':'';
       var pubBadge=r.is_public===false?'<span class="d-hidden-badge">非公開</span>':'<span class="d-pub-badge">公開</span>';
+      var ROUTE_LBL={web_ad:'WEB広告',newspaper:'新聞',tv:'テレビ',phone_sales:'電話営業',other:'その他'};
+      var AGE_LBL={10:'10代',20:'20代',30:'30代',40:'40代',50:'50代',60:'60代',70:'70代',80:'80代',90:'90代',100:'100代以上'};
+      var GENDER_LBL={male:'男性',female:'女性',other:'その他'};
+      var RESOLVE_LBL={unresolved:'未解決',negotiating:'交渉中',resolved:'解決済み'};
+      var CONSULT_LBL={none:'未相談',consumer_center:'消費生活センター',credit_card:'クレジットカード会社',lawyer:'弁護士・法テラス',police:'警察',other:'その他'};
+      var consultStr=(r.consulted||[]).map(function(c){return CONSULT_LBL[c]||c;}).join('・')||'―';
       var div=document.createElement('div'); div.className='damage-admin-item'+(r.report_count>=5?' flagged':'');
       div.innerHTML=
         '<div class="dai-head">'
@@ -917,11 +923,19 @@ async function loadDamageAdmin(){
           +'<div class="dai-badges">'+pubBadge+reportBadge+'<span class="dai-date">'+(r.created_at||'').slice(0,10)+'</span></div>'
         +'</div>'
         +'<div class="dai-tags">'+tags+'</div>'
-        +(r.nickname?'<div class="dai-meta">投稿者: '+r.nickname+'</div>':'')
-        +(r.damage_amount?'<div class="dai-meta">被害額: ¥'+r.damage_amount.toLocaleString()+'</div>':'')
+        +'<div class="dai-meta-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 16px;font-size:12px;color:var(--txm);margin:8px 0;padding:8px 10px;background:#f8fafc;border-radius:6px">'
+          +'<span>👤 投稿者: '+(r.nickname||'匿名')+'</span>'
+          +'<span>💰 被害額: '+(r.damage_amount?'¥'+r.damage_amount.toLocaleString():'―')+'</span>'
+          +'<span>✅ 解決状況: '+(RESOLVE_LBL[r.resolve_status]||r.resolve_status||'―')+'</span>'
+          +'<span>🎂 年齢: '+(AGE_LBL[r.age]||r.age||'―')+'</span>'
+          +'<span>⚧ 性別: '+(GENDER_LBL[r.gender]||r.gender||'―')+'</span>'
+          +'<span>🛒 購入経路: '+(ROUTE_LBL[r.purchase_route]||r.purchase_route||'―')+'</span>'
+          +'<span>📅 購入時期: '+(r.purchase_date||'―')+'</span>'
+          +'<span>📞 相談先: '+consultStr+'</span>'
+          +'<span>📧 メール: '+(r.email||'―')+'</span>'
+        +'</div>'
         +(r.detail?'<div class="dai-detail">'+r.detail+'</div>':'')
         +(r.screenshot_url?'<div class="dai-meta"><a href="'+r.screenshot_url+'" target="_blank" style="color:var(--teal2);font-size:12px">📎 スクリーンショットを確認</a></div>':'')
-        +(r.email?'<div class="dai-meta">メール: '+r.email+'</div>':'')
         +'<div class="dai-actions">'
           +(r.is_public!==false
             ?'<button class="dai-btn dai-btn-hide" onclick="toggleDamagePublic('+r.id+',false,this)">非公開にする</button>'

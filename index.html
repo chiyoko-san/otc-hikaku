@@ -597,6 +597,10 @@
         <div id="damage-med-rank-list"></div>
       </div>
       <div class="cside-box">
+        <div class="cside-title">被害会社ランキング</div>
+        <div id="damage-maker-rank-list"></div>
+      </div>
+      <div class="cside-box">
         <div class="cside-title">被害を報告する</div>
         <div class="col-side-cta">
           <button class="col-side-cta-btn" onclick="showPg('damage-report')">
@@ -2474,7 +2478,7 @@ function loadMoreDamage(){
 /* ── 集計 ── */
 async function loadDamageStats(){
   try{
-    var r = await sbFetch('damage_reports?select=damage_types,damage_amount,medicine_name&is_public=eq.true&limit=1000');
+    var r = await sbFetch('damage_reports?select=damage_types,damage_amount,medicine_name,maker&is_public=eq.true&limit=1000');
     var rows = await r.json();
     var total = rows.length;
     var totalAmt = rows.reduce(function(s,row){ return s+(row.damage_amount||0);},0);
@@ -2502,6 +2506,14 @@ async function loadDamageStats(){
       return '<div class="d-rank-item">'        +'<div class="d-rank-label"><span class="d-rank-num">'+(i+1)+'</span>'+m+'</div>'        +'<div class="d-rank-count">'+medCount[m]+'件</div>'      +'</div>';
     }).join('') || '<div style="font-size:13px;color:var(--txl)">データなし</div>';
 
+    /* 被害会社ランキング */
+    var makerCount={};
+    rows.forEach(function(row){ if(row.maker) makerCount[row.maker]=(makerCount[row.maker]||0)+1; });
+    var sortedMaker=Object.keys(makerCount).sort(function(a,b){return makerCount[b]-makerCount[a];});
+    var makerHtml = sortedMaker.slice(0,5).map(function(m,i){
+      return '<div class="d-rank-item">'        +'<div class="d-rank-label"><span class="d-rank-num">'+(i+1)+'</span>'+m+'</div>'        +'<div class="d-rank-count">'+makerCount[m]+'件</div>'      +'</div>';
+    }).join('') || '<div style="font-size:13px;color:var(--txl)">データなし</div>';
+
     /* 全IDに一括反映（OR演算子ではなく全要素を更新） */
     ['damage-stats','damage-stats-list','damage-stats-r'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.innerHTML=statsHtml;
@@ -2511,6 +2523,9 @@ async function loadDamageStats(){
     });
     ['damage-med-rank','damage-med-rank-list','damage-med-rank-r'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.innerHTML=medHtml;
+    });
+    ['damage-maker-rank','damage-maker-rank-list','damage-maker-rank-r'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.innerHTML=makerHtml;
     });
 
   }catch(e){ console.error('damage stats error',e); }
