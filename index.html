@@ -26,7 +26,7 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <div class="logo" onclick="goHome()" style="cursor:pointer">クスリノ<em>コンパス</em></div>
+    <div class="logo" onclick="goHome()" style="cursor:pointer" title="トップページへ">クスリノ<em>コンパス</em></div>
     <button type="button" class="ntab" id="t-search" onclick="showPg('search')">検索</button>
     <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">症状から選ぶ</button>
     <button type="button" class="ntab" id="t-column" onclick="showPg('column')">コラム</button>
@@ -1927,13 +1927,15 @@ function akiRestart(){
 }
 /* ── ホーム ── */
 function goHome(){
-  document.getElementById('pg-search').style.display='none';
-  document.getElementById('med-detail').style.display='none';
+  /* 全ページ非表示・タブ解除 */
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
-  document.getElementById('pg-home').style.display='block';
-  history.pushState({home:true},'',location.pathname);
-  window.scrollTo(0,0);
+  /* ホームページ表示 */
+  var homeEl=document.getElementById('pg-home');
+  if(homeEl) homeEl.style.display='block';
+  /* URLをルートに戻す */
+  history.pushState({home:true},'','/');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 async function doHomeSearch(q){
