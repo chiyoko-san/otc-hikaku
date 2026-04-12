@@ -345,7 +345,7 @@
 
 
 <div class="pg" id="pg-damage-report">
-  <div class="damage-layout">
+  <div class="damage-report-wrap">
     <div class="damage-main">
       <div class="ptitle">被害を報告する</div>
       <div class="pdesc">市販薬・健康食品・サプリの購入トラブルを報告してください。投稿内容は集計・公開され被害防止に役立てます。</div>
@@ -548,20 +548,7 @@
         </div>
         <div id="d-status" style="margin-top:10px;font-size:13px"></div>
     </div>
-    <aside class="damage-side">
-      <div class="cside-box">
-        <div class="cside-title">被害集計</div>
-        <div id="damage-stats"><div style="font-size:13px;color:var(--txl)">読み込み中...</div></div>
-      </div>
-      <div class="cside-box">
-        <div class="cside-title">被害種別ランキング</div>
-        <div id="damage-type-rank"></div>
-      </div>
-      <div class="cside-box">
-        <div class="cside-title">被害商品ランキング</div>
-        <div id="damage-med-rank"></div>
-      </div>
-    </aside>
+
   </div>
 </div>
 
@@ -932,7 +919,7 @@ function showPg(id, push){
 function applyURLParams(){
   var params=new URLSearchParams(location.search);
   var pg=params.get("pg");
-  var validPgs=["guide","column","concept","privacy","terms","contact"];
+  var validPgs=["guide","column","concept","privacy","terms","contact","damage-report","damage-list"];
   if(pg && validPgs.indexOf(pg)>-1) showPg(pg, false);
   var colId=params.get("col");
   if(colId){ showPg("column",false); showColFromDB(colId); }
@@ -1676,8 +1663,12 @@ async function submitContact(){
         showPg('column',false);showColFromDB(colId);
       } else if(pg&&pg!=='search'&&!q&&!cat&&!syms){
         /* 検索以外の明示的なページ遷移 */
-        await buildCats();buildSymp();buildIngs();
-        showPg(pg,false);
+        if(pg==='damage-list'||pg==='damage-report'){
+          showPg(pg,false);
+        } else {
+          await buildCats();buildSymp();buildIngs();
+          showPg(pg,false);
+        }
       } else {
         /* pg=search または 検索パラメータあり → 検索ページ */
         document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});

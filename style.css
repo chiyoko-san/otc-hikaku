@@ -659,3 +659,6 @@ footer a:hover{color:#fff}
   .cmp-float{bottom:16px;right:16px;left:16px}
   .cmp-float-btn{flex:1;justify-content:center}
 }
+
+/* 被害報告するページ（集計なし・中央寄せ） */
+.damage-report-wrap{max-width:680px;margin:0 auto;padding:0 16px}
