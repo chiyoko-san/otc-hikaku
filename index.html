@@ -823,6 +823,15 @@ function showPg(id, push){
   if(!pgEl) return;
   var homeEl=document.getElementById('pg-home');
   if(homeEl)homeEl.style.display='none';
+  /* 検索ページ初回表示時にデータ読み込み */
+  if(id==='search'){
+    var catlist=document.getElementById('catlist');
+    if(catlist&&!catlist.children.length){
+      buildCats().then(function(){buildSymp();buildIngs();render();});
+    } else if(catlist&&catlist.children.length){
+      render();
+    }
+  }
   document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on");});
   document.querySelectorAll(".ntab").forEach(function(t){t.classList.remove("on");});
   pgEl.classList.add("on");
@@ -1433,34 +1442,45 @@ async function submitContact(){
 (async function(){
   try{
     var params=new URLSearchParams(location.search);
-    var hasAny=params.get('pg')||params.get('med')||params.get('col')||params.get('q')||params.get('cat')||params.get('syms');
+    var pg=params.get('pg'),colId=params.get('col'),medId=params.get('med');
+    var q=params.get('q'),cat=params.get('cat'),syms=params.get('syms');
+    var ings=params.get('ings'),risk=params.get('risk');
+    var hasAny=pg||colId||medId||q||cat||syms;
+
     if(hasAny){
+      /* URLパラメータあり → ホーム非表示 */
       var homeEl=document.getElementById('pg-home');
       if(homeEl)homeEl.style.display='none';
-      var q=params.get('q'),syms=params.get('syms'),cat=params.get('cat');
-      var ings=params.get('ings'),risk=params.get('risk');
       if(q){S.q=q;var qi=document.getElementById('qinp');if(qi)qi.value=q;}
       if(cat)S.cat=cat;
       if(syms)S.syms=syms.split(',').filter(Boolean);
       if(ings)S.ings=ings.split(',').filter(Boolean);
       if(risk)S.risk=risk;
-      await buildCats();buildSymp();buildIngs();
-      var colId=params.get('col'),medId=params.get('med'),pg=params.get('pg');
-      if(medId){await showMedDetail(parseInt(medId));}
-      else if(colId){showPg('column',false);showColFromDB(colId);}
-      else if(pg&&pg!=='search'){showPg(pg,false);}
-      else{
+
+      if(medId){
+        await buildCats();buildSymp();buildIngs();
+        await showMedDetail(parseInt(medId));
+      } else if(colId){
+        showPg('column',false);showColFromDB(colId);
+      } else if(pg&&pg!=='search'){
+        /* 検索以外のページ */
+        await buildCats();buildSymp();buildIngs();
+        showPg(pg,false);
+      } else {
+        /* 検索ページ（pg=searchまたはq/cat/symsあり） */
         document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
         document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
         var ps=document.getElementById('pg-search');if(ps)ps.classList.add('on');
         var ts=document.getElementById('t-search');if(ts)ts.classList.add('on');
+        await buildCats();buildSymp();buildIngs();
         await render();
       }
     }
+    /* URLパラメータなし → ホームページをそのまま表示（何もしない） */
   }catch(e){
     console.error('初期化エラー:', e);
-    document.getElementById('grid').innerHTML=
-      '<div class="nores" style="padding:30px;color:var(--red)">初期化エラー: '+e.message+'</div>';
+    var gridEl=document.getElementById('grid');
+    if(gridEl) gridEl.innerHTML='<div class="nores" style="padding:30px;color:var(--red)">初期化エラー: '+e.message+'</div>';
   }
 })();
 
@@ -1826,7 +1846,13 @@ function updateDropdownLabel(dropdownId, labelId, selectId){
     labelEl.textContent='選択してください';
     labelEl.style.color='var(--txl)';
   } else {
-    labelEl.textContent=checked.length+'件選択中';
+    var DTYPE={'subscription':'定期購入','cancel_difficult':'解約困難','min_purchase':'購入縛り',
+      'price_hidden':'価格隠し','charge_continue':'解約後請求','hard_to_return':'返品拒否',
+      'no_effect':'効果なし','side_effect':'副作用','false_ad':'虚偽広告','other':'その他',
+      'none':'未相談','consumer_center':'消費生活センター','credit_card':'カード会社',
+      'lawyer':'弁護士','police':'警察'};
+    var names=checked.map(function(cb){return DTYPE[cb.value]||cb.value;});
+    labelEl.textContent=names.join(' / ');
     labelEl.style.color='var(--teal2)';
   }
 }
@@ -2123,8 +2149,6 @@ async function submitDamageReport(){
       document.getElementById('d-resolve').value='unresolved';
       document.getElementById('d-public').value='1';
       clearScreenshot();
-      DAMAGE_OFFSET=0;
-      loadDamageReports(true);
       loadDamageStats();
     } else {
       showDStatus('送信に失敗しました: '+res.status,'err');
@@ -2139,8 +2163,9 @@ async function submitDamageReport(){
 /* ── 一覧読み込み ── */
 async function loadDamageReports(reset){
   if(reset) DAMAGE_OFFSET=0;
-  var filter = document.getElementById('d-filter-type').value;
-  var el = document.getElementById('damage-list');
+  var filterEl = document.getElementById('d-filter-type')||document.getElementById('d-filter-type-list');
+  var filter = filterEl ? filterEl.value : '';
+  var el = document.getElementById('damage-list')||document.getElementById('damage-list-page')||document.createElement('div');
   if(DAMAGE_OFFSET===0) el.innerHTML='<div style="padding:20px;color:var(--txl)">読み込み中...</div>';
 
   var query = 'damage_reports?select=id,medicine_name,maker,damage_types,damage_amount,detail,resolved,created_at,nickname&is_public=eq.true&order=created_at.desc&limit='+(DAMAGE_LIMIT+1)+'&offset='+DAMAGE_OFFSET;
@@ -2182,7 +2207,8 @@ async function loadDamageReports(reset){
     });
 
     DAMAGE_OFFSET += rows.length;
-    document.getElementById('damage-list-more').style.display = hasMore?'block':'none';
+    var moreEl=document.getElementById('damage-list-more')||document.getElementById('damage-list-page-more');
+    if(moreEl) moreEl.style.display = hasMore?'block':'none';
     restoreReportedBtns();
   }catch(e){
     el.innerHTML='<div style="padding:20px;color:var(--red)">読み込みエラー: '+e.message+'</div>';

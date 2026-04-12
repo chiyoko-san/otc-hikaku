@@ -368,7 +368,7 @@ footer a:hover{color:#fff}
 .d-hint-inline{font-size:11px;color:var(--txl);font-weight:400;margin-left:6px}
 
 /* ステップ形式 */
-.d-step{border:1px solid var(--bd);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.d-step{border:1px solid var(--bd);border-radius:10px;margin-bottom:12px}
 .d-step-head{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--sl);font-size:14px;font-weight:700;color:var(--navy);border-bottom:1px solid var(--bd)}
 .d-step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--teal);color:#fff;border-radius:50%;font-size:12px;font-weight:700;flex-shrink:0}
 .d-step-body{padding:16px}
@@ -391,7 +391,7 @@ footer a:hover{color:#fff}
 
 /* 商品選択・検索 */
 .damage-search-wrap{position:relative}
-.damage-search-results{position:absolute;top:100%;left:0;right:0;background:var(--wh);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:50;max-height:240px;overflow-y:auto}
+.damage-search-results{position:absolute;top:100%;left:0;right:0;background:var(--wh);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:200;max-height:240px;overflow-y:auto}
 .d-med-opt{padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid var(--bd)}
 .d-med-opt:last-child{border-bottom:none}
 .d-med-opt:hover{background:var(--tl)}
@@ -453,7 +453,7 @@ footer a:hover{color:#fff}
 .d-dropdown-arrow{font-size:10px;color:var(--txl);flex-shrink:0;margin-left:8px;transition:transform .2s}
 /* アコーディオン形式（position:staticで切り取られない） */
 .d-dropdown-list.d-accordion{position:static;border:none;box-shadow:none;border-radius:0 0 8px 8px;margin-top:0;border-top:1px solid var(--bd)}
-.d-dropdown-list{background:var(--wh);border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-top:0}
+.d-dropdown-list{background:var(--wh);border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-top:0;z-index:100}
 .d-ck-item{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;font-size:14px;color:var(--txm);border-bottom:1px solid var(--bd);transition:background .1s}
 .d-ck-item:last-child{border-bottom:none}
 .d-ck-item:hover{background:var(--tl)}
