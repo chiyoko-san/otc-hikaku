@@ -596,3 +596,29 @@ footer a:hover{color:#fff}
   .list-card-head{flex-direction:column;gap:8px}
   .list-card-right{justify-content:space-between;width:100%}
 }
+/* ── 検索ページ追加CSS ── */
+/* 検索アイコン */
+.sico{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.srel{position:relative}
+.srel input{padding-left:32px}
+
+/* フィルター行 */
+.frow{margin-bottom:8px;font-size:13px;color:var(--txm);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.frow label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.flabel{font-size:12px;color:var(--txl);min-width:70px;flex-shrink:0}
+.freset{width:100%;margin-top:8px;padding:7px;border:1px solid var(--bd);border-radius:6px;background:none;font-size:13px;color:var(--txl);cursor:pointer;font-family:inherit;transition:all .15s}
+.freset:hover{background:var(--rb);color:var(--red);border-color:var(--red)}
+
+/* 要注意成分ボックス */
+.warn-box{margin:12px 8px;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px}
+.warn-title{font-size:12px;font-weight:700;color:#c2410c;margin-bottom:6px}
+.warn-body{font-size:11px;color:var(--txm);margin-bottom:4px;line-height:1.6}
+.warn-body:last-child{margin-bottom:0}
+.warn-link{color:var(--red);font-weight:700;cursor:pointer;text-decoration:underline}
+
+/* 比較バー改善 */
+.cmpbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--wh);border:1px solid var(--bd);border-radius:8px;margin-bottom:10px;flex-wrap:wrap}
+.cmpbadge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:var(--teal);color:#fff;border-radius:50%;font-size:12px;font-weight:700}
+.cmpbtn{margin-left:auto;padding:6px 14px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.cmpbtn:hover{background:var(--teal2)}
+.cmpbtn:disabled{background:var(--bd);color:var(--txl);cursor:not-allowed}

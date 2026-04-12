@@ -77,16 +77,20 @@
 <div class="pg" id="pg-search">
   <div class="layout">
     <aside class="sb">
+      <!-- 検索ボックス -->
       <div class="sbox">
         <div class="srel">
-          
-          <input type="text" id="qinp" placeholder="商品名・成分・症状・メーカー…" autocomplete="off">
+          <span class="sico" onclick="S.q=document.getElementById('qinp').value;S.pg=1;render()" style="cursor:pointer">🔍</span>
+          <input type="text" id="qinp" placeholder="商品名・成分・症状・メーカー…" autocomplete="off"
+            oninput="S.q=this.value;S.pg=1;render()"
+            onkeydown="if(event.key==='Enter'){S.q=this.value;S.pg=1;render();}">
         </div>
       </div>
 
+      <!-- カテゴリ -->
       <div class="acc">
         <button type="button" class="acc-hd" id="hd-cat" onclick="togAcc('cat')">
-          カテゴリ
+          🗂 カテゴリ
           <span class="acc-cnt" id="cnt-cat"></span>
           <span class="acc-arr">▼</span>
         </button>
@@ -95,9 +99,10 @@
         </div>
       </div>
 
+      <!-- 症状で絞り込む -->
       <div class="acc">
         <button type="button" class="acc-hd" id="hd-sym" onclick="togAcc('sym')">
-          症状で絞り込む
+          😷 症状で絞り込む
           <span class="acc-cnt" id="cnt-sym"></span>
           <span class="acc-arr">▼</span>
         </button>
@@ -106,9 +111,10 @@
         </div>
       </div>
 
+      <!-- 成分で絞り込む -->
       <div class="acc">
         <button type="button" class="acc-hd" id="hd-ing" onclick="togAcc('ing')">
-          成分で絞り込む
+          🧪 成分で絞り込む
           <span class="acc-cnt" id="cnt-ing"></span>
           <span class="acc-arr">▼</span>
         </button>
@@ -117,68 +123,75 @@
         </div>
       </div>
 
+      <!-- 絞り込み・並び替え -->
       <div class="acc">
         <button type="button" class="acc-hd open" id="hd-fil" onclick="togAcc('fil')">
-          絞り込み・並び替え
-          <span class="acc-arr">▼</span>
+          ⚙ 絞り込み・並び替え
+          <span class="acc-arr">▲</span>
         </button>
         <div class="acc-bd open" id="bd-fil">
-          <select class="fsel" id="fitype" style="margin-bottom:6px">
-            <option value="">種別：すべて</option>
-            <option value="otc">OTC医薬品</option>
-            <option value="quasi">医薬部外品</option>
-            <option value="functional">機能性表示食品</option>
-          </select>
-          <select class="fsel" id="frisk">
-            <option value="">リスク区分：すべて</option>
-            <option value="0">要指導医薬品</option>
-            <option value="1">第1類</option>
-            <option value="2">第2類（指定含む）</option>
-            <option value="3">第3類</option>
-          </select>
-          <select class="fsel" id="fsort" style="margin-top:6px">
-            <option value="def">並び替え：デフォルト</option>
-            <option value="pa">価格：安い順</option>
-            <option value="pd">価格：高い順</option>
-            <option value="nm">名前：五十音順</option>
-            <option value="rk">リスク区分順</option>
-          </select>
-          <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
-            <label class="chk"><input type="checkbox" id="cnd"> 眠気なしのみ表示</label>
-            <label class="chk"><input type="checkbox" id="cnw"> 要注意成分を含まない</label>
+          <div class="frow">
+            <label class="flabel">種別：</label>
+            <select id="fitype" class="fsel" onchange="S.itype=this.value;S.pg=1;render();updCnts()">
+              <option value="">すべて</option>
+              <option value="otc">OTC医薬品</option>
+              <option value="supple">サプリメント</option>
+              <option value="quasi">医薬部外品</option>
+            </select>
           </div>
-          <button type="button" class="rbtn" id="rbtn">✕ すべてリセット</button>
+          <div class="frow">
+            <label class="flabel">リスク区分：</label>
+            <select id="frisk" class="fsel" onchange="S.risk=this.value;S.pg=1;render();updCnts()">
+              <option value="">すべて</option>
+              <option value="1">第1類</option>
+              <option value="2">第2類（指定）</option>
+              <option value="2.5">第2類</option>
+              <option value="3">第3類</option>
+            </select>
+          </div>
+          <div class="frow">
+            <label class="flabel">並び替え：</label>
+            <select id="fsort" class="fsel" onchange="S.sort=this.value;S.pg=1;render()">
+              <option value="">デフォルト</option>
+              <option value="pa">価格が安い順</option>
+              <option value="pd">価格が高い順</option>
+              <option value="nm">名前順</option>
+              <option value="rk">リスク区分順</option>
+            </select>
+          </div>
+          <div class="frow"><label><input type="checkbox" id="cnd" onchange="S.nd=this.checked;S.pg=1;render()"> 眠気なしのみ表示</label></div>
+          <div class="frow"><label><input type="checkbox" id="cnw" onchange="S.nw=this.checked;S.pg=1;render()"> 要注意成分を含まない</label></div>
+          <button type="button" class="freset" onclick="resetFilters()">✕ すべてリセット</button>
         </div>
       </div>
 
-      <div class="wbox">
-        <strong>⚠ 要注意成分について</strong>
-        <b>ア尿素</b>→ 2023年AU規制・2025年KR麻薬類指定<br>
-        <b>コデイン系</b>→ 12歳未満禁忌・依存リスク
+      <!-- 要注意成分 -->
+      <div class="warn-box">
+        <div class="warn-title">⚠ 要注意成分について</div>
+        <div class="warn-body">
+          <span class="warn-link" onclick="S.q='アセトアミノフェン';document.getElementById('qinp').value='アセトアミノフェン';S.pg=1;render()">ア尿素</span>→ 2023年AU規制・2025年KR麻薬類指定
+        </div>
+        <div class="warn-body">
+          <span class="warn-link" onclick="S.q='コデイン';document.getElementById('qinp').value='コデイン';S.pg=1;render()">コデイン系</span>→ 12歳未満禁忌・依存リスク
+        </div>
       </div>
     </aside>
 
-    <main>
+    <main class="main">
+      <!-- 比較バー -->
       <div class="cmpbar">
-        <span>比較したい商品を選択 <span class="cmpcnt" id="cmpcnt">0</span>/4</span>
-        <button type="button" class="cmpbtn" id="cmpbtn" disabled onclick="openCmp()">成分比較表を開く</button>
+        比較したい商品を選択
+        <span class="cmpbadge" id="cmpcnt">0</span>/4
+        <button type="button" class="cmpbtn" id="cmpbtn" disabled onclick="openCmp()">📊 成分比較表を開く</button>
       </div>
-      <div class="resinfo" id="resinfo"></div>
+      <!-- アクティブフィルタ -->
       <div class="afchips" id="afchips"></div>
-      <div class="grid" id="grid"></div>
+      <!-- 件数 -->
+      <div class="resinfo" id="resinfo"></div>
+      <!-- カードグリッド -->
+      <div id="grid"></div>
       <div class="pagi" id="pagi"></div>
     </main>
-  </div>
-</div>
-
-<div class="pg" id="pg-guide">
-  <div class="ptitle">症状から薬を選ぶ</div>
-  <div class="pdesc">症状グループをクリックすると該当する薬の一覧を表示します。</div>
-  <div class="ggrid" id="ggrid"></div>
-  <div id="gresult"></div>
-  <div class="guide-aki-cta">
-    <div class="guide-aki-title">💬 絞り込めない場合は質問に答えて探す</div>
-    <button class="guide-aki-btn" onclick="showGuideAki()">質問に答えて薬を探す →</button>
   </div>
 </div>
 
@@ -903,6 +916,21 @@ window.addEventListener("popstate",function(e){
 });
 
 /* アコーディオン */
+
+function resetFilters(){
+  S.q=''; S.cat='all'; S.syms=[]; S.ings=[]; S.itype=''; S.risk=''; S.nd=false; S.nw=false; S.sort=''; S.pg=1;
+  var qi=document.getElementById('qinp'); if(qi) qi.value='';
+  var ft=document.getElementById('fitype'); if(ft) ft.value='';
+  var fr=document.getElementById('frisk'); if(fr) fr.value='';
+  var fs=document.getElementById('fsort'); if(fs) fs.value='';
+  var cn=document.getElementById('cnd'); if(cn) cn.checked=false;
+  var cw=document.getElementById('cnw'); if(cw) cw.checked=false;
+  document.querySelectorAll('.cbtn').forEach(function(b){b.classList.remove('on');});
+  var allBtn=document.querySelector('[data-cat="all"]'); if(allBtn) allBtn.classList.add('on');
+  buildSymp(); buildIngs();
+  render(); updCnts();
+}
+
 function togAcc(k){
   var hd=document.getElementById("hd-"+k);
   var bd=document.getElementById("bd-"+k);
