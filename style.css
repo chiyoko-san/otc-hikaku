@@ -478,3 +478,18 @@ footer a:hover{color:#fff}
 .di-report-btn:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2}
 .di-report-btn.reported{border-color:#ef4444;color:#ef4444;opacity:.5;cursor:not-allowed}
 .di-nick{font-size:11px;color:var(--teal2);font-weight:600;margin-left:6px;padding:1px 6px;background:var(--tl);border-radius:10px}
+
+/* ── フッター修正 ── */
+footer{background:var(--navy);color:rgba(255,255,255,.6);text-align:center;padding:32px 20px;font-size:12px;margin-top:40px}
+footer a{color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s}
+footer a:hover{color:#fff}
+.footer-inner{max-width:1240px;margin:0 auto}
+.footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.footer-note{max-width:640px;margin:0 auto 8px;line-height:1.7;color:rgba(255,255,255,.5)}
+.footer-copy{color:rgba(255,255,255,.4)}
+
+/* ── 症状ページ アキネーターCTA ── */
+.guide-aki-cta{margin-top:32px;padding:24px;background:linear-gradient(135deg,var(--navy),#1a3a5f);border-radius:12px;text-align:center}
+.guide-aki-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:12px}
+.guide-aki-btn{padding:12px 28px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.guide-aki-btn:hover{background:var(--teal2)}
