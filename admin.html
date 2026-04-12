@@ -233,6 +233,21 @@
 </div>
 
 <script>
+var SB_URL = "https://glxhggfxxwpfmwqoulyy.supabase.co";
+var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdseGhnZ2Z4eHdwZm13cW91bHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyODY4NDMsImV4cCI6MjA5MDg2Mjg0M30.djy6MZQz28_U7exsEjLq3PeLJTw2QuSSeVhrCNkF894";
+
+async function sbFetch(path, opts){
+  var res = await fetch(SB_URL + '/rest/v1/' + path, Object.assign({
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+    }
+  }, opts||{}));
+  if(!res.ok) throw new Error(res.status + ' ' + await res.text());
+  return res;
+}
+
 var COLS=[], EDIT_ID=null, CUR_THUMB=null;
 var PW_KEY="admin_pw_hash", COLS_KEY="admin_cols";
 

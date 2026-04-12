@@ -2485,7 +2485,9 @@ async function loadDamageStats(){
     var totalAmt = rows.reduce(function(s,r){ return s+(r.damage_amount||0);},0);
 
     /* 集計カード */
-    var statsEl=document.getElementById('damage-stats')||document.getElementById('damage-stats-list');
+    var statsEl=document.getElementById('damage-stats')
+    ||document.getElementById('damage-stats-list')
+    ||document.getElementById('damage-stats-r');
   if(statsEl) statsEl.innerHTML=
       '<div class="d-stat-row">'
         +'<div class="d-stat"><div class="d-stat-num">'+total+'</div><div class="d-stat-label">報告件数</div></div>'
@@ -2499,7 +2501,9 @@ async function loadDamageStats(){
     });
     var sorted = Object.keys(typeCount).sort(function(a,b){return typeCount[b]-typeCount[a];});
     var max = sorted.length?typeCount[sorted[0]]:1;
-    var typeEl=document.getElementById('damage-type-rank')||document.getElementById('damage-type-rank-list');
+    var typeEl=document.getElementById('damage-type-rank')
+    ||document.getElementById('damage-type-rank-list')
+    ||document.getElementById('damage-type-rank-r');
   if(typeEl) typeEl.innerHTML = sorted.slice(0,8).map(function(t,i){
       var pct = Math.round(typeCount[t]/max*100);
       return '<div class="d-rank-item">'
@@ -2513,7 +2517,9 @@ async function loadDamageStats(){
     var medCount={};
     rows.forEach(function(r){ medCount[r.medicine_name]=(medCount[r.medicine_name]||0)+1; });
     var sortedMed=Object.keys(medCount).sort(function(a,b){return medCount[b]-medCount[a];});
-    var medEl=document.getElementById('damage-med-rank')||document.getElementById('damage-med-rank-list');
+    var medEl=document.getElementById('damage-med-rank')
+    ||document.getElementById('damage-med-rank-list')
+    ||document.getElementById('damage-med-rank-r');
   if(medEl) medEl.innerHTML = sortedMed.slice(0,5).map(function(m,i){
       return '<div class="d-rank-item">'
         +'<div class="d-rank-label"><span class="d-rank-num">'+(i+1)+'</span>'+m+'</div>'
