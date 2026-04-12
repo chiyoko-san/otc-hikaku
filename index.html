@@ -722,9 +722,16 @@ async function fetchMeds(){
   var data = await res.json();
   /* camelCase変換 */
   return data.map(function(m){
+    /* DBカラム名がsnake_caseの場合も対応 */
+    var ings = m.ings || m.ingredients || [];
+    /* 文字列の場合はパース */
+    if(typeof ings === 'string'){
+      try{ ings = JSON.parse(ings); }catch(e){ ings = ings?[ings]:[]; }
+    }
     return Object.assign(m, {
-      warnIngs:  m.warn_ings || [],
-      noteType:  m.note_type || 'nn',
+      ings:      ings,
+      warnIngs:  m.warn_ings || m.warnIngs || [],
+      noteType:  m.note_type || m.noteType || 'nn',
     });
   });
 }
@@ -895,7 +902,8 @@ function showPg(id, push){
   if(push!==false){
     /* URLを完全にリセットしてからページ指定のみ付与 */
     var newUrl=location.pathname;
-    if(id!=="search") newUrl+='?pg='+id;
+    if(id==='search') newUrl+='?pg=search';
+    else newUrl+='?pg='+id;
     history.pushState({pg:id},'',newUrl);
   }
 }
@@ -1271,6 +1279,8 @@ async function render(){
   /* URLをゼロから組み立て（パラメータが蓄積しないように） */
   try{
     var parts=[];
+    /* 検索ページはpg=searchを先頭に置いて他ページと明確に区別 */
+    parts.push('pg=search');
     if(S.q) parts.push('q='+encodeURIComponent(S.q));
     if(S.cat&&S.cat!=='all') parts.push('cat='+encodeURIComponent(S.cat));
     if(S.syms&&S.syms.length) parts.push('syms='+encodeURIComponent(S.syms.join(',')));
@@ -1280,7 +1290,7 @@ async function render(){
     if(S.nd) parts.push('nd=1');
     if(S.nw) parts.push('nw=1');
     if(S.pg&&S.pg>1) parts.push('p='+S.pg);
-    history.replaceState({pg:'search'},'',location.pathname+(parts.length?'?'+parts.join('&'):''));
+    history.replaceState({pg:'search'},'',location.pathname+'?'+parts.join('&'));
   }catch(e){}
   /* ローディング表示 */
   var gridEl=document.getElementById('grid');gridEl.className='list-grid';gridEl.innerHTML='<div class="nores" style="padding:40px;color:var(--txl)">読み込み中...</div>';
@@ -1288,6 +1298,8 @@ async function render(){
   buildAfChips();
   try{
     var page = await fetchMeds();
+    /* MEDSグローバルを更新（類似商品・成分検索用） */
+    if(page.length) MEDS = page;
     var total = TOTAL_COUNT;
     document.getElementById('resinfo').innerHTML='<strong>'+total.toLocaleString()+'件</strong>表示中（全'+total.toLocaleString()+'件）';
     document.getElementById('grid').innerHTML=page.length===0
@@ -1642,12 +1654,12 @@ async function submitContact(){
         await showMedDetail(parseInt(medId));
       } else if(colId){
         showPg('column',false);showColFromDB(colId);
-      } else if(pg&&pg!=='search'){
-        /* 検索以外のページ */
+      } else if(pg&&pg!=='search'&&!q&&!cat&&!syms){
+        /* 検索以外の明示的なページ遷移 */
         await buildCats();buildSymp();buildIngs();
         showPg(pg,false);
       } else {
-        /* 検索ページ（pg=searchまたはq/cat/symsあり） */
+        /* pg=search または 検索パラメータあり → 検索ページ */
         document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
         document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
         var ps=document.getElementById('pg-search');if(ps)ps.classList.add('on');
@@ -1937,7 +1949,7 @@ async function doHomeSearch(q){
     await buildCats();buildSymp();buildIngs();
   }
   if(val){S.q=val;var qi=document.getElementById('qinp');if(qi)qi.value=val;}
-  var newUrl=val?location.pathname+'?q='+encodeURIComponent(val):location.pathname;
+  var newUrl=location.pathname+'?pg=search'+(val?'&q='+encodeURIComponent(val):'');
   history.pushState({pg:'search'},'',newUrl);
   await render();
 }
