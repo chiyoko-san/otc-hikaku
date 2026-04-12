@@ -493,3 +493,70 @@ footer a:hover{color:#fff}
 .guide-aki-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:12px}
 .guide-aki-btn{padding:12px 28px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
 .guide-aki-btn:hover{background:var(--teal2)}
+
+/* ── 検索サイドバー（sbox/sb/srel/acc） ── */
+.sb{background:var(--wh);border:1px solid var(--bd);border-radius:10px;overflow:hidden;position:sticky;top:68px}
+.sbox{padding:10px 12px;border-bottom:1px solid var(--bd)}
+.srel{position:relative}
+.srel input{width:100%;padding:7px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px;font-family:inherit;outline:none;color:var(--tx)}
+.srel input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,161,141,.1)}
+.acc{}
+.acch{padding:10px 14px;font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd)}
+.acch:hover{background:var(--sl)}
+.accb{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.accb.open{max-height:600px}
+.catlist{padding:6px 8px}
+.sg{margin-bottom:2px}
+.sgh{padding:6px 10px;font-size:12px;font-weight:600;color:var(--txm);cursor:pointer;display:flex;justify-content:space-between;border-radius:6px}
+.sgh:hover{background:var(--sl)}
+.gar{font-size:10px;color:var(--txl);transition:transform .2s}
+.stags{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px 6px}
+.stags.hide{display:none}
+.resinfo{font-size:12px;color:var(--txl);margin-bottom:8px;padding:4px 0}
+
+/* ── 検索サイドバー アコーディオン ── */
+.acc{border-bottom:1px solid var(--bd)}
+.acc-hd{width:100%;padding:10px 14px;background:none;border:none;font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;display:flex;align-items:center;gap:4px;text-align:left;font-family:inherit}
+.acc-hd:hover{background:var(--sl)}
+.acc-cnt{font-size:11px;font-weight:400;color:var(--teal2);margin-left:2px}
+.acc-arr{margin-left:auto;font-size:10px;color:var(--txl);transition:transform .2s}
+.acc-hd.open .acc-arr{transform:rotate(180deg)}
+.acc-bd{display:none;padding:4px 8px 8px}
+.acc-bd.open{display:block}
+/* カテゴリ・症状・成分リスト */
+.catitem{padding:5px 8px;font-size:12px;color:var(--txm);cursor:pointer;border-radius:4px;display:flex;justify-content:space-between}
+.catitem:hover,.catitem.on{background:var(--tl);color:var(--teal2);font-weight:600}
+.catcnt{font-size:11px;color:var(--txl)}
+/* 絞り込みセレクト */
+.fsel{width:100%;padding:5px 8px;border:1px solid var(--bd);border-radius:6px;font-size:12px;font-family:inherit;color:var(--tx);outline:none;display:block}
+.fsel:focus{border-color:var(--teal)}
+.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txm);cursor:pointer}
+.chk input{accent-color:var(--teal);width:14px;height:14px}
+.rbtn{width:100%;margin-top:8px;padding:6px;border:1px solid var(--bd);border-radius:6px;background:none;color:var(--txl);font-size:12px;cursor:pointer;font-family:inherit}
+.rbtn:hover{background:var(--rb);color:var(--red);border-color:var(--red)}
+/* 要注意ボックス */
+.wbox{padding:10px 14px;background:#fff7ed;font-size:11px;color:#92400e;line-height:1.7;border-top:1px solid #fde68a}
+.wbox b{color:#b45309}
+/* 比較バー */
+.cmpbar{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px 12px;background:var(--sl);border-radius:8px;font-size:13px;color:var(--txm)}
+.cmpcnt{font-weight:700;color:var(--teal2)}
+.cmpbtn{padding:5px 14px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.cmpbtn:disabled{opacity:.4;cursor:default}
+/* アクティブフィルターチップ */
+.afchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.afchip-item{display:flex;align-items:center;gap:4px;padding:3px 10px;background:var(--tl);color:var(--teal2);border-radius:20px;font-size:12px;font-weight:600}
+.afchip-item button{background:none;border:none;color:var(--teal2);cursor:pointer;font-size:12px;padding:0;line-height:1}
+/* ページネーション */
+.pagi{display:flex;gap:6px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.pgbtn{padding:6px 12px;border:1px solid var(--bd);border-radius:6px;background:var(--wh);cursor:pointer;font-size:13px;color:var(--txm);font-family:inherit}
+.pgbtn:hover,.pgbtn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* ── 検索ページ不足CSS補完 ── */
+.cbtn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:8px 10px;border:none;background:none;text-align:left;cursor:pointer;font-size:13px;color:var(--txm);border-radius:6px;font-family:inherit;transition:background .1s}
+.cbtn:hover,.cbtn.on{background:var(--tl);color:var(--teal2);font-weight:600}
+.cbtn .ck{font-size:11px;color:var(--txl);margin-left:4px}
+.cbtn.on .ck{color:var(--teal2)}
+.stag{display:inline-block;padding:3px 8px;border:1px solid var(--bd);border-radius:12px;font-size:11px;cursor:pointer;margin:2px;color:var(--txm);background:var(--wh);transition:all .1s}
+.stag:hover,.stag.on{background:var(--tl);border-color:var(--teal);color:var(--teal2)}
+.ichip{display:inline-block;padding:3px 8px;border:1px solid var(--bd);border-radius:12px;font-size:11px;cursor:pointer;margin:2px;color:var(--txm);background:var(--wh)}
+.ichip:hover,.ichip.on{background:var(--tl);border-color:var(--teal);color:var(--teal2)}
