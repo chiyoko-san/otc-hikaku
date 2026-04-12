@@ -198,6 +198,17 @@
   </div>
 </div>
 
+<div class="pg" id="pg-guide">
+  <div class="ptitle">症状から薬を選ぶ</div>
+  <div class="pdesc">症状グループをクリックすると該当する薬の一覧を表示します。</div>
+  <div class="ggrid" id="ggrid"></div>
+  <div id="gresult"></div>
+  <div class="guide-aki-cta">
+    <div class="guide-aki-title">💬 絞り込めない場合は質問に答えて探す</div>
+    <button class="guide-aki-btn" onclick="showGuideAki()">質問に答えて薬を探す →</button>
+  </div>
+</div>
+
 <div class="pg" id="pg-med-detail"></div>
 
 <div class="pg" id="pg-column">
@@ -905,6 +916,7 @@ function showPg(id, push){
   pgEl.classList.add("on");
   var tabEl = document.getElementById("t-"+id);
   if(tabEl) tabEl.classList.add("on");
+  if(id==="guide")  buildGuide();
   if(id==="guide")  buildGuide();
   if(id==="column") buildCols();
   if(push!==false){
