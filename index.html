@@ -968,15 +968,21 @@ function buildSymp(){
     h.innerHTML=grp.g+'<span class="gar">▼</span>';
     var t=document.createElement("div");t.className="stags hide";
     grp.s.forEach(function(sym){
-      var cnt=MEDS.filter(function(m){return m.symptoms&&m.symptoms.indexOf(sym)>-1;}).length;
-      if(!cnt)return;
       var sp=document.createElement("span");
       sp.className="stag"+(S.syms.indexOf(sym)>-1?" on":"");
-      sp.innerHTML=sym+'<span style="opacity:.5;font-size:9px;margin-left:2px">'+cnt+'</span>';
+      sp.textContent=sym;
+      sp.title=sym+'で絞り込む';
+      sp.style.cursor='pointer';
       sp.addEventListener("click",function(){
+        /* 検索ページに移動して症状フィルター適用 */
+        if(!document.getElementById('pg-search').classList.contains('on')){
+          showPg('search');
+        }
         var idx=S.syms.indexOf(sym);
         if(idx>-1)S.syms.splice(idx,1);else S.syms.push(sym);
         sp.classList.toggle("on");S.pg=1;render();updCnts();
+        /* 検索ページまでスクロール */
+        document.getElementById('grid').scrollIntoView({behavior:'smooth',block:'start'});
       });
       t.appendChild(sp);
     });
@@ -1092,34 +1098,46 @@ function mkCard(m){
   var nc=m.noteType==="danger"?"nd":m.noteType==="warn"?"nw":"nn";
   var pr=m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div><div class="cpnote">参考価格（税込）</div>':'<div class="cpval np">価格要確認</div>';
   var sel=CMP.indexOf(m.id)>-1;
-  return '<div class="card list-card" id="cd-'+m.id+'" onclick="showMedDetail('+m.id+')" style="cursor:pointer">'
-    +'<div class="list-card-thumb"></div>'
-    +'<div class="list-card-body">'
-    +'<div class="list-card-head">'
-    +'<div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
-    +'<div class="list-card-right">'
-    +'<div class="cprice">'+pr+'</div>'
-    +'<div class="csel" onclick="event.stopPropagation()"><input type="checkbox"'+(sel?" checked":"")
-    +' onchange="togCmp('+m.id+',this.checked)"></div>'
-    +'</div></div>'
-    +'<div class="badges">'
-    +(m.itype&&m.itype!=="otc"?'<span class="badge '+(TYPECLS[m.itype]||"bf")+'">'+(TYPEICO[m.itype]||"")+" "+(TYPELBL[m.itype]||m.itype)+'</span>':"")
-    +'<span class="badge bc">'+cat.l+'</span>'
-    +(!m.itype||m.itype==="otc"?'<span class="badge '+(RCLS[m.risk]||"r25")+'">'+(RLBL[m.risk]||"")+'</span>':"")
-    +(m.drowsy?'<span class="badge bd2">眠気注意</span>':"")
-    +((m.warnIngs&&m.warnIngs.length)?'<span class="badge bw2">要注意成分</span>':"")
-    +"</div>"+sH
-    +'<div class="cef">'+mkEffTags(m.effect||"")+"</div>"
-    +'<div class="ings">'+iH+"</div>"
-    +(m.note?'<div class="note '+nc+'">'+m.note+"</div>":"")
-    +'<div class="cfoot" onclick="event.stopPropagation()"><span class="cfootl">成分数:'+(m.ings||[]).length+'</span>'
-    +'<div style="display:flex;gap:8px;align-items:center">'
-    +'<button type="button" class="simbtn" onclick="event.stopPropagation();showSim('+m.id+')">類似商品</button>'
-    +'<a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank" onclick="event.stopPropagation()">PMDA ↗</a>'
-    +"</div></div>"
+  var symsH='';
+  if(m.symptoms&&m.symptoms.length){
+    symsH='<div class="csymp">'+m.symptoms.slice(0,6).map(function(s){
+      return '<span class="sym'+(S.syms.indexOf(s)>-1?' hit':'')+' clickable" data-s="'+s+'" onclick="event.stopPropagation();addSym(this.dataset.s)">'+s+'</span>';
+    }).join('')+(m.symptoms.length>6?'<span class="sym-more">+'.concat(m.symptoms.length-6)+'</span>':'')+'</div>';
+  }
+  return '<div class="card lc" id="cd-'+m.id+'" onclick="showMedDetail('+m.id+')">'
+    +'<div class="lc-head">'
+      +'<div class="lc-title-group">'
+        +'<div class="cname">'+m.name+'</div>'
+        +'<div class="cmaker">'+(m.maker||'')+'</div>'
+      +'</div>'
+      +'<div class="lc-price-group">'
+        +''+pr+''
+        +'<div class="lc-chk" onclick="event.stopPropagation()"><input type="checkbox"'+(sel?' checked':'')
+        +' onchange="togCmp('+m.id+',this.checked)"></div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="lc-body">'
+      +'<div class="badges">'
+        +(m.itype&&m.itype!=='otc'?'<span class="badge '+(TYPECLS[m.itype]||'bf')+'">'+( TYPEICO[m.itype]||'')+' '+(TYPELBL[m.itype]||m.itype)+'</span>':'')
+        +'<span class="badge bc">'+cat.l+'</span>'
+        +(!m.itype||m.itype==='otc'?'<span class="badge '+(RCLS[m.risk]||'r25')+'">'+( RLBL[m.risk]||'')+'</span>':'')
+        +(m.drowsy?'<span class="badge bd2">眠気注意</span>':'')
+        +((m.warnIngs&&m.warnIngs.length)?'<span class="badge bw2">要注意成分</span>':'')
+      +'</div>'
+      +symsH
+      +(m.effect?'<div class="lc-effect">'+m.effect.slice(0,60)+(m.effect.length>60?'…':'')+'</div>':'')
+      +(iH?'<div class="lc-ings">'+iH+'</div>':'')
+      +(m.note?'<div class="note '+(m.noteType==='danger'?'nd':m.noteType==='warn'?'nw':'nn')+'">'+m.note+'</div>':'')
+    +'</div>'
+    +'<div class="lc-foot" onclick="event.stopPropagation()">'
+      +'<span class="lc-cnt">成分数: '+(m.ings||[]).length+'</span>'
+      +'<div class="lc-foot-btns">'
+        +'<button type="button" class="lc-btn" onclick="event.stopPropagation();showSim('+m.id+')">類似商品</button>'
+        +'<a class="lc-btn lc-btn-pmda" href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank" onclick="event.stopPropagation()">PMDA ↗</a>'
+      +'</div>'
     +'</div>'
     +'<div id="sim-'+m.id+'" style="display:none"></div>'
-    +"</div>";
+    +'</div>';
 }
 
 /* 類似商品 */
@@ -1266,15 +1284,20 @@ async function render(){
     if(pages>1){
       function mkPg(n,lbl,dis,on){
         var b=document.createElement('button');b.type='button';
-        b.className='pbtn'+(on?' on':'')+(dis?' pdis':'');
+        b.className='pager-btn'+(on?' active':'')+(dis?' disabled':'');
         b.textContent=lbl||n;
-        if(!dis&&!on){(function(pg){b.addEventListener('click',function(){S.pg=pg;render();window.scrollTo(0,0);});})(n);}
+        if(!dis&&!on){(function(pg){b.addEventListener('click',function(){S.pg=pg;render();window.scrollTo({top:0,behavior:'smooth'});});})(n);}
         return b;
       }
-      if(S.pg>1)el.appendChild(mkPg(S.pg-1,'<'));
-      var s=Math.max(1,S.pg-2),e=Math.min(pages,S.pg+2);
-      for(var p=s;p<=e;p++)el.appendChild(mkPg(p,p,false,p===S.pg));
-      if(S.pg<pages)el.appendChild(mkPg(S.pg+1,'>'));
+      /* 前へ */
+      el.appendChild(mkPg(S.pg-1,'←',S.pg===1,false));
+      /* 番号 */
+      var start=Math.max(1,S.pg-2),end2=Math.min(pages,S.pg+2);
+      if(start>1){el.appendChild(mkPg(1,'1',false,false));if(start>2){var d=document.createElement('span');d.className='pager-dot';d.textContent='…';el.appendChild(d);}}
+      for(var p=start;p<=end2;p++) el.appendChild(mkPg(p,p,false,p===S.pg));
+      if(end2<pages){if(end2<pages-1){var d2=document.createElement('span');d2.className='pager-dot';d2.textContent='…';el.appendChild(d2);}el.appendChild(mkPg(pages,pages,false,false));}
+      /* 次へ */
+      el.appendChild(mkPg(S.pg+1,'→',S.pg===pages,false));
     }
   }catch(e){
     document.getElementById('grid').innerHTML='<div class="nores">データの取得に失敗しました: '+e.message+'</div>';
