@@ -637,3 +637,25 @@ footer a:hover{color:#fff}
 .cmpbtn{margin-left:auto;padding:6px 14px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
 .cmpbtn:hover{background:var(--teal2)}
 .cmpbtn:disabled{background:var(--bd);color:var(--txl);cursor:not-allowed}
+
+/* ── ページネーション ── */
+.pagi{display:flex;align-items:center;justify-content:center;gap:4px;margin:20px 0 32px;flex-wrap:wrap}
+.pager-btn{min-width:38px;height:38px;padding:0 12px;border:1.5px solid var(--bd);border-radius:8px;background:var(--wh);font-size:14px;color:var(--txm);cursor:pointer;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;font-weight:500}
+.pager-btn:hover:not(.disabled):not(.active){background:var(--tl);border-color:var(--teal);color:var(--teal2)}
+.pager-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:700;box-shadow:0 2px 8px rgba(47,161,141,.3)}
+.pager-btn.disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.pager-dot{font-size:14px;color:var(--txl);padding:0 4px;line-height:38px;user-select:none}
+
+/* ── フローティング比較ボタン ── */
+.cmp-float{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;align-items:stretch;border-radius:12px;box-shadow:0 8px 32px rgba(15,23,42,.2);overflow:hidden;border:none}
+.cmp-float-btn{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--navy);color:#fff;border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;transition:background .15s}
+.cmp-float-btn:hover{background:var(--teal2)}
+.cmp-float-icon{font-size:18px}
+.cmp-float-label{white-space:nowrap}
+.cmp-float-cnt{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--teal);color:#fff;border-radius:50%;font-size:13px;font-weight:700}
+.cmp-float-clear{padding:0 14px;background:#334155;color:rgba(255,255,255,.7);border:none;cursor:pointer;font-size:18px;transition:background .15s}
+.cmp-float-clear:hover{background:#ef4444;color:#fff}
+@media(max-width:600px){
+  .cmp-float{bottom:16px;right:16px;left:16px}
+  .cmp-float-btn{flex:1;justify-content:center}
+}

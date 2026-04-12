@@ -178,11 +178,14 @@
     </aside>
 
     <main class="main">
-      <!-- 比較バー -->
-      <div class="cmpbar">
-        比較したい商品を選択
-        <span class="cmpbadge" id="cmpcnt">0</span>/4
-        <button type="button" class="cmpbtn" id="cmpbtn" disabled onclick="openCmp()">📊 成分比較表を開く</button>
+      <!-- 比較フローティングボタン -->
+      <div class="cmp-float" id="cmp-float" style="display:none">
+        <button type="button" class="cmp-float-btn" onclick="openCmp()">
+          <span class="cmp-float-icon">📊</span>
+          <span class="cmp-float-label">成分を比較する</span>
+          <span class="cmp-float-cnt" id="cmpcnt">0</span>/4
+        </button>
+        <button type="button" class="cmp-float-clear" onclick="clearCmp()" title="比較をリセット">✕</button>
       </div>
       <!-- アクティブフィルタ -->
       <div class="afchips" id="afchips"></div>
@@ -670,15 +673,16 @@ function buildQuery(forCount){
   /* 成分フィルター（AND条件：全成分を含む） */
   if(S.ings && S.ings.length){
     S.ings.forEach(function(ing){
-      /* ings配列に部分一致する成分名を含むレコードを取得 */
-      params.push('ings=cs.{"'+encodeURIComponent(ing)+'"}');
+      params.push('ings=cs.{"'+ing.replace(/"/g,'')+'"}');
     });
   }
 
   /* 症状フィルター（OR条件：いずれかの症状を含む） */
   if(S.syms && S.syms.length){
+    /* Supabase array contains: symptoms=cs.{"症状名"} */
+    /* 複数症状はOR: or=(symptoms.cs.{"頭痛"},symptoms.cs.{"発熱"}) */
     var symOr = S.syms.map(function(s){
-      return 'symptoms.cs.{"'+encodeURIComponent(s)+'"}';
+      return 'symptoms.cs.{"'+s.replace(/"/g,'')+'"}';
     }).join(',');
     params.push('or=('+symOr+')');
   }
@@ -1177,8 +1181,19 @@ function togCmp(id,chk){
       var cb=document.querySelector("#cd-"+id+" input[type=checkbox]");if(cb)cb.checked=false;return;}
     CMP.push(id);
   }else{var i=CMP.indexOf(id);if(i>-1)CMP.splice(i,1);}
-  document.getElementById("cmpcnt").textContent=CMP.length;
-  document.getElementById("cmpbtn").disabled=CMP.length<2;
+  var cntEl=document.getElementById('cmpcnt');
+  if(cntEl) cntEl.textContent=CMP.length;
+  var floatEl=document.getElementById('cmp-float');
+  if(floatEl) floatEl.style.display=CMP.length>=1?'flex':'none';
+}
+
+function clearCmp(){
+  CMP=[];
+  document.querySelectorAll('.lc input[type=checkbox]').forEach(function(cb){cb.checked=false;});
+  var cntEl=document.getElementById('cmpcnt');
+  if(cntEl) cntEl.textContent='0';
+  var floatEl=document.getElementById('cmp-float');
+  if(floatEl) floatEl.style.display='none';
 }
 
 function openCmp(){
