@@ -452,9 +452,16 @@
                 <label class="d-field-label">年齢</label>
                 <select id="d-age">
                   <option value="">選択しない</option>
-                  <option value="10">10代</option><option value="20">20代</option>
-                  <option value="30">30代</option><option value="40">40代</option>
-                  <option value="50">50代</option><option value="60">60代以上</option>
+                  <option value="10">10代</option>
+                  <option value="20">20代</option>
+                  <option value="30">30代</option>
+                  <option value="40">40代</option>
+                  <option value="50">50代</option>
+                  <option value="60">60代</option>
+                  <option value="70">70代</option>
+                  <option value="80">80代</option>
+                  <option value="90">90代</option>
+                  <option value="100">100代以上</option>
                 </select>
               </div>
               <div class="fg">
@@ -468,10 +475,11 @@
                 <label class="d-field-label">購入経路</label>
                 <select id="d-route" onchange="toggleOtherInputBySelect('d-route','d-route-other')">
                   <option value="">選択しない</option>
-                  <option value="sns_ad">SNS広告</option><option value="search_ad">検索広告</option>
-                  <option value="tv">テレビ・雑誌</option><option value="store">店頭</option>
-                  <option value="word_of_mouth">知人紹介</option>
-                  <option value="other" onchange="toggleOtherInput('d-route-other','d-route-select')">その他</option>
+                  <option value="web_ad">WEB広告</option>
+                  <option value="newspaper">新聞</option>
+                  <option value="tv">テレビ</option>
+                  <option value="phone_sales">電話営業</option>
+                  <option value="other">その他</option>
                 </select>
               </div>
               <div class="fg">
@@ -2125,6 +2133,29 @@ function showGuideAki(){
     }
     if(btn) btn.scrollIntoView({behavior:'smooth',block:'center'});
   },200);
+}
+
+
+function showDStatus(msg, type){
+  var el = document.getElementById('d-status');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+  el.style.padding = msg ? '10px 14px' : '0';
+  el.style.borderRadius = '8px';
+  if(type === 'ok'){
+    el.style.background = '#f0fdf4';
+    el.style.color = '#166534';
+    el.style.border = '1px solid #bbf7d0';
+  } else if(type === 'err'){
+    el.style.background = '#fef2f2';
+    el.style.color = '#991b1b';
+    el.style.border = '1px solid #fecaca';
+  } else {
+    el.style.background = 'var(--sl)';
+    el.style.color = 'var(--txm)';
+    el.style.border = '1px solid var(--bd)';
+  }
 }
 
 function setDamageMode(mode){
