@@ -182,6 +182,8 @@
   </div>
 </div>
 
+<div class="pg" id="pg-med-detail"></div>
+
 <div class="pg" id="pg-column">
   <div id="clist">
     <div class="ptitle">お役立ちコラム</div>
@@ -652,6 +654,22 @@ function buildQuery(forCount){
   /* 要注意成分なし */
   if(S.nw) params.push('warn_ings=eq.[]');
 
+  /* 成分フィルター（AND条件：全成分を含む） */
+  if(S.ings && S.ings.length){
+    S.ings.forEach(function(ing){
+      /* ings配列に部分一致する成分名を含むレコードを取得 */
+      params.push('ings=cs.{"'+encodeURIComponent(ing)+'"}');
+    });
+  }
+
+  /* 症状フィルター（OR条件：いずれかの症状を含む） */
+  if(S.syms && S.syms.length){
+    var symOr = S.syms.map(function(s){
+      return 'symptoms.cs.{"'+encodeURIComponent(s)+'"}';
+    }).join(',');
+    params.push('or=('+symOr+')');
+  }
+
   /* ソート */
   if(!forCount){
     var order = 'id.asc';
@@ -942,6 +960,7 @@ buildSymp();
 
 /* 成分チップ */
 function buildIngs(){
+  /* MEDSが空でもSupabaseから成分を取得済みのキャッシュがあれば使う */
   var map={};
   MEDS.forEach(function(m){
     (m.ings||[]).forEach(function(ing){
@@ -949,6 +968,10 @@ function buildIngs(){
       if(k)map[k]=(map[k]||0)+1;
     });
   });
+  /* MEDSが空の場合はグローバルキャッシュから */
+  if(!Object.keys(map).length&&window._ING_CACHE){
+    map=window._ING_CACHE;
+  }
   var sorted=Object.keys(map).sort(function(a,b){return map[b]-map[a];}).slice(0,80);
   var el=document.getElementById("ingarea");el.innerHTML="";
   sorted.forEach(function(ing){
@@ -1025,14 +1048,13 @@ function mkCard(m){
   (m.warnIngs||[]).forEach(function(w){
     wset[w.replace(/[(（][^)）]*/g,"").replace(/[)）]/g,"").trim()]=1;
   });
-  var iH=(m.ings||[]).map(function(ing){
+  var iH=(m.ings||[]).slice(0,5).map(function(ing){
     var b=ing.replace(/[(（][^)）]*/g,"").replace(/[)）]/g,"").trim();
     var iM=S.ings.indexOf(b)>-1;
     var iW=!!wset[b];
-    var hD=!!ING[b];
     var cls=iW?"iw":iM?"im":"in";
-            return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
-  }).join("");
+    return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="event.stopPropagation();addIng(this.dataset.b)">'+ing+'</span>';
+  }).join("")+(m.ings&&m.ings.length>5?'<span style="font-size:11px;color:var(--txl)">他'+(m.ings.length-5)+'件</span>':'');
   var sH="";
   if(m.symptoms&&m.symptoms.length){
     sH='<div class="csymp">'+m.symptoms.map(function(s){
@@ -1042,11 +1064,16 @@ function mkCard(m){
   var nc=m.noteType==="danger"?"nd":m.noteType==="warn"?"nw":"nn";
   var pr=m.price?'<div class="cpval">¥'+m.price.toLocaleString()+'</div><div class="cpnote">参考価格（税込）</div>':'<div class="cpval np">価格要確認</div>';
   var sel=CMP.indexOf(m.id)>-1;
-  return '<div class="card" id="cd-'+m.id+'">'
-    +'<div class="csel"><input type="checkbox"'+(sel?" checked":"")
+  return '<div class="card list-card" id="cd-'+m.id+'" onclick="showMedDetail('+m.id+')" style="cursor:pointer">'
+    +'<div class="list-card-thumb"></div>'
+    +'<div class="list-card-body">'
+    +'<div class="list-card-head">'
+    +'<div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
+    +'<div class="list-card-right">'
+    +'<div class="cprice">'+pr+'</div>'
+    +'<div class="csel" onclick="event.stopPropagation()"><input type="checkbox"'+(sel?" checked":"")
     +' onchange="togCmp('+m.id+',this.checked)"></div>'
-    +'<div class="chard"><div><div class="cname">'+m.name+'</div><div class="cmaker">'+(m.maker||"")+'</div></div>'
-    +'<div class="cprice">'+pr+'</div></div>'
+    +'</div></div>'
     +'<div class="badges">'
     +(m.itype&&m.itype!=="otc"?'<span class="badge '+(TYPECLS[m.itype]||"bf")+'">'+(TYPEICO[m.itype]||"")+" "+(TYPELBL[m.itype]||m.itype)+'</span>':"")
     +'<span class="badge bc">'+cat.l+'</span>'
@@ -1057,11 +1084,12 @@ function mkCard(m){
     +'<div class="cef">'+mkEffTags(m.effect||"")+"</div>"
     +'<div class="ings">'+iH+"</div>"
     +(m.note?'<div class="note '+nc+'">'+m.note+"</div>":"")
-    +'<div class="cfoot"><span class="cfootl">成分数:'+(m.ings||[]).length+'</span>'
+    +'<div class="cfoot" onclick="event.stopPropagation()"><span class="cfootl">成分数:'+(m.ings||[]).length+'</span>'
     +'<div style="display:flex;gap:8px;align-items:center">'
-    +'<button type="button" class="simbtn" onclick="showSim('+m.id+')">類似商品</button>'
-    +'<a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank">PMDA ↗</a>'
+    +'<button type="button" class="simbtn" onclick="event.stopPropagation();showSim('+m.id+')">類似商品</button>'
+    +'<a href="https://www.pmda.go.jp/PmdaSearch/otcSearch" target="_blank" onclick="event.stopPropagation()">PMDA ↗</a>'
     +"</div></div>"
+    +'</div>'
     +'<div id="sim-'+m.id+'" style="display:none"></div>'
     +"</div>";
 }
@@ -1194,7 +1222,7 @@ async function render(){
     history.replaceState({pg:'search'},'',location.pathname+(parts.length?'?'+parts.join('&'):''));
   }catch(e){}
   /* ローディング表示 */
-  document.getElementById('grid').innerHTML='<div class="nores" style="padding:40px;color:var(--txl)">読み込み中...</div>';
+  var gridEl=document.getElementById('grid');gridEl.className='list-grid';gridEl.innerHTML='<div class="nores" style="padding:40px;color:var(--txl)">読み込み中...</div>';
   document.getElementById('resinfo').innerHTML='';
   buildAfChips();
   try{
@@ -1312,6 +1340,73 @@ function buildColPopular(cols){
     +'</div>';
   }).join('');
 }
+
+/* ── 医薬品詳細ページ ── */
+async function showMedDetail(id){
+  var pgEl = document.getElementById('pg-med-detail');
+  if(!pgEl) return;
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
+  var homeEl=document.getElementById('pg-home');
+  if(homeEl) homeEl.style.display='none';
+  pgEl.classList.add('on');
+  pgEl.innerHTML='<div style="padding:40px;text-align:center;color:var(--txl)">読み込み中...</div>';
+  history.pushState({med:id},'',location.pathname+'?med='+id);
+  try{
+    var res=await sbFetch('medicines?id=eq.'+id+'&limit=1');
+    var data=await res.json();
+    var m=data[0];
+    if(!m){pgEl.innerHTML='<div style="padding:40px">見つかりません</div>';return;}
+    var cat=null;
+    for(var i=0;i<CATS.length;i++){if(CATS[i].id===m.cat){cat=CATS[i];break;}}
+    cat=cat||{l:m.cat||''};
+    var wset={};
+    (m.warnIngs||[]).forEach(function(w){wset[w.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim()]=1;});
+    var iH=(m.ings||[]).map(function(ing){
+      var b=ing.replace(/[(（][^)）]*/g,'').replace(/[)）]/g,'').trim();
+      var cls=wset[b]?'iw':S.ings.indexOf(b)>-1?'im':'in';
+      return '<span class="itag '+cls+' clickable" data-b="'+b.replace(/"/g,'&quot;')+'" onclick="addIng(this.dataset.b)">'+ing+'</span>';
+    }).join('');
+    var pr=m.price?'¥'+m.price.toLocaleString()+'<span style="font-size:12px;font-weight:400"> 参考価格（税込）</span>':'価格要確認';
+    var symsH='';
+    if(m.symptoms&&m.symptoms.length){
+      var stagHtml=m.symptoms.map(function(s){
+        return '<span class="stag clickable" data-s="'+s.replace(/"/g,'&quot;')+'" onclick="addSym(this.dataset.s)">'+s+'</span>';
+      }).join('');
+      symsH='<div class="dsec"><h3>効果・症状</h3><div>'+stagHtml+'</div></div>';
+    }
+    pgEl.innerHTML=
+      '<div style="max-width:900px;margin:0 auto">'
+      +'<button type="button" class="bkbtn" onclick="history.back()">← 検索に戻る</button>'
+      +'<div class="dhead">'
+        +'<div>'
+          +'<div class="dtitle">'+m.name+'</div>'
+          +'<div class="dmaker">'+(m.maker||'')+'</div>'
+        +'</div>'
+        +'<div class="cprice" style="font-size:22px;font-weight:700;color:var(--teal2)">'+pr+'</div>'
+      +'</div>'
+      +'<div class="badges" style="margin-bottom:16px">'
+        +'<span class="badge bc">'+cat.l+'</span>'
+        +(m.risk?'<span class="badge '+(RCLS[m.risk]||'r25')+'">'+(RLBL[m.risk]||'')+'</span>':'')
+        +(m.drowsy?'<span class="badge bd2">眠気注意</span>':'')
+        +(m.warnIngs&&m.warnIngs.length?'<span class="badge bw2">要注意成分</span>':'')
+      +'</div>'
+      +'<div class="dsec"><h3>成分</h3><div class="ings">'+iH+'</div></div>'
+      +symsH
+      +(m.effect?'<div class="dsec"><h3>効能・効果</h3><div style="font-size:14px;line-height:1.8;color:var(--txm)">'+m.effect+'</div></div>':'')
+      +(m.note?'<div class="dsec"><h3>注意事項</h3><div class="note '+(m.noteType==='danger'?'nd':m.noteType==='warn'?'nw':'nn')+'">'+m.note+'</div></div>':'')
+      +'<div class="dsec"><h3>購入</h3>'
+        +'<div style="display:flex;gap:12px;flex-wrap:wrap">'
+          +'<a href="https://www.amazon.co.jp/s?k='+encodeURIComponent(m.name)+'" target="_blank" class="dbtn dbtn-a">Amazon で探す</a>'
+          +'<a href="https://search.rakuten.co.jp/search/mall/'+encodeURIComponent(m.name)+'/" target="_blank" class="dbtn dbtn-r">楽天で探す</a>'
+        +'</div>'
+      +'</div>'
+      +'</div>';
+  }catch(e){
+    pgEl.innerHTML='<div style="padding:40px;color:var(--red)">エラー: '+e.message+'</div>';
+  }
+}
+
 async function showColFromDB(id){
   document.getElementById('clist').style.display='none';
   document.getElementById('cdetail').innerHTML='<div style="padding:40px;text-align:center;color:var(--txl)">読み込み中...</div>';
