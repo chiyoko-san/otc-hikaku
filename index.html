@@ -76,7 +76,9 @@
 
 <div class="pg" id="pg-search">
   <div class="layout">
-    <aside class="sb">
+    <aside class="sb" id="sp-filter-drawer" onclick="if(event.target===this)closeSpFilter()">
+      <div class="sb-inner-wrap">
+      <div class="sb-close-btn"><span>🔍 絞り込み</span><button onclick="closeSpFilter()">✕ 閉じる</button></div>
       <!-- 検索ボックス -->
       <div class="sbox">
         <div class="srel">
@@ -175,9 +177,15 @@
           <span class="warn-link" onclick="S.q='コデイン';document.getElementById('qinp').value='コデイン';S.pg=1;render()">コデイン系</span>→ 12歳未満禁忌・依存リスク
         </div>
       </div>
+      </div><!-- /sb-inner-wrap -->
     </aside>
 
     <main class="main">
+      <!-- スマホ用フィルタートグル -->
+      <button type="button" class="sp-filter-toggle" onclick="openSpFilter()" id="sp-filter-btn">
+        🔍 絞り込み・カテゴリ
+        <span class="sp-filter-cnt" id="sp-filter-cnt"></span>
+      </button>
       <!-- 比較フローティングボタン -->
       <div class="cmp-float" id="cmp-float" style="display:none">
         <button type="button" class="cmp-float-btn" onclick="openCmp()">
@@ -1308,6 +1316,7 @@ async function render(){
   var gridEl=document.getElementById('grid');gridEl.className='list-grid';gridEl.innerHTML='<div class="nores" style="padding:40px;color:var(--txl)">読み込み中...</div>';
   document.getElementById('resinfo').innerHTML='';
   buildAfChips();
+  updSpFilterCnt();
   try{
     var page = await fetchMeds();
     /* MEDSグローバルを更新（類似商品・成分検索用） */
@@ -2538,6 +2547,32 @@ function getSBConf(){
 
 /* エスケープ */
 function esc(s){ return (s||'').replace(/'/g,"\'").replace(/"/g,'&quot;'); }
+
+/* ── スマホ用フィルタードロワー ── */
+function openSpFilter(){
+  var el=document.getElementById('sp-filter-drawer');
+  if(el) el.classList.add('sp-open');
+  document.body.style.overflow='hidden';
+}
+function closeSpFilter(){
+  var el=document.getElementById('sp-filter-drawer');
+  if(el) el.classList.remove('sp-open');
+  document.body.style.overflow='';
+}
+/* フィルター適用件数をボタンに表示 */
+function updSpFilterCnt(){
+  var cnt=0;
+  if(S.cat&&S.cat!=='all')cnt++;
+  if(S.q)cnt++;
+  if(S.syms&&S.syms.length)cnt+=S.syms.length;
+  if(S.ings&&S.ings.length)cnt+=S.ings.length;
+  if(S.risk)cnt++;
+  if(S.itype)cnt++;
+  if(S.nd)cnt++;
+  if(S.nw)cnt++;
+  var el=document.getElementById('sp-filter-cnt');
+  if(el) el.textContent=cnt>0?cnt+'件適用中':'';
+}
 
 /* showPgフック：damageページ表示時にデータ読み込み */
 var _origShowPg = showPg;
