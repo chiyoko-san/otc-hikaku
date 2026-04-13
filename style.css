@@ -667,13 +667,41 @@ footer a:hover{color:#fff}
    スマホ対応修正
 ════════════════════════════════════════ */
 
-/* ── ナビ：スマホで横スクロール ── */
+/* ── ハンバーガーメニュー ── */
+.nav-tabs{display:flex;align-items:center;gap:4px}
+.hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:none;border:none;cursor:pointer;padding:4px;margin-left:auto;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ドロップダウンメニュー */
+.sp-nav-menu{
+  display:none;position:fixed;top:48px;left:0;right:0;z-index:300;
+  background:var(--navy);border-top:1px solid rgba(255,255,255,.1);
+  flex-direction:column;padding:8px 0;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.sp-nav-menu.open{display:flex}
+.sp-nav-item{
+  padding:14px 20px;background:none;border:none;
+  color:rgba(255,255,255,.85);font-size:15px;font-weight:600;
+  text-align:left;cursor:pointer;font-family:inherit;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  transition:background .15s;
+}
+.sp-nav-item:last-child{border-bottom:none}
+.sp-nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.sp-nav-item-cta{color:var(--teal);font-weight:700}
+.sp-nav-overlay{display:none;position:fixed;inset:0;top:48px;z-index:299;background:rgba(0,0,0,.3)}
+.sp-nav-overlay.open{display:block}
+
 @media(max-width:768px){
-  .nav{padding:0 12px;height:48px}
-  .nav-inner{gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap;justify-content:flex-start}
-  .nav-inner::-webkit-scrollbar{display:none}
-  .logo{font-size:15px;white-space:nowrap;margin-right:8px;flex-shrink:0}
-  .ntab{padding:5px 10px;font-size:12px;white-space:nowrap;flex-shrink:0}
+  .nav{padding:0 16px;height:48px}
+  .nav-inner{gap:0}
+  .logo{font-size:16px;white-space:nowrap}
+  .nav-tabs{display:none}
+  .hamburger{display:flex}
 }
 
 /* ── 検索フィルター：スマホ用トグルボタン ── */

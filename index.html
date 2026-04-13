@@ -27,14 +27,29 @@
 <nav class="nav">
   <div class="nav-inner">
     <div class="logo" onclick="goHome()" style="cursor:pointer" title="トップページへ">クスリノ<em>コンパス</em></div>
-    <button type="button" class="ntab" id="t-search" onclick="showPg('search')">検索</button>
-    <button type="button" class="ntab" id="t-guide" onclick="showPg('guide')">症状から選ぶ</button>
-    <button type="button" class="ntab" id="t-column" onclick="showPg('column')">コラム</button>
-    <button type="button" class="ntab" id="t-damage-report" onclick="showPg('damage-report')">被害報告する</button>
-    <button type="button" class="ntab" id="t-damage-list" onclick="showPg('damage-list')">被害を見る</button>
-    
+    <!-- PC用ナビ -->
+    <div class="nav-tabs" id="nav-tabs">
+      <button type="button" class="ntab" id="t-search" onclick="showPg('search');closeHamburger()">検索</button>
+      <button type="button" class="ntab" id="t-guide" onclick="showPg('guide');closeHamburger()">症状から選ぶ</button>
+      <button type="button" class="ntab" id="t-column" onclick="showPg('column');closeHamburger()">コラム</button>
+      <button type="button" class="ntab" id="t-damage-report" onclick="showPg('damage-report');closeHamburger()">被害報告する</button>
+      <button type="button" class="ntab" id="t-damage-list" onclick="showPg('damage-list');closeHamburger()">被害を見る</button>
+    </div>
+    <!-- ハンバーガーボタン（スマホのみ表示） -->
+    <button type="button" class="hamburger" id="hamburger-btn" onclick="toggleHamburger()" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+<!-- スマホ用ドロップダウンメニュー -->
+<div class="sp-nav-menu" id="sp-nav-menu">
+  <button type="button" class="sp-nav-item" onclick="showPg('search');closeHamburger()">🔍 検索</button>
+  <button type="button" class="sp-nav-item" onclick="showPg('guide');closeHamburger()">😷 症状から選ぶ</button>
+  <button type="button" class="sp-nav-item" onclick="showPg('column');closeHamburger()">📖 コラム</button>
+  <button type="button" class="sp-nav-item" onclick="showPg('damage-report');closeHamburger()">📝 被害報告する</button>
+  <button type="button" class="sp-nav-item sp-nav-item-cta" onclick="showPg('damage-list');closeHamburger()">🚨 被害を見る</button>
+</div>
+<div class="sp-nav-overlay" id="sp-nav-overlay" onclick="closeHamburger()"></div>
 
 <!-- ホームページ -->
 <div id="pg-home" style="display:block">
@@ -2547,6 +2562,23 @@ function getSBConf(){
 
 /* エスケープ */
 function esc(s){ return (s||'').replace(/'/g,"\'").replace(/"/g,'&quot;'); }
+
+/* ── ハンバーガーメニュー ── */
+function toggleHamburger(){
+  var menu=document.getElementById('sp-nav-menu');
+  var btn=document.getElementById('hamburger-btn');
+  var overlay=document.getElementById('sp-nav-overlay');
+  var open=menu.classList.toggle('open');
+  btn.classList.toggle('open',open);
+  overlay.classList.toggle('open',open);
+  document.body.style.overflow=open?'hidden':'';
+}
+function closeHamburger(){
+  document.getElementById('sp-nav-menu').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
+  document.getElementById('sp-nav-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
 
 /* ── スマホ用フィルタードロワー ── */
 function openSpFilter(){
