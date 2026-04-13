@@ -160,7 +160,7 @@
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
-        <button type="button" class="btn" onclick="saveCol('published')" id="btn-publish">公開保存</button>
+        <button type="button" class="btn" onclick="saveCol()" id="btn-publish">公開保存</button>
         <button type="button" class="btn-sec" onclick="saveCol('draft')" style="background:#fef9c3;color:#713f12;border:1px solid #fde047">下書き保存</button>
         <button type="button" class="btn-sec" onclick="clearForm()">クリア</button>
       </div>
@@ -674,7 +674,8 @@ function saveCol(forceStatus){
   var sm=document.getElementById("f-summary").value.trim();
   var b=document.getElementById("f-body").value.trim();
   var tag=document.getElementById("f-tag").value;
-  var status=forceStatus||document.getElementById("f-status").value;
+  var status=document.getElementById("f-status").value;
+  if(forceStatus==="draft") status="draft"; /* 下書き保存ボタン用 */
   var publishAt=document.getElementById("f-publish-at").value||"";
 
   /* 下書きはタイトルだけ必須 */
