@@ -822,6 +822,7 @@ async function saveColToSB(col){
         summary:col.summary, body:col.body,
         thumb:col.thumb||null,
         status:col.status||'published',
+        publish_at:col.publishAt||null,
         slug:col.slug||null,
         updated_at:new Date().toISOString().slice(0,16),
       })
@@ -845,6 +846,7 @@ async function saveColToSB(col){
             summary:col.summary, body:col.body,
             thumb:col.thumb||null,
             status:col.status||'published',
+            publish_at:col.publishAt||null,
             slug:col.slug||null,
             updated_at:new Date().toISOString().slice(0,16),
           })
