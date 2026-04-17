@@ -1,0 +1,42 @@
+name: Refresh Ad Products Weekly
+
+on:
+  schedule:
+    # 毎週月曜 AM 3:00 JST (= 日曜 18:00 UTC)
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+    inputs:
+      product_id:
+        description: '特定商品のみ更新する場合のID (例: adp_001)'
+        required: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install anthropic supabase requests
+
+      - name: Refresh all ad products
+        if: ${{ github.event.inputs.product_id == '' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/ad_product_extractor.py --refresh-all
+
+      - name: Refresh specific product
+        if: ${{ github.event.inputs.product_id != '' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/ad_product_extractor.py --id "${{ github.event.inputs.product_id }}" --refresh
