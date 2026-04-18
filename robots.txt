@@ -1,0 +1,9 @@
+# クスリノコンパス robots.txt
+
+User-agent: *
+Allow: /
+
+# 試験公開ページはインデックス除外
+Disallow: /lab/
+
+Sitemap: https://kusuri-compass.com/sitemap.xml
