@@ -15,11 +15,14 @@ DATA_DIR = Path(__file__).parent
 MED_JSON = DATA_DIR / "medicines.json"
 JST      = timezone(timedelta(hours=9))
 
+# 投稿フォームのパス(実際の試験公開URLに合わせる)
+SIGHTING_FORM_PATH = "/lab/adv-research-7k3m/submit/"
+
 # ── テーマプール ─────────────────────────────────────────
 THEMES = [
     ("安全情報", "市販薬の飲み合わせ危険ランキング。サプリ・他薬との相互作用"),
     ("安全情報", "妊娠中・授乳中に使える市販薬・使えない市販薬の見分け方"),
-    ("安全情報", "子ども（12歳未満）に与えてはいけない市販薬成分"),
+    ("安全情報", "子ども(12歳未満)に与えてはいけない市販薬成分"),
     ("安全情報", "市販薬の過量服用リスク。アセトアミノフェンの肝障害"),
     ("安全情報", "高齢者が注意すべき市販薬。腎機能・認知機能への影響"),
     ("安全情報", "運転前に飲んではいけない市販薬成分一覧"),
@@ -32,46 +35,55 @@ THEMES = [
     ("花粉症",   "花粉症薬の正しい飲み始めタイミング。シーズン前から始める理由"),
     ("花粉症",   "点鼻薬・点眼薬・飲み薬の使い分け。花粉症治療の組み合わせ方"),
     ("かぜ薬",   "風邪の症状に合った市販薬の選び方。のど・鼻・熱それぞれの対処"),
-    ("かぜ薬",   "総合感冒薬は本当に必要か？症状に応じた単剤選択という考え方"),
+    ("かぜ薬",   "総合感冒薬は本当に必要か?症状に応じた単剤選択という考え方"),
     ("胃腸",     "胃薬の選び方。制酸薬・H2ブロッカー・PPIの違いと使い分け"),
     ("胃腸",     "下痢止めを飲むべきケース・飲まないほうがいいケース"),
     ("美容・スキンケア", "シミ・肝斑に効く市販薬成分。トラネキサム酸・ビタミンCの違い"),
     ("育毛",     "ミノキシジル配合育毛剤の正しい使い方と期待できる効果"),
-    ("漢方",     "葛根湯は万能薬？漢方薬を正しく使うための「証」の考え方"),
+    ("漢方",     "葛根湯は万能薬?漢方薬を正しく使うための「証」の考え方"),
     ("漢方",     "防風通聖散・大柴胡湯・防己黄耆湯。肥満に用いる漢方薬の違い"),
-    ("安全情報", "2024年最新：景品表示法改正で変わった健康食品広告のルール"),
     ("基礎知識", "機能性表示食品と医薬品の違い。パッケージの見分け方"),
-    ("安全情報", "定期購入トラブル急増。健康食品・サプリの契約に潜む罠"),
+    # --- 広告・契約啓発系(自動的に投稿フォームCTA追加) ---
+    ("広告・契約", "「初回500円」の落とし穴。健康食品の定期購入トラブルが急増中"),
+    ("広告・契約", "定期購入の解約で困らないために。契約前に必ず確認すべき5つのポイント"),
+    ("広告・契約", "電話が繋がらない…解約できない定期購入への対処法と相談先"),
+    ("広告・契約", "景品表示法改正で変わった健康食品広告のルール。違反事例から学ぶ見極め方"),
+    ("広告・契約", "SNSで見かける健康系広告、信じていい?広告表示の「根拠」を読み解くコツ"),
+    ("広告・契約", "「今だけ」「〇%OFF」の罠。消費者心理を突く広告表現の落とし穴"),
+    ("広告・契約", "定期購入と都度購入、どちらを選ぶ?健康食品の賢い買い方比較"),
+    ("広告・契約", "解約できない・連絡がつかないときの消費者ホットライン188の使い方"),
+    ("広告・契約", "健康食品の口コミは信じていい?広告の「体験談」に潜む景表法違反"),
+    ("広告・契約", "クーリングオフは効かない?通信販売で契約してしまった時にできること"),
 ]
 
-# ── システムプロンプト ──────────────────────────────────
+# ── システムプロンプト(OTC系) ───────────────────────────
 SYSTEM_PROMPT = """あなたは薬剤師・医療ライターです。
-市販薬（OTC医薬品）の正しい選び方・安全な使い方について、消費者向けにわかりやすいコラムを書いてください。
+市販薬(OTC医薬品)の正しい選び方・安全な使い方について、消費者向けにわかりやすいコラムを書いてください。
 
 ## 制約
 - 根拠は厚生労働省・消費者庁・PMDAの公開情報に基づく
 - 医療行為や診断の代替にならないことを明記する
-- Markdownで記述する（## 見出し、**太字**、- リスト、> 引用、::: tip/warn/danger 吹き出し）
-- 本文は3000〜4000文字程度（日本語）
-- 最後に「出典：」を記載する
+- Markdownで記述する(## 見出し、**太字**、- リスト、> 引用、::: tip/warn/danger 吹き出し)
+- 本文は4500〜5500文字程度(日本語)
+- 最後に「出典:」を記載する
 - 一人称は使わない
 
-## 画像の挿入ルール（重要）
-本文中に画像を入れるべき箇所（見出しの直後・重要な説明の後）に、以下の形式で画像を挿入すること。
+## 画像の挿入ルール(重要)
+本文中に画像を入れるべき箇所(見出しの直後・重要な説明の後)に、以下の形式で画像を挿入すること。
 画像URLは {IMAGE_BASE_URL}/1.png, /2.png ... の連番で挿入する。
 {IMAGE_BASE_URL} はシステムが自動で置換するプレースホルダなのでそのまま記述すること。
 
-形式：
+形式:
 ![画像の説明文]({IMAGE_BASE_URL}/1.png)
 
-例：
+例:
 ![解熱鎮痛薬の比較図]({IMAGE_BASE_URL}/1.png)
 ![症状別の選び方]({IMAGE_BASE_URL}/2.png)
 ![注意事項のイメージ]({IMAGE_BASE_URL}/3.png)
 
 画像は本文中に3〜5枚挿入すること。番号は1から順番に振ること。
 
-## 吹き出し記法（必ず2〜3個使うこと）
+## 吹き出し記法(必ず2〜3個使うこと)
 ::: tip タイトル
 内容
 :::
@@ -80,12 +92,12 @@ SYSTEM_PROMPT = """あなたは薬剤師・医療ライターです。
 内容
 :::
 
-## 出力フォーマット（JSONのみ・余分なテキスト不要）
+## 出力フォーマット(JSONのみ・余分なテキスト不要)
 {
-  "title": "記事タイトル（60文字以内）",
+  "title": "記事タイトル(60文字以内)",
   "tag": "タグ",
-  "summary": "サマリー（100文字以内）",
-  "body": "本文（Markdown形式、3000〜4000文字）",
+  "summary": "サマリー(100文字以内)",
+  "body": "本文(Markdown形式、4500〜5500文字)",
   "image_prompts": [
     {
       "label": "サムネイル",
@@ -94,7 +106,7 @@ SYSTEM_PROMPT = """あなたは薬剤師・医療ライターです。
       "prompt": "Flat vector illustration for thumbnail. Topic: [記事の主題を英語で]. Teal and navy palette, no text, no faces, no dates. 16:9 ratio."
     },
     {
-      "label": "本文①：[見出し名]",
+      "label": "本文①:[見出し名]",
       "filename": "1.png",
       "prompt": "Flat vector illustration of [内容を英語で説明]. Clean minimal design, teal palette, no text, no faces, no dates. 16:9 ratio."
     }
@@ -105,6 +117,73 @@ image_promptsは本文中の画像({IMAGE_BASE_URL}/1.png等)と同じ数だけ�
 各promptは英語で、flat vector illustration スタイルで記述し、no text・no faces・no datesを必ず含めること。
 サムネイルは必ずis_thumb:trueで1枚含めること。"""
 
+# ── システムプロンプト(広告・契約啓発系) ─────────────
+SYSTEM_PROMPT_AD = """あなたは消費生活アドバイザー・医療ライターです。
+健康食品・医薬部外品・OTC医薬品のネット広告と通信販売の契約について、消費者向けに啓発記事を書いてください。
+
+## 制約(非常に重要)
+- 特定の商品名・販売者名・ブランド名を本文に出さない。一般論として書く
+- 「詐欺」「違法」「悪質」などの断定的な表現は使わない
+- 事実と意見を明確に区別する。主観的評価は避ける
+- 根拠は消費者庁・国民生活センター・厚生労働省・消費者ホットライン188などの公的情報源を参照
+- 「契約は自由だが、判断材料となる情報を整理する」というスタンスで書く
+- 医療行為や診断の代替にならないことを明記
+- Markdownで記述(## 見出し、**太字**、- リスト、> 引用、::: tip/warn/danger 吹き出し)
+- 本文は4500〜5500文字程度(日本語)
+- 最後に「出典:」として消費者庁・国民生活センター等の公的情報源を記載
+- 一人称は使わない
+
+## 扱うトピックの例
+- 定期購入契約の構造(縛り回数・継続義務・解約条件)
+- 景品表示法(優良誤認・有利誤認)・特定商取引法の基本
+- 広告で使われる訴求手法(初回限定・期間限定・体験談)の読み解き方
+- 解約トラブルの相談先(消費者ホットライン188、国民生活センター)
+- 契約前のチェックポイント
+
+## 画像の挿入ルール
+本文中に画像を入れるべき箇所(見出しの直後・重要な説明の後)に、以下の形式で画像を挿入すること。
+画像URLは {IMAGE_BASE_URL}/1.png, /2.png ... の連番で挿入する。
+{IMAGE_BASE_URL} はシステムが自動で置換するプレースホルダなのでそのまま記述すること。
+
+形式:
+![画像の説明文]({IMAGE_BASE_URL}/1.png)
+
+画像は本文中に3〜5枚挿入すること。番号は1から順番に振ること。
+
+## 吹き出し記法(必ず2〜3個使うこと)
+::: tip タイトル
+内容
+:::
+
+::: warn タイトル
+内容
+:::
+
+## 出力フォーマット(JSONのみ・余分なテキスト不要)
+{
+  "title": "記事タイトル(60文字以内・煽りすぎない中立的な表現)",
+  "tag": "広告・契約",
+  "summary": "サマリー(100文字以内)",
+  "body": "本文(Markdown形式、4500〜5500文字)",
+  "image_prompts": [
+    {
+      "label": "サムネイル",
+      "is_thumb": true,
+      "filename": "thumb.png",
+      "prompt": "Flat vector illustration for thumbnail. Topic: [記事の主題を英語で]. Teal and navy palette, no text, no faces, no dates. 16:9 ratio."
+    },
+    {
+      "label": "本文①:[見出し名]",
+      "filename": "1.png",
+      "prompt": "Flat vector illustration of [内容を英語で説明]. Clean minimal design, teal palette, no text, no faces, no dates. 16:9 ratio."
+    }
+  ]
+}
+
+image_promptsは本文中の画像({IMAGE_BASE_URL}/1.png等)と同じ数だけ生成すること。
+各promptは英語で、flat vector illustrationスタイルで記述し、no text・no faces・no datesを必ず含めること。
+サムネイルは必ずis_thumb:trueで1枚含めること。"""
+
 # ─────────────────────────────────────────────────────────
 
 def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | None:
@@ -113,14 +192,17 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
         print("[gen] ANTHROPIC_API_KEY が未設定", file=sys.stderr)
         return None
 
-    user_prompt = f"次のテーマでコラムを書いてください：\n\nテーマ: {theme_desc}\nタグ: {theme_tag}\n\n画像URLベース: {{IMAGE_BASE_URL}}\n（本文中の画像はすべて {{IMAGE_BASE_URL}}/1.png, /2.png ... の形式で挿入してください）"
+    # タグに応じてシステムプロンプトを切り替え
+    system_prompt = SYSTEM_PROMPT_AD if theme_tag == "広告・契約" else SYSTEM_PROMPT
+
+    user_prompt = f"次のテーマでコラムを書いてください:\n\nテーマ: {theme_desc}\nタグ: {theme_tag}\n\n画像URLベース: {{IMAGE_BASE_URL}}\n(本文中の画像はすべて {{IMAGE_BASE_URL}}/1.png, /2.png ... の形式で挿入してください)"
     if context:
-        user_prompt += f"\n\n参考データ（関連OTC商品）:\n{context}"
+        user_prompt += f"\n\n参考データ(関連OTC商品):\n{context}"
 
     payload = json.dumps({
         "model": "claude-opus-4-5-20251101",
-        "max_tokens": 6000,
-        "system": SYSTEM_PROMPT,
+        "max_tokens": 8000,
+        "system": system_prompt,
         "messages": [{"role": "user", "content": user_prompt}]
     }).encode("utf-8")
 
@@ -136,7 +218,7 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=120) as r:
+        with urllib.request.urlopen(req, timeout=180) as r:
             resp = json.loads(r.read().decode("utf-8"))
             text = resp["content"][0]["text"].strip()
             m = re.search(r'\{[\s\S]+\}', text)
@@ -173,7 +255,6 @@ def save_image_prompts(col_id: str, image_prompts: list, date_folder: str) -> st
         )
         with urllib.request.urlopen(req, timeout=30) as r:
             pass
-        project_ref = sb_url.split("//")[1].split(".")[0]
         public_url = f"{sb_url}/storage/v1/object/public/column-images/{storage_path}"
         print(f"[gen] プロンプトJSON保存: {public_url}")
         return public_url
@@ -200,12 +281,12 @@ def save_to_supabase(col: dict) -> bool:
         with urllib.request.urlopen(req_check, timeout=30) as r:
             existing = json.loads(r.read().decode("utf-8"))
             if existing:
-                print(f"[gen] Supabase内ID重複: {col['id']} → スキップ（正常）")
+                print(f"[gen] Supabase内ID重複: {col['id']} → スキップ(正常)")
                 return True
     except Exception as e:
         print(f"[gen] 重複チェックエラー: {e}", file=sys.stderr)
 
-    # 保存（status='draft' で保存 → 管理画面で確認後に公開）
+    # 保存(status='draft' で保存 → 管理画面で確認後に公開)
     payload = json.dumps({
         "id":         col["id"],
         "title":      col["title"],
@@ -257,7 +338,7 @@ def get_medicines_context(tag: str) -> str:
         if not relevant:
             return ""
         return "\n".join(
-            f"- {m['name']}（{m.get('maker','')}）: {m.get('effect','')[:60]}"
+            f"- {m['name']}({m.get('maker','')}): {m.get('effect','')[:60]}"
             for m in relevant
         )
     except Exception:
@@ -268,6 +349,35 @@ def pick_theme(slot: int, date_str: str) -> tuple[str, str]:
     import hashlib
     seed = int(hashlib.md5(f"{date_str}-{slot}".encode()).hexdigest(), 16)
     return THEMES[seed % len(THEMES)]
+
+
+def build_sighting_cta() -> str:
+    """広告・契約啓発記事の末尾に付ける「目撃情報募集」CTAボックス(Markdown)"""
+    return f"""
+
+---
+
+## 読んでくださったあなたへ
+
+::: tip 広告で見かけた商品、教えてください
+この記事をきっかけに「そういえば、最近こんな広告を見た」と思い出された方へ。
+
+**クスリノコンパスでは、読者の皆さんから「SNSや検索で見かけた健康系広告の目撃情報」を匿名で受け付けています。**
+
+寄せられた情報は、購入条件(定期縛り・解約条件・価格設定など)を調査する手がかりとして活用し、集計データを試験公開ページで共有しています。個別の投稿内容がそのまま公開されることはありません。
+
+1分程度で投稿できます。あなたの違和感が、次に誰かを守る手がかりになります。
+
+[→ 広告目撃情報を投稿する]({SIGHTING_FORM_PATH})
+:::
+
+### 解約や契約トラブルで困っている方へ
+
+- **消費者ホットライン188(いやや!)**: 局番なしで188。最寄りの消費生活センターにつながります。
+- **国民生活センター 公式サイト**: 定期購入トラブルの相談事例・対処法が公開されています。
+
+早めの相談が、被害拡大を防ぐ第一歩です。
+"""
 
 
 def run(dry_run=False, theme_index=None):
@@ -285,7 +395,7 @@ def run(dry_run=False, theme_index=None):
     print(f"[gen] コラムID: {col_id}")
 
     if dry_run:
-        print("[gen] dry-run モード（APIは呼ばない）")
+        print("[gen] dry-run モード(APIは呼ばない)")
         return True
 
     context  = get_medicines_context(theme_tag)
@@ -303,6 +413,11 @@ def run(dry_run=False, theme_index=None):
 
     body = col_data.get("body", "")
     body = body.replace("{IMAGE_BASE_URL}", image_base_url)
+
+    # 広告・契約啓発系の記事には、本文末尾に投稿フォームCTAを自動追加
+    if theme_tag == "広告・契約":
+        body += build_sighting_cta()
+        print(f"[gen] 広告啓発系記事のためCTAボックスを追加")
 
     col = {
         "id":      col_id,
@@ -327,13 +442,13 @@ def run(dry_run=False, theme_index=None):
         print(f"[gen] 画像プロンプト: {len(image_prompts)} 件")
         save_image_prompts(col_id, image_prompts, date_folder)
     else:
-        print(f"[gen] 画像プロンプトなし（image_promptsが空）")
+        print(f"[gen] 画像プロンプトなし(image_promptsが空)")
 
     if save_to_supabase(col):
         print(f"[gen] ✅ Supabaseに下書き保存しました")
         print(f"[gen] → admin.html で確認・編集後に公開してください")
 
-        # image_promptsをJSONファイルに保存（gen_images.pyが使用）
+        # image_promptsをJSONファイルに保存(gen_images.pyが使用)
         image_prompts = col_data.get("image_prompts", [])
         if image_prompts:
             prompts_path = DATA_DIR / f"prompts_{col_id}.json"
