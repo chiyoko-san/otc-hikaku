@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<title>広告商品 購入条件調査 [試験公開] | クスリノコンパス</title>
+<style>
+.adp-page {
+  --adp-bg: #faf7f2;
+  --adp-ink: #1a1a1a;
+  --adp-sub: #5a5a5a;
+  --adp-accent: #c8342e;
+  --adp-safe: #2d6a4f;
+  --adp-warn: #d4861a;
+  --adp-line: #d8d0c2;
+  --adp-card: #ffffff;
+  background: var(--adp-bg);
+  color: var(--adp-ink);
+  font-family: "Noto Serif JP", "Yu Mincho", serif;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+.adp-wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.adp-beta-banner {
+  background: #1a1a1a; color: #faf7f2; padding: 10px 20px;
+  text-align: center; font-family: "Courier New", monospace;
+  font-size: 12px; letter-spacing: 0.15em;
+}
+.adp-beta-banner strong { color: #ffd166; }
+.adp-hero { padding: 80px 0 60px; border-bottom: 3px double var(--adp-ink); position: relative; }
+.adp-hero::before {
+  content: "RESEARCH DRAFT / INTERNAL"; position: absolute; top: 30px; right: 0;
+  font-family: "Courier New", monospace; font-size: 11px;
+  letter-spacing: 0.2em; color: var(--adp-sub);
+}
+.adp-kicker {
+  font-family: "Courier New", monospace; font-size: 12px;
+  letter-spacing: 0.3em; color: var(--adp-accent); margin-bottom: 16px;
+}
+.adp-title {
+  font-size: clamp(32px, 5vw, 52px); font-weight: 900;
+  line-height: 1.25; margin: 0 0 24px; letter-spacing: -0.02em;
+}
+.adp-title em { font-style: normal; color: var(--adp-accent); position: relative; }
+.adp-title em::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 4px;
+  height: 8px; background: rgba(200, 52, 46, 0.15); z-index: -1;
+}
+.adp-lead { font-size: 17px; max-width: 680px; color: var(--adp-sub); line-height: 1.9; }
+.adp-meta {
+  margin-top: 28px; display: flex; gap: 24px; flex-wrap: wrap;
+  font-family: "Courier New", monospace; font-size: 12px;
+  color: var(--adp-sub); letter-spacing: 0.05em;
+}
+.adp-meta span strong { color: var(--adp-ink); }
+.adp-section { padding: 64px 0; border-bottom: 1px solid var(--adp-line); }
+.adp-section-label {
+  font-family: "Courier New", monospace; font-size: 11px;
+  letter-spacing: 0.3em; color: var(--adp-accent);
+  border-top: 2px solid var(--adp-ink); padding-top: 12px;
+  display: inline-block; margin-bottom: 12px;
+}
+.adp-section h2 { font-size: 28px; font-weight: 900; margin: 0 0 8px; line-height: 1.4; }
+.adp-section-desc { color: var(--adp-sub); font-size: 15px; max-width: 680px; margin: 0 0 32px; }
+.adp-big-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1px; background: var(--adp-line); border: 1px solid var(--adp-line);
+}
+.adp-big-stat { background: var(--adp-card); padding: 32px 24px; text-align: center; }
+.adp-big-stat-num {
+  font-family: "Courier New", monospace; font-size: 48px; font-weight: 700;
+  color: var(--adp-accent); line-height: 1; margin-bottom: 8px;
+}
+.adp-big-stat-unit { font-size: 16px; color: var(--adp-sub); margin-left: 4px; }
+.adp-big-stat-label { font-size: 13px; color: var(--adp-sub); letter-spacing: 0.05em; }
+.adp-table-wrap { overflow-x: auto; }
+.adp-table {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+  background: var(--adp-card); border: 1px solid var(--adp-line);
+}
+.adp-table thead th {
+  background: #f0ece3; padding: 14px 16px; text-align: left;
+  font-size: 11px; font-family: "Courier New", monospace;
+  letter-spacing: 0.1em; color: var(--adp-sub);
+  border-bottom: 2px solid var(--adp-ink);
+}
+.adp-table tbody td { padding: 16px; border-bottom: 1px solid var(--adp-line); }
+.adp-table tbody tr:last-child td { border-bottom: none; }
+.adp-table tbody tr:hover { background: #faf7f2; }
+.adp-table td.num { font-family: "Courier New", monospace; font-weight: 700; text-align: right; }
+.adp-table td.num.danger { color: var(--adp-accent); }
+.adp-table td.num.warn { color: var(--adp-warn); }
+.adp-table td.cat { font-weight: 700; position: relative; padding-left: 28px; }
+.adp-table td.cat::before {
+  content: ""; position: absolute; left: 16px; top: 50%;
+  transform: translateY(-50%); width: 4px; height: 18px; background: var(--adp-accent);
+}
+.adp-bar-chart { margin-top: 16px; }
+.adp-bar-row {
+  display: grid; grid-template-columns: 140px 1fr 80px; gap: 16px;
+  align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--adp-line);
+}
+.adp-bar-label { font-size: 14px; font-weight: 700; }
+.adp-bar-track { height: 24px; background: #f0ece3; position: relative; overflow: hidden; }
+.adp-bar-fill {
+  height: 100%; background: linear-gradient(90deg, #c8342e 0%, #d4861a 100%);
+  transition: width 0.8s ease;
+}
+.adp-bar-value {
+  font-family: "Courier New", monospace; font-size: 13px;
+  text-align: right; font-weight: 700;
+}
+@media (max-width: 720px) {
+  .adp-bar-row { grid-template-columns: 100px 1fr 60px; gap: 8px; }
+  .adp-bar-label { font-size: 12px; }
+}
+.adp-pies {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px;
+}
+.adp-pie-card {
+  background: var(--adp-card); padding: 28px;
+  border: 1px solid var(--adp-line); text-align: center;
+}
+.adp-pie-card h3 { font-size: 15px; font-weight: 700; margin: 0 0 16px; }
+.adp-pie {
+  width: 140px; height: 140px; border-radius: 50%;
+  margin: 0 auto 16px; position: relative; background: #f0ece3;
+}
+.adp-pie::after {
+  content: attr(data-pct) "%"; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); font-family: "Courier New", monospace;
+  font-size: 26px; font-weight: 700; color: var(--adp-ink);
+}
+.adp-pie-legend { font-size: 12px; color: var(--adp-sub); line-height: 1.7; }
+.adp-pie-legend strong { color: var(--adp-accent); }
+.adp-histogram {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+  align-items: end; height: 200px; padding: 20px 0;
+}
+.adp-hist-bar { background: var(--adp-accent); position: relative; min-height: 4px; opacity: 0.85; }
+.adp-hist-label {
+  margin-top: 8px; font-family: "Courier New", monospace;
+  font-size: 10px; color: var(--adp-sub); text-align: center;
+  letter-spacing: 0.05em; line-height: 1.3;
+}
+.adp-hist-count {
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-family: "Courier New", monospace; font-size: 11px; font-weight: 700;
+}
+.adp-histogram-wrap { margin-top: 8px; }
+.adp-histogram-labels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.adp-note {
+  background: var(--adp-card); border-left: 4px solid var(--adp-accent);
+  padding: 20px 24px; margin-top: 24px; font-size: 14px;
+}
+.adp-note strong {
+  font-family: "Courier New", monospace; font-size: 11px;
+  letter-spacing: 0.2em; color: var(--adp-accent);
+  display: block; margin-bottom: 6px;
+}
+.adp-disclaimer { padding: 48px 0 80px; font-size: 13px; color: var(--adp-sub); line-height: 1.8; }
+.adp-disclaimer h3 {
+  font-family: "Courier New", monospace; font-size: 11px;
+  letter-spacing: 0.3em; margin-bottom: 12px;
+}
+.adp-loading { text-align: center; padding: 60px 0; color: var(--adp-sub); }
+</style>
+</head>
+<body>
+
+<div class="adp-beta-banner">
+  <strong>[BETA]</strong> このページは試験公開中です。フィードバック歓迎。
+</div>
+
+<main class="adp-page">
+  <div class="adp-wrap">
+    <header class="adp-hero">
+      <div class="adp-kicker">クスリノコンパス調査レポート #01</div>
+      <h1 class="adp-title">健康系ネット広告、<br><em>その購入条件</em>を<br>測ってみた。</h1>
+      <p class="adp-lead">
+        ネットで頻繁に見かける、健康食品・医薬部外品・医薬品の広告。"初回500円"の向こう側にある定期縛り・解約ルール・総額を、カテゴリ横断で集計した匿名統計レポートです。
+      </p>
+      <div class="adp-meta">
+        <span><strong>調査対象</strong> 健康系ネット広告商品</span>
+        <span><strong>集計方法</strong> 公式LPからの構造化抽出</span>
+        <span><strong>サンプル数</strong> <span id="adp-n">-</span>件</span>
+        <span><strong>最終更新</strong> <span id="adp-last-update">-</span></span>
+      </div>
+    </header>
+
+    <section class="adp-section">
+      <span class="adp-section-label">OVERVIEW</span>
+      <h2>まず、全体像から。</h2>
+      <p class="adp-section-desc">調査対象全体の特徴を数値で俯瞰します。特定の商品を評価するものではなく、カテゴリ全体の傾向を示すものです。</p>
+      <div class="adp-big-stats" id="adp-big-stats">
+        <div class="adp-loading" style="grid-column:1/-1;">集計中…</div>
+      </div>
+    </section>
+
+    <section class="adp-section">
+      <span class="adp-section-label">BY CATEGORY</span>
+      <h2>カテゴリごとの購入条件。</h2>
+      <p class="adp-section-desc">縦軸はカテゴリ、横軸は平均値。サンプル数が少ないカテゴリは参考値です。</p>
+      <div class="adp-table-wrap">
+        <table class="adp-table">
+          <thead>
+            <tr>
+              <th>カテゴリ</th>
+              <th style="text-align:right;">件数</th>
+              <th style="text-align:right;">平均初回価格</th>
+              <th style="text-align:right;">平均通常価格</th>
+              <th style="text-align:right;">平均縛り回数</th>
+              <th style="text-align:right;">平均 解約までの総額</th>
+            </tr>
+          </thead>
+          <tbody id="adp-category-tbody">
+            <tr><td colspan="6" class="adp-loading">集計中…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="adp-section">
+      <span class="adp-section-label">BIND DISTRIBUTION</span>
+      <h2>"最低◯回継続"の分布。</h2>
+      <p class="adp-section-desc">定期購入コースにおける「最低継続回数」の分布。0回=縛りなし、4回以上は解約までの負担が重くなります。</p>
+      <div class="adp-histogram-wrap">
+        <div class="adp-histogram" id="adp-bind-hist"></div>
+        <div class="adp-histogram-labels" id="adp-bind-hist-labels"></div>
+      </div>
+    </section>
+
+    <section class="adp-section">
+      <span class="adp-section-label">CANCEL METHODS</span>
+      <h2>解約は、どう受け付けられているか。</h2>
+      <p class="adp-section-desc">電話のみ受付の割合が高いほど、解約時のハードルが高いカテゴリと言えます。</p>
+      <div class="adp-pies" id="adp-cancel-pies"></div>
+    </section>
+
+    <section class="adp-section">
+      <span class="adp-section-label">PRICE GAP</span>
+      <h2>初回価格と通常価格のギャップ。</h2>
+      <p class="adp-section-desc">「初回は◯%OFF」の割引率の分布。高いほど、初回だけ見て契約すると後の負担が急増します。</p>
+      <div class="adp-bar-chart" id="adp-gap-chart"></div>
+    </section>
+
+    <section class="adp-section">
+      <span class="adp-section-label">OBSERVATIONS</span>
+      <h2>この調査から見えたこと。</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:24px;">
+        <div class="adp-note">
+          <strong>OBSERVATION 01</strong>
+          定期コース商品の多くは、初回価格の80〜95%OFFという大幅割引で訴求される傾向がある。しかし通常価格での「縛り期間中の総額」を計算すると、市販の類似成分商品と比較して割高なケースが多い。
+        </div>
+        <div class="adp-note">
+          <strong>OBSERVATION 02</strong>
+          解約方法が「電話のみ」かつ受付時間が平日日中に限定されるケースが一定数存在する。働きながら解約する場合の実質的なハードルは、Web受付可の商品とは大きく異なる。
+        </div>
+        <div class="adp-note">
+          <strong>OBSERVATION 03</strong>
+          「次回発送の◯日前までに連絡」というルールは商品によって異なる(7日〜15日など)。タイミングを逃すと1回分追加発送されるため、契約時に確認することが重要。
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="adp-disclaimer">
+    <div class="adp-wrap">
+      <h3>METHODOLOGY & DISCLAIMER</h3>
+      <p>本ページの集計値は、各商品の公式LPに記載された情報を取得日時点で収集し、カテゴリ横断で統計処理したものです。個別商品を特定する情報は掲載していません。</p>
+      <p>「健康食品」「医薬部外品」「医薬品」などの分類や解約条件の設計は、販売者ごとに異なり、また適宜変更されます。本データは参考統計であり、購入判断は必ず各商品の最新の公式情報をご確認ください。</p>
+      <p>本調査は、特定の商品や販売者を批判・推奨するものではなく、購入検討時の判断材料を提供することを目的としています。</p>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SB_URL = 'https://glxhggfxxwpfmwqoulyy.supabase.co';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdseGhnZ2Z4eHdwZm13cW91bHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyODY4NDMsImV4cCI6MjA5MDg2Mjg0M30.djy6MZQz28_U7exsEjLq3PeLJTw2QuSSeVhrCNkF894';
+  const sb = supabase.createClient(SB_URL, SB_KEY);
+</script>
+<script>
+(() => {
+  'use strict';
+  const CATEGORY_LABEL = {
+    diet: 'ダイエット', hair: '育毛', joint: '関節',
+    sleep: '睡眠', eye: '目', beauty: '美容', other: 'その他'
+  };
+  const yen = n => n == null ? '-' : '¥' + Math.round(n).toLocaleString();
+
+  async function load() {
+    const { data, error } = await sb.from('ad_products')
+      .select('category, classification, first_price, regular_price, retail_price, is_subscription, bind_count, total_until_cancel, cancel_methods, fetched_at')
+      .eq('is_published', true);
+    if (error) { console.error(error); return; }
+    const rows = data || [];
+    if (rows.length === 0) {
+      document.getElementById('adp-big-stats').innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#5a5a5a;">集計対象データが蓄積中です。</div>';
+      return;
+    }
+    document.getElementById('adp-n').textContent = rows.length;
+    const latest = rows.map(r => r.fetched_at).filter(Boolean).sort().pop();
+    if (latest) {
+      const d = new Date(latest);
+      document.getElementById('adp-last-update').textContent =
+        d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+    }
+    renderBigStats(rows);
+    renderCategoryTable(rows);
+    renderBindHistogram(rows);
+    renderCancelPies(rows);
+    renderGapChart(rows);
+  }
+
+  function renderBigStats(rows) {
+    const subs = rows.filter(r => r.is_subscription);
+    const avgBind = subs.length
+      ? subs.reduce((a,r)=>a+(r.bind_count||0),0) / subs.length : 0;
+    const avgGap = rows
+      .filter(r => r.first_price && r.regular_price && r.regular_price > 0)
+      .map(r => 1 - r.first_price/r.regular_price);
+    const avgGapPct = avgGap.length
+      ? avgGap.reduce((a,b)=>a+b,0) / avgGap.length * 100 : 0;
+    const phoneOnly = rows.filter(r => {
+      const m = r.cancel_methods || [];
+      return m.length === 1 && m[0] === 'phone';
+    }).length;
+    const stats = [
+      { num: Math.round(subs.length/rows.length*100), unit: '%', label: '定期購入コース' },
+      { num: avgBind.toFixed(1), unit: '回', label: '平均 最低継続回数' },
+      { num: Math.round(avgGapPct), unit: '%', label: '平均 初回割引率' },
+      { num: Math.round(phoneOnly/rows.length*100), unit: '%', label: '解約が電話のみ' },
+    ];
+    document.getElementById('adp-big-stats').innerHTML = stats.map(s => `
+      <div class="adp-big-stat">
+        <div class="adp-big-stat-num">${s.num}<span class="adp-big-stat-unit">${s.unit}</span></div>
+        <div class="adp-big-stat-label">${s.label}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderCategoryTable(rows) {
+    const groups = {};
+    rows.forEach(r => {
+      const k = r.category || 'other';
+      if (!groups[k]) groups[k] = [];
+      groups[k].push(r);
+    });
+    const tbody = document.getElementById('adp-category-tbody');
+    tbody.innerHTML = Object.keys(CATEGORY_LABEL).map(k => {
+      const g = groups[k] || [];
+      if (g.length === 0) return null;
+      const avg = (arr, f) => {
+        const v = arr.map(f).filter(x => x != null && !isNaN(x));
+        return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null;
+      };
+      const avgFirst = avg(g, r=>r.first_price);
+      const avgReg = avg(g, r=>r.regular_price);
+      const avgBind = avg(g.filter(r=>r.is_subscription), r=>r.bind_count);
+      const avgTotal = avg(g, r=>r.total_until_cancel);
+      return `
+        <tr>
+          <td class="cat">${CATEGORY_LABEL[k]}</td>
+          <td class="num">${g.length}</td>
+          <td class="num">${yen(avgFirst)}</td>
+          <td class="num">${yen(avgReg)}</td>
+          <td class="num ${avgBind>=4?'danger':avgBind>=2?'warn':''}">${avgBind==null?'-':avgBind.toFixed(1)+'回'}</td>
+          <td class="num danger">${yen(avgTotal)}</td>
+        </tr>
+      `;
+    }).filter(Boolean).join('');
+  }
+
+  function renderBindHistogram(rows) {
+    const bins = [
+      { label: '縛りなし', range: x => x === 0, count: 0 },
+      { label: '1-2回', range: x => x >= 1 && x <= 2, count: 0 },
+      { label: '3回', range: x => x === 3, count: 0 },
+      { label: '4-5回', range: x => x >= 4 && x <= 5, count: 0 },
+      { label: '6回以上', range: x => x >= 6, count: 0 },
+    ];
+    rows.forEach(r => {
+      const b = r.bind_count || 0;
+      bins.forEach(bin => { if (bin.range(b)) bin.count++; });
+    });
+    const max = Math.max(...bins.map(b=>b.count), 1);
+    document.getElementById('adp-bind-hist').innerHTML = bins.map(b => `
+      <div style="display:flex;flex-direction:column;justify-content:end;height:100%;">
+        <div class="adp-hist-bar" style="height:${(b.count/max)*100}%;">
+          <div class="adp-hist-count">${b.count}</div>
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('adp-bind-hist-labels').innerHTML = bins.map(b => `
+      <div class="adp-hist-label">${b.label}</div>
+    `).join('');
+  }
+
+  function renderCancelPies(rows) {
+    const groups = {};
+    rows.forEach(r => {
+      if (!r.is_subscription) return;
+      const k = r.category || 'other';
+      if (!groups[k]) groups[k] = { total: 0, phoneOnly: 0 };
+      groups[k].total++;
+      const m = r.cancel_methods || [];
+      if (m.length === 1 && m[0] === 'phone') groups[k].phoneOnly++;
+    });
+    const entries = Object.entries(groups)
+      .filter(([,v]) => v.total >= 2)
+      .sort((a,b) => (b[1].phoneOnly/b[1].total) - (a[1].phoneOnly/a[1].total));
+    document.getElementById('adp-cancel-pies').innerHTML = entries.map(([k, v]) => {
+      const p = Math.round(v.phoneOnly/v.total*100);
+      const deg = (p/100)*360;
+      return `
+        <div class="adp-pie-card">
+          <h3>${CATEGORY_LABEL[k]||k}</h3>
+          <div class="adp-pie" data-pct="${p}" style="background:conic-gradient(#c8342e 0 ${deg}deg, #f0ece3 ${deg}deg 360deg);"></div>
+          <div class="adp-pie-legend">
+            <strong>電話のみ</strong>の解約: ${v.phoneOnly}/${v.total}件<br>
+            (n=${v.total})
+          </div>
+        </div>
+      `;
+    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#5a5a5a;">集計に十分なサンプルがまだ蓄積されていません。</div>';
+  }
+
+  function renderGapChart(rows) {
+    const bins = [
+      { label: '50% OFF未満', range: x => x < 0.5, count: 0 },
+      { label: '50-70% OFF', range: x => x >= 0.5 && x < 0.7, count: 0 },
+      { label: '70-85% OFF', range: x => x >= 0.7 && x < 0.85, count: 0 },
+      { label: '85-95% OFF', range: x => x >= 0.85 && x < 0.95, count: 0 },
+      { label: '95% OFF以上', range: x => x >= 0.95, count: 0 },
+    ];
+    let n = 0;
+    rows.forEach(r => {
+      if (!r.first_price || !r.regular_price || r.regular_price <= 0) return;
+      const gap = 1 - r.first_price/r.regular_price;
+      if (gap < 0) return;
+      bins.forEach(b => { if (b.range(gap)) b.count++; });
+      n++;
+    });
+    const max = Math.max(...bins.map(b=>b.count), 1);
+    document.getElementById('adp-gap-chart').innerHTML = bins.map(b => `
+      <div class="adp-bar-row">
+        <div class="adp-bar-label">${b.label}</div>
+        <div class="adp-bar-track">
+          <div class="adp-bar-fill" style="width:${(b.count/max)*100}%;"></div>
+        </div>
+        <div class="adp-bar-value">${b.count}件 (${n?Math.round(b.count/n*100):0}%)</div>
+      </div>
+    `).join('');
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
