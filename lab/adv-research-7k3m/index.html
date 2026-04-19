@@ -198,7 +198,19 @@
         <div class="adp-loading" style="grid-column:1/-1;">集計中…</div>
       </div>
     </section>
-
+ <!-- 目撃情報 -->
+    <section class="adp-section">
+      <span class="adp-section-label">CROWDSOURCED SIGHTINGS</span>
+      <h2>みんなが見た、広告。</h2>
+      <p class="adp-section-desc">
+        このページの読者から寄せられた「広告で見かけた健康系商品」の目撃情報の集計です。個別の投稿内容は公開されません。
+        <br>
+        <a href="submit/" style="color:#c8342e;border-bottom:1px solid currentColor;">→ あなたが見た広告も、ぜひ投稿してください</a>
+      </p>
+      <div class="adp-big-stats" id="sightings-stats">
+        <div class="adp-loading" style="grid-column:1/-1;">集計中…</div>
+      </div>
+    </section>
     <section class="adp-section">
       <span class="adp-section-label">BY CATEGORY</span>
       <h2>カテゴリごとの購入条件。</h2>
@@ -314,6 +326,8 @@
     renderBindHistogram(rows);
     renderCancelPies(rows);
     renderGapChart(rows);
+    loadSightings();
+  }
   }
 
   function renderBigStats(rows) {
@@ -458,7 +472,43 @@
   }
 
   load();
-})();
+// 目撃情報の集計を読み込む
+  async function loadSightings() {
+    try {
+      const { data: summary } = await sb.from('ad_sightings_summary').select('*').single();
+      const { data: byMedia } = await sb.from('ad_sightings_by_media').select('*');
+
+      if (!summary) return;
+
+      const MEDIA_LABEL = {
+        instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok',
+        x: 'X', facebook: 'Facebook', google_search: 'Google', yahoo_search: 'Yahoo', other: 'その他'
+      };
+
+      const topMedia = (byMedia && byMedia[0])
+        ? (MEDIA_LABEL[byMedia[0].media] || byMedia[0].media)
+        : '-';
+
+      const stats = [
+        { num: summary.total_count || 0, unit: '件', label: '投稿された目撃情報' },
+        { num: summary.week_count || 0, unit: '件', label: '直近7日間' },
+        { num: summary.month_count || 0, unit: '件', label: '直近30日間' },
+        { num: topMedia, unit: '', label: '最多の媒体', isText: true },
+      ];
+
+      document.getElementById('sightings-stats').innerHTML = stats.map(s => `
+        <div class="adp-big-stat">
+          <div class="adp-big-stat-num" style="font-size:${s.isText ? '24px' : '48px'};">${s.num}<span class="adp-big-stat-unit">${s.unit}</span></div>
+          <div class="adp-big-stat-label">${s.label}</div>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.warn('目撃情報の集計取得に失敗:', e);
+      document.getElementById('sightings-stats').innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#5a5a5a;">まだ投稿がありません。</div>';
+    }
+  }
+  })();
 </script>
 </body>
 </html>
