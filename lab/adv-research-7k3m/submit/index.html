@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>広告目撃投稿 [試験公開] | クスリノコンパス</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  --bg: #faf7f2;
+  --ink: #1a1a1a;
+  --sub: #5a5a5a;
+  --accent: #c8342e;
+  --line: #d8d0c2;
+  --card: #ffffff;
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Noto Serif JP", "Yu Mincho", serif;
+  line-height: 1.8;
+}
+.beta-banner {
+  background: #1a1a1a; color: #faf7f2; padding: 10px 20px;
+  text-align: center; font-family: "Courier New", monospace;
+  font-size: 12px; letter-spacing: 0.15em;
+}
+.beta-banner strong { color: #ffd166; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+.kicker {
+  font-family: "Courier New", monospace;
+  font-size: 12px; letter-spacing: 0.3em;
+  color: var(--accent); margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 900; line-height: 1.3;
+  margin: 0 0 20px; letter-spacing: -0.02em;
+}
+.lead {
+  font-size: 15px; color: var(--sub);
+  margin: 0 0 32px; max-width: 620px;
+}
+.form-intro {
+  background: var(--card); border-left: 4px solid var(--accent);
+  padding: 20px 24px; margin-bottom: 32px; font-size: 14px;
+}
+.form-intro strong {
+  font-family: "Courier New", monospace; font-size: 11px;
+  letter-spacing: 0.2em; color: var(--accent);
+  display: block; margin-bottom: 6px;
+}
+form { display: flex; flex-direction: column; gap: 24px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; }
+.field .hint { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+.field .optional {
+  display: inline-block; margin-left: 8px;
+  font-family: "Courier New", monospace; font-size: 10px;
+  color: var(--sub); letter-spacing: 0.1em; font-weight: 400;
+}
+.field input, .field textarea, .field select {
+  font-family: inherit; font-size: 15px;
+  padding: 12px 14px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink);
+  border-radius: 0; width: 100%;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none; border-color: var(--ink);
+}
+.field textarea { min-height: 90px; resize: vertical; line-height: 1.7; }
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+.media-grid input[type="radio"] { display: none; }
+.media-grid label {
+  display: block; padding: 12px 8px;
+  border: 1px solid var(--line);
+  text-align: center; cursor: pointer;
+  font-size: 13px; font-weight: 700;
+  background: var(--card);
+  transition: all 0.15s;
+}
+.media-grid input[type="radio"]:checked + label {
+  background: var(--ink); color: #faf7f2;
+  border-color: var(--ink);
+}
+.media-grid label:hover { border-color: var(--ink); }
+.submit-btn {
+  margin-top: 16px; padding: 16px 32px;
+  background: var(--ink); color: #faf7f2;
+  border: none; cursor: pointer;
+  font-family: inherit; font-size: 15px;
+  font-weight: 700; letter-spacing: 0.1em;
+}
+.submit-btn:hover { background: var(--accent); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.privacy {
+  margin-top: 20px; padding-top: 20px;
+  border-top: 1px dashed var(--line);
+  font-size: 12px; color: var(--sub); line-height: 1.8;
+}
+.privacy strong {
+  font-family: "Courier New", monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  display: block; margin-bottom: 6px;
+}
+.success, .error { padding: 20px 24px; margin: 24px 0; font-size: 14px; }
+.success { background: #d7ebe0; border-left: 4px solid #2d6a4f; }
+.error { background: #f8dada; border-left: 4px solid var(--accent); }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="beta-banner">
+  <strong>[BETA]</strong> このページは試験公開中です。
+</div>
+
+<main class="wrap">
+  <div class="kicker">ADVERTISEMENT SIGHTING FORM</div>
+  <h1>広告で見かけた<br>健康系商品の、目撃情報。</h1>
+  <p class="lead">
+    SNSや検索で見かけた、健康食品・医薬品・医薬部外品の広告について、情報をお寄せください。集まった目撃情報は、購入条件を調査する手がかりにします。
+  </p>
+
+  <div class="form-intro">
+    <strong>ABOUT</strong>
+    投稿内容は編集部で確認の上、統計的に利用します。個別の投稿内容がそのまま公開されることはありません。商品名や販売者名の記載があっても、調査・公開判断は編集部が行います。<br>
+    匿名で投稿できます。氏名・連絡先の入力は不要です。
+  </div>
+
+  <div id="success-msg" class="success hidden">
+    <strong>ご協力ありがとうございました。</strong><br>
+    投稿内容を確認し、調査対象に加えるかを検討します。集計結果は試験公開ページで順次反映されます。
+  </div>
+
+  <div id="error-msg" class="error hidden">
+    投稿に失敗しました。時間をおいて再度お試しください。
+  </div>
+
+  <form id="sighting-form">
+
+    <div class="field">
+      <label>どの媒体で見ましたか? <span class="optional">必須</span></label>
+      <div class="media-grid">
+        <input type="radio" id="m-ig" name="media" value="instagram">
+        <label for="m-ig">Instagram</label>
+        <input type="radio" id="m-yt" name="media" value="youtube">
+        <label for="m-yt">YouTube</label>
+        <input type="radio" id="m-tt" name="media" value="tiktok">
+        <label for="m-tt">TikTok</label>
+        <input type="radio" id="m-x" name="media" value="x">
+        <label for="m-x">X (Twitter)</label>
+        <input type="radio" id="m-fb" name="media" value="facebook">
+        <label for="m-fb">Facebook</label>
+        <input type="radio" id="m-gs" name="media" value="google_search">
+        <label for="m-gs">Google検索</label>
+        <input type="radio" id="m-ys" name="media" value="yahoo_search">
+        <label for="m-ys">Yahoo検索</label>
+        <input type="radio" id="m-ot" name="media" value="other">
+        <label for="m-ot">その他</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="category">どんな商品でしたか? <span class="optional">必須</span></label>
+      <select id="category" name="category" required>
+        <option value="">選んでください</option>
+        <option value="diet">ダイエット系</option>
+        <option value="hair">育毛・発毛系</option>
+        <option value="joint">関節・膝系</option>
+        <option value="sleep">睡眠・休息系</option>
+        <option value="eye">目・視力系</option>
+        <option value="beauty">美容系</option>
+        <option value="other">その他</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="product_name">商品名 <span class="optional">任意</span></label>
+      <div class="hint">覚えている範囲で。うろ覚えでも大丈夫です。</div>
+      <input type="text" id="product_name" name="product_name" placeholder="例: スリムガードα">
+    </div>
+
+    <div class="field">
+      <label for="product_hint">商品の特徴 <span class="optional">任意</span></label>
+      <div class="hint">商品名がわからない場合、どんな広告だったか教えてください。</div>
+      <textarea id="product_hint" name="product_hint" placeholder="例: 30代女性がこれで10kg痩せたと話す動画広告"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="ad_copy">訴求文・キャッチコピー <span class="optional">任意</span></label>
+      <div class="hint">「初回500円」「今だけ」など、広告内で強調されていた文言。</div>
+      <textarea id="ad_copy" name="ad_copy" placeholder="例: 初回たったの500円! 簡単解約"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="concerns">気になった点 <span class="optional">任意</span></label>
+      <div class="hint">広告を見て「これ大丈夫?」と思った理由があれば。</div>
+      <textarea id="concerns" name="concerns" placeholder="例: 効果の根拠が示されていなかった、解約方法が不明瞭だった"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="lp_url">LP(商品ページ)のURL <span class="optional">任意</span></label>
+      <div class="hint">広告をタップした先のページURLがあれば。</div>
+      <input type="url" id="lp_url" name="lp_url" placeholder="https://...">
+    </div>
+
+    <button type="submit" class="submit-btn" id="submit-btn">投稿する</button>
+
+    <div class="privacy">
+      <strong>PRIVACY</strong>
+      このフォームで収集する情報は、投稿内容(上記のテキスト)と投稿日時、ブラウザ情報(User-Agent)のみです。IPアドレス・Cookie・氏名・連絡先は収集しません。投稿内容は編集部の確認を経て、集計データとして試験公開ページで利用されます。個別の投稿内容そのものが公開されることはありません。
+    </div>
+  </form>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SB_URL = 'https://glxhggfxxwpfmwqoulyy.supabase.co';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdseGhnZ2Z4eHdwZm13cW91bHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyODY4NDMsImV4cCI6MjA5MDg2Mjg0M30.djy6MZQz28_U7exsEjLq3PeLJTw2QuSSeVhrCNkF894';
+  const sb = supabase.createClient(SB_URL, SB_KEY);
+</script>
+<script>
+(() => {
+  'use strict';
+  const form = document.getElementById('sighting-form');
+  const successMsg = document.getElementById('success-msg');
+  const errorMsg = document.getElementById('error-msg');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = '送信中…';
+    successMsg.classList.add('hidden');
+    errorMsg.classList.add('hidden');
+
+    const fd = new FormData(form);
+    const payload = {
+      media: fd.get('media') || null,
+      category: fd.get('category') || null,
+      product_name: (fd.get('product_name') || '').trim() || null,
+      product_hint: (fd.get('product_hint') || '').trim() || null,
+      ad_copy: (fd.get('ad_copy') || '').trim() || null,
+      concerns: (fd.get('concerns') || '').trim() || null,
+      lp_url: (fd.get('lp_url') || '').trim() || null,
+      user_agent: navigator.userAgent.slice(0, 300),
+    };
+
+    if (!payload.media) {
+      alert('媒体を選択してください。');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '投稿する';
+      return;
+    }
+    if (!payload.category) {
+      alert('カテゴリを選択してください。');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '投稿する';
+      return;
+    }
+
+    const hasContent = payload.product_name || payload.product_hint ||
+                       payload.ad_copy || payload.lp_url;
+    if (!hasContent) {
+      alert('商品名・特徴・訴求文・URLのいずれかを入力してください。');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '投稿する';
+      return;
+    }
+
+    try {
+      const { error } = await sb.from('ad_sightings').insert(payload);
+      if (error) throw error;
+      successMsg.classList.remove('hidden');
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = '投稿する';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error(err);
+      errorMsg.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '投稿する';
+    }
+  });
+})();
+</script>
+</body>
+</html>
