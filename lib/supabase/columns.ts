@@ -3,6 +3,8 @@ import type { Column } from '@/types';
 
 export async function getPublishedColumns(limit = 50): Promise<Column[]> {
   const sb = createServerClient();
+  if (!sb) return [];
+
   const { data, error } = await sb
     .from('columns')
     .select('*')
@@ -18,6 +20,8 @@ export async function getPublishedColumns(limit = 50): Promise<Column[]> {
 
 export async function getColumnBySlugOrId(key: string): Promise<Column | null> {
   const sb = createServerClient();
+  if (!sb) return null;
+
   // slug カラム優先、なければ id カラムで引く
   let { data } = await sb
     .from('columns')
@@ -41,6 +45,8 @@ export async function getColumnBySlugOrId(key: string): Promise<Column | null> {
 
 export async function getAllColumnSlugs(): Promise<string[]> {
   const sb = createServerClient();
+  if (!sb) return [];
+
   const { data } = await sb
     .from('columns')
     .select('id, slug')
@@ -51,6 +57,8 @@ export async function getAllColumnSlugs(): Promise<string[]> {
 
 export async function getColumnsByTag(tag: string, limit = 10): Promise<Column[]> {
   const sb = createServerClient();
+  if (!sb) return [];
+
   const { data } = await sb
     .from('columns')
     .select('*')

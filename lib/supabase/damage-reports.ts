@@ -3,6 +3,8 @@ import type { DamageReport } from '@/types';
 
 export async function getPublicDamageReports(limit = 100): Promise<DamageReport[]> {
   const sb = createServerClient();
+  if (!sb) return [];
+
   const { data, error } = await sb
     .from('damage_reports')
     .select('*')
@@ -20,6 +22,8 @@ export async function getDamageReportCountByMedicineId(
   medicineId: number
 ): Promise<number> {
   const sb = createServerClient();
+  if (!sb) return 0;
+
   const { count } = await sb
     .from('damage_reports')
     .select('*', { count: 'exact', head: true })
@@ -33,6 +37,8 @@ export async function getDamageReportsByMedicineId(
   limit = 10
 ): Promise<DamageReport[]> {
   const sb = createServerClient();
+  if (!sb) return [];
+
   const { data } = await sb
     .from('damage_reports')
     .select('*')
@@ -48,6 +54,8 @@ export async function getDamageReportStats(): Promise<{
   byType: Record<string, number>;
 }> {
   const sb = createServerClient();
+  if (!sb) return { total: 0, byType: {} };
+
   const { data, count } = await sb
     .from('damage_reports')
     .select('damage_types', { count: 'exact' })
