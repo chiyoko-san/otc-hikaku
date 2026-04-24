@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: #0FAE96;
+  --brand-dark: #0A8473;
+  --brand-light: #E6F7F4;
+  --ink: #1A2433;
+  --muted: #5C6678;
+  --line: #E5E7EB;
+  --bg: #F8FAFC;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #fff;
+  color: var(--ink);
+  font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .container-narrow {
+    @apply mx-auto w-full max-w-5xl px-4 md:px-6;
+  }
+  .container-wide {
+    @apply mx-auto w-full max-w-7xl px-4 md:px-6;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-white hover:bg-brand-dark;
+  }
+  .btn-outline {
+    @apply btn border border-brand text-brand hover:bg-brand-light;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700 hover:border-brand hover:text-brand transition;
+  }
+  .chip-active {
+    @apply inline-flex items-center rounded-full bg-brand px-3 py-1 text-sm text-white;
+  }
+  .risk-badge {
+    @apply inline-flex items-center rounded px-2 py-0.5 text-xs font-bold;
+  }
+  .risk-1 { @apply risk-badge bg-red-100 text-red-700; }
+  .risk-2 { @apply risk-badge bg-orange-100 text-orange-700; }
+  .risk-2-5 { @apply risk-badge bg-orange-100 text-orange-700; }
+  .risk-3 { @apply risk-badge bg-green-100 text-green-700; }
+}
+
+/* コラム本文マークダウン */
+.prose-column h2 {
+  @apply mt-10 mb-4 text-2xl font-bold border-l-4 border-brand pl-3;
+}
+.prose-column h3 {
+  @apply mt-6 mb-3 text-xl font-bold;
+}
+.prose-column p {
+  @apply my-4 leading-relaxed;
+}
+.prose-column ul, .prose-column ol {
+  @apply my-4 ml-6 list-disc space-y-1;
+}
+.prose-column ol {
+  @apply list-decimal;
+}
+.prose-column a {
+  @apply text-brand underline underline-offset-2 hover:text-brand-dark;
+}
+.prose-column blockquote {
+  @apply my-4 border-l-4 border-gray-300 bg-gray-50 px-4 py-2 text-gray-700;
+}
+.prose-column table {
+  @apply my-4 w-full border-collapse;
+}
+.prose-column th, .prose-column td {
+  @apply border border-gray-300 px-3 py-2;
+}
+.prose-column th {
+  @apply bg-gray-100 font-bold;
+}
+.prose-column hr {
+  @apply my-8 border-gray-200;
+}
+.prose-column img {
+  @apply my-4 rounded-lg;
+}
+.prose-column code {
+  @apply rounded bg-gray-100 px-1 py-0.5 text-sm;
+}
+
+/* tip/warn/danger ボックス (::: tip など) */
+.callout {
+  @apply my-4 rounded-lg border-l-4 p-4;
+}
+.callout-tip { @apply callout border-brand bg-brand-light; }
+.callout-warn { @apply callout border-orange-500 bg-orange-50; }
+.callout-danger { @apply callout border-red-500 bg-red-50; }
+.callout-info { @apply callout border-blue-500 bg-blue-50; }
+.callout-title {
+  @apply mb-1 font-bold;
+}
