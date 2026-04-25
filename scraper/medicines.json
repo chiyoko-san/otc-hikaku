@@ -1,6 +1,6 @@
 {
-  "total": 7554,
-  "updated_at": "2026-04-18T18:25:27.118270",
+  "total": 7555,
+  "updated_at": "2026-04-25T18:25:19.705007",
   "medicines": [
     {
       "id": 1,
@@ -153867,6 +153867,26 @@
       "note": "",
       "noteType": "nn",
       "id": 1000534,
+      "price": null,
+      "asin": "",
+      "rakuten_url": "",
+      "amazon_tag": "",
+      "price_updated_at": ""
+    },
+    {
+      "name": "ケアエージ",
+      "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300009_K2604000011_01_01",
+      "maker": "／剤盛堂薬品（株）\nHTML",
+      "effect": "",
+      "ings": [],
+      "risk": null,
+      "cat": "vitamin",
+      "drowsy": false,
+      "warnIngs": [],
+      "symptoms": [],
+      "note": "",
+      "noteType": "nn",
+      "id": 1000535,
       "price": null,
       "asin": "",
       "rakuten_url": "",
