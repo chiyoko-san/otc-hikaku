@@ -94,6 +94,17 @@ export default async function ColumnDetailPage({ params }: Props) {
           </div>
         </header>
 
+        {/* ヒーロー画像 */}
+        {col.thumb && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={col.thumb}
+            alt={col.title}
+            className="mb-8 w-full rounded-lg"
+            loading="eager"
+          />
+        )}
+
         {col.body && <ColumnRenderer body={col.body} />}
 
         {/* 関連コラム */}

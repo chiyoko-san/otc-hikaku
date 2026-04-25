@@ -154,21 +154,36 @@ export default async function HomePage() {
               <Link
                 key={c.id}
                 href={`/columns/${c.slug || c.id}/`}
-                className="block rounded-lg border border-gray-200 bg-white p-5 hover:border-brand hover:shadow-md"
+                className="group block overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:border-brand hover:shadow-md"
               >
-                {c.tag && (
-                  <span className="mb-2 inline-block rounded bg-brand-light px-2 py-0.5 text-xs text-brand-dark">
-                    {c.tag}
-                  </span>
+                {c.thumb ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={c.thumb}
+                    alt={c.title}
+                    className="h-36 w-full object-cover transition group-hover:scale-[1.02]"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="flex h-36 items-center justify-center bg-gradient-to-br from-brand-light to-white">
+                    <span className="text-3xl">💊</span>
+                  </div>
                 )}
-                <h3 className="mb-2 text-lg font-bold leading-tight">
-                  {c.title}
-                </h3>
-                {c.summary && (
-                  <p className="line-clamp-2 text-sm text-gray-600">
-                    {c.summary}
-                  </p>
-                )}
+                <div className="p-5">
+                  {c.tag && (
+                    <span className="mb-2 inline-block rounded bg-brand-light px-2 py-0.5 text-xs text-brand-dark">
+                      {c.tag}
+                    </span>
+                  )}
+                  <h3 className="mb-2 text-lg font-bold leading-tight">
+                    {c.title}
+                  </h3>
+                  {c.summary && (
+                    <p className="line-clamp-2 text-sm text-gray-600">
+                      {c.summary}
+                    </p>
+                  )}
+                </div>
               </Link>
             ))}
           </div>
