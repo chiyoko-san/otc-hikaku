@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
+import { MedicineAutocomplete } from './MedicineAutocomplete';
 
 const DAMAGE_TYPES = [
   { id: 'side_effect', label: '副作用が出た' },
@@ -12,9 +13,8 @@ const DAMAGE_TYPES = [
   { id: 'other', label: 'その他' },
 ];
 
-// URL の簡易バリデーション
 function isValidUrl(s: string): boolean {
-  if (!s) return true; // 空欄はOK(任意)
+  if (!s) return true;
   try {
     const u = new URL(s);
     return u.protocol === 'http:' || u.protocol === 'https:';
@@ -23,11 +23,27 @@ function isValidUrl(s: string): boolean {
   }
 }
 
+type ProductSelection = {
+  name: string;
+  maker?: string | null;
+  medicine_id?: number | null;
+  ad_product_id?: string | null;
+  isFreeText: boolean;
+};
+
 export function DamageReportForm() {
   const [step, setStep] = useState(1);
+
+  const [product, setProduct] = useState<ProductSelection>({
+    name: '',
+    maker: null,
+    medicine_id: null,
+    ad_product_id: null,
+    isFreeText: false,
+  });
+
   const [form, setForm] = useState({
-    medicine_name: '',
-    maker: '',
+    maker_manual: '',  // ユーザーが手動で書く maker(自由入力時の補助)
     damage_types: [] as string[],
     damage_amount: '',
     detail: '',
@@ -54,7 +70,7 @@ export function DamageReportForm() {
   };
 
   const submit = async () => {
-    if (!form.medicine_name.trim()) {
+    if (!product.name.trim()) {
       setError('商品名を入力してください。');
       setStep(1);
       return;
@@ -65,21 +81,27 @@ export function DamageReportForm() {
       return;
     }
     if (!isValidUrl(form.purchase_url.trim())) {
-      setError('購入先URLの形式が正しくありません。「https://」から始まる完全なURLを入力してください。');
+      setError('購入先URLの形式が正しくありません。');
       setStep(3);
       return;
     }
     if (!isValidUrl(form.ad_url.trim())) {
-      setError('広告URLの形式が正しくありません。「https://」から始まる完全なURLを入力してください。');
+      setError('広告URLの形式が正しくありません。');
       setStep(3);
       return;
     }
     setSubmitting(true);
     setError('');
 
+    // maker は選択時の値が優先、なければ手動入力
+    const finalMaker =
+      product.maker || form.maker_manual.trim() || null;
+
     const payload = {
-      medicine_name: form.medicine_name.trim(),
-      maker: form.maker.trim() || null,
+      medicine_name: product.name.trim(),
+      medicine_id: product.medicine_id ?? null,
+      ad_product_id: product.ad_product_id ?? null,
+      maker: finalMaker,
       damage_types: form.damage_types,
       damage_amount: form.damage_amount
         ? parseInt(form.damage_amount, 10)
@@ -100,6 +122,7 @@ export function DamageReportForm() {
       .insert(payload);
 
     if (err) {
+      console.error(err);
       setError('投稿に失敗しました。時間をおいてやり直してください。');
       setSubmitting(false);
       return;
@@ -155,30 +178,37 @@ export function DamageReportForm() {
       {step === 1 && (
         <div className="space-y-4">
           <h2 className="text-xl font-bold">商品情報</h2>
+
           <div>
             <label className="mb-1 block text-sm font-bold">
               商品名 <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              value={form.medicine_name}
-              onChange={(e) =>
-                setForm({ ...form, medicine_name: e.target.value })
-              }
-              placeholder="例: ロキソニンS、◯◯サプリなど"
-              className="w-full rounded border border-gray-300 px-3 py-2 focus:border-brand focus:outline-none"
+            <MedicineAutocomplete
+              value={product}
+              onChange={setProduct}
             />
+            <div className="mt-1 text-xs text-gray-500">
+              入力すると候補が表示されます。候補にない場合は自由入力もできます。
+            </div>
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-bold">メーカー名</label>
-            <input
-              type="text"
-              value={form.maker}
-              onChange={(e) => setForm({ ...form, maker: e.target.value })}
-              placeholder="わかれば"
-              className="w-full rounded border border-gray-300 px-3 py-2 focus:border-brand focus:outline-none"
-            />
-          </div>
+
+          {/* 自由入力時のみ、メーカー名の手動入力欄を出す */}
+          {product.isFreeText && product.name && (
+            <div>
+              <label className="mb-1 block text-sm font-bold">
+                メーカー名(任意)
+              </label>
+              <input
+                type="text"
+                value={form.maker_manual}
+                onChange={(e) =>
+                  setForm({ ...form, maker_manual: e.target.value })
+                }
+                placeholder="わかれば入力"
+                className="w-full rounded border border-gray-300 px-3 py-2 focus:border-brand focus:outline-none"
+              />
+            </div>
+          )}
         </div>
       )}
 
@@ -250,7 +280,6 @@ export function DamageReportForm() {
             />
           </div>
 
-          {/* 新規: WEB購入の場合のURL2つ */}
           <div className="rounded border border-gray-200 bg-gray-50 p-4">
             <div className="mb-3 text-sm font-bold text-gray-700">
               🌐 Web から購入した場合(任意)
@@ -354,9 +383,23 @@ export function DamageReportForm() {
           <dl className="space-y-2 rounded border border-gray-200 bg-gray-50 p-4 text-sm">
             <div>
               <dt className="font-bold">商品:</dt>
-              <dd>
-                {form.medicine_name}
-                {form.maker && ` (${form.maker})`}
+              <dd className="flex flex-wrap items-center gap-2">
+                <span>{product.name}</span>
+                {product.medicine_id && (
+                  <span className="rounded bg-brand-light px-1.5 py-0.5 text-xs text-brand-dark">
+                    💊 登録薬品
+                  </span>
+                )}
+                {product.ad_product_id && (
+                  <span className="rounded bg-orange-100 px-1.5 py-0.5 text-xs text-orange-700">
+                    📦 広告商品DB
+                  </span>
+                )}
+                {(product.maker || form.maker_manual) && (
+                  <span className="text-gray-500">
+                    ({product.maker || form.maker_manual})
+                  </span>
+                )}
               </dd>
             </div>
             <div>
@@ -376,13 +419,17 @@ export function DamageReportForm() {
             {form.purchase_url && (
               <div>
                 <dt className="font-bold">購入先URL:</dt>
-                <dd className="break-all text-xs text-gray-600">{form.purchase_url}</dd>
+                <dd className="break-all text-xs text-gray-600">
+                  {form.purchase_url}
+                </dd>
               </div>
             )}
             {form.ad_url && (
               <div>
                 <dt className="font-bold">広告URL:</dt>
-                <dd className="break-all text-xs text-gray-600">{form.ad_url}</dd>
+                <dd className="break-all text-xs text-gray-600">
+                  {form.ad_url}
+                </dd>
               </div>
             )}
           </dl>
