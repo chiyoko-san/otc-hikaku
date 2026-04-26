@@ -9,6 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/lab/',           // 試験公開は未インデックス
+          '/admin/',         // 管理画面は未インデックス
           '/api/',
           '/search/',        // 検索結果ページはインデックス不要
           '/medicines/redirect-by-id/',  // リダイレクタはインデックス不要
