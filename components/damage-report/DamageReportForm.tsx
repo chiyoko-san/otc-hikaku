@@ -12,6 +12,17 @@ const DAMAGE_TYPES = [
   { id: 'other', label: 'その他' },
 ];
 
+// URL の簡易バリデーション
+function isValidUrl(s: string): boolean {
+  if (!s) return true; // 空欄はOK(任意)
+  try {
+    const u = new URL(s);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 export function DamageReportForm() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
@@ -22,6 +33,8 @@ export function DamageReportForm() {
     detail: '',
     purchase_route: '',
     purchase_date: '',
+    purchase_url: '',
+    ad_url: '',
     nickname: '',
     age: '',
     gender: '',
@@ -51,6 +64,16 @@ export function DamageReportForm() {
       setStep(2);
       return;
     }
+    if (!isValidUrl(form.purchase_url.trim())) {
+      setError('購入先URLの形式が正しくありません。「https://」から始まる完全なURLを入力してください。');
+      setStep(3);
+      return;
+    }
+    if (!isValidUrl(form.ad_url.trim())) {
+      setError('広告URLの形式が正しくありません。「https://」から始まる完全なURLを入力してください。');
+      setStep(3);
+      return;
+    }
     setSubmitting(true);
     setError('');
 
@@ -64,6 +87,8 @@ export function DamageReportForm() {
       detail: form.detail.trim() || null,
       purchase_route: form.purchase_route.trim() || null,
       purchase_date: form.purchase_date.trim() || null,
+      purchase_url: form.purchase_url.trim() || null,
+      ad_url: form.ad_url.trim() || null,
       nickname: form.nickname.trim() || null,
       age: form.age ? parseInt(form.age, 10) : null,
       gender: form.gender || null,
@@ -224,6 +249,54 @@ export function DamageReportForm() {
               className="w-full rounded border border-gray-300 px-3 py-2"
             />
           </div>
+
+          {/* 新規: WEB購入の場合のURL2つ */}
+          <div className="rounded border border-gray-200 bg-gray-50 p-4">
+            <div className="mb-3 text-sm font-bold text-gray-700">
+              🌐 Web から購入した場合(任意)
+            </div>
+            <p className="mb-4 text-xs text-gray-600">
+              該当する場合のみ、URL を貼り付けてください。同じ商品の被害をたどる手がかりになります。
+            </p>
+
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs font-bold text-gray-700">
+                  購入先のURL
+                </label>
+                <input
+                  type="url"
+                  value={form.purchase_url}
+                  onChange={(e) =>
+                    setForm({ ...form, purchase_url: e.target.value })
+                  }
+                  placeholder="https://example.com/product/..."
+                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                />
+                <div className="mt-1 text-xs text-gray-500">
+                  例: 商品ページ、Amazon・楽天のページ、公式LP など
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-bold text-gray-700">
+                  広告のURL
+                </label>
+                <input
+                  type="url"
+                  value={form.ad_url}
+                  onChange={(e) =>
+                    setForm({ ...form, ad_url: e.target.value })
+                  }
+                  placeholder="https://www.instagram.com/p/..."
+                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                />
+                <div className="mt-1 text-xs text-gray-500">
+                  例: Instagram投稿、YouTube動画、Twitter広告 など
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -298,6 +371,18 @@ export function DamageReportForm() {
               <div>
                 <dt className="font-bold">詳細:</dt>
                 <dd className="whitespace-pre-wrap">{form.detail}</dd>
+              </div>
+            )}
+            {form.purchase_url && (
+              <div>
+                <dt className="font-bold">購入先URL:</dt>
+                <dd className="break-all text-xs text-gray-600">{form.purchase_url}</dd>
+              </div>
+            )}
+            {form.ad_url && (
+              <div>
+                <dt className="font-bold">広告URL:</dt>
+                <dd className="break-all text-xs text-gray-600">{form.ad_url}</dd>
               </div>
             )}
           </dl>
