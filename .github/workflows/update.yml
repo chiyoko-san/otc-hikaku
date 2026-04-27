@@ -11,7 +11,7 @@ on:
         type: choice
         options: ["hira","kata","alpha","clean","functional","reprocess"]
       limit:
-        description: "取得件数上限（0=無制限）"
+        description: "取得件数上限(0=無制限)"
         required: false
         default: "0"
 jobs:
@@ -40,7 +40,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # ── PMDAスクレイピング（通常） ──
+      # ── PMDAスクレイピング(通常) ──
       - name: PMDAスクレイピング
         if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' && github.event.inputs.group != 'reprocess' }}
         run: |
@@ -52,7 +52,7 @@ jobs:
         continue-on-error: true
 
       # ── 既存データの詳細再取得 ──
-      - name: 詳細再取得（reprocess）
+      - name: 詳細再取得(reprocess)
         if: ${{ github.event.inputs.group == 'reprocess' }}
         run: |
           python scraper/pmda_selenium.py \
@@ -84,7 +84,7 @@ jobs:
           m = d.get('medicines', [])
           clean = [x for x in m
             if x.get('name','') and len(x.get('name','')) >= 2
-            and not re.match(r'^PDF\s*[\(\（]', x.get('name',''))
+            and not re.match(r'^PDF\s*[\(\(]', x.get('name',''))
             and not re.match(r'^\d{4}年', x.get('name',''))]
           d['medicines'] = clean
           d['total'] = len(clean)
@@ -97,15 +97,18 @@ jobs:
           print(f'詳細取得済み: {has_detail}件 ({has_detail/len(clean)*100:.1f}%)')
           PYEOF
 
-      # ── index.htmlビルド ──
-      - name: index.html ビルド
-        run: python scraper/build.py --output index.html
+      # ── data/medicines.json への同期(Next.js が読むため) ──
+      - name: data/medicines.json へ同期
+        run: |
+          mkdir -p data
+          cp scraper/medicines.json data/medicines.json
+          echo "[sync] data/medicines.json updated"
 
-      # ── コミット ──
+      # ── コミット(scraper/medicines.json + data/medicines.json) ──
       - name: コミット
         run: |
           git pull --rebase 2>/dev/null || true
-          git add index.html scraper/medicines.json
+          git add scraper/medicines.json data/medicines.json
           COUNT=$(python3 -c "import json;d=json.load(open('scraper/medicines.json'));print(d.get('total',0))")
           GROUP="${{ github.event.inputs.group || 'scheduled' }}"
           git diff --staged --quiet || git commit -m "update(${GROUP}): ${COUNT}件"
