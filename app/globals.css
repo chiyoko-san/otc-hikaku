@@ -52,6 +52,8 @@ body {
   .risk-2 { @apply risk-badge bg-orange-100 text-orange-700; }
   .risk-2-5 { @apply risk-badge bg-orange-100 text-orange-700; }
   .risk-3 { @apply risk-badge bg-green-100 text-green-700; }
+  .risk-functional { @apply risk-badge bg-emerald-100 text-emerald-700; }
+  .risk-quasi { @apply risk-badge bg-purple-100 text-purple-700; }
 }
 
 /* コラム本文マークダウン */

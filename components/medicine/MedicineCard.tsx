@@ -2,14 +2,18 @@ import Link from 'next/link';
 import type { Medicine } from '@/types';
 import { getCategoryLabel } from '@/lib/categories';
 
-function riskClass(risk: number): string {
+function riskClass(risk: number, itype?: string): string {
+  if (itype === 'functional') return 'risk-functional';
+  if (itype === 'quasi') return 'risk-quasi';
   if (risk === 1) return 'risk-1';
   if (risk === 2) return 'risk-2';
   if (risk === 2.5) return 'risk-2-5';
   return 'risk-3';
 }
 
-function riskLabel(risk: number): string {
+function riskLabel(risk: number, itype?: string): string {
+  if (itype === 'functional') return '機能性';
+  if (itype === 'quasi') return '医薬部外品';
   if (risk === 1) return '第1類';
   if (risk === 2) return '第2類';
   if (risk === 2.5) return '指定第2類';
@@ -27,7 +31,7 @@ export function MedicineCard({ med }: { med: Medicine }) {
         <h3 className="text-base font-bold leading-tight text-gray-900">
           {med.name}
         </h3>
-        <span className={riskClass(med.risk)}>{riskLabel(med.risk)}</span>
+        <span className={riskClass(med.risk, med.itype)}>{riskLabel(med.risk, med.itype)}</span>
       </div>
       <div className="mb-2 text-xs text-gray-500">{med.maker}</div>
       <div className="mb-2 flex flex-wrap gap-1">

@@ -53,7 +53,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-function riskLabel(risk: number): string {
+function riskLabel(risk: number, itype?: string): string {
+  if (itype === 'functional') return '機能性表示食品';
+  if (itype === 'quasi') return '医薬部外品';
   if (risk === 1) return '第1類医薬品';
   if (risk === 2) return '第2類医薬品';
   if (risk === 2.5) return '指定第2類医薬品';
@@ -61,12 +63,25 @@ function riskLabel(risk: number): string {
   return '分類不明';
 }
 
-function riskDescription(risk: number): string {
+function riskDescription(risk: number, itype?: string): string {
+  if (itype === 'functional')
+    return '事業者の責任で機能性が表示された食品(医薬品ではありません)';
+  if (itype === 'quasi')
+    return '医薬部外品。医薬品より作用が緩和な製品です';
   if (risk === 1) return '購入時に薬剤師への相談が必要です';
   if (risk === 2) return '登録販売者または薬剤師が説明義務のある薬です';
   if (risk === 2.5) return '指定第2類。薬剤師・登録販売者による情報提供の努力義務があります';
   if (risk === 3) return '比較的リスクが低いとされる区分の医薬品です';
   return '';
+}
+
+function riskClass(risk: number, itype?: string): string {
+  if (itype === 'functional') return 'risk-functional';
+  if (itype === 'quasi') return 'risk-quasi';
+  if (risk === 1) return 'risk-1';
+  if (risk === 2) return 'risk-2';
+  if (risk === 2.5) return 'risk-2-5';
+  return 'risk-3';
 }
 
 export default async function MedicineDetailPage({ params }: Props) {
@@ -112,18 +127,8 @@ export default async function MedicineDetailPage({ params }: Props) {
         {/* タイトル */}
         <header className="mb-6">
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span
-              className={
-                med.risk === 1
-                  ? 'risk-1'
-                  : med.risk === 2
-                  ? 'risk-2'
-                  : med.risk === 2.5
-                  ? 'risk-2-5'
-                  : 'risk-3'
-              }
-            >
-              {riskLabel(med.risk)}
+            <span className={riskClass(med.risk, med.itype)}>
+              {riskLabel(med.risk, med.itype)}
             </span>
             <Link
               href={`/categories/${med.cat}/`}
@@ -228,7 +233,7 @@ export default async function MedicineDetailPage({ params }: Props) {
               }
             >
               <div className="callout-title">
-                {riskLabel(med.risk)} ー {riskDescription(med.risk)}
+                {riskLabel(med.risk, med.itype)} ー {riskDescription(med.risk, med.itype)}
               </div>
               <p className="text-sm">{med.note}</p>
             </div>
