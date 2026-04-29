@@ -103,21 +103,9 @@ C) 過去の健康食品・市販薬による消費者被害事例
 - 一人称は使わない
 
 ## 画像の挿入ルール(重要)
-本文中に画像を入れるべき箇所(見出しの直後・重要な説明の後)に、以下の形式で画像を挿入すること。
-画像URLは {IMAGE_BASE_URL}/1.png, /2.png ... の連番で挿入する。
-{IMAGE_BASE_URL} はシステムが自動で置換するプレースホルダなのでそのまま記述すること。
-
-形式:
-![画像の説明文]({IMAGE_BASE_URL}/1.png)
-
-例:
-![景表法違反の広告例イメージ]({IMAGE_BASE_URL}/1.png)
-![定期購入の契約画面イメージ]({IMAGE_BASE_URL}/2.png)
-![消費者ホットライン188のイメージ]({IMAGE_BASE_URL}/3.png)
-
-画像は本文中に3〜5枚挿入すること。番号は1から順番に振ること。
-画像は警告・契約・スマホ・書類・チェックリスト・天秤・盾等の象徴を意識し、
-特定の商品・企業を連想させる描写は避けること。
+本文中には画像(Markdown の `![...](...)` 記法)を一切挿入しないこと。
+画像URLや画像のプレースホルダ(`{IMAGE_BASE_URL}` など)も使用しないこと。
+本文はテキストのみで完結させること。
 
 ## 吹き出し記法(必ず2〜3個使うこと)
 ::: tip タイトル
@@ -141,7 +129,7 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
     if not api_key:
         print("[gen] ANTHROPIC_API_KEY が未設定", file=sys.stderr)
         return None
-    user_prompt = f"次のテーマでコラムを書いてください:\n\nテーマ: {theme_desc}\nタグ: {theme_tag}\n\n画像URLベース: {{IMAGE_BASE_URL}}\n(本文中の画像はすべて {{IMAGE_BASE_URL}}/1.png, /2.png ... の形式で挿入してください)"
+    user_prompt = f"次のテーマでコラムを書いてください:\n\nテーマ: {theme_desc}\nタグ: {theme_tag}\n\n本文中には画像のMarkdownリンクを一切含めないこと。テキストのみで完結させてください。"
     if context:
         user_prompt += f"\n\n参考データ(関連OTC商品):\n{context}"
     payload = json.dumps({
@@ -255,12 +243,14 @@ def run(dry_run=False, theme_index=None):
     if not col_data:
         print("[gen] コラム生成失敗", file=sys.stderr)
         return False
-    # IMAGE_BASE_URL を実際のSupabase StorageのURLに置換
-    sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
-    date_folder = today.strftime("%Y%m%d")
-    image_base_url = f"https://glxhggfxxwpfmwqoulyy.supabase.co/storage/v1/object/public/column-images/{date_folder}"
+    # 念のため:本文内の画像Markdown(![...](...))を全て削除する保険処理
+    # AIが指示を無視して画像URLを書いてしまった場合に対応
     body = col_data.get("body", "")
-    body = body.replace("{IMAGE_BASE_URL}", image_base_url)
+    img_md_pattern = re.compile(r'!\[[^\]]*\]\([^)]*\)\s*\n?')
+    removed_images = len(img_md_pattern.findall(body))
+    body = img_md_pattern.sub('', body)
+    # 連続した空行を1つに整理
+    body = re.sub(r'\n{3,}', '\n\n', body)
     col = {
         "id":      col_id,
         "title":   col_data.get("title", theme_desc[:60]),
@@ -271,10 +261,10 @@ def run(dry_run=False, theme_index=None):
     }
     print(f"[gen] タイトル: {col['title']}")
     print(f"[gen] 文字数: {len(col['body'])} 文字")
-    print(f"[gen] 画像ベースURL: {image_base_url}")
-    # 画像URLの数を確認
-    img_count = col["body"].count(image_base_url)
-    print(f"[gen] 画像挿入: {img_count} 箇所")
+    if removed_images > 0:
+        print(f"[gen] ⚠️ 画像Markdownを{removed_images}箇所削除しました(AIが指示を無視)")
+    else:
+        print(f"[gen] 画像Markdown: 0箇所(指示通り)")
     if save_to_supabase(col):
         print(f"[gen] ✅ Supabaseに下書き保存しました")
         print(f"[gen] → admin.html で確認・編集後に公開してください")
