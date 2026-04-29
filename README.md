@@ -1,27 +1,21 @@
-# 機能性表示食品ラベル対応
+# revalidate 間隔短縮
 
 ## 修正内容
 
-「分類不明」と表示されていた機能性表示食品(itype='functional')と医薬部外品(itype='quasi')に、
-正しいラベル(緑系/紫系)を表示するようにしました。
+| ファイル | 旧 | 新 |
+|---|---|---|
+| `app/columns/page.tsx` | 3600秒(1時間) | **60秒(1分)** |
+| `app/columns/[slug]/page.tsx` | 86400秒(1日) | **300秒(5分)** |
+| `app/damage-reports/page.tsx` | 600秒(10分) | **60秒(1分)** |
 
-## 修正ファイル(3つ)
+## 効果
 
-1. `app/medicines/[slug]/page.tsx` - 詳細ページのラベル
-2. `components/medicine/MedicineCard.tsx` - 一覧カードのラベル(短縮表示)
-3. `app/globals.css` - 新CSSクラス risk-functional / risk-quasi
+- コラム公開後、最大1分でサイトに反映
+- コラム本文を編集した場合、最大5分で反映
+- 被害報告投稿後、最大1分で一覧に反映
+- 毎回 Vercel Redeploy する必要なし
 
-## ラベル変換ロジック
+## 配置
 
-- `itype === 'functional'` → 機能性表示食品(緑系・emerald-100)
-- `itype === 'quasi'`     → 医薬部外品(紫系・purple-100)
-- それ以外               → risk値からラベル決定(従来通り)
-
-## 影響範囲
-
-- エラスチン、その他505件の機能性表示食品
-- 2件の医薬部外品
-
-## 配置先
-
-それぞれ同じパスに上書きアップロード。
+3ファイルそれぞれを GitHub の同じパスに上書き。
+Vercel が自動でデプロイ → 2-3分後に反映。

@@ -5,7 +5,7 @@ import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { buildMetadata } from '@/lib/seo';
 
 // コラムは毎日追加されうるので 1 時間で再生成
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
   title: '市販薬コラム|薬剤師監修の市販薬選び方ガイド',

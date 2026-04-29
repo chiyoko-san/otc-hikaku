@@ -4,7 +4,7 @@ import { getPublicDamageReports, getDamageReportStats } from '@/lib/supabase/dam
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { buildMetadata } from '@/lib/seo';
 
-export const revalidate = 600; // 10分
+export const revalidate = 60; // 1分
 
 export const metadata: Metadata = buildMetadata({
   title: '市販薬・健康食品の被害報告一覧',

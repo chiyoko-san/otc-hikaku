@@ -14,7 +14,7 @@ import {
   buildBreadcrumbJsonLd,
 } from '@/lib/seo';
 
-export const revalidate = 86400; // 1日
+export const revalidate = 300; // 5分
 
 export async function generateStaticParams() {
   const slugs = await getAllColumnSlugs();
