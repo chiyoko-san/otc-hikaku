@@ -26,8 +26,7 @@ export const metadata: Metadata = {
   },
   icons: { icon: '/favicon.ico' },
   verification: {
-    // Google Search Console の認証コードを入れる場所
-    // google: 'your-verification-code',
+    google: '7pyOwVHgUPN9w4B2ygCkxbRH6i7h7WKmgarfQBiqqOI',
   },
 };
 
