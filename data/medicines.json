@@ -1,6 +1,6 @@
 {
-  "total": 7557,
-  "updated_at": "2026-05-02T18:30:33.225802",
+  "total": 7558,
+  "updated_at": "2026-05-09T18:37:54.425948",
   "medicines": [
     {
       "id": 1,
@@ -153927,6 +153927,26 @@
       "note": "",
       "noteType": "nn",
       "id": 1000537,
+      "price": null,
+      "asin": "",
+      "rakuten_url": "",
+      "amazon_tag": "",
+      "price_updated_at": ""
+    },
+    {
+      "name": "ヒビヒフールαプラス",
+      "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/630357_J2501000159_01_01",
+      "maker": "／万協製薬（株）\nHTML",
+      "effect": "",
+      "ings": [],
+      "risk": null,
+      "cat": "vitamin",
+      "drowsy": false,
+      "warnIngs": [],
+      "symptoms": [],
+      "note": "",
+      "noteType": "nn",
+      "id": 1000538,
       "price": null,
       "asin": "",
       "rakuten_url": "",
