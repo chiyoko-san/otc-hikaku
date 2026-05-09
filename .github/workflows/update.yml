@@ -104,12 +104,31 @@ jobs:
           cp scraper/medicines.json data/medicines.json
           echo "[sync] data/medicines.json updated"
 
-      # ── コミット(scraper/medicines.json + data/medicines.json) ──
+      # ── コミット(競合時リトライあり・最大3回) ──
       - name: コミット
         run: |
-          git pull --rebase 2>/dev/null || true
           git add scraper/medicines.json data/medicines.json
           COUNT=$(python3 -c "import json;d=json.load(open('scraper/medicines.json'));print(d.get('total',0))")
           GROUP="${{ github.event.inputs.group || 'scheduled' }}"
-          git diff --staged --quiet || git commit -m "update(${GROUP}): ${COUNT}件"
-          git push
+
+          # 変更がなければ正常終了
+          if git diff --staged --quiet; then
+            echo "[commit] no changes, skipping"
+            exit 0
+          fi
+
+          git commit -m "update(${GROUP}): ${COUNT}件"
+
+          # push リトライ(競合時は最新を取り込んで再試行)
+          for i in 1 2 3; do
+            echo "[push] attempt $i"
+            git pull --rebase origin main 2>/dev/null || true
+            if git push origin main; then
+              echo "[push] success on attempt $i"
+              exit 0
+            fi
+            echo "[push] failed on attempt $i, retrying in 5 sec..."
+            sleep 5
+          done
+          echo "[push] failed after 3 attempts"
+          exit 1
