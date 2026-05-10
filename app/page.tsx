@@ -1,212 +1,88 @@
 import Link from 'next/link';
-import {
-  getEnrichedMedicines,
-  getAllSymptoms,
-  getAllIngredients,
-} from '@/lib/medicines';
-import { SYMPTOM_GROUPS } from '@/lib/symptom-groups';
-import { getPublishedColumns } from '@/lib/supabase/columns';
+import type { Metadata } from 'next';
+import { getEnrichedMedicines } from '@/lib/medicines';
+import { CATEGORIES } from '@/lib/categories';
+import { MedicineCard } from '@/components/medicine/MedicineCard';
+import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { HomeSearchBox } from '@/components/home/HomeSearchBox';
+import { buildMetadata } from '@/lib/seo';
 
-export const revalidate = 3600;
+export const metadata: Metadata = buildMetadata({
+  title: '市販薬一覧|成分・リスク区分で比較',
+  description:
+    '市販薬(OTC医薬品)を成分・カテゴリ・リスク区分から比較。PMDA公開情報ベースの中立情報。',
+  path: '/medicines/',
+});
 
-export default async function HomePage() {
-  const totalMeds = getEnrichedMedicines().length;
-  const topSymptoms = getAllSymptoms().slice(0, 12);
-  const topIngredients = getAllIngredients().slice(0, 12);
-  const recentColumns = (await getPublishedColumns(6)) || [];
+export default function MedicinesIndexPage() {
+  const all = getEnrichedMedicines();
+
+  // カテゴリ別にグループ化
+  const byCategory = new Map<string, typeof all>();
+  for (const m of all) {
+    if (!byCategory.has(m.cat)) byCategory.set(m.cat, []);
+    byCategory.get(m.cat)!.push(m);
+  }
+
+  // 件数の多いカテゴリから表示
+  const sortedCats = CATEGORIES.filter((c) =>
+    byCategory.has(c.id)
+  ).sort(
+    (a, b) =>
+      (byCategory.get(b.id)?.length || 0) -
+      (byCategory.get(a.id)?.length || 0)
+  );
 
   return (
-    <div>
-      {/* HERO */}
-      <section className="bg-gradient-to-br from-brand-light via-white to-white py-16 md:py-24">
-        <div className="container-narrow text-center">
-          <h1 className="mb-4 text-4xl font-bold leading-tight md:text-6xl">
-            市販薬を、
-            <em className="not-italic text-brand">成分</em>で選ぶ。
-          </h1>
-          <p className="mb-8 text-gray-700 md:text-lg">
-            7,500品以上の市販薬を成分・効能・リスク区分から比較。
-            <br />
-            広告なし・PMDA公開情報ベース。
-          </p>
-          <div className="mx-auto mb-6 max-w-xl">
-            <HomeSearchBox />
-          </div>
-          <div className="mb-10 flex flex-wrap justify-center gap-2">
-            {[
-              'ロキソプロフェン',
-              'イブプロフェン',
-              'アセトアミノフェン',
-              '花粉症',
-              '眠気なし',
-              '胃腸薬',
-              'かぜ薬',
-              '頭痛',
-            ].map((tag) => (
-              <Link
-                key={tag}
-                href={`/search/?q=${encodeURIComponent(tag)}`}
-                className="chip hover:border-brand"
-              >
-                {tag}
-              </Link>
-            ))}
-          </div>
-          <div className="mx-auto grid max-w-2xl grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-brand md:text-3xl">
-                7,500+
-              </div>
-              <div className="text-xs text-gray-500">収録医薬品</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-brand md:text-3xl">0</div>
-              <div className="text-xs text-gray-500">広告・案件</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-brand md:text-3xl">
-                PMDA
-              </div>
-              <div className="text-xs text-gray-500">データソース</div>
-            </div>
-          </div>
+    <div className="container-wide py-6 md:py-10">
+      <Breadcrumb items={[{ name: 'ホーム', href: '/' }, { name: '薬品一覧' }]} />
 
-          {/* アキネーター */}
-          <div className="mt-10">
-            <Link href="/akinator/" className="btn-primary">
-              💊 症状から薬を探す(質問に答えるだけ)
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 症状から選ぶ */}
-      <section className="container-wide py-12">
-        <h2 className="mb-2 text-2xl font-bold md:text-3xl">症状から選ぶ</h2>
+      <header className="mb-8">
+        <h1 className="mb-2 text-3xl font-bold md:text-4xl">市販薬一覧</h1>
         <p className="mb-6 text-gray-600">
-          気になる症状をタップして、該当する市販薬を確認できます。
+          詳細情報を整備した市販薬 {all.length} 品をカテゴリ別に掲載しています。
         </p>
-        <div className="flex flex-wrap gap-2">
-          {topSymptoms.map((s) => (
-            <Link
-              key={s.slug}
-              href={`/symptoms/${s.slug}/`}
-              className="chip hover:border-brand"
-            >
-              {s.name}
-              <span className="ml-1 text-xs text-gray-500">
-                ({s.medicineIds.length})
-              </span>
-            </Link>
-          ))}
-          <Link
-            href="/symptoms/"
-            className="chip bg-brand text-white hover:bg-brand-dark"
-          >
-            すべての症状 →
-          </Link>
+        <div className="max-w-2xl">
+          <HomeSearchBox />
         </div>
-      </section>
+      </header>
 
-      {/* 成分から選ぶ */}
-      <section className="container-wide py-12">
-        <h2 className="mb-2 text-2xl font-bold md:text-3xl">よく見る成分</h2>
-        <p className="mb-6 text-gray-600">
-          成分名をタップすると、その成分を含む市販薬が一覧表示されます。
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {topIngredients.map((ing) => (
-            <Link
-              key={ing.slug}
-              href={`/ingredients/${ing.slug}/`}
-              className="chip hover:border-brand"
-            >
-              {ing.name}
-              <span className="ml-1 text-xs text-gray-500">
-                ({ing.medicineIds.length})
-              </span>
-            </Link>
-          ))}
+      {/* カテゴリリンク */}
+      <nav className="mb-10 flex flex-wrap gap-2">
+        {sortedCats.map((c) => (
           <Link
-            href="/ingredients/"
-            className="chip bg-brand text-white hover:bg-brand-dark"
+            key={c.id}
+            href={`/categories/${c.id}/`}
+            className="chip hover:border-brand"
           >
-            成分辞典 →
+            {c.label}({byCategory.get(c.id)?.length || 0})
           </Link>
-        </div>
-      </section>
+        ))}
+      </nav>
 
-      {/* 最新コラム */}
-      {recentColumns.length > 0 && (
-        <section className="container-wide py-12">
-          <div className="mb-6 flex items-baseline justify-between">
-            <h2 className="text-2xl font-bold md:text-3xl">最新コラム</h2>
-            <Link
-              href="/columns/"
-              className="text-sm text-brand hover:underline"
-            >
-              すべて見る →
-            </Link>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {recentColumns.map((c) => (
+      {/* カテゴリごとに薬品カードを表示 */}
+      {sortedCats.map((c) => {
+        const meds = byCategory.get(c.id) || [];
+        if (meds.length === 0) return null;
+        return (
+          <section key={c.id} className="mb-12">
+            <div className="mb-4 flex items-baseline justify-between">
+              <h2 className="text-2xl font-bold">{c.label}</h2>
               <Link
-                key={c.id}
-                href={`/columns/${c.slug || c.id}/`}
-                className="group block overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:border-brand hover:shadow-md"
+                href={`/categories/${c.id}/`}
+                className="text-sm text-brand hover:underline"
               >
-                {c.thumb ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={c.thumb}
-                    alt={c.title}
-                    className="h-36 w-full object-cover transition group-hover:scale-[1.02]"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="flex h-36 items-center justify-center bg-gradient-to-br from-brand-light to-white">
-                    <span className="text-3xl">💊</span>
-                  </div>
-                )}
-                <div className="p-5">
-                  {c.tag && (
-                    <span className="mb-2 inline-block rounded bg-brand-light px-2 py-0.5 text-xs text-brand-dark">
-                      {c.tag}
-                    </span>
-                  )}
-                  <h3 className="mb-2 text-lg font-bold leading-tight">
-                    {c.title}
-                  </h3>
-                  {c.summary && (
-                    <p className="line-clamp-2 text-sm text-gray-600">
-                      {c.summary}
-                    </p>
-                  )}
-                </div>
+                すべて見る ({meds.length}件) →
               </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 被害報告への誘導 */}
-      <section className="bg-gray-50 py-12">
-        <div className="container-narrow text-center">
-          <h2 className="mb-3 text-2xl font-bold">市販薬で困ったことはありませんか?</h2>
-          <p className="mb-6 text-gray-600">
-            副作用・定期購入トラブル・広告表現への疑問など、消費者の声を集めています。
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/damage-reports/" className="btn-outline">
-              被害報告を見る
-            </Link>
-            <Link href="/damage-reports/submit/" className="btn-primary">
-              被害を報告する
-            </Link>
-          </div>
-        </div>
-      </section>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {meds.slice(0, 6).map((m) => (
+                <MedicineCard key={m.id} med={m} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }
