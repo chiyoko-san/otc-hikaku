@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
 """
 Claude APIで市販薬・健康食品の消費者保護コラムを自動生成 → Supabase に直接保存
+
+【v2 改善点】
+1. 過去コラム(直近20本)をプロンプトに渡して重複回避
+2. 構成パターンを5種類用意してランダム選択
+3. テーマ選定で「直近使ったカテゴリ」を避けてバランス化
+4. モデルを claude-opus-4-7 に更新
+
 環境変数:
   ANTHROPIC_API_KEY : Claude APIキー
   SUPABASE_URL      : https://xxxx.supabase.co
   SUPABASE_KEY      : anon public キー
 """
-import json, re, sys, os, argparse, urllib.request, urllib.error
+import json, re, sys, os, argparse, urllib.request, urllib.error, random, hashlib
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+
 DATA_DIR = Path(__file__).parent
 MED_JSON = DATA_DIR / "medicines.json"
 JST      = timezone(timedelta(hours=9))
+
 # ── テーマプール(消費者保護・景表法・誇大広告系50テーマ)──
 THEMES = [
     # ─── A. 景表法・薬機法・誇大広告(17テーマ)─────────
@@ -70,8 +79,65 @@ THEMES = [
     ("被害事例", "美白化粧品のトラブル事例(白斑問題から学ぶこと)"),
     ("被害事例", "市販の漢方薬・生薬製剤による健康被害の報告例"),
 ]
+
+# ── 構成パターン(5種類からランダム選択して多様化)──────
+STRUCTURE_PATTERNS = [
+    {
+        "name": "標準型",
+        "instruction": """## 推奨構成
+1. **導入**:具体的な相談事例や典型シナリオから入る(読者の「あるある」感を引き出す)
+2. **本論**:法的根拠・仕組みの解説(条文・公的データを引用)
+3. **見抜き方**:消費者が自衛するための具体的チェックポイント(箇条書きで5つ程度)
+4. **困ったときの対処法**:相談窓口、解約手順など
+5. **まとめ**:重要ポイント3つに絞って再掲"""
+    },
+    {
+        "name": "Q&A型",
+        "instruction": """## 推奨構成(Q&A形式で構成すること)
+複数の具体的な質問とその回答で構成する。
+- 冒頭:なぜこのテーマが今問題なのかを2〜3段落で導入
+- Q1〜Q5:読者が実際に抱きそうな疑問を5つ用意し、それぞれに法的根拠・実例つきで回答
+- 各Qの回答は400〜600文字程度
+- 最後にまとめと相談窓口の案内
+**見出しは ## Q1. 〜?  形式で書く**"""
+    },
+    {
+        "name": "ケーススタディ型",
+        "instruction": """## 推奨構成(具体的な架空事例ベース)
+1. **ケース紹介**:架空の消費者(年齢・性別・職業を設定)が陥った具体的なシナリオを物語形式で200〜400文字で描写
+2. **何が問題だったか**:法的観点からの分析
+3. **どこで気づくべきだったか**:契約時・広告閲覧時に注意できたポイント
+4. **似たケースの参考事例**:消費者庁・国民生活センターの公開事例を引用
+5. **同じ被害を避けるための具体的行動**:箇条書きで
+※ケースは「Aさん(40代女性・会社員)」のように架空人物として明示"""
+    },
+    {
+        "name": "誤解・神話バスター型",
+        "instruction": """## 推奨構成(よくある誤解を1つずつ崩していく)
+1. **導入**:このテーマでなぜ誤解が蔓延しているのか
+2. **誤解その1**:「〜は安心」「〜なら大丈夫」など世間に流布する誤解を提示 → 法的事実で反証
+3. **誤解その2**:別の誤解を提示 → 反証
+4. **誤解その3**:別の誤解を提示 → 反証
+5. **誤解その4**:別の誤解を提示 → 反証
+6. **本当に正しい知識**:消費者が持つべき正しい認識をまとめる
+7. **相談窓口**
+**見出しは ## 誤解1:「〜」  形式で書く**"""
+    },
+    {
+        "name": "時系列・歴史型",
+        "instruction": """## 推奨構成(規制の変遷や事件の時系列で構成)
+1. **導入**:現在の規制状況を一言で
+2. **過去**:このテーマに関する規制・事件はどう変遷してきたか(具体的な年と出来事を3〜5個)
+3. **現在**:今の法規制・運用はどうなっているか(条文を引用)
+4. **典型的な違反パターン**:現在も発生している事例(具体的に3つ)
+5. **将来の見通し**:今後さらに規制強化が予想される領域
+6. **消費者として今できること**:具体的アクション
+**年号や日付を積極的に入れて時間軸を明確にする**"""
+    },
+]
+
 # ── システムプロンプト(消費者保護路線)─────────────
-SYSTEM_PROMPT = """あなたは消費者問題に詳しい医療・法律ライターです。
+SYSTEM_PROMPT_BASE = """あなたは消費者問題に詳しい医療・法律ライターです。
 市販薬・健康食品・サプリメントに関する消費者被害、誇大広告、景品表示法違反、定期購入トラブルについて、消費者目線で具体的かつ法的根拠に基づいた解説コラムを書いてください。
 
 ## サイトの立ち位置
@@ -123,21 +189,111 @@ C) 過去の健康食品・市販薬による消費者被害事例
   "summary": "サマリー(100文字以内)",
   "body": "本文(Markdown形式、3000〜4000文字)"
 }"""
+
 # ─────────────────────────────────────────────────────────
-def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | None:
+def fetch_recent_columns(limit: int = 20) -> list[dict]:
+    """Supabaseから直近のコラムを取得(重複回避用)"""
+    sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    sb_key = os.environ.get("SUPABASE_KEY", "")
+    if not sb_url or not sb_key:
+        return []
+    url = f"{sb_url}/rest/v1/columns?select=title,tag,summary&order=date.desc&limit={limit}"
+    req = urllib.request.Request(
+        url,
+        headers={"apikey": sb_key, "Authorization": f"Bearer {sb_key}"},
+        method="GET"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except Exception as e:
+        print(f"[gen] 過去コラム取得エラー(無視して続行): {e}", file=sys.stderr)
+        return []
+
+
+def format_past_columns_for_prompt(past: list[dict]) -> str:
+    """過去コラムをプロンプト用にフォーマット"""
+    if not past:
+        return ""
+    lines = []
+    for i, c in enumerate(past, 1):
+        title = c.get("title", "")
+        tag = c.get("tag", "")
+        summary = c.get("summary", "")
+        lines.append(f"{i}. [{tag}] {title}\n   要約: {summary}")
+    return "\n".join(lines)
+
+
+def pick_theme_smart(slot: int, date_str: str, past: list[dict]) -> tuple[int, str, str]:
+    """過去コラムのタグ分布を見て、偏りを避けてテーマを選定"""
+    # 直近5本のタグを取得
+    recent_tags = [c.get("tag", "") for c in past[:5]]
+    # 直近5本のタイトルから既出キーワードを抽出(完全一致回避用)
+    recent_titles = set(c.get("title", "") for c in past[:20])
+
+    # 候補:直近で使われていないタグを優先
+    candidates = []
+    for i, (tag, desc) in enumerate(THEMES):
+        # すでに完全一致するタイトルが過去にあったらスキップ
+        # (THEMESのdescが直接タイトルになることがあるため)
+        if desc in recent_titles:
+            continue
+        # 直近5本に同じタグが3回以上出ていたら、そのタグはスキップ
+        if recent_tags.count(tag) >= 3:
+            continue
+        candidates.append((i, tag, desc))
+
+    # 候補が空ならフォールバック(全テーマから選ぶ)
+    if not candidates:
+        candidates = [(i, t, d) for i, (t, d) in enumerate(THEMES)]
+
+    # 日付+スロットで擬似ランダム選定(再現性確保)
+    seed = int(hashlib.md5(f"{date_str}-{slot}".encode()).hexdigest(), 16)
+    idx, tag, desc = candidates[seed % len(candidates)]
+    return idx, tag, desc
+
+
+def pick_structure_pattern(date_str: str, slot: int) -> dict:
+    """構成パターンを日付ベースで選択(同じ日は同じ構成)"""
+    seed = int(hashlib.md5(f"struct-{date_str}-{slot}".encode()).hexdigest(), 16)
+    return STRUCTURE_PATTERNS[seed % len(STRUCTURE_PATTERNS)]
+
+
+def call_claude(theme_tag: str, theme_desc: str, past_columns: list[dict], structure: dict) -> dict | None:
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
     if not api_key:
         print("[gen] ANTHROPIC_API_KEY が未設定", file=sys.stderr)
         return None
+
+    # システムプロンプトに構成パターンを追加
+    system_prompt = SYSTEM_PROMPT_BASE + "\n\n" + structure["instruction"]
+
+    # ユーザープロンプトに過去コラム情報を含める
     user_prompt = f"次のテーマでコラムを書いてください:\n\nテーマ: {theme_desc}\nタグ: {theme_tag}\n\n本文中には画像のMarkdownリンクを一切含めないこと。テキストのみで完結させてください。"
-    if context:
-        user_prompt += f"\n\n参考データ(関連OTC商品):\n{context}"
+
+    past_str = format_past_columns_for_prompt(past_columns)
+    if past_str:
+        user_prompt += f"""
+
+## 【重要】重複回避のための過去コラム一覧
+以下は本サイトで直近に公開された記事です。
+これらと**タイトル・切り口・構成・冒頭の入り方・使用する具体例**が被らないようにしてください。
+同じテーマ領域でも、必ず違う角度・違う事例・違う構成で書いてください。
+
+{past_str}
+
+特に注意:
+- 同じ冒頭の入り方(「近年、〜が増えています」「皆さんは〜をご存じですか」など定型句)を避ける
+- 過去コラムで既に挙げられた具体例(企業名・商品ジャンル)はできるだけ別のものを使う
+- まとめの締め方も定型化させない"""
+
     payload = json.dumps({
-        "model": "claude-opus-4-5-20251101",
+        "model": "claude-opus-4-7",
         "max_tokens": 6000,
-        "system": SYSTEM_PROMPT,
+        "system": system_prompt,
         "messages": [{"role": "user", "content": user_prompt}]
     }).encode("utf-8")
+
     req = urllib.request.Request(
         "https://api.anthropic.com/v1/messages",
         data=payload,
@@ -149,7 +305,7 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
         method="POST"
     )
     try:
-        with urllib.request.urlopen(req, timeout=120) as r:
+        with urllib.request.urlopen(req, timeout=180) as r:
             resp = json.loads(r.read().decode("utf-8"))
             text = resp["content"][0]["text"].strip()
             m = re.search(r'\{[\s\S]+\}', text)
@@ -162,6 +318,8 @@ def call_claude(theme_tag: str, theme_desc: str, context: str = "") -> dict | No
     except Exception as e:
         print(f"[gen] Claude APIエラー: {e}", file=sys.stderr)
     return None
+
+
 def save_to_supabase(col: dict) -> bool:
     sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
     sb_key = os.environ.get("SUPABASE_KEY", "")
@@ -179,8 +337,8 @@ def save_to_supabase(col: dict) -> bool:
         with urllib.request.urlopen(req_check, timeout=30) as r:
             existing = json.loads(r.read().decode("utf-8"))
             if existing:
-              print(f"[gen] ID重複: {col['id']} → 生成済みです(正常終了)")
-              return True
+                print(f"[gen] ID重複: {col['id']} → 生成済みです(正常終了)")
+                return True
     except Exception as e:
         print(f"[gen] 重複チェックエラー: {e}", file=sys.stderr)
     # 保存(status='draft' で保存 → 管理画面で確認後に公開)
@@ -215,42 +373,54 @@ def save_to_supabase(col: dict) -> bool:
     except Exception as e:
         print(f"[gen] Supabase保存エラー: {e}", file=sys.stderr)
     return False
-def get_medicines_context(tag: str) -> str:
-    """消費者保護系コラムでは、参考データはあまり使わない(汎用テーマが多いため)"""
-    # 消費者保護トピックは特定の医薬品カテゴリに紐づかないため、空を返す
-    return ""
-def pick_theme(slot: int, date_str: str) -> tuple[str, str]:
-    import hashlib
-    seed = int(hashlib.md5(f"{date_str}-{slot}".encode()).hexdigest(), 16)
-    return THEMES[seed % len(THEMES)]
+
+
 def run(dry_run=False, theme_index=None):
     today    = datetime.now(JST)
     date_str = today.strftime("%Y-%m-%d")
     slot     = 0 if today.hour < 15 else 1
     col_id   = f"auto_{today.strftime('%Y%m%d')}_{slot}"
+
+    # 過去コラムを取得(重複回避とテーマ選定の両方に使う)
+    print("[gen] 過去コラム取得中...")
+    past_columns = fetch_recent_columns(limit=20)
+    print(f"[gen] 過去コラム {len(past_columns)} 件取得")
+
+    # テーマ選定
     if theme_index is not None:
         theme_tag, theme_desc = THEMES[theme_index % len(THEMES)]
+        picked_idx = theme_index % len(THEMES)
     else:
-        theme_tag, theme_desc = pick_theme(slot, date_str)
-    print(f"[gen] テーマ: [{theme_tag}] {theme_desc}")
+        picked_idx, theme_tag, theme_desc = pick_theme_smart(slot, date_str, past_columns)
+
+    # 構成パターン選定
+    structure = pick_structure_pattern(date_str, slot)
+
+    print(f"[gen] テーマ[{picked_idx}]: [{theme_tag}] {theme_desc}")
+    print(f"[gen] 構成パターン: {structure['name']}")
     print(f"[gen] コラムID: {col_id}")
+
     if dry_run:
         print("[gen] dry-run モード(APIは呼ばない)")
+        print("[gen] --- 過去コラム(直近5本)---")
+        for c in past_columns[:5]:
+            print(f"  [{c.get('tag','')}] {c.get('title','')}")
         return True
-    context  = get_medicines_context(theme_tag)
+
     print("[gen] Claude APIでコラム生成中...")
-    col_data = call_claude(theme_tag, theme_desc, context)
+    col_data = call_claude(theme_tag, theme_desc, past_columns, structure)
     if not col_data:
         print("[gen] コラム生成失敗", file=sys.stderr)
         return False
+
     # 念のため:本文内の画像Markdown(![...](...))を全て削除する保険処理
-    # AIが指示を無視して画像URLを書いてしまった場合に対応
     body = col_data.get("body", "")
     img_md_pattern = re.compile(r'!\[[^\]]*\]\([^)]*\)\s*\n?')
     removed_images = len(img_md_pattern.findall(body))
     body = img_md_pattern.sub('', body)
     # 連続した空行を1つに整理
     body = re.sub(r'\n{3,}', '\n\n', body)
+
     col = {
         "id":      col_id,
         "title":   col_data.get("title", theme_desc[:60]),
@@ -265,11 +435,14 @@ def run(dry_run=False, theme_index=None):
         print(f"[gen] ⚠️ 画像Markdownを{removed_images}箇所削除しました(AIが指示を無視)")
     else:
         print(f"[gen] 画像Markdown: 0箇所(指示通り)")
+
     if save_to_supabase(col):
         print(f"[gen] ✅ Supabaseに下書き保存しました")
         print(f"[gen] → admin.html で確認・編集後に公開してください")
         return True
     return False
+
+
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--dry-run",  action="store_true")
