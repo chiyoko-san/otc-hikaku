@@ -1,6 +1,6 @@
 {
-  "total": 7633,
-  "updated_at": "2026-05-23T18:48:02.632443",
+  "total": 7634,
+  "updated_at": "2026-05-30T18:48:14.043202",
   "medicines": [
     {
       "id": 1,
@@ -155447,6 +155447,26 @@
       "note": "",
       "noteType": "nn",
       "id": 1000613,
+      "price": null,
+      "asin": "",
+      "rakuten_url": "",
+      "amazon_tag": "",
+      "price_updated_at": ""
+    },
+    {
+      "name": "ロキソプロフェンNaテープ大判「三井薬品」",
+      "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/480114_K2605000014_01_01",
+      "maker": "／東光薬品工業株式会社,販売会社／三井薬品株式会社\nHTML",
+      "effect": "",
+      "ings": [],
+      "risk": null,
+      "cat": "ext_pain",
+      "drowsy": false,
+      "warnIngs": [],
+      "symptoms": [],
+      "note": "",
+      "noteType": "nn",
+      "id": 1000614,
       "price": null,
       "asin": "",
       "rakuten_url": "",
