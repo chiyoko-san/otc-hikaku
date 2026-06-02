@@ -4,7 +4,6 @@ import type { Column } from '@/types';
 export async function getPublishedColumns(limit = 50): Promise<Column[]> {
   const sb = createServerClient();
   if (!sb) return [];
-
   const { data, error } = await sb
     .from('columns')
     .select('*')
@@ -18,35 +17,39 @@ export async function getPublishedColumns(limit = 50): Promise<Column[]> {
   return (data || []) as Column[];
 }
 
-export async function getColumnBySlugOrId(key: string): Promise<Column | null> {
+/**
+ * slug または id でコラムを取得
+ * @param key スラッグまたはID
+ * @param includeDrafts true なら下書きも含めて取得（プレビュー用）
+ */
+export async function getColumnBySlugOrId(
+  key: string,
+  includeDrafts = false
+): Promise<Column | null> {
   const sb = createServerClient();
   if (!sb) return null;
 
   // slug カラム優先、なければ id カラムで引く
-  let { data } = await sb
-    .from('columns')
-    .select('*')
-    .eq('slug', key)
-    .eq('status', 'published')
-    .maybeSingle();
+  let query = sb.from('columns').select('*').eq('slug', key);
+  if (!includeDrafts) {
+    query = query.eq('status', 'published');
+  }
+  let { data } = await query.maybeSingle();
 
   if (!data) {
-    const res = await sb
-      .from('columns')
-      .select('*')
-      .eq('id', key)
-      .eq('status', 'published')
-      .maybeSingle();
+    let query2 = sb.from('columns').select('*').eq('id', key);
+    if (!includeDrafts) {
+      query2 = query2.eq('status', 'published');
+    }
+    const res = await query2.maybeSingle();
     data = res.data;
   }
-
   return (data as Column | null) || null;
 }
 
 export async function getAllColumnSlugs(): Promise<string[]> {
   const sb = createServerClient();
   if (!sb) return [];
-
   const { data } = await sb
     .from('columns')
     .select('id, slug')
@@ -58,7 +61,6 @@ export async function getAllColumnSlugs(): Promise<string[]> {
 export async function getColumnsByTag(tag: string, limit = 10): Promise<Column[]> {
   const sb = createServerClient();
   if (!sb) return [];
-
   const { data } = await sb
     .from('columns')
     .select('*')
