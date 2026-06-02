@@ -371,15 +371,8 @@ function renderList(){
   el.innerHTML=filtered.map(function(col,i){
     var realI=COLS.indexOf(col);
     var th=col.thumb?'<img src="'+col.thumb+'" alt="">':'<div class="col-thumb-none">🖼️</div>';
-    
-    // プレビューURL生成(slug優先、なければid)
-    var previewKey = col.slug || col.id;
-    var previewUrl = '/columns/' + previewKey + '/';
-    // 下書き・予約公開ならプレビューパラメータを付ける
-    if(col.status === 'draft' || col.status === 'scheduled'){
-      previewUrl += '?preview=true';
-    }
-    
+    var key=col.slug||col.id;
+    var previewUrl='/columns/'+key+'/'+((col.status==='draft'||col.status==='scheduled')?'?preview=true':'');
     return '<div class="col-item">'
       +'<div class="col-thumb">'+th+'</div>'
       +'<div class="col-item-body">'
@@ -393,7 +386,7 @@ function renderList(){
       +'<span class="col-tag">'+col.tag+'</span>'+col.date+'</div>'
       +'</div>'
       +'<div class="col-item-acts">'
-      +'<a href="'+previewUrl+'" target="_blank" rel="noopener noreferrer" class="btn-preview" style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;transition:background 0.15s">👁️ プレビュー</a>'
+      +'<a href="'+previewUrl+'" target="_blank" rel="noopener noreferrer" class="btn-preview">👁️ プレビュー</a>'
       +'<button type="button" class="btn-edit" onclick="editCol('+realI+')">✏️ 編集</button>'
       +'<button type="button" class="btn-del" onclick="delCol('+realI+')">削除</button>'
       +'</div></div></div>';
