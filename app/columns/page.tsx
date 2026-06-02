@@ -71,7 +71,7 @@ export default async function ColumnsIndexPage() {
                 <img
                   src={c.thumb}
                   alt={c.title}
-                  className="h-40 w-full object-cover object-top transition group-hover:scale-[1.02]"
+                  className="h-40 w-full object-contain bg-brand-light transition group-hover:scale-[1.02]"
                   loading="lazy"
                 />
               ) : (
