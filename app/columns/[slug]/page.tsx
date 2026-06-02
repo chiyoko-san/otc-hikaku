@@ -21,25 +21,52 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
-type Props = { params: { slug: string } };
+type Props = {
+  params: { slug: string };
+  searchParams: { preview?: string };
+};
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const col = await getColumnBySlugOrId(params.slug);
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
+  const isPreview = searchParams?.preview === 'true';
+  const col = await getColumnBySlugOrId(params.slug, isPreview);
   if (!col) return { title: 'コラムが見つかりません' };
-  return buildMetadata({
+
+  const baseMeta = buildMetadata({
     title: col.title,
     description: col.summary || col.title,
     path: `/columns/${col.slug || col.id}/`,
     image: col.thumb || undefined,
     type: 'article',
   });
+
+  // プレビューモード時は検索エンジンに登録させない
+  if (isPreview) {
+    return {
+      ...baseMeta,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  return baseMeta;
 }
 
-export default async function ColumnDetailPage({ params }: Props) {
-  const col = await getColumnBySlugOrId(params.slug);
+export default async function ColumnDetailPage({
+  params,
+  searchParams,
+}: Props) {
+  // プレビューモード判定
+  const isPreview = searchParams?.preview === 'true';
+
+  const col = await getColumnBySlugOrId(params.slug, isPreview);
   if (!col) notFound();
 
-  // 関連コラム(同タグ)
+  // 関連コラム(同タグ・公開済みのみ)
   const related = col.tag
     ? (await getPublishedColumns(100))
         .filter((c) => c.tag === col.tag && c.id !== col.id)
@@ -52,25 +79,52 @@ export default async function ColumnDetailPage({ params }: Props) {
     { name: col.title },
   ];
 
+  // プレビューモード時は構造化データを出さない（SEO対策）
+  const isDraft = col.status !== 'published';
+
   return (
     <>
-      <JsonLd
-        data={buildArticleJsonLd({
-          ...col,
-          slug: col.slug || col.id,
-        } as any)}
-      />
-      <JsonLd
-        data={buildBreadcrumbJsonLd(
-          breadcrumbs.map((b) => ({
-            name: b.name,
-            url: b.href || `/columns/${col.slug || col.id}/`,
-          }))
-        )}
-      />
+      {!isDraft && (
+        <>
+          <JsonLd
+            data={buildArticleJsonLd({
+              ...col,
+              slug: col.slug || col.id,
+            } as any)}
+          />
+          <JsonLd
+            data={buildBreadcrumbJsonLd(
+              breadcrumbs.map((b) => ({
+                name: b.name,
+                url: b.href || `/columns/${col.slug || col.id}/`,
+              }))
+            )}
+          />
+        </>
+      )}
 
       <article className="container-narrow py-6 md:py-10">
         <Breadcrumb items={breadcrumbs} />
+
+        {/* プレビューモード時のバナー */}
+        {isPreview && isDraft && (
+          <div className="mb-6 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">📝</span>
+              <div>
+                <p className="font-bold text-yellow-800">
+                  プレビューモード(下書き)
+                </p>
+                <p className="mt-1 text-sm text-yellow-700">
+                  このコラムは <span className="font-bold">下書き状態</span> のため、まだ一般公開されていません。
+                </p>
+                <p className="mt-1 text-xs text-yellow-600">
+                  ステータス: <code className="rounded bg-yellow-100 px-1 py-0.5">{col.status || 'draft'}</code>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <header className="mb-8">
           {col.tag && (
@@ -113,7 +167,7 @@ export default async function ColumnDetailPage({ params }: Props) {
             <h2 className="mb-4 text-xl font-bold">関連コラム</h2>
             <div className="grid gap-3 md:grid-cols-2">
               {related.map((c) => (
-                <a
+                
                   key={c.id}
                   href={`/columns/${c.slug || c.id}/`}
                   className="rounded border border-gray-200 bg-white p-4 hover:border-brand"
