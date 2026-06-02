@@ -21,6 +21,21 @@ DATA_DIR = Path(__file__).parent
 MED_JSON = DATA_DIR / "medicines.json"
 JST      = timezone(timedelta(hours=9))
 
+# ── 被害報告誘導セクション(末尾に自動挿入)─────────
+DAMAGE_REPORT_FOOTER = """
+---
+
+## 🛡️ 被害報告にご協力ください
+
+同じような被害を受けた方が、これ以上増えないために。
+
+クスリノコンパスでは、消費者の皆さまから**広告・契約トラブルの目撃情報・被害情報**を集めています。あなたの1件が、次の誰かの被害を防ぐ手がかりになります。
+
+🔗 **[被害情報を投稿する(匿名OK・1分で完了)](https://www.kusuri-compass.com/damage-reports/submit/)**
+
+※投稿内容は集計データとして公表され、特定の個人や企業を非難する目的では使用されません。
+"""
+
 # ── テーマプール(消費者保護・景表法・誇大広告系50テーマ)──
 THEMES = [
     # ─── A. 景表法・薬機法・誇大広告(17テーマ)─────────
@@ -451,6 +466,19 @@ def run(dry_run=False, theme_index=None):
     body = img_md_pattern.sub('', body)
     # 連続した空行を1つに整理
     body = re.sub(r'\n{3,}', '\n\n', body)
+
+    # 被害報告誘導セクションを「## 出典」の直前に挿入
+    # 既に入ってる場合は二重挿入を防ぐ
+    if "damage-reports/submit" not in body:
+        if "## 出典" in body:
+            # 「## 出典」の直前に挿入
+            body = body.replace("## 出典", DAMAGE_REPORT_FOOTER + "\n## 出典", 1)
+        else:
+            # 出典セクションがない場合は末尾に追加
+            body = body.rstrip() + DAMAGE_REPORT_FOOTER
+        print(f"[gen] ✅ 被害報告誘導セクションを挿入しました")
+    else:
+        print(f"[gen] ℹ️ 被害報告誘導セクションは既に含まれています")
 
     col = {
         "id":      col_id,
