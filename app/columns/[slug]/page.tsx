@@ -17,8 +17,13 @@ import {
 export const revalidate = 300; // 5分
 
 export async function generateStaticParams() {
-  const slugs = await getAllColumnSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getAllColumnSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch (e) {
+    console.error('[generateStaticParams] エラー:', e);
+    return [];
+  }
 }
 
 type Props = {
@@ -42,7 +47,6 @@ export async function generateMetadata({
     type: 'article',
   });
 
-  // プレビューモード時は検索エンジンに登録させない
   if (isPreview) {
     return {
       ...baseMeta,
@@ -60,13 +64,10 @@ export default async function ColumnDetailPage({
   params,
   searchParams,
 }: Props) {
-  // プレビューモード判定
   const isPreview = searchParams?.preview === 'true';
-
   const col = await getColumnBySlugOrId(params.slug, isPreview);
   if (!col) notFound();
 
-  // 関連コラム(同タグ・公開済みのみ)
   const related = col.tag
     ? (await getPublishedColumns(100))
         .filter((c) => c.tag === col.tag && c.id !== col.id)
@@ -79,7 +80,6 @@ export default async function ColumnDetailPage({
     { name: col.title },
   ];
 
-  // プレビューモード時は構造化データを出さない（SEO対策）
   const isDraft = col.status !== 'published';
 
   return (
@@ -106,7 +106,6 @@ export default async function ColumnDetailPage({
       <article className="container-narrow py-6 md:py-10">
         <Breadcrumb items={breadcrumbs} />
 
-        {/* プレビューモード時のバナー */}
         {isPreview && isDraft && (
           <div className="mb-6 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
             <div className="flex items-start gap-3">
@@ -148,9 +147,8 @@ export default async function ColumnDetailPage({
           </div>
         </header>
 
-        {/* ヒーロー画像 */}
         {col.thumb && (
-          // eslint-disable-next-line @next/next/no-img-element
+          /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={col.thumb}
             alt={col.title}
@@ -161,7 +159,6 @@ export default async function ColumnDetailPage({
 
         {col.body && <ColumnRenderer body={col.body} />}
 
-        {/* 関連コラム */}
         {related.length > 0 && (
           <aside className="mt-16 border-t border-gray-200 pt-8">
             <h2 className="mb-4 text-xl font-bold">関連コラム</h2>
