@@ -809,58 +809,52 @@ async function testSBConnection(){
 
 async function saveColToSB(col){
   var cfg=getSBConfig();
-  if(!cfg.url||!cfg.key) return false;
+  if(!cfg.url||!cfg.key){
+    console.error('[Supabase] 設定が空です');
+    alert('Supabase接続設定が空です。⚙️設定タブで確認してください。');
+    return false;
+  }
+  
+  console.log('[Supabase保存開始]', col.id, 'status=', col.status);
+  
   try{
-    /* まず既存レコードをPATCHで更新 */
-    var patchRes=await fetch(cfg.url+'/rest/v1/columns?id=eq.'+encodeURIComponent(col.id),{
-      method:'PATCH',
+    /* upsert: 既存ならUPDATE、なければINSERT (Prefer: resolution=merge-duplicates) */
+    var res=await fetch(cfg.url+'/rest/v1/columns',{
+      method:'POST',
       headers:{
         'apikey':cfg.key,
         'Authorization':'Bearer '+cfg.key,
         'Content-Type':'application/json',
-        'Prefer':'return=minimal',
+        'Prefer':'resolution=merge-duplicates,return=representation',
       },
       body:JSON.stringify({
-        title:col.title, date:col.date, tag:col.tag,
-        summary:col.summary, body:col.body,
+        id:col.id,
+        title:col.title,
+        date:col.date,
+        tag:col.tag,
+        summary:col.summary,
+        body:col.body,
         thumb:col.thumb||null,
         status:col.status||'published',
         publish_at:col.publishAt||null,
         slug:col.slug||null,
-        updated_at:new Date().toISOString().slice(0,16),
+        updated_at:new Date().toISOString(),
       })
     });
-    /* PATCHが204なら成功、行がなければ0件更新なのでPOSTで新規作成 */
-    if(patchRes.ok){
-      var affected=patchRes.headers.get('content-range');
-      // content-rangeが 0件の場合は行なし→POST
-      if(affected && affected.indexOf('*/0')>-1){
-        /* 新規作成 */
-        var postRes=await fetch(cfg.url+'/rest/v1/columns',{
-          method:'POST',
-          headers:{
-            'apikey':cfg.key,
-            'Authorization':'Bearer '+cfg.key,
-            'Content-Type':'application/json',
-            'Prefer':'return=minimal',
-          },
-          body:JSON.stringify({
-            id:col.id, title:col.title, date:col.date, tag:col.tag,
-            summary:col.summary, body:col.body,
-            thumb:col.thumb||null,
-            status:col.status||'published',
-            publish_at:col.publishAt||null,
-            slug:col.slug||null,
-            updated_at:new Date().toISOString().slice(0,16),
-          })
-        });
-        return postRes.ok;
-      }
+    
+    if(res.ok){
+      var data=await res.json();
+      console.log('[Supabase保存成功]', data);
       return true;
+    } else {
+      var errText=await res.text();
+      console.error('[Supabase保存失敗]', res.status, errText);
+      alert('Supabase保存失敗:\nStatus: '+res.status+'\n\n'+errText.substring(0,300));
+      return false;
     }
-    return false;
   }catch(e){
-    console.error('SB保存エラー:',e);
+    console.error('[Supabase通信エラー]', e);
+    alert('Supabase通信エラー: '+e.message);
     return false;
   }
 }
