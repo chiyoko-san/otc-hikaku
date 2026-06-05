@@ -14,7 +14,7 @@ import {
   buildBreadcrumbJsonLd,
 } from '@/lib/seo';
 
-export const revalidate = 300; // 5分
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   try {
@@ -81,10 +81,12 @@ export default async function ColumnDetailPage({
   ];
 
   const isDraft = col.status !== 'published';
+  const showJsonLd = !isDraft;
+  const showPreviewBanner = isPreview && isDraft;
 
   return (
     <>
-      {!isDraft && (
+      {showJsonLd ? (
         <>
           <JsonLd
             data={buildArticleJsonLd({
@@ -101,12 +103,12 @@ export default async function ColumnDetailPage({
             )}
           />
         </>
-      )}
+      ) : null}
 
       <article className="container-narrow py-6 md:py-10">
         <Breadcrumb items={breadcrumbs} />
 
-        {isPreview && isDraft && (
+        {showPreviewBanner ? (
           <div className="mb-6 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
             <div className="flex items-start gap-3">
               <span className="text-2xl">📝</span>
@@ -115,39 +117,39 @@ export default async function ColumnDetailPage({
                   プレビューモード(下書き)
                 </p>
                 <p className="mt-1 text-sm text-yellow-700">
-                  このコラムは <span className="font-bold">下書き状態</span> のため、まだ一般公開されていません。
+                  このコラムは下書き状態のため、まだ一般公開されていません。
                 </p>
                 <p className="mt-1 text-xs text-yellow-600">
-                  ステータス: <code className="rounded bg-yellow-100 px-1 py-0.5">{col.status || 'draft'}</code>
+                  ステータス: {col.status || 'draft'}
                 </p>
               </div>
             </div>
           </div>
-        )}
+        ) : null}
 
         <header className="mb-8">
-          {col.tag && (
+          {col.tag ? (
             <span className="mb-3 inline-block rounded bg-brand-light px-3 py-1 text-sm text-brand-dark">
               {col.tag}
             </span>
-          )}
+          ) : null}
           <h1 className="mb-3 text-3xl font-bold leading-tight md:text-4xl">
             {col.title}
           </h1>
-          {col.summary && (
+          {col.summary ? (
             <p className="mb-4 text-lg leading-relaxed text-gray-700">
               {col.summary}
             </p>
-          )}
+          ) : null}
           <div className="flex items-center gap-3 border-t border-b border-gray-200 py-3 text-sm text-gray-500">
-            {col.date && <span>公開: {col.date}</span>}
-            {col.updated_at && col.updated_at !== col.date && (
+            {col.date ? <span>公開: {col.date}</span> : null}
+            {col.updated_at && col.updated_at !== col.date ? (
               <span>更新: {new Date(col.updated_at).toLocaleDateString('ja-JP')}</span>
-            )}
+            ) : null}
           </div>
         </header>
 
-        {col.thumb && (
+        {col.thumb ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={col.thumb}
@@ -155,11 +157,11 @@ export default async function ColumnDetailPage({
             className="mb-8 w-full rounded-lg"
             loading="eager"
           />
-        )}
+        ) : null}
 
-        {col.body && <ColumnRenderer body={col.body} />}
+        {col.body ? <ColumnRenderer body={col.body} /> : null}
 
-        {related.length > 0 && (
+        {related.length > 0 ? (
           <aside className="mt-16 border-t border-gray-200 pt-8">
             <h2 className="mb-4 text-xl font-bold">関連コラム</h2>
             <div className="grid gap-3 md:grid-cols-2">
@@ -170,16 +172,16 @@ export default async function ColumnDetailPage({
                   className="rounded border border-gray-200 bg-white p-4 hover:border-brand"
                 >
                   <div className="mb-1 text-sm font-bold">{c.title}</div>
-                  {c.summary && (
+                  {c.summary ? (
                     <p className="line-clamp-2 text-xs text-gray-600">
                       {c.summary}
                     </p>
-                  )}
+                  ) : null}
                 </a>
               ))}
             </div>
           </aside>
-        )}
+        ) : null}
       </article>
     </>
   );
