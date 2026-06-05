@@ -20,14 +20,14 @@ export const revalidate = 300;
 type ColumnData = {
   id: string;
   title: string;
-  date?: string;
-  tag?: string;
-  summary?: string;
-  body?: string;
-  thumb?: string;
-  status?: string;
-  slug?: string;
-  updated_at?: string;
+  date?: string | null;
+  tag?: string | null;
+  summary?: string | null;
+  body?: string | null;
+  thumb?: string | null;
+  status?: string | null;
+  slug?: string | null;
+  updated_at?: string | null;
 };
 
 export async function generateStaticParams() {
