@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import {
   getColumnBySlugOrId,
   getAllColumnSlugs,
@@ -16,12 +17,25 @@ import {
 
 export const revalidate = 300;
 
+type ColumnData = {
+  id: string;
+  title: string;
+  date?: string;
+  tag?: string;
+  summary?: string;
+  body?: string;
+  thumb?: string;
+  status?: string;
+  slug?: string;
+  updated_at?: string;
+};
+
 export async function generateStaticParams() {
   try {
     const slugs = await getAllColumnSlugs();
     return slugs.map((slug) => ({ slug }));
   } catch (e) {
-    console.error('[generateStaticParams] エラー:', e);
+    console.error('[generateStaticParams] error:', e);
     return [];
   }
 }
@@ -57,15 +71,21 @@ export async function generateMetadata({
   return baseMeta;
 }
 
-function RelatedCard({ col }: { col: any }) {
+type RelatedCardProps = { col: ColumnData };
+
+function RelatedCard(props: RelatedCardProps) {
+  const col = props.col;
   const href = `/columns/${col.slug || col.id}/`;
   return (
-    <a key={col.id} href={href} className="rounded border border-gray-200 bg-white p-4 hover:border-brand">
+    <Link
+      href={href}
+      className="rounded border border-gray-200 bg-white p-4 hover:border-brand"
+    >
       <div className="mb-1 text-sm font-bold">{col.title}</div>
       {col.summary ? (
         <p className="line-clamp-2 text-xs text-gray-600">{col.summary}</p>
-      )) : null}
-    </a>
+      ) : null}
+    </Link>
   );
 }
 
