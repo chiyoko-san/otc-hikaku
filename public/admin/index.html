@@ -287,40 +287,52 @@ function doLogout(){sessionStorage.removeItem("admin_authed");location.reload();
 
 /* ── データ ── */
 async function loadCols(){
-  /* まずLocalStorageから読む */
-  var r=localStorage.getItem(COLS_KEY);
-  COLS=r?JSON.parse(r):[];
-
-  /* Supabaseからも取得してマージ */
   var cfg=getSBConfig();
+  
+  /* Supabaseがあれば、Supabaseを優先（信頼の源） */
   if(cfg.url&&cfg.key){
     try{
-      var res=await fetch(cfg.url+'/rest/v1/columns?select=id,title,date,tag,summary,thumb,body,status&order=date.desc&limit=100',{
+      var res=await fetch(cfg.url+'/rest/v1/columns?select=id,title,date,tag,summary,thumb,body,status,slug,publish_at,updated_at&order=updated_at.desc.nullslast&limit=200',{
         headers:{'apikey':cfg.key,'Authorization':'Bearer '+cfg.key}
       });
       if(res.ok){
         var sbCols=await res.json();
-        /* LocalStorageにないものを追加、あるものは上書き */
-        sbCols.forEach(function(sc){
-          var exists=COLS.findIndex(function(c){return c.id===sc.id;});
-          var col={
-            id:sc.id, title:sc.title||'', date:sc.date||'',
-            tag:sc.tag||'', summary:sc.summary||'',
-            thumb:sc.thumb||'', body:sc.body||'',
-            status:sc.status||'draft'
+        /* SupabaseデータをCOLSの正本とする */
+        COLS=sbCols.map(function(sc){
+          return {
+            id:sc.id,
+            title:sc.title||'',
+            date:sc.date||'',
+            tag:sc.tag||'',
+            summary:sc.summary||'',
+            thumb:sc.thumb||'',
+            body:sc.body||'',
+            status:sc.status||'draft',
+            slug:sc.slug||'',
+            publishAt:sc.publish_at||'',
+            updatedAt:sc.updated_at||''
           };
-          if(exists>-1) COLS[exists]=col;
-          else COLS.unshift(col);
         });
+        /* LocalStorageにも保存（バックアップ・オフライン対応） */
         localStorage.setItem(COLS_KEY,JSON.stringify(COLS));
-        showStatus('Supabaseから'+sbCols.length+'件取得・同期しました','ok');
+        showStatus('☁ Supabaseから'+sbCols.length+'件のコラムを取得しました','ok');
+        renderList();
+        return;
+      } else {
+        showStatus('Supabase取得エラー: '+res.status,'err');
       }
     }catch(e){
-      showStatus('Supabase読み込みエラー: '+e.message,'err');
+      showStatus('Supabase取得失敗、ローカルから読み込みます: '+e.message,'warn');
     }
   }
+  
+  /* Supabase未設定 or エラー時はLocalStorageから */
+  var r=localStorage.getItem(COLS_KEY);
+  COLS=r?JSON.parse(r):[];
   renderList();
-  if(!cfg.url||!cfg.key) showStatus('コラム'+COLS.length+'件（ローカル）','ok');
+  if(!cfg.url||!cfg.key){
+    showStatus('コラム'+COLS.length+'件（ローカルのみ）','warn');
+  }
 }
 function saveCols(){localStorage.setItem(COLS_KEY,JSON.stringify(COLS));}
 
