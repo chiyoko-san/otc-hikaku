@@ -50,14 +50,23 @@ export async function generateMetadata({
   if (isPreview) {
     return {
       ...baseMeta,
-      robots: {
-        index: false,
-        follow: false,
-      },
+      robots: { index: false, follow: false },
     };
   }
 
   return baseMeta;
+}
+
+function RelatedCard({ col }: { col: any }) {
+  const href = `/columns/${col.slug || col.id}/`;
+  return (
+    <a key={col.id} href={href} className="rounded border border-gray-200 bg-white p-4 hover:border-brand">
+      <div className="mb-1 text-sm font-bold">{col.title}</div>
+      {col.summary ? (
+        <p className="line-clamp-2 text-xs text-gray-600">{col.summary}</p>
+      )) : null}
+    </a>
+  );
 }
 
 export default async function ColumnDetailPage({
@@ -144,7 +153,9 @@ export default async function ColumnDetailPage({
           <div className="flex items-center gap-3 border-t border-b border-gray-200 py-3 text-sm text-gray-500">
             {col.date ? <span>公開: {col.date}</span> : null}
             {col.updated_at && col.updated_at !== col.date ? (
-              <span>更新: {new Date(col.updated_at).toLocaleDateString('ja-JP')}</span>
+              <span>
+                更新: {new Date(col.updated_at).toLocaleDateString('ja-JP')}
+              </span>
             ) : null}
           </div>
         </header>
@@ -166,18 +177,7 @@ export default async function ColumnDetailPage({
             <h2 className="mb-4 text-xl font-bold">関連コラム</h2>
             <div className="grid gap-3 md:grid-cols-2">
               {related.map((c) => (
-                
-                  key={c.id}
-                  href={`/columns/${c.slug || c.id}/`}
-                  className="rounded border border-gray-200 bg-white p-4 hover:border-brand"
-                >
-                  <div className="mb-1 text-sm font-bold">{c.title}</div>
-                  {c.summary ? (
-                    <p className="line-clamp-2 text-xs text-gray-600">
-                      {c.summary}
-                    </p>
-                  ) : null}
-                </a>
+                <RelatedCard key={c.id} col={c} />
               ))}
             </div>
           </aside>
