@@ -1,0 +1,25 @@
+name: Debug PMDA Detail
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Chrome インストール
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update -q && sudo apt-get install -y google-chrome-stable
+
+      - name: 依存インストール
+        run: pip install selenium webdriver-manager
+
+      - name: 詳細ページ調査
+        run: python scraper/debug_pmda_detail.py
+        timeout-minutes: 15
