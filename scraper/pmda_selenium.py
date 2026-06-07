@@ -21,6 +21,7 @@ DATA_DIR    = Path(__file__).parent
 OUTPUT      = DATA_DIR / "medicines.json"
 CACHE_DIR   = DATA_DIR / "pmda_cache"
 LOG_FILE    = DATA_DIR / "scraper.log"
+STATS_FILE  = DATA_DIR / "scrape_stats.json"
 PMDA_SEARCH = "https://www.pmda.go.jp/PmdaSearch/otcSearch"
 PAGE_DELAY  = 2.5
 DET_DELAY   = 2.0
@@ -394,39 +395,93 @@ def extract_items(driver):
             items.append({"name": name, "url": href})
     return items
 
+# ── 変化に強いフォーム操作（多段フォールバック） ──────────────
+def find_keyword_input(driver):
+    """検索キーワード入力欄を複数の手がかりで探す。
+    PMDA側のid/name変更に耐えるため、id→name→type→placeholderの順に試す。"""
+    candidates = [
+        (By.ID, "txtName"),
+        (By.NAME, "txtName"),
+        (By.CSS_SELECTOR, "input[name*='Name']"),
+        (By.CSS_SELECTOR, "input[id*='Name']"),
+        (By.CSS_SELECTOR, "input[type='text']"),
+        (By.CSS_SELECTOR, "input[placeholder*='名']"),
+    ]
+    for by, sel in candidates:
+        try:
+            els = driver.find_elements(by, sel)
+            for el in els:
+                # 表示されていて入力可能なものを優先
+                if el.is_displayed() and el.is_enabled():
+                    return el
+        except Exception:
+            continue
+    return None
+
+def click_search_button(driver):
+    """検索ボタンを複数の手がかりで探してクリック。見つかればTrue。"""
+    candidates = [
+        (By.CSS_SELECTOR, "input[type='image'][name='btnA']"),
+        (By.CSS_SELECTOR, "input[type='image']"),
+        (By.CSS_SELECTOR, "button[type='submit']"),
+        (By.CSS_SELECTOR, "input[type='submit']"),
+        (By.XPATH, "//input[contains(@value,'検索')]"),
+        (By.XPATH, "//button[contains(.,'検索')]"),
+        (By.XPATH, "//a[contains(.,'検索')]"),
+    ]
+    for by, sel in candidates:
+        try:
+            for el in driver.find_elements(by, sel):
+                if el.is_displayed() and el.is_enabled():
+                    el.click()
+                    return True
+        except Exception:
+            continue
+    # 最終手段: 入力欄でEnter送信
+    try:
+        inp = find_keyword_input(driver)
+        if inp:
+            from selenium.webdriver.common.keys import Keys
+            inp.send_keys(Keys.RETURN)
+            return True
+    except Exception:
+        pass
+    return False
+
 def search_keyword(driver, keyword):
     all_items = []
     driver.get(PMDA_SEARCH)
     time.sleep(1.5)
     dismiss_alert(driver)
 
-    # 100件表示
+    # 100件表示（テキスト一致だけに頼らず、件数系リンクを総当たり）
     try:
         driver.execute_script("""
-            document.querySelectorAll('a').forEach(function(a){
-                if(a.textContent.trim()==='100件') a.click();
+            document.querySelectorAll('a,option').forEach(function(a){
+                var t=(a.textContent||a.value||'').trim();
+                if(t==='100件'||t==='100'){ try{a.click();}catch(e){} }
             });
         """)
         time.sleep(0.8)
     except Exception:
         pass
 
-    # キーワード入力
+    # キーワード入力（多段フォールバック）
+    inp = find_keyword_input(driver)
+    if inp is None:
+        log(f"  入力欄が見つかりません（PMDAの画面構造が変わった可能性）keyword=「{keyword}」")
+        return []
     try:
-        inp = driver.find_element(By.ID, "txtName")
         inp.clear()
         inp.send_keys(keyword)
     except Exception as e:
         log(f"  入力エラー: {e}")
         return []
 
-    # 検索ボタン
+    # 検索ボタン（多段フォールバック）
     original_handles = set(driver.window_handles)
-    try:
-        btn = driver.find_element(By.CSS_SELECTOR, "input[type='image'][name='btnA']")
-        btn.click()
-    except Exception as e:
-        log(f"  ボタンエラー: {e}")
+    if not click_search_button(driver):
+        log(f"  検索ボタンが見つかりません（PMDAの画面構造が変わった可能性）keyword=「{keyword}」")
         return []
 
     time.sleep(PAGE_DELAY)
@@ -528,6 +583,7 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
     driver = make_driver()
     new_items = []
     updated_items = {}  # name → updated data
+    raw_found = 0       # PMDAから返ってきた総件数（健全性チェック用）
 
     try:
         if reprocess and reprocess_items:
@@ -558,6 +614,7 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
                 except Exception as e:
                     log(f"  検索エラー「{kw}」: {e}"); continue
 
+                raw_found += len(kw_items)  # PMDAから返ってきた総件数（重複込み）
                 for item in kw_items:
                     if item["name"] in existing_names: continue
                     if limit and len(new_items) >= limit:
@@ -590,6 +647,44 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
         log(f"完了: 新規{len(new_items)}件 / 合計{len(merged)}件")
 
     save(merged)
+
+    # ── 健全性チェック（壊れたら気づくための仕組み） ──────────
+    # 通常クロールでPMDAから1件も返らなかった = セレクタ破損やサイト変更の疑い。
+    # 「新規0件」だけでは判定しない（既存と重複しただけかもしれないため）。
+    healthy = True
+    reason = ""
+    if reprocess:
+        if len(updated_items) == 0 and reprocess_items:
+            healthy = False
+            reason = f"reprocess対象{len(reprocess_items)}件に対し更新0件。詳細ページの構造変化の疑い。"
+    else:
+        if raw_found == 0:
+            healthy = False
+            reason = "PMDA検索結果が全キーワードで0件。検索フォーム/結果ページの構造変化の疑い。"
+
+    stats = {
+        "ran_at":       datetime.now().isoformat(),
+        "mode":         "reprocess" if reprocess else "scrape",
+        "group":        group,
+        "raw_found":    raw_found,
+        "new_items":    len(new_items),
+        "updated_items": len(updated_items),
+        "total_after":  len(merged),
+        "healthy":      healthy,
+        "reason":       reason,
+    }
+    try:
+        STATS_FILE.write_text(json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+
+    if not healthy:
+        log(f"⚠ 健全性チェック失敗: {reason}")
+        # CI（GitHub Actions）では非ゼロ終了でジョブを失敗させ、通知を出す
+        if os.environ.get("GITHUB_ACTIONS"):
+            import sys as _sys
+            _sys.exit(2)
+
     return len(updated_items) if reprocess else len(new_items)
 
 def _apply_updates(existing, updated_items):
