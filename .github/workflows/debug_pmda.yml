@@ -20,6 +20,6 @@ jobs:
       - name: 依存インストール
         run: pip install selenium webdriver-manager
 
-      - name: 詳細ページ調査
-        run: python scraper/debug_pmda_detail.py
+      - name: HTMLボタン描画調査
+        run: python scraper/debug_pmda_html.py
         timeout-minutes: 15
