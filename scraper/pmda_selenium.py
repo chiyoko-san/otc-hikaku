@@ -251,21 +251,15 @@ def enrich(d):
     })
     return d
 
-# ── 詳細取得（修正版） ───────────────────────────
-def get_html_detail_url(driver, generallist_url):
-    """GeneralListページからHTML添付文書URLを取得"""
-    try:
-        links = driver.find_elements(By.TAG_NAME, "a")
-        for link in links:
-            href = link.get_attribute("href") or ""
-            text = link.text.strip()
-            # HTML添付文書リンクを探す
-            if ("DetailWithHtml" in href or "otcDetail/Detail/" in href) and "DetailWithHtml" in href:
-                return href
-            if text in ["HTML", "html"] and ("pmda.go.jp" in href or href.startswith("/")):
-                return href if href.startswith("http") else f"https://www.pmda.go.jp{href}"
-    except Exception:
-        pass
+# ── 詳細取得（URL直叩き版） ───────────────────────────
+def to_detail_url(generallist_url):
+    """GeneralListページURL → HTML詳細ページURL へ変換。
+    例: .../otcDetail/GeneralList/180102_J..._01_01
+        → .../otcDetail/180102_J..._01_01
+    PMDAの「HTML」ボタン(onclick=detailDisp)が開くURLと同じ。
+    クリック不要でこのURLを直接開けば効能・成分・用法が本文に出る。"""
+    if "/otcDetail/GeneralList/" in generallist_url:
+        return generallist_url.replace("/otcDetail/GeneralList/", "/otcDetail/")
     return None
 
 def get_detail(driver, item):
@@ -278,33 +272,30 @@ def get_detail(driver, item):
     result = {"name": item["name"], "pmda_url": url}
 
     try:
+        # まずGeneralListページで基本情報（リスク区分・メーカー）を取得
         driver.get(url)
         time.sleep(DET_DELAY)
         body = driver.find_element(By.TAG_NAME, "body").text
-
-        # GeneralListページから基本情報取得
         risk = parse_risk(body)
         maker = parse_maker(body)
-
         if risk is not None:
             result["risk"] = risk
         if maker:
             result["maker"] = maker
 
-        # HTML添付文書リンクを探す
-        html_url = get_html_detail_url(driver, url)
-
-        if html_url:
-            # HTML添付文書ページから効能・成分取得
+        # HTML詳細ページURLを組み立てて直接開く（クリック不要）
+        detail_url = to_detail_url(url)
+        if detail_url:
             try:
-                log(f"    HTML添付文書: {html_url[:60]}")
-                driver.get(html_url)
+                log(f"    詳細ページ: {detail_url[:60]}")
+                driver.get(detail_url)
                 time.sleep(HTML_DELAY)
                 html_body = driver.find_element(By.TAG_NAME, "body").text
 
+                # 効能・効果（次セクション「効能関連注意」or「用法」で切る）
                 effect = extract_between(html_body,
                     ["効能又は効果", "効能・効果", "効能効果", "【効能・効果】"],
-                    ["用法及び用量", "用法・用量", "【用法", "＜用法"])
+                    ["効能関連注意", "用法及び用量", "用法・用量", "【用法", "＜用法"])
                 ings = parse_ings(driver, html_body)
                 if not maker:
                     maker = parse_maker(html_body)
@@ -319,19 +310,15 @@ def get_detail(driver, item):
                 })
                 log(f"    取得成功: 効能={bool(effect)} 成分={len(ings)}件")
             except Exception as e:
-                log(f"    HTML詳細エラー: {e}")
+                log(f"    詳細ページエラー: {e}")
         else:
-            # HTML版なし → GeneralListからテキスト抽出を試みる
+            # GeneralList形式でないURL → そのページから直接抽出を試みる
             effect = extract_between(body,
                 ["効能又は効果", "効能・効果"],
-                ["用法及び用量", "用法・用量"])
-            ings_text = extract_between(body,
-                ["成分及び分量", "成分・分量"],
-                ["用法及び用量", "添加物"])
-
+                ["効能関連注意", "用法及び用量", "用法・用量"])
             result.update({
                 "effect": effect[:300] if effect else "",
-                "ings":   parse_ings(driver, body) if ings_text else [],
+                "ings":   parse_ings(driver, body),
                 "risk":   risk,
                 "maker":  maker,
             })
