@@ -11,7 +11,7 @@ on:
         type: choice
         options: ["hira","kata","alpha","clean","functional","reprocess"]
       limit:
-        description: "取得件数上限(0=無制限)"
+        description: "取得件数上限(0=無制限)。reprocessは既定500"
         required: false
         default: "0"
 jobs:
@@ -97,15 +97,52 @@ jobs:
           print(f'詳細取得済み: {has_detail}件 ({has_detail/len(clean)*100:.1f}%)')
           PYEOF
 
+      # ── クロール健全性チェック（壊れたら気づく仕組み） ──
+      # scraper が書き出す scrape_stats.json を読み、PMDAから1件も取れて
+      # いない等の異常を検知したらジョブを失敗させ、GitHubから通知する。
+      - name: クロール健全性チェック
+        if: ${{ github.event.inputs.group != 'functional' && github.event.inputs.group != 'clean' }}
+        run: |
+          python3 - << 'PYEOF'
+          import json, os, sys
+          from pathlib import Path
+          p = Path('scraper/scrape_stats.json')
+          if not p.exists():
+              print('::warning::scrape_stats.json がありません（scraperが途中で落ちた可能性）')
+              sys.exit(1)
+          s = json.loads(p.read_text())
+          summary = (
+              f"mode={s.get('mode')} group={s.get('group')} "
+              f"raw_found={s.get('raw_found')} new={s.get('new_items')} "
+              f"updated={s.get('updated_items')} total={s.get('total_after')} "
+              f"healthy={s.get('healthy')}"
+          )
+          print(summary)
+          # GitHub Actions のジョブサマリに出す
+          gs = os.environ.get('GITHUB_STEP_SUMMARY')
+          if gs:
+              with open(gs, 'a', encoding='utf-8') as f:
+                  f.write(f"### PMDAクロール結果\n\n{summary}\n\n")
+                  if not s.get('healthy'):
+                      f.write(f"⚠ **異常検知**: {s.get('reason')}\n")
+          if not s.get('healthy'):
+              print(f"::error::クロール異常: {s.get('reason')}")
+              sys.exit(1)
+          PYEOF
+
       # ── data/medicines.json への同期(Next.js が読むため) ──
       - name: data/medicines.json へ同期
+        if: ${{ always() }}
         run: |
           mkdir -p data
           cp scraper/medicines.json data/medicines.json
           echo "[sync] data/medicines.json updated"
 
       # ── コミット(競合時リトライあり・最大3回) ──
+      # 健全性チェックが失敗した場合はこのステップは実行されない（success()既定）
+      # ため、壊れた/空のデータがコミットされることはない。
       - name: コミット
+        if: ${{ success() }}
         run: |
           git add scraper/medicines.json data/medicines.json
           COUNT=$(python3 -c "import json;d=json.load(open('scraper/medicines.json'));print(d.get('total',0))")
