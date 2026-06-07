@@ -492,13 +492,45 @@ def search_keyword(driver, keyword):
         driver.switch_to.window(new_handles.pop())
 
     page = 1
+    seen_signatures = set()   # 各ページの内容シグネチャ（薬名の集合）を記録
+    seen_names = set()        # このキーワード内で既出の薬名
+    stale = 0                 # 新規ゼロが続いた回数
     while True:
         items = extract_items(driver)
-        all_items.extend(items)
-        log(f"  p{page}: {len(items)}件")
-        if not go_next(driver): break
+
+        # ページ内容のシグネチャ（順不同の薬名集合）。同一ページの繰り返しを検出する
+        sig = frozenset(it["name"] for it in items)
+        if items and sig in seen_signatures:
+            log(f"  p{page}: {len(items)}件（前と同一内容 → ページ送りが進んでいないため停止）")
+            break
+        seen_signatures.add(sig)
+
+        # このキーワード内での新規だけ採用
+        fresh = [it for it in items if it["name"] not in seen_names]
+        for it in fresh:
+            seen_names.add(it["name"])
+        all_items.extend(fresh)
+        log(f"  p{page}: {len(items)}件（新規{len(fresh)}件）")
+
+        # 新規が出ないページが2回続いたら、実質終端とみなして停止
+        if not fresh:
+            stale += 1
+            if stale >= 2:
+                log("  新規ゼロが連続 → 終端とみなし停止")
+                break
+        else:
+            stale = 0
+
+        if not items:
+            # 空ページが返ったら終端
+            break
+
+        if not go_next(driver):
+            break
         page += 1
-        if page > 50: break  # 無限ループ防止
+        if page > 50:
+            log("  page上限(50)到達 → 停止")
+            break
 
     if len(driver.window_handles) > 1:
         try:
@@ -589,6 +621,7 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
         if reprocess and reprocess_items:
             # 再取得モード
             targets = reprocess_items[:limit] if limit else reprocess_items
+            attempted = 0   # 試行数（早期判定用）
             for i, item in enumerate(targets):
                 log(f"再取得 [{i+1}/{len(targets)}]: {item['name']}")
                 # キャッシュを削除して再取得
@@ -596,6 +629,7 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
                 if cp.exists():
                     cp.unlink()
                 det = get_detail(driver, item)
+                attempted += 1
                 if det.get('effect') or det.get('ings'):
                     updated_items[item['name']] = det
                     log(f"  → 取得成功: 効能={bool(det.get('effect'))} 成分={len(det.get('ings',[]))}件")
@@ -605,6 +639,13 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
                     save(merged)
                     if os.environ.get("GITHUB_ACTIONS"):
                         git_commit(f"reprocess中間: {len(updated_items)}件更新")
+
+                # 早期判定: 最初の30件を試して成功0件なら詳細取得が壊れている。
+                # 7,015件を無駄に4時間回さず、ここで中断して気づけるようにする。
+                if attempted == 30 and len(updated_items) == 0:
+                    log("⚠ 最初の30件すべてで効能・成分が取得できませんでした。"
+                        "詳細ページの構造変化（ラベル変更等）の疑いがあるため中断します。")
+                    break
         else:
             # 通常スクレイピング
             for i, kw in enumerate(keywords):
