@@ -163,53 +163,114 @@ def parse_risk(body):
     if "要指導"    in body: return 0
     if "指定第２類" in body or "指定第2類" in body: return 2
     if "第１類"    in body or "第1類" in body: return 1
-    if "第２類"    in body or "第2類" in body: return 2.5
+    if "第２類"    in body or "第2類" in body: return 2
     if "第３類"    in body or "第3類" in body: return 3
     return None
 
-def parse_ings(driver, body):
-    ings = []
-    # テーブルから成分・分量を取得
+def _label_rows(driver):
+    """詳細ページの全テーブルから {ラベル: 値} の対応を集める。
+    主テーブルは TD=[ラベル, 値] の2セル行で構成されている。"""
+    rows = {}
     try:
         for table in driver.find_elements(By.TAG_NAME, "table"):
-            in_ing = False
             for row in table.find_elements(By.TAG_NAME, "tr"):
-                ths = [c.text.strip() for c in row.find_elements(By.TAG_NAME, "th")]
                 tds = [c.text.strip() for c in row.find_elements(By.TAG_NAME, "td")]
-                if any("成分" in t or "分量" in t for t in ths):
-                    in_ing = True; continue
-                if in_ing:
-                    val = tds[0] if tds else ""
-                    if not val: break
-                    if not any(s in val for s in ["添加物","合計","注","備考"]):
-                        ings.append(val)
+                if len(tds) >= 2 and tds[0] and tds[0] not in rows:
+                    rows[tds[0]] = tds[1]
+    except Exception:
+        pass
+    return rows
+
+def parse_ings(driver, body):
+    """成分テーブル（TH=['成分','分量','内訳']）の直後のデータ行から
+    成分名+分量だけを正確に取る。消費者相談窓口・剤形などのラベルは混入しない。"""
+    ings = []
+    try:
+        for table in driver.find_elements(By.TAG_NAME, "table"):
+            trs = table.find_elements(By.TAG_NAME, "tr")
+            # このテーブルが成分テーブルか判定（TH に '成分' と '分量'）
+            header_th = []
+            for row in trs:
+                ths = [c.text.strip() for c in row.find_elements(By.TAG_NAME, "th")]
+                if ths:
+                    header_th = ths
+                    break
+            is_ing_table = any("成分" in t for t in header_th) and any("分量" in t for t in header_th)
+            if not is_ing_table:
+                continue
+            # データ行（TD が3セル: 成分名 / 分量 / 内訳）を拾う
+            for row in trs:
+                tds = [c.text.strip() for c in row.find_elements(By.TAG_NAME, "td")]
+                if len(tds) >= 2 and tds[0] and tds[0] not in ("成分分量", "成分", "分量", "内訳"):
+                    name = tds[0]
+                    amount = tds[1] if len(tds) >= 2 else ""
+                    # 添加物・合計などは除外
+                    if any(s in name for s in ["添加物", "合計", "備考"]):
+                        continue
+                    if amount and re.search(r'[\d.]', amount):
+                        ings.append(f"{name}({amount})")
+                    else:
+                        ings.append(name)
+            if ings:
+                break  # 成分テーブルが取れたら終了
     except Exception:
         pass
 
-    # テーブルで取れなければテキストから抽出
+    # テーブルで取れなければテキストからフォールバック
     if not ings:
         sec = extract_between(body,
-            ["成分及び分量","成分・分量","有効成分","成分と分量"],
-            ["【用法","添加物","次の注意","用法及び用量"])
+            ["成分及び分量", "成分・分量", "有効成分", "成分と分量"],
+            ["添加物", "保管", "消費者相談", "用法"])
         for line in sec.splitlines():
             line = line.strip()
-            if line and len(line) > 2 and not line.startswith("【"):
-                # 「成分名　量mg」形式をパース
-                m = re.match(r'^(.+?)\s+([\d.]+\s*(?:mg|g|μg|μL|mL|IU|万|億|%)[^　\s]*)(.*)$', line)
-                if m:
-                    ing_name = m.group(1).strip()
-                    amount = m.group(2).strip()
-                    ings.append(f"{ing_name}({amount})")
-                elif len(line) < 60:
-                    ings.append(line)
-    return [i for i in ings if len(i) < 80][:15]
+            if not line or len(line) < 3 or line.startswith("【"):
+                continue
+            m = re.match(r'^(.+?)\s+([\d.]+\s*(?:mg|g|μg|μL|mL|IU|万|億|%)[^　\s]*)', line)
+            if m:
+                ings.append(f"{m.group(1).strip()}({m.group(2).strip()})")
+            elif len(line) < 40 and not any(s in line for s in ["窓口","会社","区分","剤形","注意"]):
+                ings.append(line)
+    # 重複除去・長すぎ除外
+    seen, out = set(), []
+    for i in ings:
+        if len(i) < 100 and i not in seen:
+            seen.add(i); out.append(i)
+    return out[:15]
 
-def parse_maker(body):
-    for label in ["販売会社名","製造販売元","会社名","販売元","製造元"]:
-        val = extract_between(body, [label], ["\n\n","\n※","\n【","\n〒"])
-        if val and len(val) < 80:
-            return val.strip()
-    return ""
+def parse_maker(driver_or_body, body=None):
+    """製造販売会社を取得。住所・添付文書情報・PDF名を除去して社名だけ返す。
+    詳細ページではテーブル行 TD=['製造販売会社', '社名+住所'] にある。"""
+    raw = ""
+    # driver が渡された場合はテーブルから取得
+    if body is not None:
+        driver = driver_or_body
+        rows = _label_rows(driver)
+        for label in ["製造販売会社", "製造販売元", "販売会社"]:
+            if label in rows and rows[label]:
+                raw = rows[label]
+                break
+        text = body
+    else:
+        # 後方互換: body文字列だけ渡された場合
+        text = driver_or_body
+
+    if not raw:
+        for label in ["製造販売会社", "製造販売元", "販売会社名", "会社名", "販売元"]:
+            v = extract_between(text, [label], ["\n", "添付文書", "住所"])
+            if v:
+                raw = v; break
+
+    # クリーニング: 住所・添付文書情報・PDF名・先頭スラッシュ・末尾HTMLを除去
+    raw = raw.split("添付文書")[0]
+    raw = raw.split("住所")[0]
+    raw = re.sub(r'[／/]?\s*$', '', raw)
+    raw = raw.replace("\nHTML", "").replace("HTML", "")
+    raw = re.sub(r'\s+', ' ', raw).strip(" 　／/,")
+    # 社名は会社表記までで切る（住所が続いている場合）
+    m = re.match(r'^(.+?(?:株式会社|（株）|\(株\)|有限会社|（有）))', raw)
+    if m:
+        raw = m.group(1)
+    return raw[:60].strip()
 
 def enrich(d):
     ings = d.get("ings", [])
@@ -272,16 +333,14 @@ def get_detail(driver, item):
     result = {"name": item["name"], "pmda_url": url}
 
     try:
-        # まずGeneralListページで基本情報（リスク区分・メーカー）を取得
+        # まずGeneralListページで基本情報（保険的に）
         driver.get(url)
         time.sleep(DET_DELAY)
         body = driver.find_element(By.TAG_NAME, "body").text
         risk = parse_risk(body)
-        maker = parse_maker(body)
+        maker = ""
         if risk is not None:
             result["risk"] = risk
-        if maker:
-            result["maker"] = maker
 
         # HTML詳細ページURLを組み立てて直接開く（クリック不要）
         detail_url = to_detail_url(url)
@@ -296,9 +355,15 @@ def get_detail(driver, item):
                 effect = extract_between(html_body,
                     ["効能又は効果", "効能・効果", "効能効果", "【効能・効果】"],
                     ["効能関連注意", "用法及び用量", "用法・用量", "【用法", "＜用法"])
+                # 成分・メーカー・リスクは詳細ページの表構造から取る
                 ings = parse_ings(driver, html_body)
-                if not maker:
-                    maker = parse_maker(html_body)
+                maker = parse_maker(driver, html_body)
+                # リスク区分は表の「リスク区分」行を優先
+                rows = _label_rows(driver)
+                if rows.get("リスク区分"):
+                    r2 = parse_risk(rows["リスク区分"])
+                    if r2 is not None:
+                        risk = r2
                 if risk is None:
                     risk = parse_risk(html_body)
 
@@ -593,9 +658,18 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
     # reprocessモード: effectもingsもない商品のURLリストを作成
     reprocess_items = []
     if reprocess:
+        BAD_ING_TOKENS = ["消費者相談窓口", "製造販売会社", "販売会社", "剤形",
+                          "リスク区分", "保管", "添付文書", "会社名"]
         for m in existing:
-            if (not m.get('itype') or m.get('itype') == 'otc') and \
-               not m.get('effect') and not m.get('ings') and m.get('pmda_url'):
+            if not ((not m.get('itype') or m.get('itype') == 'otc') and m.get('pmda_url')):
+                continue
+            empty = not m.get('effect') and not m.get('ings')
+            # 以前のバグで壊れたデータ（成分にラベル混入 / メーカーにHTML・先頭スラッシュ）も対象化
+            ings = m.get('ings') or []
+            bad_ing = any(any(tok in str(i) for tok in BAD_ING_TOKENS) for i in ings)
+            mk = m.get('maker') or ""
+            bad_maker = ("HTML" in mk) or mk.startswith("／") or mk.startswith("/")
+            if empty or bad_ing or bad_maker:
                 reprocess_items.append({"name": m["name"], "url": m["pmda_url"]})
         log(f"再取得対象: {len(reprocess_items)}件")
 
