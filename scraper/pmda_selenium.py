@@ -350,16 +350,23 @@ def get_detail(driver, item):
                 driver.get(detail_url)
                 time.sleep(HTML_DELAY)
                 html_body = driver.find_element(By.TAG_NAME, "body").text
+                result["_fetched"] = bool(html_body and len(html_body) > 100)
 
-                # 効能・効果（次セクション「効能関連注意」or「用法」で切る）
-                effect = extract_between(html_body,
-                    ["効能又は効果", "効能・効果", "効能効果", "【効能・効果】"],
-                    ["効能関連注意", "用法及び用量", "用法・用量", "【用法", "＜用法"])
+                rows = _label_rows(driver)
+                # 効能・効果：まず表の行から、なければテキストから
+                effect = ""
+                for k in ["効能・効果", "効能又は効果", "効能効果", "効能"]:
+                    if rows.get(k):
+                        effect = rows[k]
+                        break
+                if not effect:
+                    effect = extract_between(html_body,
+                        ["効能又は効果", "効能・効果", "効能効果", "【効能・効果】"],
+                        ["効能関連注意", "用法及び用量", "用法・用量", "【用法", "＜用法"])
                 # 成分・メーカー・リスクは詳細ページの表構造から取る
                 ings = parse_ings(driver, html_body)
                 maker = parse_maker(driver, html_body)
                 # リスク区分は表の「リスク区分」行を優先
-                rows = _label_rows(driver)
                 if rows.get("リスク区分"):
                     r2 = parse_risk(rows["リスク区分"])
                     if r2 is not None:
@@ -373,9 +380,10 @@ def get_detail(driver, item):
                     "risk":   risk,
                     "maker":  maker,
                 })
-                log(f"    取得成功: 効能={bool(effect)} 成分={len(ings)}件")
+                log(f"    取得結果: 効能={bool(effect)} 成分={len(ings)}件 fetched={result['_fetched']}")
             except Exception as e:
                 log(f"    詳細ページエラー: {e}")
+                result["_fetched"] = False
         else:
             # GeneralList形式でないURL → そのページから直接抽出を試みる
             effect = extract_between(body,
@@ -392,7 +400,9 @@ def get_detail(driver, item):
         log(f"  詳細エラー [{item['name']}]: {e}")
 
     result = enrich(result)
+    fetched = result.pop("_fetched", False)
     write_cache(url, result)
+    result["_fetched"] = fetched  # ループの健全性判定用に返す（保存はしない）
     return result
 
 # ── 検索・一覧取得 ──────────────────────────────
@@ -677,12 +687,13 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
     new_items = []
     updated_items = {}  # name → updated data
     raw_found = 0       # PMDAから返ってきた総件数（健全性チェック用）
+    fetched_ok_total = 0  # reprocessでページ取得に成功した累計
 
     try:
         if reprocess and reprocess_items:
             # 再取得モード
             targets = reprocess_items[:limit] if limit else reprocess_items
-            attempted = 0   # 試行数（早期判定用）
+            fetch_fail_streak = 0   # ページ取得自体に失敗した連続回数
             for i, item in enumerate(targets):
                 log(f"再取得 [{i+1}/{len(targets)}]: {item['name']}")
                 # キャッシュを削除して再取得
@@ -690,10 +701,19 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
                 if cp.exists():
                     cp.unlink()
                 det = get_detail(driver, item)
-                attempted += 1
                 if det.get('effect') or det.get('ings'):
                     updated_items[item['name']] = det
                     log(f"  → 取得成功: 効能={bool(det.get('effect'))} 成分={len(det.get('ings',[]))}件")
+
+                # 健全性: ページ取得自体に失敗（例外/空body）した連続回数を数える。
+                # 効能=False（ページは取れたが様式が違う漢方・消毒薬等）は正常系なので
+                # 中断条件にしない。本当にページが取れない時だけ連続失敗で中断する。
+                if det.get('_fetched'):
+                    fetch_fail_streak = 0
+                    fetched_ok_total += 1
+                else:
+                    fetch_fail_streak += 1
+
                 if (i+1) % 50 == 0:
                     # 中間コミット
                     merged = _apply_updates(existing, updated_items)
@@ -701,11 +721,10 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
                     if os.environ.get("GITHUB_ACTIONS"):
                         git_commit(f"reprocess中間: {len(updated_items)}件更新")
 
-                # 早期判定: 最初の30件を試して成功0件なら詳細取得が壊れている。
-                # 7,015件を無駄に4時間回さず、ここで中断して気づけるようにする。
-                if attempted == 30 and len(updated_items) == 0:
-                    log("⚠ 最初の30件すべてで効能・成分が取得できませんでした。"
-                        "詳細ページの構造変化（ラベル変更等）の疑いがあるため中断します。")
+                # 早期判定: ページ取得が30回連続で失敗 = 詳細ページ構造の変化等。
+                if fetch_fail_streak >= 30:
+                    log("⚠ 詳細ページの取得に30回連続で失敗しました。"
+                        "サイト構造の変化やアクセス遮断の疑いがあるため中断します。")
                     break
         else:
             # 通常スクレイピング
@@ -756,9 +775,10 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
     healthy = True
     reason = ""
     if reprocess:
-        if len(updated_items) == 0 and reprocess_items:
+        # ページ取得が1件もできていない時だけ異常（効能=Falseは正常系なので除外）
+        if reprocess_items and fetched_ok_total == 0:
             healthy = False
-            reason = f"reprocess対象{len(reprocess_items)}件に対し更新0件。詳細ページの構造変化の疑い。"
+            reason = f"reprocess対象{len(reprocess_items)}件で詳細ページを1件も取得できず。サイト構造変化/アクセス遮断の疑い。"
     else:
         if raw_found == 0:
             healthy = False
@@ -771,6 +791,7 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
         "raw_found":    raw_found,
         "new_items":    len(new_items),
         "updated_items": len(updated_items),
+        "fetched_ok":   fetched_ok_total,
         "total_after":  len(merged),
         "healthy":      healthy,
         "reason":       reason,
