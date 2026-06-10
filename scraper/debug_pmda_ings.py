@@ -63,23 +63,39 @@ def probe(driver, name, generallist_url):
 
     # メーカー欄周辺のテキスト（ラベル前後を見る）
     body = driver.find_element(By.TAG_NAME, "body").text
-    pr(f"\n  --- メーカー欄周辺テキスト ---")
-    for label in ["製造販売", "販売会社", "会社名", "製造販売元", "販売元"]:
-        idx = body.find(label)
+    pr(f"\n  --- body長さ: {len(body)}字 ---")
+    pr(f"\n  --- 全ラベル行（TD2セルの1セル目=ラベル）---")
+    seen = set()
+    for table in driver.find_elements(By.TAG_NAME, "table"):
+        for row in table.find_elements(By.TAG_NAME, "tr"):
+            tds = [c.text.strip() for c in row.find_elements(By.TAG_NAME, "td")]
+            if len(tds) >= 2 and tds[0] and tds[0] not in seen:
+                seen.add(tds[0])
+                pr(f"    [{tds[0][:20]}] = {tds[1][:50].replace(chr(10),' ')}")
+    pr(f"\n  --- 効能/効果 を含む箇所 ---")
+    for kw in ["効能", "効果", "適応", "はたらき", "作用"]:
+        idx = body.find(kw)
         if idx >= 0:
-            pr(f"    「{label}」周辺: {body[idx:idx+80].replace(chr(10),' / ')}")
+            pr(f"    「{kw}」: {body[idx:idx+60].replace(chr(10),' ')}")
 
 def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
     meds = data.get("medicines", [])
-    # 効能は取れたが成分が壊れていた漢方系と、別タイプ（鎮痛テープ等）を混ぜて2件
-    targets = []
-    for m in meds:
-        if m.get("pmda_url") and "GeneralList" in m.get("pmda_url",""):
-            targets.append(m)
-        if len(targets) >= 2:
-            break
+    # 効能が取れていない薬（effect空 & ings空 & pmda_url有）を実データから直接拾う。
+    # 名前一致に頼らないので確実にFalse薬が対象になる。
+    targets = [m for m in meds
+               if (not m.get("itype") or m.get("itype") == "otc")
+               and not m.get("effect") and not m.get("ings")
+               and m.get("pmda_url")][:3]
+    if not targets:  # 万一なければ名前指定で
+        want = ["DHC 解熱鎮痛薬", "アースレッド", "イスクラ勝湿顆粒"]
+        for w in want:
+            for m in meds:
+                if w in m.get("name","") and m.get("pmda_url"):
+                    targets.append(m); break
     pr(f"調査対象: {len(targets)}件")
+    for t in targets:
+        pr(f"  - {t['name']}")
     driver = make_driver()
     try:
         for m in targets:
