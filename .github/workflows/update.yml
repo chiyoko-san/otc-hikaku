@@ -52,13 +52,17 @@ jobs:
         continue-on-error: true
 
       # ── 既存データの詳細再取得 ──
+      # 1ジョブ内で複数ラウンド回す。各ラウンドは220分で自己終了し中間コミット済み。
+      # ジョブのtimeout(350分)内で2ラウンド程度進められる。limit=0で全件対象。
       - name: 詳細再取得(reprocess)
         if: ${{ github.event.inputs.group == 'reprocess' }}
         run: |
           python scraper/pmda_selenium.py \
             --reprocess \
-            --limit ${{ github.event.inputs.limit || '500' }}
-        timeout-minutes: 245
+            --resume \
+            --max-minutes 300 \
+            --limit ${{ github.event.inputs.limit || '0' }}
+        timeout-minutes: 320
         continue-on-error: true
 
       # ── 機能性表示食品 ──
