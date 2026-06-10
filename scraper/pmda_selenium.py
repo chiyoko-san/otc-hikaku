@@ -654,7 +654,7 @@ def git_commit(msg):
         log(f"コミットエラー: {e}")
 
 # ── メイン ──────────────────────────────────────
-def run(group="hira", resume=False, limit=0, reprocess=False):
+def run(group="hira", resume=False, limit=0, reprocess=False, max_minutes=0):
     """
     reprocess=True: 既存のeffect/ingsが空のものを再取得
     """
@@ -694,7 +694,16 @@ def run(group="hira", resume=False, limit=0, reprocess=False):
             # 再取得モード
             targets = reprocess_items[:limit] if limit else reprocess_items
             fetch_fail_streak = 0   # ページ取得自体に失敗した連続回数
+            start_t = time.time()
+            budget_sec = max_minutes * 60 if max_minutes else 0
+            stopped_by_budget = False
             for i, item in enumerate(targets):
+                # 時間予算に達したら綺麗に切り上げ（CIのタイムアウト前に自分で止める）
+                if budget_sec and (time.time() - start_t) > budget_sec:
+                    log(f"⏱ 時間予算({max_minutes}分)に到達。{i}件処理時点で安全に終了します。"
+                        f"resumeで続きから再開できます。")
+                    stopped_by_budget = True
+                    break
                 log(f"再取得 [{i+1}/{len(targets)}]: {item['name']}")
                 # キャッシュを削除して再取得
                 cp = cache_path(item["url"])
@@ -840,5 +849,8 @@ if __name__ == "__main__":
     p.add_argument("--resume",     action="store_true")
     p.add_argument("--limit",      type=int, default=0)
     p.add_argument("--reprocess",  action="store_true", help="effect/ingsが空の既存データを再取得")
+    p.add_argument("--max-minutes", type=int, default=220,
+                   help="この分数で安全に切り上げ（CIの245分タイムアウト回避）。0で無制限")
     a = p.parse_args()
-    run(group=a.group, resume=a.resume, limit=a.limit, reprocess=a.reprocess)
+    run(group=a.group, resume=a.resume, limit=a.limit, reprocess=a.reprocess,
+        max_minutes=a.max_minutes)
