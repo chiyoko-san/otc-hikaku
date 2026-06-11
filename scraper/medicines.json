@@ -1,6 +1,6 @@
 {
   "total": 7644,
-  "updated_at": "2026-06-11T01:05:24.066712",
+  "updated_at": "2026-06-11T01:13:12.334372",
   "medicines": [
     {
       "id": 1,
@@ -131822,15 +131822,21 @@
     {
       "name": "JPS五苓散料エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601009289_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "五苓散エキス（3/4量）(1.8g)"
+      ],
+      "effect": "体力に関わらず使用でき、のどが渇いて尿量が少ないもので、めまい、はきけ、嘔吐、腹痛、頭痛、むくみなどのいずれかを伴う次の諸症：\n水様性下痢、急性胃腸炎（しぶり腹のものには使用しないこと）、暑気あたり、頭痛、むくみ、二日酔",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "頭痛",
+        "下痢",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -131842,15 +131848,21 @@
     {
       "name": "JPS八味地黄丸料エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010345_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "八味地黄丸エキス（1／2量）(2.30g)"
+      ],
+      "effect": "体力中等度以下で、疲れやすくて、四肢が冷えやすく、尿量減少又は多尿で、ときに口渇があるものの次の諸症：\n下肢痛、腰痛、しびれ、高齢者のかすみ目、かゆみ、排尿困難、残尿感、夜間尿、頻尿、むくみ、高血圧に伴う随伴症状の改善（肩こり、頭重、耳鳴り）、軽い尿漏れ",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "eye",
+      "symptoms": [
+        "かゆみ",
+        "肉体疲労",
+        "腰痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -131862,15 +131874,20 @@
     {
       "name": "JPS六君子湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010820_06_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "六君子湯エキス（1／2量）(2.25g)"
+      ],
+      "effect": "体力中等度以下で、胃腸が弱く、食欲がなく、みぞおちがつかえ、疲れやすく、貧血性で手足が冷えやすいものの次の諸症：\n胃炎、胃腸虚弱、胃下垂、消化不良、食欲不振、胃痛、嘔吐",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "胃痛",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -131882,15 +131899,20 @@
     {
       "name": "JPS六味丸料エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010915_04_03",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "六味丸料乾燥エキス(２．５ｇ)"
+      ],
+      "effect": "体力中等度以下で、疲れやすくて尿量減少又は多尿で、ときに手足のほてり、口渇があるものの次の諸症：\n排尿困難、残尿感、頻尿、むくみ、かゆみ、夜尿症、しびれ",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "ext_skin",
+      "symptoms": [
+        "かゆみ",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -131902,15 +131924,21 @@
     {
       "name": "JPS加味逍遙散料エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601008920_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "加味逍遙散エキス(3／5量)(2.28g)"
+      ],
+      "effect": "体力中等度以下で、のぼせ感があり、肩がこり、疲れやすく、精神不安やいらだちなどの精神神経症状、ときに便秘の傾向のあるものの次の諸症：\n冷え症、虚弱体質、月経不順、月経困難、更年期障害、血の道症、不眠症",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "便秘",
+        "肉体疲労",
+        "不眠"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -131922,15 +131950,21 @@
     {
       "name": "JPS十味敗毒湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601009662_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "十味敗毒湯乾燥エキス(2.6g)"
+      ],
+      "effect": "体力中等度なものの皮膚疾患で、発赤があり、ときに化膿するものの次の諸症：\n化膿性皮膚疾患・急性皮膚疾患の初期、じんましん、湿疹・皮膚炎、水虫",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "ext_skin",
+      "symptoms": [
+        "肌荒れ",
+        "水虫",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -131942,15 +131976,20 @@
     {
       "name": "JPS半夏厚朴湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010412_03_04",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "半夏厚朴湯エキス（3／4量）(1．65g)"
+      ],
+      "effect": "体力中等度をめやすとして、気分がふさいで、咽喉・食道部に異物感があり、ときに動悸、めまい、嘔気などを伴う次の諸症：\n不安神経症、神経性胃炎、つわり、せき、しわがれ声、のどのつかえ感",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "せき",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -131962,15 +132001,22 @@
     {
       "name": "JPS半夏瀉心湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010450_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "半夏瀉心湯エキス（1／2量）(2．3g)"
+      ],
+      "effect": "体力中等度で、みぞおちがつかえた感じがあり、ときに悪心、嘔吐があり食欲不振で腹が鳴って軟便又は下痢の傾向のあるものの次の諸症：\n急・慢性胃腸炎、下痢・軟便、消化不良、胃下垂、神経性胃炎、胃弱、二日酔、げっぷ、胸やけ、口内炎、神経症",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "胸やけ",
+        "下痢",
+        "肉体疲労",
+        "口内炎"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132002,15 +132048,20 @@
     {
       "name": "JPS小柴胡湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601009728_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "小柴胡湯エキス（1／2量）(2．15g)"
+      ],
+      "effect": "体力中等度で、ときに脇腹（腹）からみぞおちあたりにかけて苦しく、食欲不振や口の苦味があり、舌に白苔がつくものの次の諸症：\n食欲不振、はきけ、胃炎、胃痛、胃腸虚弱、疲労感、かぜの後期の諸症状",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "胃痛",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132022,15 +132073,22 @@
     {
       "name": "JPS小青竜湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601009784_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "小青竜湯エキス（1／2量）(2.5g)"
+      ],
+      "effect": "体力中等度又はやや虚弱で、うすい水様のたんを伴うせきや鼻水が出るものの次の諸症：\n気管支炎、気管支ぜんそく、鼻炎、アレルギー性鼻炎、むくみ、感冒、花粉症",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "鼻水",
+        "せき",
+        "たん",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132042,15 +132100,21 @@
     {
       "name": "JPS当帰芍薬散料エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010204_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "当帰芍薬散エキス（1／2量）(2．3g)"
+      ],
+      "effect": "体力虚弱で、冷え症で貧血の傾向があり疲労しやすく、ときに下腹部痛、頭重、めまい、肩こり、耳鳴り、動悸などを訴えるものの次の諸症：\n月経不順、月経異常、月経痛、更年期障害、産前産後あるいは流産による障害　（貧血、疲労倦怠、めまい、むくみ）、めまい・立ちくらみ、頭重、肩こり、腰痛、足腰の冷え症、しもやけ、むくみ、しみ、耳鳴り",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "women",
+      "symptoms": [
+        "月経痛",
+        "肉体疲労",
+        "腰痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132062,15 +132126,23 @@
     {
       "name": "JPS桃核承気湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010140_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "桃核承気湯エキス（3／4量）(1．8g)"
+      ],
+      "effect": "体力中等度以上で、のぼせて便秘しがちなものの次の諸症：\n月経不順、月経困難症、月経痛、月経時や産後の精神不安、腰痛、便秘、高血圧の随伴症状（頭痛、めまい、肩こり）、痔疾、打撲症",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "頭痛",
+        "月経痛",
+        "便秘",
+        "肉体疲労",
+        "腰痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132082,15 +132154,19 @@
     {
       "name": "JPS桔梗石膏エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010938_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）,販売会社／クラシエ薬品（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "桔梗石膏エキス(1.54g)"
+      ],
+      "effect": "去痰、排膿",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cough",
+      "symptoms": [
+        "たん"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132102,15 +132178,28 @@
     {
       "name": "JPS漢方胃腸薬Ｎ",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_K1305000006_03_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
+      "ings": [
+        "ケイヒ(885.0mg)",
+        "エンゴサク(708.0mg)",
+        "ボレイ(708.0mg)",
+        "ウイキョウ(354.0mg)",
+        "シュクシャ(265.5mg)",
+        "カンゾウ(265.5mg)",
+        "リョウキョウ(123.9mg)",
+        "ブクリョウ(885.0mg)"
+      ],
+      "effect": "体力中等度以下で、腹部は力がなくて、神経過敏で胃痛又は腹痛があって、ときに胸やけや、げっぷ、胃もたれ、食欲不振、はきけ、嘔吐などを伴うものの次の諸症：\n神経性胃炎、慢性胃炎、胃腸虚弱",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
       "cat": "stomach",
-      "symptoms": [],
+      "symptoms": [
+        "胃痛",
+        "胸やけ",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132122,15 +132211,19 @@
     {
       "name": "JPS猪苓湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010096_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "猪苓湯乾燥エキス(1．56g)"
+      ],
+      "effect": "体力に関わらず使用でき、排尿異常があり、ときに口が渇くものの次の諸症：\n排尿困難、排尿痛、残尿感、頻尿、むくみ",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "kampo",
+      "symptoms": [
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132142,15 +132235,19 @@
     {
       "name": "JPS知柏地黄丸料エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_K1903000009_02_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／クラシエ薬品（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "知柏地黄丸料乾燥エキス(3,000mg)"
+      ],
+      "effect": "体力中等度以下で、疲れやすく胃腸障害がなく、口渇があるものの次の諸症：\n顔や四肢のほてり、排尿困難、頻尿、むくみ",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132162,15 +132259,21 @@
     {
       "name": "JPS続命湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_K2108000019_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "続命湯乾燥エキス(2.1g)"
+      ],
+      "effect": "体力中等度以上のものの次の諸症：\nしびれ、筋力低下、高血圧に伴う症状（めまい、耳鳴り、肩こり、頭痛、頭重、頭部圧迫感）、気管支炎、気管支ぜんそく、神経痛、関節のはれや痛み、頭痛、むくみ",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cough",
+      "symptoms": [
+        "頭痛",
+        "肉体疲労",
+        "神経痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132182,15 +132285,21 @@
     {
       "name": "JPS葛根湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601008737_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "葛根湯エキス(1／2量)(2.50g)"
+      ],
+      "effect": "体力中等度以上のものの次の諸症：\n感冒の初期（汗をかいていないもの）、鼻かぜ、鼻炎、頭痛、肩こり、筋肉痛、手や肩の痛み",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "頭痛",
+        "肉体疲労",
+        "筋肉痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132202,15 +132311,20 @@
     {
       "name": "JPS葛根湯加川きゅう辛夷エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601008870_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "葛根湯加川きゅう辛夷エキス（1／2量）(2．3g)"
+      ],
+      "effect": "比較的体力があるものの次の諸症：\n鼻づまり、蓄膿症（副鼻腔炎）、慢性鼻炎",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "allergy",
+      "symptoms": [
+        "鼻づまり",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132222,15 +132336,20 @@
     {
       "name": "JPS釣藤散料エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010072_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／クラシエ薬品（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "釣藤散エキス（1／2量）(2．5g)"
+      ],
+      "effect": "体力中等度で、慢性に経過する頭痛、めまい、肩こりなどがあるものの次の諸症：\n慢性頭痛、神経症、高血圧の傾向のあるもの",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "circu",
+      "symptoms": [
+        "頭痛",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132242,15 +132361,19 @@
     {
       "name": "JPS防已黄耆湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010542_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "防已黄耆湯エキス（4／5量）(2.24g)"
+      ],
+      "effect": "体力中等度以下で、疲れやすく、汗のかきやすい傾向があるものの次の諸症：\n肥満に伴う関節の腫れや痛み、むくみ、多汗症、肥満症（筋肉にしまりのない、いわゆる水ぶとり）",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "kampo",
+      "symptoms": [
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132262,15 +132385,21 @@
     {
       "name": "JPS麦門冬湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010316_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "麦門冬湯エキス（1／2量）(2.9g)"
+      ],
+      "effect": "体力中等度以下で、たんが切れにくく、ときに強くせきこみ、又は咽頭の乾燥感があるものの次の諸症：\nからぜき、気管支炎、気管支ぜんそく、咽頭炎、しわがれ声",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cough",
+      "symptoms": [
+        "せき",
+        "たん",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132282,15 +132411,23 @@
     {
       "name": "JPS麻杏よく甘湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010734_03_02",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "麻杏よく甘湯乾燥エキス(1．8g)"
+      ],
+      "effect": "体力中等度なものの次の諸症：\n関節痛、神経痛、筋肉痛、いぼ、手足のあれ（手足の湿疹・皮膚炎）",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "ext_skin",
+      "symptoms": [
+        "肌荒れ",
+        "肉体疲労",
+        "関節痛",
+        "筋肉痛",
+        "神経痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132302,15 +132439,20 @@
     {
       "name": "JPS麻杏甘石湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010700_03_03",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "麻杏甘石湯乾燥エキス散(2.96g)"
+      ],
+      "effect": "体力中等度以上で、せきが出て、ときにのどが渇くものの次の諸症：\nせき、小児ぜんそく、気管支ぜんそく、気管支炎、感冒、痔の痛み",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "せき",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132322,15 +132464,23 @@
     {
       "name": "JPS麻黄湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601010677_04_04",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "日局麻黄湯エキス(1．7g)"
+      ],
+      "effect": "体力充実して、かぜのひきはじめで、さむけがして発熱、頭痛があり、せきが出て身体のふしぶしが痛く汗が出ていないものの次の諸症：\n感冒、鼻かぜ、気管支炎、鼻づまり",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "頭痛",
+        "発熱",
+        "鼻づまり",
+        "せき",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132342,15 +132492,23 @@
     {
       "name": "JPS黄連解毒湯エキス錠N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/340008_J0601008626_06_02",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ジェーピーエス製薬（株）,販売会社／ジェーピーエス製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "黄連解毒湯エキス(1．6g)"
+      ],
+      "effect": "体力中等度以上で、のぼせ気味で顔色赤く、いらいらして落ち着かない傾向のあるものの次の諸症：\n鼻出血、不眠症、神経症、胃炎、二日酔、血の道症、めまい、動悸、更年期障害、湿疹・皮膚炎、皮膚のかゆみ、口内炎",
+      "risk": 2,
+      "maker": "ジェーピーエス製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "肌荒れ",
+        "かゆみ",
+        "肉体疲労",
+        "不眠",
+        "口内炎"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132362,15 +132520,17 @@
     {
       "name": "きずパットフィットN",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400032_J0801000245_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／大協薬品工業（株）\nHTML",
-      "cat": "vitamin",
+      "ings": [
+        "アクリノール水和物(0.8g)"
+      ],
+      "effect": "切り傷，すり傷，さし傷，かき傷，靴ずれ，創傷面の殺菌・消毒・被覆",
+      "risk": 3,
+      "maker": "大協薬品工業（株）",
+      "cat": "oral",
       "symptoms": [],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132382,16 +132542,28 @@
     {
       "name": "せきどめ顆粒N",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/610001_J0601012285_03_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／寧薬化学工業（株）\nHTML",
+      "ings": [
+        "ジヒドロコデインリン酸塩(30mg)",
+        "dl-メチルエフェドリン塩酸塩(75mg)",
+        "クロルフェニラミンマレイン酸塩(7.5mg)",
+        "グアイフェネシン(300mg)"
+      ],
+      "effect": "せき，たん",
+      "risk": 0,
+      "maker": "寧薬化学工業（株）",
       "cat": "cough",
-      "symptoms": [],
-      "warnIngs": [],
-      "drowsy": false,
-      "noteType": "",
-      "note": "",
+      "symptoms": [
+        "せき",
+        "たん"
+      ],
+      "warnIngs": [
+        "ジヒドロコデインリン酸塩",
+        "コデインリン酸塩",
+        "ジヒドロコデイン"
+      ],
+      "drowsy": true,
+      "noteType": "danger",
+      "note": "⚠コデイン系：12歳未満禁忌。依存リスクあり。 ⚠コデイン系：12歳未満禁忌。依存リスクあり。 ⚠コデイン系：12歳未満禁忌。依存リスクあり。",
       "source": "pmda",
       "asin": "",
       "rakuten_url": "",
@@ -132402,15 +132574,21 @@
     {
       "name": "アンチュンN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1501000108_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "水製エキス(0.9g)"
+      ],
+      "effect": "体力中等度以下で，腹部は力がなくて，胃痛又は腹痛があって，ときに胸やけや，げっぷ，胃もたれ，食欲不振，はきけ，嘔吐などを伴うものの次の諸症：神経性胃炎，慢性胃炎，胃腸虚弱",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "胃痛",
+        "胸やけ",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132422,15 +132600,20 @@
     {
       "name": "ウンセインN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1201000268_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "温清飲エキス散（1/2量）(4.08g)"
+      ],
+      "effect": "体力中等度で，皮膚はかさかさして色つやが悪く，のぼせるものの次の諸症：湿疹・皮膚炎，月経不順，月経困難，血の道症，更年期障害，神経症",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "ext_skin",
+      "symptoms": [
+        "肌荒れ",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132442,15 +132625,19 @@
     {
       "name": "エスプライン　ＳＡＲＳ−ＣｏＶ−２　Ｎ（一般用）",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/670773_K2211000028_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／富士レビオ株式会社\nHTML",
+      "ings": [
+        "反応カセット(抗SARS - CoV - 2モノクローナル抗体)",
+        "反応カセット(ALP標識抗SARS - CoV - 2モノクローナル抗体)",
+        "反応カセット(5-ブロモ-4-クロロ-3-インドリル−りん酸二ナトリウム塩)"
+      ],
+      "effect": "鼻腔ぬぐい液又は唾液中のSARS - CoV - 2抗原の検出\n（SARS - CoV - 2感染疑いの判定補助）",
+      "risk": 1,
+      "maker": "富士レビオ株式会社",
       "cat": "vitamin",
       "symptoms": [],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132462,15 +132649,24 @@
     {
       "name": "エルキスN",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/380071_J1001000172_04_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ゼネル薬工粉河（株）,販売会社／ゼネル薬品工業（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "ジフェンヒドラミン(1g)",
+        "リドカイン(0.5g)",
+        "イソプロピルメチルフェノール(0.1g)",
+        "酸化亜鉛(5g)"
+      ],
+      "effect": "湿疹，皮膚炎，ただれ，あせも，かぶれ，かゆみ，しもやけ，虫さされ，じんましん",
+      "risk": 2,
+      "maker": "ゼネル薬工粉河（株）",
+      "cat": "ext_skin",
+      "symptoms": [
+        "肌荒れ",
+        "かゆみ",
+        "虫刺され"
+      ],
       "warnIngs": [],
-      "drowsy": false,
-      "noteType": "",
+      "drowsy": true,
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132482,15 +132678,23 @@
     {
       "name": "オウゲインN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1201000024_03_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "黄連解毒湯エキス散(3／4量)(1.62g)"
+      ],
+      "effect": "体力中等度以上で，のぼせぎみで顔色赤く，いらいらして落ち着かない傾向のあるものの次の諸症：鼻出血，不眠症，神経症，胃炎，二日酔，血の道症，めまい，動悸，更年期障害，湿疹・皮膚炎，皮膚のかゆみ，口内炎",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "肌荒れ",
+        "かゆみ",
+        "肉体疲労",
+        "不眠",
+        "口内炎"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132502,15 +132706,20 @@
     {
       "name": "カッコーサンN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1501000109_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "エキス散(2.64g)"
+      ],
+      "effect": "体力中等度以下のものの次の諸症：感冒，暑さによる食欲不振，下痢，全身倦怠，急性胃腸炎",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "下痢",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132522,15 +132731,17 @@
     {
       "name": "カールバンN",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400032_J0801000242_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／大協薬品工業（株）\nHTML",
-      "cat": "vitamin",
+      "ings": [
+        "アクリノール水和物(0.8g)"
+      ],
+      "effect": "切り傷，すり傷，さし傷，かき傷，靴ずれ，創傷面の殺菌・消毒・被覆",
+      "risk": 3,
+      "maker": "大協薬品工業（株）",
+      "cat": "oral",
       "symptoms": [],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132542,15 +132753,17 @@
     {
       "name": "キズプラスターフィットN",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400032_J0801000247_02_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／大協薬品工業（株）,販売会社／日本薬剤（株）\nHTML",
-      "cat": "vitamin",
+      "ings": [
+        "アクリノール水和物(0.8g)"
+      ],
+      "effect": "切傷，すり傷，さし傷，かき傷，靴ずれ，創傷面の殺菌・消毒・被覆",
+      "risk": 3,
+      "maker": "大協薬品工業（株）",
+      "cat": "oral",
       "symptoms": [],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132562,15 +132775,19 @@
     {
       "name": "キュウキインN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1801000227_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "エキス散(4.32g)"
+      ],
+      "effect": "体力中等度以下のものの次の諸症。ただし産後の場合は体力に関わらず使用できる。：血の道症，月経不順，産後の体力低下",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "women",
+      "symptoms": [
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132582,15 +132799,23 @@
     {
       "name": "クリーンデンタルN",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/530283_J1501000256_03_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／日本ゼトック（株）,販売会社／第一三共ヘルスケア（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "トコフェロール酢酸エステル(2g)",
+        "ヒノキチオール(0.1g)",
+        "セチルピリジニウム塩化物水和物(0.05g)",
+        "グリチルリチン酸二カリウム(0.4g)",
+        "アラントイン(0.3g)"
+      ],
+      "effect": "歯肉炎・歯槽膿漏における諸症状（歯ぐきのはれ・出血・痛み・うみ・発赤・むずがゆさ，口のねばり，口臭）の緩和，口内炎",
+      "risk": 3,
+      "maker": "日本ゼトック（株）",
+      "cat": "oral",
+      "symptoms": [
+        "口内炎"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132602,15 +132827,19 @@
     {
       "name": "クロマイ-N軟膏",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/430549_K1103000029_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／第一三共ヘルスケア（株）\nHTML",
-      "cat": "vitamin",
+      "ings": [
+        "クロラムフェニコール(20mg(力価))",
+        "フラジオマイシン硫酸塩(5mg(力価))",
+        "ナイスタチン(10万単位)"
+      ],
+      "effect": "化膿性皮膚疾患（とびひ，めんちょう，毛のう炎）",
+      "risk": 2,
+      "maker": "第一三共ヘルスケア（株）",
+      "cat": "ext_skin",
       "symptoms": [],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132622,15 +132851,30 @@
     {
       "name": "コデビタこどもかぜシロップｎ",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/670055_K2505000012_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／福地製薬株式会社\nHTML",
+      "ings": [
+        "アセトアミノフェン(300mg)",
+        "dl-メチルエフェドリン塩酸塩(20mg)",
+        "デキストロメトルファン臭化水素酸塩水和物(16mg)",
+        "グアヤコールスルホン酸カリウム(80mg)",
+        "ジフェンヒドラミン塩酸塩(25mg)",
+        "南天実流エキス(0.9mL(原生薬換算量：900mg))",
+        "カンゾウエキス(275mg(原生薬換算量：1100mg))"
+      ],
+      "effect": "かぜの諸症状（鼻水、鼻づまり、くしゃみ、のどの痛み、せき、たん、悪寒、発熱、頭痛、関節の痛み、筋肉の痛み）の緩和",
+      "risk": 0,
+      "maker": "福地製薬株式会社",
       "cat": "cold",
-      "symptoms": [],
+      "symptoms": [
+        "頭痛",
+        "発熱",
+        "鼻水",
+        "鼻づまり",
+        "せき",
+        "たん"
+      ],
       "warnIngs": [],
-      "drowsy": false,
-      "noteType": "",
+      "drowsy": true,
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132642,15 +132886,19 @@
     {
       "name": "ゴリンサンN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1001000327_05_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
+      "ings": [
+        "エキス散(3.36g)"
+      ],
+      "effect": "体力中等度のものの次の諸症：排尿痛，頻尿，残尿感，尿のにごり",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
       "cat": "vitamin",
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132662,15 +132910,21 @@
     {
       "name": "ゴレーンN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1501000157_02_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "五苓散エキス（1/2量）(1.6g)"
+      ],
+      "effect": "体力に関わらず使用でき，のどが渇いて尿量が少ないもので，めまい，はきけ，嘔吐，腹痛，頭痛，むくみなどのいずれかを伴う次の諸症：水様性下痢，急性胃腸炎（しぶり腹のものには使用しないこと），暑気あたり，頭痛，むくみ，二日酔",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "頭痛",
+        "下痢",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132682,15 +132936,20 @@
     {
       "name": "サイボックN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J2001000186_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "柴朴湯エキス散(1／2量)(3.6g)"
+      ],
+      "effect": "体力中等度で，気分がふさいで，咽喉，食道部に異物感があり，かぜをひきやすく，ときに動悸，めまい，嘔気などを伴うものの次の諸症：気管支ぜんそく，小児ぜんそく，せき，気管支炎，不安神経症，虚弱体質",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "せき",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132702,15 +132961,21 @@
     {
       "name": "サイリュンN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1201000029_02_02",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "エキス散(3g)"
+      ],
+      "effect": "体力中等度以上で，精神不安があって，動悸，不眠，便秘などを伴う次の諸症：高血圧の随伴症状（動悸，不安，不眠），神経症，更年期神経症，小児夜泣き，便秘",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "便秘",
+        "肉体疲労",
+        "不眠"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132722,15 +132987,22 @@
     {
       "name": "サンワロンN",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300303_J0601010974_08_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／三和生薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "サンワロンN水製エキス(2g)",
+        "加工ブシ末(1g)"
+      ],
+      "effect": "体力虚弱で，手足の冷えが強く，疲れやすいものの次の諸症：胃腸虚弱，下痢，嘔吐，胃痛，腹痛，急・慢性胃炎",
+      "risk": 2,
+      "maker": "三和生薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "胃痛",
+        "下痢",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132742,15 +133014,22 @@
     {
       "name": "サンワロンN顆粒",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300303_J0601010975_08_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／三和生薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "サンワロンN水製エキス(2g)",
+        "加工ブシ末(1g)"
+      ],
+      "effect": "体力虚弱で，手足の冷えが強く，疲れやすいものの次の諸症：胃腸虚弱，下痢，嘔吐，胃痛，腹痛，急・慢性胃炎",
+      "risk": 2,
+      "maker": "三和生薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "胃痛",
+        "下痢",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132762,15 +133041,21 @@
     {
       "name": "シギロンN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1901000068_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "エキス散(1.5g)"
+      ],
+      "effect": "体力中等度以上で，胸腹部に重苦しさがあり，ときに不安，不眠などがあるものの次の諸症：胃炎，胃痛，腹痛，神経症",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "胃痛",
+        "肉体疲労",
+        "不眠"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132782,15 +133067,23 @@
     {
       "name": "シモラN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1401000439_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "エキス散(3.42g)"
+      ],
+      "effect": "体力中等度以下で，手足の冷えを感じ，下肢の冷えが強く，下肢又は下腹部が痛くなりやすいものの次の諸症：冷え症，しもやけ，頭痛，下腹部痛，腰痛，下痢，月経痛",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "stomach",
+      "symptoms": [
+        "頭痛",
+        "月経痛",
+        "下痢",
+        "肉体疲労",
+        "腰痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -132802,15 +133095,20 @@
     {
       "name": "ショウサインN「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J1401000018_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "小柴胡湯エキス散(1／2量)(3.25g)"
+      ],
+      "effect": "体力中等度で，ときに脇腹（腹）からみぞおちあたりにかけて苦しく，食欲不振や口の苦味があり，舌に白苔がつくものの次の諸症：食欲不振，はきけ，胃炎，胃痛，胃腸虚弱，疲労感，かぜの後期の諸症状",
+      "risk": 2,
+      "maker": "小太郎漢方製薬（株）",
+      "cat": "cold",
+      "symptoms": [
+        "胃痛",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
