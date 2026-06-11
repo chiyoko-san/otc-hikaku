@@ -1,6 +1,6 @@
 {
   "total": 7644,
-  "updated_at": "2026-06-11T21:38:30.072800",
+  "updated_at": "2026-06-11T21:48:17.383561",
   "medicines": [
     {
       "id": 1,
@@ -94715,15 +94715,23 @@
     {
       "name": "新ヘパリーゼプラス",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/380077_J0601005246_03_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／ゼリア新薬工業（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "肝臓水解物(600mg)",
+        "ジクロロ酢酸ジイソプロピルアミン(30mg)",
+        "リボフラビン(12mg)",
+        "トコフェロール酢酸エステル(9mg)"
+      ],
+      "effect": "滋養強壮，胃腸障害・栄養障害・病中病後・肉体疲労・発熱性消耗性疾患・妊娠授乳期などの場合の栄養補給，虚弱体質",
+      "risk": 3,
+      "maker": "ゼリア新薬工業（株）",
+      "cat": "cold",
+      "symptoms": [
+        "発熱",
+        "肉体疲労"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -107840,15 +107848,26 @@
     {
       "name": "ノックペインA",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400348_K2410000002_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／田村薬品工業（株）\nHTML",
-      "cat": "vitamin",
-      "symptoms": [],
+      "ings": [
+        "アセトアミノフェン(900mg)"
+      ],
+      "effect": "１)頭痛・歯痛・抜歯後の疼痛・咽喉痛（のどの痛み）・耳痛・関節痛・神経痛・腰痛・筋肉痛・肩こり痛・打撲痛・骨折痛・ねんざに伴う痛み（ねんざ痛）・月経痛・外傷痛の鎮痛\n２）悪寒（発熱によるさむけ）・発熱時の解熱",
+      "risk": 2,
+      "maker": "田村薬品工業（株）",
+      "cat": "cold",
+      "symptoms": [
+        "頭痛",
+        "発熱",
+        "のど痛",
+        "月経痛",
+        "腰痛",
+        "関節痛",
+        "筋肉痛",
+        "神経痛"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
