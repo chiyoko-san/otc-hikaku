@@ -1,6 +1,6 @@
 {
   "total": 7644,
-  "updated_at": "2026-06-11T21:48:17.383561",
+  "updated_at": "2026-06-11T21:57:57.910975",
   "medicines": [
     {
       "id": 1,
@@ -115110,15 +115110,17 @@
     {
       "name": "消毒用エタノールMIX",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/200094_J1401000284_01_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／兼一薬品工業（株）,販売元／日興製薬販売（株）\nHTML",
-      "cat": "disinfect",
+      "ings": [
+        "消毒用エタノール"
+      ],
+      "effect": "手指・皮膚の洗浄・消毒",
+      "risk": 0,
+      "maker": "兼一薬品工業（株）",
+      "cat": "ext_skin",
       "symptoms": [],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
@@ -123915,15 +123917,23 @@
     {
       "name": "大正胃腸薬Ｇ",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400059_K2008000030_02_01",
-      "ings": [],
-      "effect": "",
-      "risk": 2.5,
-      "maker": "／大正製薬（株）\nHTML",
+      "ings": [
+        "炭酸水素ナトリウム(200mg)",
+        "ケイ酸アルミン酸マグネシウム(300mg)",
+        "ロートエキス3倍散(30mg)",
+        "ソファルコン(100mg)"
+      ],
+      "effect": "胸やけ，胃痛，胃酸過多，胃部不快感，はきけ（胃のむかつき，二日酔・悪酔のむかつき，嘔気），飲みすぎ，胃部膨満感，胃もたれ，胃重，胸つかえ，げっぷ，嘔吐",
+      "risk": 2,
+      "maker": "大正製薬（株）",
       "cat": "stomach",
-      "symptoms": [],
+      "symptoms": [
+        "胃痛",
+        "胸やけ"
+      ],
       "warnIngs": [],
       "drowsy": false,
-      "noteType": "",
+      "noteType": "nn",
       "note": "",
       "source": "pmda",
       "asin": "",
