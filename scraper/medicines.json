@@ -1,6 +1,6 @@
 {
   "total": 7644,
-  "updated_at": "2026-06-12T01:53:01.785754",
+  "updated_at": "2026-06-12T02:00:53.919485",
   "medicines": [
     {
       "id": 1,
@@ -207412,14 +207412,27 @@
     {
       "name": "キューピーコーワコンドロイザーα",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270072_J2101000138_01_02",
-      "maker": "／興和株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "興和株式会社",
+      "effect": "次の諸症状※の緩和：関節痛・筋肉痛（肩・腰・肘・膝痛，肩こり，五十肩など），神経痛，手足のしびれ，便秘，眼精疲労（慢性的な目の疲れ及びそれに伴う目のかすみ・目の奥の痛み）。\n脚気※。\n次の場合のビタミンB1の補給：肉体疲労時，妊娠・授乳期，病中病後の体力低下時",
+      "ings": [
+        "ボウイ乾燥エキス(240mg)",
+        "コンドロイチン硫酸エステルナトリウム(900mg)",
+        "ベンフォチアミン(13.83mg)",
+        "メコバラミン(60μg)",
+        "ガンマ-オリザノール(10mg)"
+      ],
+      "risk": 2,
+      "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘",
+        "肉体疲労",
+        "眼精疲労",
+        "関節痛",
+        "筋肉痛",
+        "神経痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000512,
@@ -207432,14 +207445,29 @@
     {
       "name": "キューピーコーワゴールドα",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270072_J0607000433_03_04",
-      "maker": "／興和株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "興和株式会社",
+      "effect": "滋養強壮，虚弱体質，肉体疲労・病後の体力低下・食欲不振・栄養障害・発熱性消耗性疾患・妊娠授乳期などの場合の栄養補給",
+      "ings": [
+        "エゾウコギ乾燥エキス(12mg)",
+        "オウギ乾燥エキス(30mg)",
+        "オキソアミヂン末(50mg)",
+        "L-アルギニン塩酸塩(50mg)",
+        "チアミン硝化物(10mg)",
+        "リボフラビン(4mg)",
+        "ピリドキシン塩酸塩(10mg)",
+        "トコフェロールコハク酸エステルカルシウム(20.7mg)",
+        "L-アスコルビン酸ナトリウム(112.6mg)",
+        "ニコチン酸アミド(25mg)",
+        "無水カフェイン(50mg)"
+      ],
+      "risk": 3,
+      "cat": "cold",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "発熱",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000513,
@@ -207452,14 +207480,28 @@
     {
       "name": "キューピーコーワゴールドα錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270072_K1804000002_02_03",
-      "maker": "／興和株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "興和株式会社",
+      "effect": "●疲労の回復・予防\n●日常生活における栄養不良に伴う身体不調の改善・予防：疲れやすい・疲れが残る・体力がない・身体が重い・身体がだるい\n●病中病後の体力低下時, 発熱を伴う消耗性疾患時, 食欲不振時, 妊娠授乳期又は産前産後等の栄養補給",
+      "ings": [
+        "エゾウコギ乾燥エキス(16.0mg)",
+        "オキソアミヂン末(50.0mg)",
+        "チアミン硝化物（V.B1）(10.0mg)",
+        "リボフラビン（V.B2）(4.0mg)",
+        "ピリドキシン塩酸塩（V.B6）(10.0mg)",
+        "ニコチン酸アミド(25.0mg)",
+        "L-アスコルビン酸ナトリウム(112.6mg)",
+        "トコフェロールコハク酸エステルカルシウム(20.7mg)",
+        "L‐アルギニン塩酸塩(60.0mg)",
+        "無水カフェイン(50.0mg)"
+      ],
+      "risk": 0,
+      "cat": "cold",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "発熱",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000514,
@@ -207492,14 +207534,28 @@
     {
       "name": "キューピーコーワゴールドＺＥＲＯドリンク",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270072_K2308000028_01_01",
-      "maker": "／興和株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "興和株式会社",
+      "effect": "●疲労の回復・予防\n●日常生活における栄養不良に伴う身体不調の改善・予防：疲れやすい・疲れが残る・体力がない・身体が重い・身体がだるい，肩・首・腰又は膝の不調，冷えやすい・血行が悪い，肌の不調（肌荒れ，肌の乾燥），二日酔いに伴う食欲の低下・だるさ\n●体力，身体抵抗力又は集中力の維持・改善\n●虚弱体質（加齢による身体虚弱を含む。）に伴う身体不調の改善・予防\n●病中病後の体力低下時，発熱を伴う消耗性疾患時，食欲不振時，妊娠授乳期又は産前産後等の栄養補給",
+      "ings": [
+        "オキソアミヂン(100mg)",
+        "エゾウコギエキス(30mg)",
+        "ニンジン乾燥エキス(45mg)",
+        "ニコチン酸アミド(25mg)",
+        "L-アルギニン塩酸塩(50mg)",
+        "チアミン硝化物(10mg)",
+        "リボフラビンリン酸エステルナトリウム(5mg)",
+        "ピリドキシン塩酸塩(10mg)",
+        "無水カフェイン(50mg)"
+      ],
+      "risk": 0,
+      "cat": "cold",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "発熱",
+        "肌荒れ",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000516,
@@ -207512,14 +207568,22 @@
     {
       "name": "アスタシオン点鼻薬クール",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/180150_K2604000002_01_01",
-      "maker": "／奥田製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
-      "drowsy": false,
+      "maker": "奥田製薬（株）",
+      "effect": "急性鼻炎，アレルギー性鼻炎又は副鼻腔炎による次の諸症状の緩和：鼻づまり，鼻みず（鼻汁過多），くしゃみ，頭重（頭が重い）",
+      "ings": [
+        "ナファゾリン塩酸塩(50mg)",
+        "クロルフェニラミンマレイン酸塩(500mg)",
+        "リドカイン(300mg)",
+        "ベンゼトニウム塩化物(20mg)"
+      ],
+      "risk": 2,
+      "cat": "allergy",
+      "drowsy": true,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "鼻水",
+        "鼻づまり"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000517,
@@ -207532,14 +207596,22 @@
     {
       "name": "コネクタス点鼻薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/180150_J2101000013_01_01",
-      "maker": "／奥田製薬（株）,販売会社／奥田製薬株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
-      "drowsy": false,
+      "maker": "奥田製薬（株）",
+      "effect": "急性鼻炎，アレルギー性鼻炎又は副鼻腔炎による次の諸症状の緩和：鼻づまり，鼻みず（鼻汁過多），くしゃみ，頭重（頭が重い）",
+      "ings": [
+        "ナファゾリン塩酸塩(50mg)",
+        "クロルフェニラミンマレイン酸塩(500mg)",
+        "リドカイン(300mg)",
+        "ベンゼトニウム塩化物(20mg)"
+      ],
+      "risk": 2,
+      "cat": "allergy",
+      "drowsy": true,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "鼻水",
+        "鼻づまり"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000518,
@@ -207552,14 +207624,19 @@
     {
       "name": "シナール配合錠C",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/342681_J2601000037_01_01",
-      "maker": "／シオノギヘルスケア（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "シオノギヘルスケア（株）",
+      "effect": "次の諸症状※の緩和：しみ，そばかす，日焼け・かぶれによる色素沈着。\n次の場合のビタミンCの補給：肉体疲労時，妊娠・授乳期，病中病後の体力低下時，老年期。\n次の場合※の出血予防：歯ぐきからの出血，鼻血",
+      "ings": [
+        "アスコルビン酸(1800mg)",
+        "パントテン酸カルシウム(27mg)"
+      ],
+      "risk": 3,
+      "cat": "ext_skin",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000519,
@@ -207572,14 +207649,20 @@
     {
       "name": "アムティパップ",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400206_K2604000007_01_01",
-      "maker": "／（株）タカミツ\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）タカミツ",
+      "effect": "肩こりに伴う肩の痛み，腰痛，関節痛，筋肉痛，腱鞘炎（手・手首・足首の痛みとはれ），肘の痛み（テニス肘など），打撲，捻挫",
+      "ings": [
+        "フェルビナク(0.5g)"
+      ],
+      "risk": 2,
+      "cat": "joint",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "腰痛",
+        "関節痛",
+        "筋肉痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000520,
@@ -207592,11 +207675,15 @@
     {
       "name": "エタノール消毒綿80％A",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/370046_J2601000048_01_01",
-      "maker": "／スズラン（株）,販売会社／オオサキメディカル（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "disinfect",
+      "maker": "スズラン（株）",
+      "effect": "手指・皮膚の消毒，医療機器の消毒",
+      "ings": [
+        "エタノール(83mL)",
+        "精製水",
+        "医療脱脂綿(19g)"
+      ],
+      "risk": 3,
+      "cat": "ext_skin",
       "drowsy": false,
       "warnIngs": [],
       "symptoms": [],
@@ -207612,14 +207699,18 @@
     {
       "name": "DHC アロエ便秘薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/470158_J1301000136_02_01",
-      "maker": "／（株）ディーエイチシー\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "（株）ディーエイチシー",
+      "effect": "便秘。便秘に伴う次の症状の緩和：肌あれ，吹出物，のぼせ，頭重，食欲不振（食欲減退），腹部膨満，腸内異常醗酵，痔",
+      "ings": [
+        "アロエ末(750mg)"
+      ],
+      "risk": 3,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000522,
@@ -207632,14 +207723,20 @@
     {
       "name": "DHC漢方 当帰芍薬散エキス錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/470158_J2001000081_01_01",
-      "maker": "／（株）ディーエイチシー\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "kampo",
+      "maker": "（株）ディーエイチシー",
+      "effect": "体力虚弱で，冷え症で貧血の傾向があり疲労しやすく，ときに下腹部痛，頭重，めまい，肩こり，耳鳴り，動悸などを訴えるものの次の諸症：月経不順，月経異常，月経痛，更年期障害，産前産後あるいは流産による障害（貧血，疲労倦怠，めまい，むくみ），めまい・立ちくらみ，頭重，肩こり，腰痛，足腰の冷え症，しもやけ，むくみ，しみ，耳鳴り",
+      "ings": [
+        "当帰芍薬散エキス(1／2量)(1650mg)"
+      ],
+      "risk": 2,
+      "cat": "women",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "月経痛",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000523,
@@ -207652,14 +207749,19 @@
     {
       "name": "DHC漢方 芍薬甘草湯エキス錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/470158_J2201000075_01_01",
-      "maker": "／（株）ディーエイチシー\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "（株）ディーエイチシー",
+      "effect": "体力に関わらず使用でき，筋肉の急激なけいれんを伴う痛みのあるものの次の諸症：こむらがえり，筋肉のけいれん，腹痛，腰痛",
+      "ings": [
+        "芍薬甘草湯エキス(1／2量)(900mg)"
+      ],
+      "risk": 2,
       "cat": "kampo",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000524,
@@ -207672,14 +207774,23 @@
     {
       "name": "NFカロヤンガッシュ",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/650037_J0601007647_07_01",
-      "maker": "／ニプロファーマ（株）,販売会社／第一三共ヘルスケア（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "ニプロファーマ（株）",
+      "effect": "■壮年性脱毛症，円形脱毛症，びまん性脱毛症，粃糠性脱毛症\n■発毛促進，育毛，脱毛（抜毛）の予防，薄毛\n■ふけ，かゆみ\n■病後・産後の脱毛",
+      "ings": [
+        "カルプロニウム塩化物水和物(2.18g)",
+        "カシュウチンキ(3mL)",
+        "チクセツニンジンチンキ(3mL)",
+        "ヒノキチオール(0.05g)",
+        "パントテニールエチルエーテル(1g)",
+        "l-メントール(0.3g)"
+      ],
+      "risk": 3,
+      "cat": "ext_skin",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "かゆみ"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000525,
@@ -207692,14 +207803,20 @@
     {
       "name": "「クラシエ」漢方当帰芍薬散料エキス顆粒",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/252468_K1809000021_02_01",
-      "maker": "／クラシエ（株）,販売会社／クラシエ薬品（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "kampo",
+      "maker": "クラシエ（株）",
+      "effect": "体力虚弱で，冷え症で貧血の傾向があり疲労しやすく，ときに下腹部痛，頭重，めまい，肩こり，耳鳴り，動悸などを訴えるものの次の諸症：月経不順，月経異常，月経痛，更年期障害，産前産後あるいは流産による障害（貧血，疲労倦怠，めまい，むくみ），めまい・立ちくらみ，頭重，肩こり，腰痛，足腰の冷え症，しもやけ，むくみ，しみ，耳鳴り",
+      "ings": [
+        "当帰芍薬散エキス（1/2量）(2,500mg)"
+      ],
+      "risk": 2,
+      "cat": "women",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "月経痛",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000526,
@@ -207712,14 +207829,19 @@
     {
       "name": "「クラシエ」漢方芍薬甘草湯エキス顆粒",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/252468_J0701000798_05_01",
-      "maker": "／クラシエ（株）,販売会社／クラシエ薬品（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "クラシエ（株）",
+      "effect": "体力に関わらず使用でき，筋肉の急激なけいれんを伴う痛みのあるものの次の諸症：こむらがえり，筋肉のけいれん，腹痛，腰痛",
+      "ings": [
+        "芍薬甘草湯エキス（1/2量）(1,450mg)"
+      ],
+      "risk": 2,
       "cat": "kampo",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000527,
@@ -207732,14 +207854,22 @@
     {
       "name": "うどんや風一夜薬顆粒",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/160050_J1901000124_01_01",
-      "maker": "／（株）うどんや風一夜薬本舗\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）うどんや風一夜薬本舗",
+      "effect": "かぜの諸症状（のどの痛み，悪寒（発熱による寒気），発熱，頭痛，関節の痛み，筋肉の痛み）の緩和",
+      "ings": [
+        "エテンザミド(900mg)",
+        "アセトアミノフェン(360mg)",
+        "無水カフェイン(150mg)",
+        "ショウキョウ末(1000mg)"
+      ],
+      "risk": 0,
+      "cat": "cold",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "頭痛",
+        "発熱"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000528,
@@ -207752,14 +207882,25 @@
     {
       "name": "アイルビーロイヤル",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/160033_J0901000122_04_01",
-      "maker": "／牛津製薬（株）,販売会社／日邦薬品工業（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "牛津製薬（株）",
+      "effect": "目の疲れ，眼病予防（水泳のあと，ほこりや汗が目に入ったときなど），紫外線その他の光線による眼炎（雪目など），眼瞼炎（まぶたのただれ），ハードコンタクトレンズを装着しているときの不快感，目のかゆみ，目のかすみ（目やにの多いときなど）",
+      "ings": [
+        "ネオスチグミンメチル硫酸塩(0.005％)",
+        "シアノコバラミン(0.005％)",
+        "フラビンアデニンジヌクレオチドナトリウム(0.04％)",
+        "ピリドキシン塩酸塩(0.02％)",
+        "アミノエチルスルホン酸(タウリン)(1％)",
+        "コンドロイチン硫酸エステルナトリウム(0.2％)"
+      ],
+      "risk": 3,
+      "cat": "eye",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "目のかゆみ",
+        "かゆみ",
+        "眼精疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000529,
@@ -207772,14 +207913,31 @@
     {
       "name": "アイルビーロイヤルEX",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300041_J2601000059_01_01",
-      "maker": "／佐賀製薬（株）,販売元／日邦薬品工業（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
-      "drowsy": false,
+      "maker": "佐賀製薬（株）",
+      "effect": "目の疲れ，結膜充血，眼病予防（水泳のあと，ほこりや汗が目に入ったときなど），紫外線その他の光線による眼炎（雪目など），眼瞼炎（まぶたのただれ），ハードコンタクトレンズを装着しているときの不快感，目のかゆみ，目のかすみ（目やにの多いときなど）",
+      "ings": [
+        "シアノコバラミン(10mg)",
+        "ネオスチグミンメチル硫酸塩(5mg)",
+        "ピリドキシン塩酸塩(50mg)",
+        "パンテノール(100mg)",
+        "アスパラギン酸カリウム・マグネシウム(1000mg)",
+        "アミノエチルスルホン酸(タウリン)(400mg)",
+        "コンドロイチン硫酸エステルナトリウム(250mg)",
+        "クロルフェニラミンマレイン酸塩(30mg)",
+        "塩酸テトラヒドロゾリン(50mg)",
+        "イプシロン-アミノカプロン酸(1000mg)",
+        "グリチルリチン酸二カリウム(250mg)",
+        "ベルベリン硫酸塩水和物(10mg)"
+      ],
+      "risk": 2,
+      "cat": "eye",
+      "drowsy": true,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "目のかゆみ",
+        "かゆみ",
+        "眼精疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000530,
@@ -207812,14 +207970,25 @@
     {
       "name": "アカシカローヤルα",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400080_J1901000053_01_01",
-      "maker": "／大同薬品工業（株）,販売会社／成光薬品工業（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "大同薬品工業（株）",
+      "effect": "滋養強壮，虚弱体質，肉体疲労・病中病後・食欲不振・栄養障害・発熱性消耗性疾患・妊娠授乳期などの場合の栄養補給",
+      "ings": [
+        "リボフラビンリン酸エステルナトリウム(3mg)",
+        "ピリドキシン塩酸塩(10mg)",
+        "ニコチン酸アミド(20mg)",
+        "ジクロロ酢酸ジイソプロピルアミン(15mg)",
+        "無水カフェイン(50mg)",
+        "ロクジョウ精「成光」(75μL)",
+        "ゴオウチンキ(100μL)"
+      ],
+      "risk": 3,
+      "cat": "cold",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "発熱",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000532,
@@ -207832,14 +208001,18 @@
     {
       "name": "アクアナチュラル便秘薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300094_J1001000014_04_01",
-      "maker": "／佐藤薬品工業（株）,販売会社／フジックス（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "佐藤薬品工業（株）",
+      "effect": "○便秘\n○便秘に伴う次の症状の緩和：頭重，のぼせ，肌あれ，吹出物，食欲不振，腹部膨満，腸内異常醗酵，痔",
+      "ings": [
+        "酸化マグネシウム(2000mg)"
+      ],
+      "risk": 3,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000533,
@@ -207852,14 +208025,18 @@
     {
       "name": "アクアナチュラル便秘薬S",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300094_J2601000015_01_01",
-      "maker": "／佐藤薬品工業（株）,販売会社／フジックス（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "佐藤薬品工業（株）",
+      "effect": "○便秘\n○便秘に伴う次の症状の緩和：頭重，のぼせ，肌あれ，吹出物，食欲不振（食欲減退），腹部膨満，腸内異常醗酵，痔",
+      "ings": [
+        "酸化マグネシウム(2000mg)"
+      ],
+      "risk": 3,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000534,
@@ -207872,14 +208049,30 @@
     {
       "name": "ケアエージ",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300009_K2604000011_01_01",
-      "maker": "／剤盛堂薬品（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "剤盛堂薬品（株）",
+      "effect": "次の場合の滋養強壮：虚弱体質、肉体疲労、病中病後、胃腸虚弱、食欲不振、血色不良、冷え症",
+      "ings": [
+        "オンジエキス末(72mg)",
+        "コウジンエキス末(700mg)",
+        "ゴミシエキス末(100mg)",
+        "ジオウエキス末(135mg)",
+        "シャクヤクエキス末(100mg)",
+        "センキュウエキス末(100mg)",
+        "トウキエキス末(150mg)",
+        "牛胆汁エキス末(50mg)",
+        "カンゾウ末(150mg)",
+        "サンヤク末(310mg)",
+        "ハンピ末(360mg)",
+        "ビャクジュツ末(100mg)",
+        "ブクリョウ末(150mg)"
+      ],
+      "risk": 3,
+      "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000535,
@@ -207892,12 +208085,20 @@
     {
       "name": "すあしの健",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/820021_K2604000014_01_01",
-      "maker": "／株式会社雪の元本店,販売会社／さくらフォレスト株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "株式会社雪の元本店",
+      "effect": "みずむし、いんきんたむし、ぜにたむし",
+      "ings": [
+        "ブテナフィン塩酸塩(1.0g)",
+        "グリチルレチン酸(0.5g)",
+        "クロルフェニラミンマレイン酸塩(0.25g)",
+        "クロタミトン(5.0g)",
+        "イソプロピルメチルフェノール(0.3g)",
+        "リドカイン(2.0g)",
+        "dl-カンフル(1.0g)"
+      ],
+      "risk": 0,
       "cat": "vitamin",
-      "drowsy": false,
+      "drowsy": true,
       "warnIngs": [],
       "symptoms": [],
       "note": "",
@@ -207912,16 +208113,35 @@
     {
       "name": "ジキニン総合感冒薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/380101_K2405000005_01_01",
-      "maker": "／全薬工業(株)\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "全薬工業(株)",
+      "effect": "かぜの諸症状（発熱、せき、頭痛、のどの痛み、たん、くしゃみ、鼻水、鼻づまり、悪寒\n（発熱によるさむけ）、関節の痛み、筋肉の痛み）の緩和",
+      "ings": [
+        "アセトアミノフェン(900mg)",
+        "ジヒドロコデインリン酸塩(24mg)",
+        "dl-メチルエフェドリン塩酸塩(60mg)",
+        "クロルフェニラミンマレイン酸塩(7.5mg)",
+        "無水カフェイン(75mg)",
+        "カンゾウ（甘草）エキス(450mg)",
+        "ビスベンチアミン(24mg)"
+      ],
+      "risk": 0,
       "cat": "cold",
-      "drowsy": false,
-      "warnIngs": [],
-      "symptoms": [],
-      "note": "",
-      "noteType": "nn",
+      "drowsy": true,
+      "warnIngs": [
+        "ジヒドロコデインリン酸塩",
+        "コデインリン酸塩",
+        "ジヒドロコデイン"
+      ],
+      "symptoms": [
+        "頭痛",
+        "発熱",
+        "鼻水",
+        "鼻づまり",
+        "せき",
+        "たん"
+      ],
+      "note": "⚠コデイン系：12歳未満禁忌。依存リスクあり。 ⚠コデイン系：12歳未満禁忌。依存リスクあり。 ⚠コデイン系：12歳未満禁忌。依存リスクあり。",
+      "noteType": "danger",
       "id": 1000537,
       "price": null,
       "asin": "",
@@ -207932,12 +208152,21 @@
     {
       "name": "ヒビヒフールαプラス",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/630357_J2501000159_01_01",
-      "maker": "／万協製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
-      "drowsy": false,
+      "maker": "万協製薬（株）",
+      "effect": "ひじ・ひざ・かかとのあれ，ひび，あかぎれ，指先・手のひらのあれ，しもやけ",
+      "ings": [
+        "ビタミンA油(0.5g)",
+        "トコフェロール酢酸エステル(2g)",
+        "アラントイン(0.2g)",
+        "グリチルレチン酸(0.3g)",
+        "イソプロピルメチルフェノール(0.1g)",
+        "ジフェンヒドラミン(0.5g)",
+        "グリセリン(40g)",
+        "パンテノール(1g)"
+      ],
+      "risk": 3,
+      "cat": "eye",
+      "drowsy": true,
       "warnIngs": [],
       "symptoms": [],
       "note": "",
@@ -207952,14 +208181,20 @@
     {
       "name": "ロキソニンSテープmini",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/850028_K2602000008_01_01",
-      "maker": "／リードケミカル株式会社,販売会社／第一三共ヘルスケア株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "リードケミカル株式会社",
+      "effect": "腰痛，肩こりに伴う肩の痛み，関節痛，筋肉痛，腱鞘炎（手・手首の痛み），肘の痛み（テニス肘など），打撲，捻挫",
+      "ings": [
+        "ロキソプロフェンナトリウム水和物(5.67g)"
+      ],
+      "risk": 2,
       "cat": "ext_pain",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "腰痛",
+        "関節痛",
+        "筋肉痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000539,
@@ -207972,14 +208207,25 @@
     {
       "name": "ロキソプロフェン錠ＳD",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/100387_K2604000010_01_01",
-      "maker": "／（株）アラクス,販売会社／新日製薬株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "ext_pain",
+      "maker": "（株）アラクス",
+      "effect": "〇頭痛・歯痛・抜歯後の疼痛・咽喉痛・耳痛・関節痛・神経痛・腰痛・筋肉痛・肩こり痛・打撲痛・骨折痛・ねんざ痛・月経痛（生理痛）・外傷痛の鎮痛\n〇悪寒・発熱時の解熱",
+      "ings": [
+        "ロキソプロフェンナトリウム水和物(68.1mg)"
+      ],
+      "risk": 1,
+      "cat": "cold",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "頭痛",
+        "発熱",
+        "のど痛",
+        "月経痛",
+        "腰痛",
+        "関節痛",
+        "筋肉痛",
+        "神経痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000540,
@@ -207992,10 +208238,12 @@
     {
       "name": "消毒もできる液体ばんそうこう",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/400331_J2601000046_01_01",
-      "maker": "／玉川衛材（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "玉川衛材（株）",
+      "effect": "すり傷，切傷，さし傷，かき傷，靴ずれ，創傷面の消毒・保護（被覆）",
+      "ings": [
+        "トリクロロカルバニリド(0.1g)"
+      ],
+      "risk": 0,
       "cat": "disinfect",
       "drowsy": false,
       "warnIngs": [],
@@ -208012,14 +208260,20 @@
     {
       "name": "キュウタッチLxテープA",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/230064_K2604000009_01_01",
-      "maker": "／救急薬品工業株式会社,販売会社／テイコクファルマケア株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "救急薬品工業株式会社",
+      "effect": "関節痛、肩こりに伴う肩の痛み、筋肉痛、腰痛、打撲、捻挫、腱鞘炎（手・手首の痛み）、肘の痛み（テニス肘など）",
+      "ings": [
+        "ロキソプロフェンナトリウム水和物(8.1g)"
+      ],
+      "risk": 2,
       "cat": "ext_pain",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "腰痛",
+        "関節痛",
+        "筋肉痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000542,
@@ -208032,16 +208286,37 @@
     {
       "name": "ジキニン顆粒ゴールド",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/380101_K2405000006_01_01",
-      "maker": "／全薬工業(株)\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
-      "drowsy": false,
-      "warnIngs": [],
-      "symptoms": [],
-      "note": "",
-      "noteType": "nn",
+      "maker": "全薬工業(株)",
+      "effect": "かぜの諸症状（のどの痛み、発熱、頭痛、悪寒、関節の痛み、筋肉の痛み、せき、たん、\nくしゃみ、鼻水、鼻づまり）の緩和",
+      "ings": [
+        "イブプロフェン(150mg)",
+        "ジヒドロコデインリン酸塩(8mg)",
+        "dl-メチルエフェドリン塩酸塩(20mg)",
+        "クロルフェニラミンマレイン酸塩(2.5mg)",
+        "グアヤコールスルホン酸カリウム(83.3mg)",
+        "無水カフェイン(25mg)",
+        "ニンジンエキス(14.3mg)",
+        "カミツレエキス(111.1mg)",
+        "カンゾウ（甘草）エキス(150mg)"
+      ],
+      "risk": 0,
+      "cat": "cold",
+      "drowsy": true,
+      "warnIngs": [
+        "ジヒドロコデインリン酸塩",
+        "コデインリン酸塩",
+        "ジヒドロコデイン"
+      ],
+      "symptoms": [
+        "頭痛",
+        "発熱",
+        "鼻水",
+        "鼻づまり",
+        "せき",
+        "たん"
+      ],
+      "note": "⚠コデイン系：12歳未満禁忌。依存リスクあり。 ⚠コデイン系：12歳未満禁忌。依存リスクあり。 ⚠コデイン系：12歳未満禁忌。依存リスクあり。",
+      "noteType": "danger",
       "id": 1000543,
       "price": null,
       "asin": "",
@@ -208052,14 +208327,23 @@
     {
       "name": "ニューZ",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/630357_J2601000066_01_01",
-      "maker": "／万協製薬（株）,販売元／（株）ファーマフーズ\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
-      "drowsy": false,
+      "maker": "万協製薬（株）",
+      "effect": "発毛促進，育毛，脱毛（抜毛）の予防，若禿（壮年性脱毛症），薄毛，ふけ，かゆみ，病後・産後の脱毛，粃糠性脱毛症，円形脱毛症",
+      "ings": [
+        "カルプロニウム塩化物(1g)",
+        "パントテニールエチルエーテル(1g)",
+        "ピリドキシン塩酸塩(0.05g)",
+        "ジフェンヒドラミン塩酸塩(0.1g)",
+        "サリチル酸(0.2g)",
+        "l-メントール(0.3g)"
+      ],
+      "risk": 2,
+      "cat": "ext_skin",
+      "drowsy": true,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "かゆみ"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000544,
@@ -208072,14 +208356,18 @@
     {
       "name": "酸化マグネシウム錠「クニヒロ」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270029_J2601000036_01_01",
-      "maker": "／皇漢堂製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "皇漢堂製薬（株）",
+      "effect": "便秘。便秘に伴う次の症状の緩和：頭重，のぼせ，肌あれ，吹出物，食欲不振（食欲減退），腹部膨満，腸内異常醗酵，痔",
+      "ings": [
+        "酸化マグネシウム(2000mg)"
+      ],
+      "risk": 3,
+      "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000545,
@@ -208092,12 +208380,18 @@
     {
       "name": "エメロット10クリーム",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/180150_J1801000065_01_01",
-      "maker": "／奥田製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
-      "drowsy": false,
+      "maker": "奥田製薬（株）",
+      "effect": "みずむし，いんきんたむし，ぜにたむし",
+      "ings": [
+        "テルビナフィン塩酸塩(1.0g)",
+        "リドカイン(2.0g)",
+        "グリチルレチン酸(0.1g)",
+        "尿素(10.0g)",
+        "ジフェンヒドラミン(1.0g)"
+      ],
+      "risk": 0,
+      "cat": "foot",
+      "drowsy": true,
       "warnIngs": [],
       "symptoms": [],
       "note": "",
@@ -208112,14 +208406,28 @@
     {
       "name": "ジョイスこどもかぜぐすり",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/501317_K2604000019_01_01",
-      "maker": "／富山めぐみ製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "富山めぐみ製薬（株）",
+      "effect": "かぜの諸症状（鼻水，鼻づまり，くしゃみ，のどの痛み，せき，たん，悪寒（発熱によるさむけ），発熱，頭痛，関節の痛み，筋肉の痛み）の緩和",
+      "ings": [
+        "アセトアミノフェン(450mg)",
+        "クロルフェニラミンマレイン酸塩(3.75mg)",
+        "チペピジンヒベンズ酸塩(37.5mg)",
+        "dl-メチルエフェドリン塩酸塩(30mg)",
+        "ヘスペリジン(45mg)",
+        "ニンジン軟エキス(80mg)"
+      ],
+      "risk": 0,
       "cat": "cold",
-      "drowsy": false,
+      "drowsy": true,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "頭痛",
+        "発熱",
+        "鼻水",
+        "鼻づまり",
+        "せき",
+        "たん"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000547,
@@ -208132,14 +208440,20 @@
     {
       "name": "麦門冬湯エキス細粒G「コタロー」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270127_J2601000070_01_01",
-      "maker": "／小太郎漢方製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "kampo",
+      "maker": "小太郎漢方製薬（株）",
+      "effect": "体力中等度以下で，たんが切れにくく，ときに強くせきこみ，又は咽頭の乾燥感があるものの次の諸症：からぜき，気管支炎，気管支ぜんそく，咽頭炎，しわがれ声",
+      "ings": [
+        "麦門冬湯エキス散(4／5量)(6.94g)"
+      ],
+      "risk": 2,
+      "cat": "cough",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "せき",
+        "たん",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000548,
@@ -208152,14 +208466,19 @@
     {
       "name": "アスミン鼻炎薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/800011_J1201000189_01_01",
-      "maker": "／薬王製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "薬王製薬（株）",
+      "effect": "花粉，ハウスダスト（室内塵）などによる次のような鼻のアレルギー症状の緩和：くしゃみ，鼻水（鼻汁過多），鼻づまり",
+      "ings": [
+        "ケトチフェンフマル酸塩(1.38mg)"
+      ],
+      "risk": 2,
       "cat": "allergy",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "鼻水",
+        "鼻づまり"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000549,
@@ -208172,14 +208491,19 @@
     {
       "name": "アスリセート整腸薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270199_K1702000022_01_02",
-      "maker": "／会社名：米田薬品工業株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "会社名：米田薬品工業株式会社",
+      "effect": "整腸（便通を整える），軟便，便秘，腹部膨満感",
+      "ings": [
+        "ビフィズス菌(24mg)",
+        "ラクトミン(24mg)"
+      ],
+      "risk": 0,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000550,
@@ -208192,14 +208516,28 @@
     {
       "name": "アルファ大草胃腸薬（分包）",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/180021_J0601002526_06_01",
-      "maker": "／大草薬品（株）,販売会社／日邦薬品工業（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "大草薬品（株）",
+      "effect": "胃痛，胸やけ，もたれ（胃もたれ），胃重，胃部不快感，胃酸過多，げっぷ（おくび），食欲不振（食欲減退），胃部・腹部膨満感，消化不良，胃弱，食べ過ぎ（過食），飲み過ぎ（過飲），胸つかえ，吐き気（むかつき，胃のむかつき，二日酔・悪酔のむかつき，嘔気，悪心），嘔吐",
+      "ings": [
+        "オウレン末(250mg)",
+        "ニンジン末(300mg)",
+        "ケイヒ末(300mg)",
+        "ショウキョウ末(100mg)",
+        "カンゾウ末(300mg)",
+        "ロートエキス散(300mg)",
+        "メタケイ酸アルミン酸マグネシウム(450mg)",
+        "沈降炭酸カルシウム(895mg)",
+        "牛胆汁エキス末(150mg)",
+        "ジメチコン(60mg)"
+      ],
+      "risk": 2,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "胃痛",
+        "胸やけ"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000551,
@@ -208212,14 +208550,18 @@
     {
       "name": "アロエ便秘薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/730102_J1201000308_08_01",
-      "maker": "／松本製薬工業株式会社,販売会社／（株）ヤクルト本社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "松本製薬工業株式会社",
+      "effect": "便秘。便秘に伴う次の症状の緩和：頭重，のぼせ，肌あれ，吹出物，食欲不振（食欲減退），腹部膨満，腸内異常醗酵，痔",
+      "ings": [
+        "アロエ末(750mg)"
+      ],
+      "risk": 3,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000552,
@@ -208232,14 +208574,19 @@
     {
       "name": "アロエ製薬便秘錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/100214_J0601003122_03_02",
-      "maker": "／アロエ製薬（株）,販売会社／小林製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "アロエ製薬（株）",
+      "effect": "便秘。便秘に伴う次の症状の緩和：肌あれ，吹出物，頭重，のぼせ，食欲不振，腹部膨満，腸内異常発酵，痔",
+      "ings": [
+        "アロエエキス(252mg)",
+        "ダイオウエキスS(144mg)"
+      ],
+      "risk": 2,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000553,
@@ -208252,14 +208599,21 @@
     {
       "name": "イサゴール便秘薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/650176_J1101000235_01_01",
-      "maker": "／フィブロ製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "フィブロ製薬（株）",
+      "effect": "便秘\n便秘に伴う次の症状の緩和：頭重，のぼせ，肌あれ，吹出物，食欲不振（食欲減退），腹部膨満，腸内異常醗酵，痔",
+      "ings": [
+        "プランタゴ・オバタ種皮末(3g)",
+        "センナ実末(1.125g)",
+        "センナ末(0.375g)",
+        "カンゾウ末(0.3g)"
+      ],
+      "risk": 0,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "便秘"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000554,
@@ -208272,14 +208626,25 @@
     {
       "name": "イノキュア胃腸薬細粒",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270180_K2010000002_01_01",
-      "maker": "／小林薬品工業（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "小林薬品工業（株）",
+      "effect": "胃痛，胸やけ，はきけ（むかつき，胃のむかつき，二日酔・悪酔のむかつき，嘔気，悪心），飲み過ぎ（過飲），胃部不快感，胃酸過多，胃部膨満感，もたれ（胃もたれ），胃重，胸つかえ，嘔吐，げっぷ（おくび）",
+      "ings": [
+        "メタケイ酸アルミン酸マグネシウム(300mg)",
+        "合成ヒドロタルサイト(800mg)",
+        "水酸化マグネシウム(450mg)",
+        "グリシン(90mg)",
+        "アズレンスルホン酸ナトリウム水和物(6mg)",
+        "L-グルタミン(400mg)",
+        "アルジオキサ(120mg)"
+      ],
+      "risk": 2,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "胃痛",
+        "胸やけ"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000555,
@@ -208292,14 +208657,25 @@
     {
       "name": "イノペインAZ胃腸薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/270180_K1912000006_01_01",
-      "maker": "／小林薬品工業（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "小林薬品工業（株）",
+      "effect": "胃痛，胸やけ，はきけ（むかつき，胃のむかつき，二日酔・悪酔のむかつき，嘔気，悪心），飲み過ぎ（過飲），胃部不快感，胃酸過多，胃部膨満感，もたれ（胃もたれ），胃重，胸つかえ，嘔吐，げっぷ（おくび）",
+      "ings": [
+        "メタケイ酸アルミン酸マグネシウム(300mg)",
+        "合成ヒドロタルサイト(800mg)",
+        "水酸化マグネシウム(450mg)",
+        "グリシン(90mg)",
+        "アズレンスルホン酸ナトリウム水和物(6mg)",
+        "L-グルタミン(400mg)",
+        "グリチルリチン酸二カリウム(60mg)"
+      ],
+      "risk": 2,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "胃痛",
+        "胸やけ"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000556,
@@ -208312,14 +208688,25 @@
     {
       "name": "ウチダの当帰芍薬散",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/160040_J0601010207_05_01",
-      "maker": "／（株）ウチダ和漢薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）ウチダ和漢薬",
+      "effect": "比較的体力が乏しく，冷え症で貧血の傾向があり疲労しやすく，ときに下腹部痛，頭重，めまい，肩こり，耳鳴り，動悸などを訴える次の諸症：月経不順，月経異常，月経痛，更年期障害，産前産後あるいは流産による障害（貧血，疲労倦怠，めまい，むくみ），めまい，頭重，肩こり，腰痛，足腰の冷え症，しもやけ，むくみ，しみ",
+      "ings": [
+        "トウキ(3g)",
+        "センキュウ(3g)",
+        "シャクヤク(4g)",
+        "ブクリョウ(4g)",
+        "ソウジュツ(4g)",
+        "タクシャ(4g)"
+      ],
+      "risk": 2,
+      "cat": "women",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "月経痛",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000557,
@@ -208332,14 +208719,25 @@
     {
       "name": "ウチダの当帰芍薬散料",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/160040_J0601010208_05_01",
-      "maker": "／（株）ウチダ和漢薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）ウチダ和漢薬",
+      "effect": "比較的体力が乏しく，冷え症で貧血の傾向があり疲労しやすく，ときに下腹部痛，頭重，めまい，肩こり，耳鳴り，動悸などを訴える次の諸症：月経不順，月経異常，月経痛，更年期障害，産前産後あるいは流産による障害（貧血，疲労倦怠，めまい，むくみ），めまい，頭重，肩こり，腰痛，足腰の冷え症，しもやけ，むくみ，しみ",
+      "ings": [
+        "トウキ(3g)",
+        "センキュウ(3g)",
+        "シャクヤク(4g)",
+        "ブクリョウ(4g)",
+        "ソウジュツ(4g)",
+        "タクシャ(4g)"
+      ],
+      "risk": 2,
+      "cat": "women",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "月経痛",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000558,
@@ -208352,14 +208750,20 @@
     {
       "name": "ウチダの当帰芍薬散料エキス散",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/160040_J0601010209_06_01",
-      "maker": "／（株）ウチダ和漢薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）ウチダ和漢薬",
+      "effect": "体力虚弱で、冷え症で貧血の傾向があり疲労しやすく、ときに下腹部痛、頭重、めまい、肩こり、耳鳴り、動悸などを訴えるものの次の諸症：\n月経不順、月経異常、月経痛、更年期障害、産前産後あるいは流産による障害（貧血、疲労倦怠、めまい、むくみ）、めまい・立ちくらみ、頭重、肩こり、腰痛、足腰の冷え症、しもやけ、むくみ、しみ、耳鳴り",
+      "ings": [
+        "当帰芍薬散料エキス(2.7g)"
+      ],
+      "risk": 2,
+      "cat": "women",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "月経痛",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000559,
@@ -208372,14 +208776,20 @@
     {
       "name": "ウチダの芍薬甘草湯",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/160040_J0601009611_01_01",
-      "maker": "／（株）ウチダ和漢薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）ウチダ和漢薬",
+      "effect": "腹直筋けいれんし，腹痛するもの，あるいは四肢筋肉のけいれん，疼痛あるもの：腹痛，坐骨神経痛，腰痛，胃けいれん，排尿痛",
+      "ings": [
+        "シャクヤク(6g)",
+        "カンゾウ(6g)"
+      ],
+      "risk": 2,
+      "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "腰痛",
+        "神経痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000560,
@@ -208392,10 +208802,12 @@
     {
       "name": "ウチダの芍薬甘草湯エキス散",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/160040_J0601009612_07_01",
-      "maker": "／（株）ウチダ和漢薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "（株）ウチダ和漢薬",
+      "effect": "急激におこる筋肉のけいれんを伴う疼痛",
+      "ings": [
+        "芍薬甘草湯エキス(1.1g)"
+      ],
+      "risk": 2,
       "cat": "kampo",
       "drowsy": false,
       "warnIngs": [],
