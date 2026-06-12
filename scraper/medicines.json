@@ -1,6 +1,6 @@
 {
   "total": 7644,
-  "updated_at": "2026-06-12T02:07:06.724669",
+  "updated_at": "2026-06-12T02:08:43.434386",
   "medicines": [
     {
       "id": 1,
@@ -210255,14 +210255,27 @@
     {
       "name": "ネオ疾風錠スーパー",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/800113_J2601000086_01_01",
-      "maker": "／大和合同製薬（株）,販売元／新大和漢方（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "大和合同製薬（株）",
+      "effect": "次の諸症状※の緩和：神経痛，筋肉痛・関節痛（肩・腰・肘・膝痛，肩こり，五十肩など），手足のしびれ，眼精疲労（慢性的な目の疲れ及びそれに伴う目のかすみ・目の奥の痛み）。\n次の場合のビタミンB1B6B12の補給：肉体疲労時，妊娠・授乳期，病中病後の体力低下時",
+      "ings": [
+        "シアノコバラミン(1500μg)",
+        "フルスルチアミン塩酸塩(109.16mg)",
+        "ピリドキシン塩酸塩(100mg)",
+        "トコフェロールコハク酸エステルカルシウム(103.58mg)",
+        "パントテン酸カルシウム(30mg)",
+        "ガンマ-オリザノール(10mg)"
+      ],
+      "risk": 3,
+      "cat": "eye",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労",
+        "眼精疲労",
+        "関節痛",
+        "筋肉痛",
+        "神経痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000612,
@@ -210275,14 +210288,18 @@
     {
       "name": "よろず杞菊地黄丸錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/800113_J2601000083_01_01",
-      "maker": "／大和合同製薬（株）,販売元／（株）フォーリーフ製薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "大和合同製薬（株）",
+      "effect": "体力中等度以下で，疲れやすく胃腸障害がなく，尿量減少又は多尿で，ときに手足のほてりや口渇があるものの次の諸症：かすみ目，疲れ目，のぼせ，頭重，めまい，排尿困難，頻尿，むくみ，視力低下",
+      "ings": [
+        "杞菊地黄丸料エキス(4.3g)"
+      ],
+      "risk": 2,
+      "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000613,
@@ -210295,14 +210312,20 @@
     {
       "name": "ロキソプロフェンNaテープ大判「三井薬品」",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/480114_K2605000014_01_01",
-      "maker": "／東光薬品工業株式会社,販売会社／三井薬品株式会社\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "東光薬品工業株式会社",
+      "effect": "腰痛，肩こりに伴う肩の痛み，関節痛，筋肉痛，腱鞘炎（手・手首の痛み），肘の痛み（テニス肘など），打撲，捻挫",
+      "ings": [
+        "ロキソプロフェンナトリウム水和物(5.67g(無水物として5g))"
+      ],
+      "risk": 2,
       "cat": "ext_pain",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "腰痛",
+        "関節痛",
+        "筋肉痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000614,
@@ -210315,14 +210338,18 @@
     {
       "name": "新モリヂーネン錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/670030_K2606000001_01_01",
-      "maker": "／福井製薬　株式会社,販売会社／日邦薬品工業（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "福井製薬 株式会社",
+      "effect": "体力中等度又はやや虚弱なものの次の諸症：\n痔核（いぼ痔），きれ痔，軽度の脱肛",
+      "ings": [
+        "乙字湯去大黄乾燥エキス(1455mg)"
+      ],
+      "risk": 2,
+      "cat": "anal",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000615,
@@ -210335,14 +210362,20 @@
     {
       "name": "サカンポー八味地黄丸錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300052_J2601000104_01_01",
-      "maker": "／（株）阪本漢法製薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）阪本漢法製薬",
+      "effect": "体力中等度以下で，疲れやすくて，四肢が冷えやすく，尿量減少又は多尿で，ときに口渇があるものの次の諸症：下肢痛，腰痛，しびれ，高齢者のかすみ目，かゆみ，排尿困難，残尿感，夜間尿，頻尿，むくみ，高血圧に伴う随伴症状の改善（肩こり，頭重，耳鳴り），軽い尿漏れ",
+      "ings": [
+        "八味地黄丸乾燥エキス(4.4g)"
+      ],
+      "risk": 2,
+      "cat": "eye",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "かゆみ",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000616,
@@ -210355,14 +210388,20 @@
     {
       "name": "サカンポー辛夷清肺湯顆粒",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300052_J2601000102_01_01",
-      "maker": "／（株）阪本漢法製薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）阪本漢法製薬",
+      "effect": "体力中等度以上で，濃い鼻汁が出て，ときに熱感を伴うものの次の諸症：鼻づまり，慢性鼻炎，蓄膿症（副鼻腔炎）",
+      "ings": [
+        "辛夷清肺湯乾燥エキス(5g)"
+      ],
+      "risk": 2,
+      "cat": "allergy",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "鼻水",
+        "鼻づまり",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000617,
@@ -210375,14 +210414,28 @@
     {
       "name": "金のネオ疾風錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/800113_J2601000087_01_01",
-      "maker": "／大和合同製薬（株）,販売元／新大和漢方（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "大和合同製薬（株）",
+      "effect": "次の諸症状※の緩和：神経痛，筋肉痛・関節痛（肩・腰・肘・膝痛，肩こり，五十肩など），手足のしびれ，眼精疲労（慢性的な目の疲れ及びそれに伴う目のかすみ・目の奥の痛み）。\n次の場合のビタミンB1B6B12の補給：肉体疲労時，妊娠・授乳期，病中病後の体力低下時",
+      "ings": [
+        "シアノコバラミン(1500μg)",
+        "フルスルチアミン塩酸塩(109.16mg)",
+        "ピリドキシン塩酸塩(100mg)",
+        "トコフェロールコハク酸エステルカルシウム(103.58mg)",
+        "パントテン酸カルシウム(30mg)",
+        "ガンマ-オリザノール(10mg)",
+        "ニコチン酸アミド(60mg)"
+      ],
+      "risk": 3,
+      "cat": "eye",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労",
+        "眼精疲労",
+        "関節痛",
+        "筋肉痛",
+        "神経痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000618,
@@ -210395,14 +210448,30 @@
     {
       "name": "飛翔内服液",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300052_J2601000106_01_01",
-      "maker": "／（株）阪本漢法製薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）阪本漢法製薬",
+      "effect": "滋養強壮，虚弱体質，肉体疲労・病中病後・食欲不振・栄養障害・発熱性消耗性疾患・産前産後などの場合の栄養補給",
+      "ings": [
+        "マムシ抽出液(0.5mL)",
+        "ニンジン流エキス(0.6mL)",
+        "ジャショウシ流エキス(0.2mL)",
+        "ニクジュヨウ流エキス(0.3mL)",
+        "インヨウカク流エキス(0.3mL)",
+        "ローヤルゼリーチンキ(100mg)",
+        "アミノエチルスルホン酸(タウリン)(1000mg)",
+        "チアミン硝化物(10mg)",
+        "リボフラビン(3mg)",
+        "ピリドキシン塩酸塩(5mg)",
+        "ニコチン酸アミド(25mg)",
+        "無水カフェイン(50mg)"
+      ],
+      "risk": 2,
+      "cat": "cold",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "発熱",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000619,
@@ -210415,14 +210484,20 @@
     {
       "name": "阪本漢法の八味地黄丸錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300052_J2601000103_01_01",
-      "maker": "／（株）阪本漢法製薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）阪本漢法製薬",
+      "effect": "体力中等度以下で，疲れやすくて，四肢が冷えやすく，尿量減少又は多尿で，ときに口渇があるものの次の諸症：下肢痛，腰痛，しびれ，高齢者のかすみ目，かゆみ，排尿困難，残尿感，夜間尿，頻尿，むくみ，高血圧に伴う随伴症状の改善（肩こり，頭重，耳鳴り），軽い尿漏れ",
+      "ings": [
+        "八味地黄丸乾燥エキス(4.4g)"
+      ],
+      "risk": 2,
+      "cat": "eye",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "かゆみ",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000620,
@@ -210435,14 +210510,20 @@
     {
       "name": "阪本漢法の八味地黄丸錠HF",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/300052_J2601000105_01_01",
-      "maker": "／（株）阪本漢法製薬\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "（株）阪本漢法製薬",
+      "effect": "体力中等度以下で，疲れやすくて，四肢が冷えやすく，尿量減少又は多尿で，ときに口渇があるものの次の諸症：下肢痛，腰痛，しびれ，高齢者のかすみ目，かゆみ，排尿困難，残尿感，夜間尿，頻尿，むくみ，高血圧に伴う随伴症状の改善（肩こり，頭重，耳鳴り），軽い尿漏れ",
+      "ings": [
+        "八味地黄丸乾燥エキス(2.2g)"
+      ],
+      "risk": 2,
+      "cat": "eye",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "かゆみ",
+        "肉体疲労",
+        "腰痛"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000621,
@@ -210455,14 +210536,31 @@
     {
       "name": "オクダ胃腸薬（錠剤）",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/180150_J0601002554_02_01",
-      "maker": "／奥田製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "奥田製薬（株）",
+      "effect": "もたれ（胃もたれ），胃痛，胃弱，胸やけ，胃酸過多，胃重，げっぷ（おくび），食欲不振（食欲減退），食べすぎ（過食），飲みすぎ（過飲），胸つかえ，胃部・腹部膨満感，はきけ（むかつき，胃のむかつき，二日酔・悪酔のむかつき，嘔気，悪心），嘔吐，消化不良，胃部不快感",
+      "ings": [
+        "リュウタン末(100mg)",
+        "オウレン末(10mg)",
+        "センブリ末(10mg)",
+        "ダイオウ末(100mg)",
+        "オウバク末(100mg)",
+        "ニガキ末(400mg)",
+        "コロンボ末(100mg)",
+        "ニンジン末(30mg)",
+        "トウヒ末(50mg)",
+        "チンピ末(50mg)",
+        "エンメイソウ末(250mg)",
+        "ボレイ末(2.5g)",
+        "沈降炭酸カルシウム(2.3g)"
+      ],
+      "risk": 2,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "胃痛",
+        "胸やけ"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000622,
@@ -210475,14 +210573,20 @@
     {
       "name": "オースギ漢方胃腸薬",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/180607_J0601008506_01_05",
-      "maker": "／大杉製薬（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
+      "maker": "大杉製薬（株）",
+      "effect": "体力中等度以下で，腹部は力がなくて，胃痛又は腹痛があって，ときに胸やけや，げっぷ，胃もたれ，食欲不振，吐き気，嘔吐などを伴うものの次の諸症：神経性胃炎，慢性胃炎，胃腸虚弱",
+      "ings": [
+        "安中散エキス(1g)"
+      ],
+      "risk": 2,
       "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "胃痛",
+        "胸やけ",
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000623,
@@ -210495,14 +210599,18 @@
     {
       "name": "万葉杞菊地黄丸錠",
       "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/800113_J2601000081_01_01",
-      "maker": "／大和合同製薬（株）,販売元／新甲賀漢方（株）\nHTML",
-      "effect": "",
-      "ings": [],
-      "risk": null,
-      "cat": "vitamin",
+      "maker": "大和合同製薬（株）",
+      "effect": "体力中等度以下で，疲れやすく胃腸障害がなく，尿量減少又は多尿で，ときに手足のほてりや口渇があるものの次の諸症：かすみ目，疲れ目，のぼせ，頭重，めまい，排尿困難，頻尿，むくみ，視力低下",
+      "ings": [
+        "杞菊地黄丸料エキス(4.3g)"
+      ],
+      "risk": 2,
+      "cat": "stomach",
       "drowsy": false,
       "warnIngs": [],
-      "symptoms": [],
+      "symptoms": [
+        "肉体疲労"
+      ],
       "note": "",
       "noteType": "nn",
       "id": 1000624,
