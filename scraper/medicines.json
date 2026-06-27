@@ -1,6 +1,6 @@
 {
-  "total": 7644,
-  "updated_at": "2026-06-20T18:19:31.656537",
+  "total": 7645,
+  "updated_at": "2026-06-27T18:11:15.920020",
   "medicines": [
     {
       "id": 1,
@@ -210614,6 +210614,36 @@
       "note": "",
       "noteType": "nn",
       "id": 1000624,
+      "price": null,
+      "asin": "",
+      "rakuten_url": "",
+      "amazon_tag": "",
+      "price_updated_at": ""
+    },
+    {
+      "name": "ここラボかゆみ止め治療薬ミスト",
+      "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/820021_K2606000010_01_01",
+      "effect": "湿疹，皮膚炎，ただれ，あせも，かぶれ，かゆみ，しもやけ，虫さされ，じんましん",
+      "ings": [
+        "ジフェンヒドラミン塩酸塩(2.0g)",
+        "アラントイン(0.2g)",
+        "ベンゼトニウム塩化物(0.1g)",
+        "グリチルリチン酸二カリウム(0.5g)"
+      ],
+      "risk": 3,
+      "maker": "株式会社雪の元本店",
+      "cat": "ext_skin",
+      "drowsy": true,
+      "warnIngs": [],
+      "symptoms": [
+        "肌荒れ",
+        "かゆみ",
+        "虫刺され"
+      ],
+      "note": "",
+      "noteType": "nn",
+      "_fetched": true,
+      "id": 1000625,
       "price": null,
       "asin": "",
       "rakuten_url": "",
