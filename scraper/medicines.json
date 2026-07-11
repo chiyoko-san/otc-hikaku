@@ -1,6 +1,6 @@
 {
-  "total": 7645,
-  "updated_at": "2026-07-04T18:11:04.309000",
+  "total": 7646,
+  "updated_at": "2026-07-11T18:04:31.625882",
   "medicines": [
     {
       "id": 1,
@@ -210644,6 +210644,35 @@
       "noteType": "nn",
       "_fetched": true,
       "id": 1000625,
+      "price": null,
+      "asin": "",
+      "rakuten_url": "",
+      "amazon_tag": "",
+      "price_updated_at": ""
+    },
+    {
+      "name": "かゆみ止めアートパッチ",
+      "pmda_url": "https://www.pmda.go.jp/PmdaSearch/otcDetail/GeneralList/470006_K1501000013_02_02",
+      "effect": "虫さされ、かゆみ、しもやけ",
+      "ings": [
+        "クロタミトン(5.0g)",
+        "リドカイン(2.0g)",
+        "ジフェンヒドラミン(1.0g)",
+        "イソプロピルメチルフェノール(1.0g)"
+      ],
+      "risk": 2,
+      "maker": "帝國製薬（株）",
+      "cat": "ext_pain",
+      "drowsy": true,
+      "warnIngs": [],
+      "symptoms": [
+        "かゆみ",
+        "虫刺され"
+      ],
+      "note": "",
+      "noteType": "nn",
+      "_fetched": true,
+      "id": 1000626,
       "price": null,
       "asin": "",
       "rakuten_url": "",
