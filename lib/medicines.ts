@@ -42,6 +42,8 @@ type RawJson = { total: number; updated_at: string; medicines: RawMedicine[] };
 let _medicines: Medicine[] | null = null;
 let _ingredients: Ingredient[] | null = null;
 let _symptoms: Symptom[] | null = null;
+let _bySlug: Map<string, Medicine> | null = null;
+let _byId: Map<number, Medicine> | null = null;
 
 /**
  * 全医薬品データ (7554件) を取得
@@ -71,17 +73,23 @@ export function getEnrichedMedicines(): Medicine[] {
 }
 
 /**
- * slug → 薬品
+ * slug → 薬品 (Map化: 7,000件超×全ページ生成でも O(1))
  */
 export function getMedicineBySlug(slug: string): Medicine | null {
-  return getAllMedicines().find((m) => m.slug === slug) || null;
+  if (!_bySlug) {
+    _bySlug = new Map(getAllMedicines().map((m) => [m.slug, m]));
+  }
+  return _bySlug.get(slug) || null;
 }
 
 /**
- * ID → 薬品 (旧URL互換)
+ * ID → 薬品 (旧URL互換, Map化)
  */
 export function getMedicineById(id: number): Medicine | null {
-  return getAllMedicines().find((m) => m.id === id) || null;
+  if (!_byId) {
+    _byId = new Map(getAllMedicines().map((m) => [m.id, m]));
+  }
+  return _byId.get(id) || null;
 }
 
 /**
@@ -189,6 +197,49 @@ export function getAllSymptoms(): Symptom[] {
  */
 export function getSymptomBySlug(slug: string): Symptom | null {
   return getAllSymptoms().find((s) => s.slug === slug) || null;
+}
+
+/**
+ * 類似薬品 (理由付き): 同成分か同カテゴリかを区別して返す
+ */
+export type SimilarMedicine = { med: Medicine; sameIngredient: boolean };
+
+export function getSimilarMedicinesWithReason(
+  med: Medicine,
+  limit = 6
+): SimilarMedicine[] {
+  const all = getEnrichedMedicines();
+  const seen = new Set<number>([med.id]);
+  const result: SimilarMedicine[] = [];
+
+  const myIngs = new Set(
+    (med.ings || []).map((i) => normalizeIngredientName(i))
+  );
+
+  // 1) 同一成分を優先
+  for (const other of all) {
+    if (seen.has(other.id)) continue;
+    const otherIngs = (other.ings || []).map((i) =>
+      normalizeIngredientName(i)
+    );
+    if (otherIngs.some((i) => myIngs.has(i))) {
+      result.push({ med: other, sameIngredient: true });
+      seen.add(other.id);
+      if (result.length >= limit) return result;
+    }
+  }
+
+  // 2) 同一カテゴリで補完
+  for (const other of all) {
+    if (seen.has(other.id)) continue;
+    if (other.cat === med.cat) {
+      result.push({ med: other, sameIngredient: false });
+      seen.add(other.id);
+      if (result.length >= limit) return result;
+    }
+  }
+
+  return result;
 }
 
 /**

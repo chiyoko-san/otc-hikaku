@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 const NAV_ITEMS = [
+  { href: '/switch/', label: '処方薬から探す' },
   { href: '/medicines/', label: '薬を探す' },
   { href: '/symptoms/', label: '症状から選ぶ' },
   { href: '/ingredients/', label: '成分辞典' },

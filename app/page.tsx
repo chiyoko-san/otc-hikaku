@@ -45,6 +45,17 @@ export default function MedicinesIndexPage() {
         <div className="max-w-2xl">
           <HomeSearchBox />
         </div>
+        <Link
+          href="/switch/"
+          className="mt-4 block max-w-2xl rounded-lg border border-brand-light bg-brand-light/30 p-4 transition hover:border-brand"
+        >
+          <span className="mb-1 block text-sm font-bold text-brand-dark">
+            「その薬、市販でも買えますよ」と言われた方へ
+          </span>
+          <span className="block text-sm text-gray-700">
+            アレグラ・ロキソニン・ガスターなど、処方薬と同じ成分の市販薬を探す →
+          </span>
+        </Link>
       </header>
 
       {/* カテゴリリンク */}

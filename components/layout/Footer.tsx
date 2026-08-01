@@ -15,6 +15,7 @@ export function Footer() {
         <div>
           <h3 className="mb-3 text-sm font-bold">探す</h3>
           <ul className="space-y-2 text-sm text-gray-700">
+            <li><Link href="/switch/">処方薬から探す</Link></li>
             <li><Link href="/medicines/">薬を探す</Link></li>
             <li><Link href="/symptoms/">症状から選ぶ</Link></li>
             <li><Link href="/ingredients/">成分辞典</Link></li>

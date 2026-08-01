@@ -5,6 +5,7 @@ import {
   getAllSymptoms,
 } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
+import { SWITCH_DRUGS } from '@/lib/switch-data';
 import { getAllColumnSlugs, getPublishedColumns } from '@/lib/supabase/columns';
 import { SITE_URL } from '@/lib/seo';
 
@@ -17,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, lastModified: now, priority: 1.0, changeFrequency: 'daily' },
     { url: `${SITE_URL}/medicines/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/switch/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/symptoms/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/ingredients/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/columns/`, lastModified: now, priority: 0.8, changeFrequency: 'daily' },
@@ -27,6 +29,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/privacy/`, lastModified: now, priority: 0.3, changeFrequency: 'yearly' },
     { url: `${SITE_URL}/contact/`, lastModified: now, priority: 0.3, changeFrequency: 'yearly' },
   ];
+
+  // 処方薬→市販薬 切替ページ (制度変更で伸びる新規需要の主力)
+  const switchPages: MetadataRoute.Sitemap = SWITCH_DRUGS.map((d) => ({
+    url: `${SITE_URL}/switch/${d.slug}/`,
+    lastModified: now,
+    priority: 0.9,
+    changeFrequency: 'weekly' as const,
+  }));
 
   // カテゴリページ
   const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((c) => ({
@@ -71,6 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticPages,
+    ...switchPages,
     ...categoryPages,
     ...medicinePages,
     ...ingredientPages,

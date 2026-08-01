@@ -21,7 +21,13 @@ function riskLabel(risk: number, itype?: string): string {
   return '不明';
 }
 
-export function MedicineCard({ med }: { med: Medicine }) {
+export function MedicineCard({
+  med,
+  badge,
+}: {
+  med: Medicine;
+  badge?: string;
+}) {
   return (
     <Link
       href={`/medicines/${med.slug}/`}
@@ -31,7 +37,14 @@ export function MedicineCard({ med }: { med: Medicine }) {
         <h3 className="text-base font-bold leading-tight text-gray-900">
           {med.name}
         </h3>
-        <span className={riskClass(med.risk, med.itype)}>{riskLabel(med.risk, med.itype)}</span>
+        <span className="flex flex-shrink-0 items-center gap-1">
+          {badge && (
+            <span className="rounded bg-brand-light px-1.5 py-0.5 text-xs font-semibold text-brand-dark">
+              {badge}
+            </span>
+          )}
+          <span className={riskClass(med.risk, med.itype)}>{riskLabel(med.risk, med.itype)}</span>
+        </span>
       </div>
       <div className="mb-2 text-xs text-gray-500">{med.maker}</div>
       <div className="mb-2 flex flex-wrap gap-1">

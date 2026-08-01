@@ -4,8 +4,9 @@ import type { Metadata } from 'next';
 import {
   getEnrichedMedicines,
   getMedicineBySlug,
-  getSimilarMedicines,
+  getSimilarMedicinesWithReason,
 } from '@/lib/medicines';
+import { findSwitchDrugsForMedicine } from '@/lib/switch-data';
 import { getAllIngredients } from '@/lib/medicines';
 import { getAllSymptoms } from '@/lib/medicines';
 import { getDamageReportCountByMedicineId } from '@/lib/supabase/damage-reports';
@@ -18,6 +19,7 @@ import {
   buildMetadata,
   buildDrugJsonLd,
   buildBreadcrumbJsonLd,
+  buildFaqJsonLd,
   SITE_URL,
 } from '@/lib/seo';
 
@@ -88,8 +90,35 @@ export default async function MedicineDetailPage({ params }: Props) {
   const med = getMedicineBySlug(params.slug);
   if (!med) notFound();
 
-  const similar = getSimilarMedicines(med, 6);
+  const similar = getSimilarMedicinesWithReason(med, 6);
+  const relatedSwitch = findSwitchDrugsForMedicine(med);
   const damageCount = await getDamageReportCountByMedicineId(med.id);
+
+  // FAQ 構造化データ (リッチリザルト対策)
+  const sameIngNames = similar
+    .filter((s) => s.sameIngredient)
+    .slice(0, 3)
+    .map((s) => s.med.name);
+  const faqs = [
+    {
+      q: `${med.name}は${riskLabel(med.risk, med.itype)}ですか?`,
+      a: `${med.name}は${riskLabel(med.risk, med.itype)}です。${riskDescription(med.risk, med.itype)}。`,
+    },
+    {
+      q: `${med.name}を飲むと眠くなりますか?`,
+      a: med.drowsy
+        ? `${med.name}は眠気が出ることがある製品です。服用後の車の運転や機械の操作は避けてください。`
+        : `${med.name}は眠気の注意表示がない製品です。ただし体質により眠気を感じる場合は運転を避けてください。`,
+    },
+    ...(sameIngNames.length > 0
+      ? [
+          {
+            q: `${med.name}と同じ成分の市販薬はありますか?`,
+            a: `同じ有効成分を含む市販薬として${sameIngNames.join('、')}などがあります。含有量や剤形が異なる場合があるため、詳細は各製品ページをご確認ください。`,
+          },
+        ]
+      : []),
+  ];
 
   // 成分と症状の slug マップを取得(リンク用)
   const allIngredients = getAllIngredients();
@@ -112,6 +141,7 @@ export default async function MedicineDetailPage({ params }: Props) {
   return (
     <>
       <JsonLd data={buildDrugJsonLd(med)} />
+      <JsonLd data={buildFaqJsonLd(faqs)} />
       <JsonLd
         data={buildBreadcrumbJsonLd(
           breadcrumbs.map((b) => ({
@@ -186,6 +216,32 @@ export default async function MedicineDetailPage({ params }: Props) {
                   </li>
                 );
               })}
+            </ul>
+          </section>
+        )}
+
+        {/* 処方薬からの切替導線 */}
+        {relatedSwitch.length > 0 && (
+          <section className="mb-8 rounded-lg border border-brand-light bg-brand-light/30 p-4">
+            <h2 className="mb-2 text-sm font-bold text-brand-dark">
+              処方薬からの切替をお考えの方へ
+            </h2>
+            <p className="mb-2 text-sm text-gray-700">
+              この製品は、処方薬
+              {relatedSwitch.map((s) => `「${s.rxName}」`).join('')}
+              と同じ系統の有効成分を含みます。処方薬との用量・剤形の違いはこちら:
+            </p>
+            <ul className="space-y-1">
+              {relatedSwitch.map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={`/switch/${s.slug}/`}
+                    className="text-sm font-semibold text-brand hover:underline"
+                  >
+                    → {s.rxName}と同じ成分の市販薬を見る
+                  </Link>
+                </li>
+              ))}
             </ul>
           </section>
         )}
@@ -297,7 +353,11 @@ export default async function MedicineDetailPage({ params }: Props) {
             </h2>
             <div className="grid gap-3 md:grid-cols-2">
               {similar.map((s) => (
-                <MedicineCard key={s.id} med={s} />
+                <MedicineCard
+                  key={s.med.id}
+                  med={s.med}
+                  badge={s.sameIngredient ? '同成分' : '同カテゴリ'}
+                />
               ))}
             </div>
           </section>
