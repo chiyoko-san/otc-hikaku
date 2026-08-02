@@ -53,6 +53,30 @@ export type Symptom = {
   medicineIds: number[];
 };
 
+// アキネーター (Supabase版: ak_categories / ak_questions / ak_choices)
+export type AkChoice = {
+  id: string;
+  label: string;
+  weights: Record<string, number>; // タグ→スコア
+  redcard: boolean;                // 緊急受診フラグ
+  redcardMsg: string;
+};
+
+export type AkQuestion = {
+  id: string;
+  q: string;
+  multi: boolean;                  // 複数選択可か
+  choices: AkChoice[];
+};
+
+export type AkCategory = {
+  id: string;
+  label: string;
+  emoji: string;
+  baseWeights: Record<string, number>;
+  questions: AkQuestion[];
+};
+
 // アキネーター決定木
 export type AkinatorResult = {
   kw: string[];
