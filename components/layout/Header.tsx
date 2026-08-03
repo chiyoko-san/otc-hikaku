@@ -37,13 +37,13 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-40 bg-brand-deep shadow-md">
         <div className="container-wide flex items-center justify-between gap-4 py-3">
           <Link
             href="/"
-            className="flex-shrink-0 text-xl font-bold text-brand-ink"
+            className="flex-shrink-0 text-xl font-bold tracking-tight text-white"
           >
-            クスリノ<em className="not-italic text-brand">コンパス</em>
+            クスリノ<em className="not-italic text-brand-bright">コンパス</em>
           </Link>
 
           {/* PC: 横並びナビ */}
@@ -52,7 +52,7 @@ export function Header() {
               <Link
                 key={n.href}
                 href={n.href}
-                className="whitespace-nowrap rounded px-3 py-1.5 text-sm text-gray-700 hover:bg-brand-light hover:text-brand"
+                className="whitespace-nowrap rounded px-3 py-1.5 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
               >
                 {n.label}
               </Link>
@@ -62,7 +62,7 @@ export function Header() {
           {/* スマホ: ハンバーガーボタン */}
           <button
             type="button"
-            className="md:hidden -mr-2 inline-flex h-10 w-10 items-center justify-center rounded text-gray-700 hover:bg-gray-100"
+            className="md:hidden -mr-2 inline-flex h-10 w-10 items-center justify-center rounded text-white hover:bg-white/10"
             aria-label={open ? 'メニューを閉じる' : 'メニューを開く'}
             aria-expanded={open}
             aria-controls="mobile-nav"

@@ -8,7 +8,18 @@ function riskClass(risk: number, itype?: string): string {
   if (risk === 1) return 'risk-1';
   if (risk === 2) return 'risk-2';
   if (risk === 2.5) return 'risk-2-5';
-  return 'risk-3';
+  if (risk === 3) return 'risk-3';
+  return 'risk-none';
+}
+
+function spineClass(risk: number, itype?: string): string {
+  if (itype === 'functional') return 'spine-functional';
+  if (itype === 'quasi') return 'spine-quasi';
+  if (risk === 1) return 'spine-1';
+  if (risk === 2) return 'spine-2';
+  if (risk === 2.5) return 'spine-2-5';
+  if (risk === 3) return 'spine-3';
+  return 'spine-none';
 }
 
 function riskLabel(risk: number, itype?: string): string {
@@ -31,7 +42,7 @@ export function MedicineCard({
   return (
     <Link
       href={`/medicines/${med.slug}/`}
-      className="block rounded-lg border border-gray-200 bg-white p-4 transition hover:border-brand hover:shadow-md"
+      className={`card block p-4 ${spineClass(med.risk, med.itype)}`}
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3 className="text-base font-bold leading-tight text-gray-900">

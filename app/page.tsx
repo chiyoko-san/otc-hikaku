@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { getEnrichedMedicines } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
 import { MedicineCard } from '@/components/medicine/MedicineCard';
-import { MedicineExplorer } from '@/components/medicine/MedicineExplorer';
+import { MedicineBrowser } from '@/components/medicine/MedicineBrowser';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { buildMetadata } from '@/lib/seo';
 
@@ -38,7 +38,7 @@ export default function MedicinesIndexPage() {
       <Breadcrumb items={[{ name: 'ホーム', href: '/' }, { name: '薬品一覧' }]} />
 
       <header className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold md:text-4xl">市販薬一覧</h1>
+        <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-brand-ink md:text-4xl">市販薬一覧</h1>
         <p className="mb-6 text-gray-600">
           詳細情報を整備した市販薬 {all.length} 品をカテゴリ別に掲載しています。
         </p>
@@ -55,15 +55,14 @@ export default function MedicinesIndexPage() {
         </Link>
       </header>
 
-      {/* 絞り込み検索 */}
-      <MedicineExplorer
+      {/* 絞り込み検索 + 結果表示 */}
+      <MedicineBrowser
         categories={sortedCats.map((c) => ({
           id: c.id,
           label: c.label,
           count: byCategory.get(c.id)?.length || 0,
         }))}
-      />
-
+      >
       {/* カテゴリリンク */}
       <nav className="mb-10 flex flex-wrap gap-2">
         {sortedCats.map((c) => (
@@ -100,6 +99,7 @@ export default function MedicinesIndexPage() {
           </section>
         );
       })}
+      </MedicineBrowser>
     </div>
   );
 }

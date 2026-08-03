@@ -5,19 +5,25 @@
 :root {
   --brand: #0FAE96;
   --brand-dark: #0A8473;
-  --brand-light: #E6F7F4;
-  --ink: #1A2433;
+  --brand-deep: #0B4A40;
+  --brand-light: #DCF3EE;
+  --ink: #132A26;
   --muted: #5C6678;
   --line: #E5E7EB;
-  --bg: #F8FAFC;
+  --bg: #F1F6F4;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
 body {
-  background: #fff;
+  background: var(--bg);
   color: var(--ink);
   font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,12 +54,27 @@ body {
   .risk-badge {
     @apply inline-flex items-center rounded px-2 py-0.5 text-xs font-bold;
   }
-  .risk-1 { @apply risk-badge bg-red-100 text-red-700; }
-  .risk-2 { @apply risk-badge bg-orange-100 text-orange-700; }
-  .risk-2-5 { @apply risk-badge bg-orange-100 text-orange-700; }
-  .risk-3 { @apply risk-badge bg-green-100 text-green-700; }
-  .risk-functional { @apply risk-badge bg-emerald-100 text-emerald-700; }
-  .risk-quasi { @apply risk-badge bg-purple-100 text-purple-700; }
+  .risk-1 { @apply risk-badge bg-risk-1 text-white; }
+  .risk-2 { @apply risk-badge bg-risk-2 text-white; }
+  .risk-2-5 { @apply risk-badge bg-risk-2x text-white; }
+  .risk-3 { @apply risk-badge bg-risk-3 text-white; }
+  .risk-none { @apply risk-badge bg-risk-none text-white; }
+  .risk-functional { @apply risk-badge bg-emerald-800 text-white; }
+  .risk-quasi { @apply risk-badge bg-purple-700 text-white; }
+
+  /* 白カード(薄緑サーフェスに浮かせる) */
+  .card {
+    @apply rounded-xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md hover:-translate-y-0.5;
+  }
+  /* リスク・スパイン: カード左端の区分色帯 */
+  .spine { @apply border-l-4; }
+  .spine-1 { @apply spine border-risk-1; }
+  .spine-2 { @apply spine border-risk-2; }
+  .spine-2-5 { @apply spine border-risk-2x; }
+  .spine-3 { @apply spine border-risk-3; }
+  .spine-none { @apply spine border-risk-none; }
+  .spine-functional { @apply spine border-emerald-500; }
+  .spine-quasi { @apply spine border-purple-500; }
 }
 
 /* コラム本文マークダウン */
