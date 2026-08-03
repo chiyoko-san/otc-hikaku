@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import { getEnrichedMedicines } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
 import { MedicineCard } from '@/components/medicine/MedicineCard';
+import { MedicineExplorer } from '@/components/medicine/MedicineExplorer';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
-import { HomeSearchBox } from '@/components/home/HomeSearchBox';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
@@ -42,9 +42,6 @@ export default function MedicinesIndexPage() {
         <p className="mb-6 text-gray-600">
           詳細情報を整備した市販薬 {all.length} 品をカテゴリ別に掲載しています。
         </p>
-        <div className="max-w-2xl">
-          <HomeSearchBox />
-        </div>
         <Link
           href="/switch/"
           className="mt-4 block max-w-2xl rounded-lg border border-brand-light bg-brand-light/30 p-4 transition hover:border-brand"
@@ -57,6 +54,15 @@ export default function MedicinesIndexPage() {
           </span>
         </Link>
       </header>
+
+      {/* 絞り込み検索 */}
+      <MedicineExplorer
+        categories={sortedCats.map((c) => ({
+          id: c.id,
+          label: c.label,
+          count: byCategory.get(c.id)?.length || 0,
+        }))}
+      />
 
       {/* カテゴリリンク */}
       <nav className="mb-10 flex flex-wrap gap-2">

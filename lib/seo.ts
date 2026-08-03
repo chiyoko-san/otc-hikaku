@@ -21,7 +21,7 @@ export function buildMetadata(opts: {
   const img = image || DEFAULT_OGP;
 
   return {
-    title: fullTitle,
+    title: { absolute: fullTitle },
     description: desc,
     alternates: { canonical: url },
     openGraph: {

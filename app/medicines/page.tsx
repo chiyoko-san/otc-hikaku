@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getEnrichedMedicines } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
 import { MedicineCard } from '@/components/medicine/MedicineCard';
+import { MedicineExplorer } from '@/components/medicine/MedicineExplorer';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { buildMetadata } from '@/lib/seo';
 
@@ -42,6 +43,15 @@ export default function MedicinesIndexPage() {
           詳細情報を整備した市販薬 {all.length} 品をカテゴリ別に掲載しています。
         </p>
       </header>
+
+      {/* 絞り込み検索 */}
+      <MedicineExplorer
+        categories={sortedCats.map((c) => ({
+          id: c.id,
+          label: c.label,
+          count: byCategory.get(c.id)?.length || 0,
+        }))}
+      />
 
       {/* カテゴリリンク */}
       <nav className="mb-10 flex flex-wrap gap-2">
