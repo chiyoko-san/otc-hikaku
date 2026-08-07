@@ -22,11 +22,29 @@ const RISK_FILTERS: { value: number; label: string }[] = [
   { value: 2.5, label: '指定第2類' },
   { value: 2, label: '第2類' },
   { value: 3, label: '第3類' },
+  { value: -3, label: '指定医薬部外品' },
+  { value: -2, label: '医薬部外品' },
+  { value: -1, label: '機能性表示' },
 ];
+
+type SortKey = 'rec' | 'name' | 'risk-asc' | 'risk-desc';
+
+/** リスクの強さ(並び替え用): 第1類が最も高い */
+function riskSeverity(r: number): number {
+  if (r === 1) return 5;
+  if (r === 2.5) return 4;
+  if (r === 2) return 3;
+  if (r === 3) return 2;
+  if (r === -3) return 1.5;
+  if (r === -2) return 1;
+  if (r === -1) return 0.5;
+  return 0;
+}
 
 function riskLabel(r: number): string {
   if (r === -1) return '機能性';
   if (r === -2) return '医薬部外品';
+  if (r === -3) return '指定医薬部外品';
   if (r === 1) return '第1類';
   if (r === 2) return '第2類';
   if (r === 2.5) return '指定第2類';
@@ -37,6 +55,7 @@ function riskLabel(r: number): string {
 function riskBadgeClass(r: number): string {
   if (r === -1) return 'risk-functional';
   if (r === -2) return 'risk-quasi';
+  if (r === -3) return 'risk-dquasi';
   if (r === 1) return 'risk-1';
   if (r === 2) return 'risk-2';
   if (r === 2.5) return 'risk-2-5';
@@ -47,6 +66,7 @@ function riskBadgeClass(r: number): string {
 function spineClass(r: number): string {
   if (r === -1) return 'spine-functional';
   if (r === -2) return 'spine-quasi';
+  if (r === -3) return 'spine-dquasi';
   if (r === 1) return 'spine-1';
   if (r === 2) return 'spine-2';
   if (r === 2.5) return 'spine-2-5';
@@ -85,6 +105,8 @@ export function MedicineBrowser({
   const [cat, setCat] = useState('');
   const [risks, setRisks] = useState<number[]>([]);
   const [noDrowsy, setNoDrowsy] = useState(false);
+  const [symptom, setSymptom] = useState('');
+  const [sort, setSort] = useState<SortKey>('rec');
   const [visible, setVisible] = useState(PAGE_SIZE);
   const trackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -119,7 +141,23 @@ export function MedicineBrowser({
   }, [q]);
 
   const isFiltering =
-    q.trim().length > 0 || cat !== '' || risks.length > 0 || noDrowsy;
+    q.trim().length > 0 ||
+    cat !== '' ||
+    risks.length > 0 ||
+    noDrowsy ||
+    symptom !== '';
+
+  // 症状タグの候補(データから頻度順に集計)
+  const symptomOptions = useMemo(() => {
+    if (!items) return [];
+    const count = new Map<string, number>();
+    for (const it of items) {
+      for (const t of it.g) count.set(t, (count.get(t) || 0) + 1);
+    }
+    return [...count.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 40);
+  }, [items]);
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -133,6 +171,7 @@ export function MedicineBrowser({
       if (cat && it.c !== cat) continue;
       if (risks.length > 0 && !risks.includes(it.r)) continue;
       if (noDrowsy && it.d === 1) continue;
+      if (symptom && !it.g.includes(symptom)) continue;
 
       if (!hasQuery) {
         out.push({ item: it, score: 0 });
@@ -149,13 +188,21 @@ export function MedicineBrowser({
       if (score >= 0) out.push({ item: it, score });
     }
 
-    if (hasQuery) out.sort((a, b) => b.score - a.score);
+    if (sort === 'name') {
+      out.sort((a, b) => a.item.n.localeCompare(b.item.n, 'ja'));
+    } else if (sort === 'risk-asc') {
+      out.sort((a, b) => riskSeverity(a.item.r) - riskSeverity(b.item.r));
+    } else if (sort === 'risk-desc') {
+      out.sort((a, b) => riskSeverity(b.item.r) - riskSeverity(a.item.r));
+    } else if (hasQuery) {
+      out.sort((a, b) => b.score - a.score);
+    }
     return out.map((s) => s.item);
-  }, [items, q, cat, risks, noDrowsy]);
+  }, [items, q, cat, risks, noDrowsy, symptom, sort]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
-  }, [q, cat, risks, noDrowsy]);
+  }, [q, cat, risks, noDrowsy, symptom, sort]);
 
   const toggleRisk = (value: number) => {
     setRisks((prev) =>
@@ -169,6 +216,8 @@ export function MedicineBrowser({
     setCat('');
     setRisks([]);
     setNoDrowsy(false);
+    setSymptom('');
+    setSort('rec');
   };
 
   const catLabel = cat ? categories.find((c) => c.id === cat)?.label : '';
@@ -226,6 +275,26 @@ export function MedicineBrowser({
             ))}
           </select>
 
+          <select
+            value={symptom}
+            onChange={(e) => {
+              setSymptom(e.target.value);
+              trackEvent('explorer_filter', {
+                type: 'symptom',
+                value: e.target.value,
+              });
+            }}
+            aria-label="症状で絞り込み"
+            className="rounded-lg border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
+          >
+            <option value="">すべての症状</option>
+            {symptomOptions.map(([t, n]) => (
+              <option key={t} value={t}>
+                {t}({n})
+              </option>
+            ))}
+          </select>
+
           {RISK_FILTERS.map((rf) => (
             <button
               key={rf.value}
@@ -262,6 +331,19 @@ export function MedicineBrowser({
           </button>
 
           {isFiltering && (
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="並び替え"
+              className="rounded-lg border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
+            >
+              <option value="rec">おすすめ順</option>
+              <option value="name">名前順</option>
+              <option value="risk-asc">リスクが低い順</option>
+              <option value="risk-desc">リスクが高い順</option>
+            </select>
+          )}
+          {isFiltering && (
             <button
               type="button"
               onClick={clearAll}
@@ -297,6 +379,7 @@ export function MedicineBrowser({
                   {[
                     q.trim() && `「${q.trim()}」`,
                     catLabel,
+                    symptom,
                     ...risks.map((r) => riskLabel(r)),
                     noDrowsy && '眠気成分なし',
                   ]

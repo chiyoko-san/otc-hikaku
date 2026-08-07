@@ -4,6 +4,7 @@ import { getCategoryLabel } from '@/lib/categories';
 
 function riskClass(risk: number, itype?: string): string {
   if (itype === 'functional') return 'risk-functional';
+  if (itype === 'designated_quasi') return 'risk-dquasi';
   if (itype === 'quasi') return 'risk-quasi';
   if (risk === 1) return 'risk-1';
   if (risk === 2) return 'risk-2';
@@ -14,6 +15,7 @@ function riskClass(risk: number, itype?: string): string {
 
 function spineClass(risk: number, itype?: string): string {
   if (itype === 'functional') return 'spine-functional';
+  if (itype === 'designated_quasi') return 'spine-dquasi';
   if (itype === 'quasi') return 'spine-quasi';
   if (risk === 1) return 'spine-1';
   if (risk === 2) return 'spine-2';
@@ -24,6 +26,7 @@ function spineClass(risk: number, itype?: string): string {
 
 function riskLabel(risk: number, itype?: string): string {
   if (itype === 'functional') return '機能性';
+  if (itype === 'designated_quasi') return '指定医薬部外品';
   if (itype === 'quasi') return '医薬部外品';
   if (risk === 1) return '第1類';
   if (risk === 2) return '第2類';

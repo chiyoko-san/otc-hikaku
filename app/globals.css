@@ -61,6 +61,7 @@ body {
   .risk-none { @apply risk-badge bg-risk-none text-white; }
   .risk-functional { @apply risk-badge bg-emerald-800 text-white; }
   .risk-quasi { @apply risk-badge bg-purple-700 text-white; }
+  .risk-dquasi { @apply risk-badge bg-indigo-700 text-white; }
 
   /* 白カード(薄緑サーフェスに浮かせる) */
   .card {
@@ -75,6 +76,7 @@ body {
   .spine-none { @apply spine border-risk-none; }
   .spine-functional { @apply spine border-emerald-500; }
   .spine-quasi { @apply spine border-purple-500; }
+  .spine-dquasi { @apply spine border-indigo-500; }
 }
 
 /* コラム本文マークダウン */

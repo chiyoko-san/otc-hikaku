@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import {
-  getEnrichedMedicines,
+  getAllMedicines,
   getMedicineBySlug,
   getSimilarMedicinesWithReason,
 } from '@/lib/medicines';
@@ -13,7 +13,6 @@ import { getDamageReportCountByMedicineId } from '@/lib/supabase/damage-reports'
 import { getCategoryLabel } from '@/lib/categories';
 import { normalizeIngredientName } from '@/lib/slug';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
-import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { JsonLd } from '@/components/layout/JsonLd';
 import {
   buildMetadata,
@@ -28,7 +27,7 @@ export const revalidate = 86400;
 
 // 全 622 件分の静的パスを事前生成(SSG)
 export async function generateStaticParams() {
-  const enriched = getEnrichedMedicines();
+  const enriched = getAllMedicines();
   return enriched.map((m) => ({ slug: m.slug }));
 }
 
@@ -45,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `${med.name}(${firstIng}配合)|成分・効能・類似薬の比較`
     : `${med.name}|成分・効能・類似薬の比較`;
 
-  const desc = `${med.name}(${med.maker})の成分・効能効果・リスク区分・類似薬との比較。${med.effect.slice(0, 100)}`;
+  const desc = `${med.name}(${med.maker})の成分・効能効果・リスク区分・類似薬との比較。${(med.effect || '').slice(0, 100)}`.trim();
 
   return buildMetadata({
     title: titleBase,
@@ -57,6 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function riskLabel(risk: number, itype?: string): string {
   if (itype === 'functional') return '機能性表示食品';
+  if (itype === 'designated_quasi') return '指定医薬部外品';
   if (itype === 'quasi') return '医薬部外品';
   if (risk === 1) return '第1類医薬品';
   if (risk === 2) return '第2類医薬品';
@@ -68,6 +68,8 @@ function riskLabel(risk: number, itype?: string): string {
 function riskDescription(risk: number, itype?: string): string {
   if (itype === 'functional')
     return '事業者の責任で機能性が表示された食品(医薬品ではありません)';
+  if (itype === 'designated_quasi')
+    return '指定医薬部外品。かつて医薬品だった成分を含み、コンビニ等でも購入できる区分です';
   if (itype === 'quasi')
     return '医薬部外品。医薬品より作用が緩和な製品です';
   if (risk === 1) return '購入時に薬剤師への相談が必要です';
@@ -79,11 +81,13 @@ function riskDescription(risk: number, itype?: string): string {
 
 function riskClass(risk: number, itype?: string): string {
   if (itype === 'functional') return 'risk-functional';
+  if (itype === 'designated_quasi') return 'risk-dquasi';
   if (itype === 'quasi') return 'risk-quasi';
   if (risk === 1) return 'risk-1';
   if (risk === 2) return 'risk-2';
   if (risk === 2.5) return 'risk-2-5';
-  return 'risk-3';
+  if (risk === 3) return 'risk-3';
+  return 'risk-none';
 }
 
 export default async function MedicineDetailPage({ params }: Props) {
@@ -188,35 +192,72 @@ export default async function MedicineDetailPage({ params }: Props) {
           </section>
         )}
 
+        {/* 詳細情報が未整備の製品への注記 */}
+        {!med.effect && (
+          <div className="callout-info mb-8">
+            <div className="callout-title">基本情報のみ掲載しています</div>
+            <p className="text-sm">
+              この製品は効能・詳細情報の整備を進めている段階です。使用にあたっては製品の添付文書をご確認ください。
+            </p>
+          </div>
+        )}
+
         {/* 有効成分 */}
         {med.ings && med.ings.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
               有効成分
             </h2>
-            <ul className="space-y-2">
-              {med.ings.map((ing, i) => {
-                const norm = normalizeIngredientName(ing);
-                const slug = ingSlugMap.get(norm);
-                return (
-                  <li
-                    key={i}
-                    className="rounded border border-gray-200 bg-white px-4 py-2"
-                  >
-                    {slug ? (
-                      <Link
-                        href={`/ingredients/${slug}/`}
-                        className="font-semibold text-brand hover:underline"
+            <div className="card overflow-x-auto">
+              <table className="w-full min-w-[560px] border-collapse text-sm">
+                <thead>
+                  <tr className="bg-brand-light/60 text-left text-brand-deep">
+                    <th className="px-4 py-2.5 font-bold">成分名</th>
+                    <th className="w-32 px-4 py-2.5 font-bold">分量</th>
+                    <th className="px-4 py-2.5 font-bold">はたらき</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {med.ings.map((ing, i) => {
+                    const norm = normalizeIngredientName(ing);
+                    const slug = ingSlugMap.get(norm);
+                    const amountMatch = ing.match(/[(（]([^)）]+)[)）]/);
+                    const amount = amountMatch ? amountMatch[1] : '—';
+                    const desc =
+                      INGREDIENT_DICT[norm] ||
+                      INGREDIENT_DICT[ing.replace(/[(（][^)）]*[)）]/g, '').trim()] ||
+                      '—';
+                    return (
+                      <tr
+                        key={i}
+                        className="border-t border-gray-100 align-top"
                       >
-                        {ing}
-                      </Link>
-                    ) : (
-                      <span className="font-semibold">{ing}</span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+                        <td className="px-4 py-2.5">
+                          {slug ? (
+                            <Link
+                              href={`/ingredients/${slug}/`}
+                              className="font-semibold text-brand-dark hover:underline"
+                            >
+                              {norm}
+                            </Link>
+                          ) : (
+                            <span className="font-semibold text-brand-ink">
+                              {norm}
+                            </span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-2.5 text-gray-700">
+                          {amount}
+                        </td>
+                        <td className="px-4 py-2.5 leading-relaxed text-gray-600">
+                          {desc}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </section>
         )}
 
@@ -351,15 +392,88 @@ export default async function MedicineDetailPage({ params }: Props) {
             <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
               類似薬品・同成分の代替
             </h2>
-            <div className="grid gap-3 md:grid-cols-2">
-              {similar.map((s) => (
-                <MedicineCard
-                  key={s.med.id}
-                  med={s.med}
-                  badge={s.sameIngredient ? '同成分' : '同カテゴリ'}
-                />
-              ))}
+            <div className="card overflow-x-auto">
+              <table className="w-full min-w-[640px] border-collapse text-sm">
+                <thead>
+                  <tr className="bg-brand-light/60 text-left text-brand-deep">
+                    <th className="px-4 py-2.5 font-bold">製品名</th>
+                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">関係</th>
+                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">区分</th>
+                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">眠気</th>
+                    <th className="px-4 py-2.5 font-bold">主な成分</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* 比較の基準行: この薬 */}
+                  <tr className="border-t border-gray-100 bg-brand-light/30 align-top">
+                    <td className="px-4 py-2.5 font-bold text-brand-ink">
+                      {med.name}
+                      <span className="ml-1.5 rounded bg-brand-dark px-1.5 py-0.5 text-xs font-semibold text-white">
+                        この薬
+                      </span>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2.5 text-gray-500">—</td>
+                    <td className="whitespace-nowrap px-3 py-2.5">
+                      <span className={riskClass(med.risk, med.itype)}>
+                        {riskLabel(med.risk, med.itype)}
+                      </span>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2.5 text-gray-700">
+                      {med.drowsy ? 'あり' : 'なし'}
+                    </td>
+                    <td className="px-4 py-2.5 text-gray-600">
+                      {(med.ings || [])
+                        .slice(0, 2)
+                        .map((x) => normalizeIngredientName(x))
+                        .join('、') || '—'}
+                    </td>
+                  </tr>
+                  {similar.map((s) => (
+                    <tr
+                      key={s.med.id}
+                      className="border-t border-gray-100 align-top transition hover:bg-gray-50"
+                    >
+                      <td className="px-4 py-2.5">
+                        <Link
+                          href={`/medicines/${s.med.slug}/`}
+                          className="font-semibold text-brand-dark hover:underline"
+                        >
+                          {s.med.name}
+                        </Link>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2.5">
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-xs font-semibold ${
+                            s.sameIngredient
+                              ? 'bg-brand-light text-brand-deep'
+                              : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
+                          {s.sameIngredient ? '同成分' : '同カテゴリ'}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2.5">
+                        <span className={riskClass(s.med.risk, s.med.itype)}>
+                          {riskLabel(s.med.risk, s.med.itype)}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2.5 text-gray-700">
+                        {s.med.drowsy ? 'あり' : 'なし'}
+                      </td>
+                      <td className="px-4 py-2.5 text-gray-600">
+                        {(s.med.ings || [])
+                          .slice(0, 2)
+                          .map((x) => normalizeIngredientName(x))
+                          .join('、') || '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
+            <p className="mt-2 text-xs text-gray-500">
+              成分・区分は概要です。使用の可否は各製品ページと添付文書をご確認ください。
+            </p>
           </section>
         )}
 

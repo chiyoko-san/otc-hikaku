@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getEnrichedMedicines } from '@/lib/medicines';
+import { getAllMedicines } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
 import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { MedicineBrowser } from '@/components/medicine/MedicineBrowser';
@@ -15,7 +15,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function MedicinesIndexPage() {
-  const all = getEnrichedMedicines();
+  const all = getAllMedicines();
 
   // カテゴリ別にグループ化
   const byCategory = new Map<string, typeof all>();

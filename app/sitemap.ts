@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import {
-  getEnrichedMedicines,
+  getAllMedicines,
   getAllIngredients,
   getAllSymptoms,
 } from '@/lib/medicines';
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // 薬品詳細ページ (SEO 主力 622件)
-  const medicinePages: MetadataRoute.Sitemap = getEnrichedMedicines().map((m) => ({
+  const medicinePages: MetadataRoute.Sitemap = getAllMedicines().map((m) => ({
     url: `${SITE_URL}/medicines/${m.slug}/`,
     lastModified: now,
     priority: 0.9,
