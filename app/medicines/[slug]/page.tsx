@@ -95,6 +95,33 @@ export default async function MedicineDetailPage({ params }: Props) {
   if (!med) notFound();
 
   const similar = getSimilarMedicinesWithReason(med, 6);
+
+  // ===== 成分量比較マトリクス用データ =====
+  // 列: この薬 + 類似5製品 / 行: 出現順のユニーク成分(この薬の成分を先頭に)
+  const compareCols = [
+    { med, relation: null as null | boolean },
+    ...similar.slice(0, 5).map((s) => ({ med: s.med, relation: s.sameIngredient })),
+  ];
+  const ingRowSeen = new Set<string>();
+  const ingRows: string[] = [];
+  for (const col of compareCols) {
+    for (const ing of col.med.ings || []) {
+      const n = normalizeIngredientName(ing);
+      if (!ingRowSeen.has(n)) {
+        ingRowSeen.add(n);
+        ingRows.push(n);
+      }
+    }
+  }
+  const ingRowsCapped = ingRows.slice(0, 14);
+  const amountOf = (m: typeof med, norm: string): string | null => {
+    const hit = (m.ings || []).find(
+      (i) => normalizeIngredientName(i) === norm
+    );
+    if (!hit) return null;
+    const mm = hit.match(/[(（]([^)）]+)[)）]/);
+    return mm ? mm[1] : '配合';
+  };
   const relatedSwitch = findSwitchDrugsForMedicine(med);
   const damageCount = await getDamageReportCountByMedicineId(med.id);
 
@@ -393,86 +420,123 @@ export default async function MedicineDetailPage({ params }: Props) {
               類似薬品・同成分の代替
             </h2>
             <div className="card overflow-x-auto">
-              <table className="w-full min-w-[640px] border-collapse text-sm">
+              <table className="w-full border-collapse text-sm">
                 <thead>
-                  <tr className="bg-brand-light/60 text-left text-brand-deep">
-                    <th className="px-4 py-2.5 font-bold">製品名</th>
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">関係</th>
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">区分</th>
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">眠気</th>
-                    <th className="px-4 py-2.5 font-bold">主な成分</th>
+                  <tr className="bg-brand-light/60 text-brand-deep">
+                    <th className="sticky left-0 z-10 min-w-[9rem] bg-brand-light px-3 py-2.5 text-left font-bold md:min-w-[11rem]">
+                      成分(配合量)
+                    </th>
+                    {compareCols.map((col, i) => (
+                      <th
+                        key={col.med.id}
+                        className={`min-w-[8rem] px-3 py-2.5 text-left align-top font-bold ${
+                          i === 0 ? 'bg-brand-light' : ''
+                        }`}
+                      >
+                        {i === 0 ? (
+                          <span className="text-brand-ink">{col.med.name}</span>
+                        ) : (
+                          <Link
+                            href={`/medicines/${col.med.slug}/`}
+                            className="text-brand-dark hover:underline"
+                          >
+                            {col.med.name}
+                          </Link>
+                        )}
+                        <span className="mt-1 block">
+                          {i === 0 ? (
+                            <span className="rounded bg-brand-dark px-1.5 py-0.5 text-xs font-semibold text-white">
+                              この薬
+                            </span>
+                          ) : (
+                            <span
+                              className={`rounded px-1.5 py-0.5 text-xs font-semibold ${
+                                col.relation
+                                  ? 'bg-white text-brand-deep ring-1 ring-brand'
+                                  : 'bg-white text-gray-500 ring-1 ring-gray-300'
+                              }`}
+                            >
+                              {col.relation ? '同成分' : '同カテゴリ'}
+                            </span>
+                          )}
+                        </span>
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {/* 比較の基準行: この薬 */}
-                  <tr className="border-t border-gray-100 bg-brand-light/30 align-top">
-                    <td className="px-4 py-2.5 font-bold text-brand-ink">
-                      {med.name}
-                      <span className="ml-1.5 rounded bg-brand-dark px-1.5 py-0.5 text-xs font-semibold text-white">
-                        この薬
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-gray-500">—</td>
-                    <td className="whitespace-nowrap px-3 py-2.5">
-                      <span className={riskClass(med.risk, med.itype)}>
-                        {riskLabel(med.risk, med.itype)}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-gray-700">
-                      {med.drowsy ? 'あり' : 'なし'}
-                    </td>
-                    <td className="px-4 py-2.5 text-gray-600">
-                      {(med.ings || [])
-                        .slice(0, 2)
-                        .map((x) => normalizeIngredientName(x))
-                        .join('、') || '—'}
-                    </td>
+                  {/* メタ行: 区分・眠気 */}
+                  <tr className="border-t border-gray-100">
+                    <th className="sticky left-0 z-10 bg-white px-3 py-2 text-left font-semibold text-gray-600">
+                      リスク区分
+                    </th>
+                    {compareCols.map((col, i) => (
+                      <td
+                        key={col.med.id}
+                        className={`px-3 py-2 ${i === 0 ? 'bg-brand-light/30' : ''}`}
+                      >
+                        <span className={riskClass(col.med.risk, col.med.itype)}>
+                          {riskLabel(col.med.risk, col.med.itype)
+                            .replace('医薬品', '')
+                            .replace('分類', '')}
+                        </span>
+                      </td>
+                    ))}
                   </tr>
-                  {similar.map((s) => (
-                    <tr
-                      key={s.med.id}
-                      className="border-t border-gray-100 align-top transition hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-2.5">
-                        <Link
-                          href={`/medicines/${s.med.slug}/`}
-                          className="font-semibold text-brand-dark hover:underline"
-                        >
-                          {s.med.name}
-                        </Link>
+                  <tr className="border-t border-gray-100">
+                    <th className="sticky left-0 z-10 bg-white px-3 py-2 text-left font-semibold text-gray-600">
+                      眠気成分
+                    </th>
+                    {compareCols.map((col, i) => (
+                      <td
+                        key={col.med.id}
+                        className={`px-3 py-2 ${i === 0 ? 'bg-brand-light/30' : ''}`}
+                      >
+                        {col.med.drowsy ? (
+                          <span className="font-semibold text-risk-2x">あり</span>
+                        ) : (
+                          <span className="text-gray-500">なし</span>
+                        )}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-2.5">
-                        <span
-                          className={`rounded px-1.5 py-0.5 text-xs font-semibold ${
-                            s.sameIngredient
-                              ? 'bg-brand-light text-brand-deep'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          {s.sameIngredient ? '同成分' : '同カテゴリ'}
-                        </span>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2.5">
-                        <span className={riskClass(s.med.risk, s.med.itype)}>
-                          {riskLabel(s.med.risk, s.med.itype)}
-                        </span>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2.5 text-gray-700">
-                        {s.med.drowsy ? 'あり' : 'なし'}
-                      </td>
-                      <td className="px-4 py-2.5 text-gray-600">
-                        {(s.med.ings || [])
-                          .slice(0, 2)
-                          .map((x) => normalizeIngredientName(x))
-                          .join('、') || '—'}
-                      </td>
-                    </tr>
-                  ))}
+                    ))}
+                  </tr>
+                  {/* 成分行 */}
+                  {ingRowsCapped.map((norm) => {
+                    const inBase = amountOf(med, norm) !== null;
+                    return (
+                      <tr
+                        key={norm}
+                        className={`border-t border-gray-100 ${
+                          inBase ? '' : 'bg-gray-50/60'
+                        }`}
+                      >
+                        <th className="sticky left-0 z-10 max-w-[13rem] bg-white px-3 py-2 text-left align-top text-xs font-semibold leading-snug text-brand-ink">
+                          {norm}
+                        </th>
+                        {compareCols.map((col, i) => {
+                          const amt = amountOf(col.med, norm);
+                          return (
+                            <td
+                              key={col.med.id}
+                              className={`whitespace-nowrap px-3 py-2 align-top text-xs ${
+                                i === 0 ? 'bg-brand-light/30' : ''
+                              } ${amt ? 'font-semibold text-brand-ink' : 'text-gray-300'}`}
+                            >
+                              {amt || '—'}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
             <p className="mt-2 text-xs text-gray-500">
-              成分・区分は概要です。使用の可否は各製品ページと添付文書をご確認ください。
+              配合量は1回量・1日量など製品ごとに基準が異なる場合があります。
+              {ingRows.length > ingRowsCapped.length &&
+                `主要${ingRowsCapped.length}成分のみ表示しています。`}
+              使用の可否は各製品ページと添付文書をご確認ください。
             </p>
           </section>
         )}
