@@ -776,6 +776,24 @@ def run(group="hira", resume=False, limit=0, reprocess=False, max_minutes=0):
         merged = _merge(existing if resume else [], new_items)
         log(f"完了: 新規{len(new_items)}件 / 合計{len(merged)}件")
 
+    # ── 激減ガード: 既存データより大幅に減る保存は拒否(0件上書き事故防止) ──
+    if existing and len(merged) < len(existing) * 0.9:
+        log(f"⚠ 保存中止: 統合後{len(merged)}件が既存{len(existing)}件の9割未満。"
+            "収集失敗による上書き事故を防ぐため保存しません。")
+        try:
+            STATS_FILE.write_text(json.dumps({
+                "ran_at": datetime.now().isoformat(),
+                "mode": "reprocess" if reprocess else "scrape",
+                "healthy": False,
+                "reason": f"merged {len(merged)} < existing {len(existing)} * 0.9",
+            }, ensure_ascii=False, indent=2), encoding="utf-8")
+        except Exception:
+            pass
+        if os.environ.get("GITHUB_ACTIONS"):
+            import sys as _sys
+            _sys.exit(2)
+        return 0
+
     save(merged)
 
     # ── 健全性チェック（壊れたら気づくための仕組み） ──────────
