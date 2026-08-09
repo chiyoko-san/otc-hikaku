@@ -5,6 +5,7 @@ import {
   getAllMedicines,
   getMedicineBySlug,
   getSimilarMedicinesWithReason,
+  INGREDIENT_DICT,
 } from '@/lib/medicines';
 import { findSwitchDrugsForMedicine } from '@/lib/switch-data';
 import { getAllIngredients } from '@/lib/medicines';
