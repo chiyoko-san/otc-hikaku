@@ -21,6 +21,12 @@ DATA_DIR = Path(__file__).parent
 MED_JSON = DATA_DIR / "medicines.json"
 JST      = timezone(timedelta(hours=9))
 
+# 重複判定のしきい値: 過去記事との類似度がこれ以上なら再生成する
+# 0.7 = 7割以上似ていたらボツ。厳しくするなら下げる(0.5等)、緩めるなら上げる。
+SIMILARITY_THRESHOLD = 0.7
+# 再生成の最大試行回数(これを超えたら諦めて中止し、その日は生成しない)
+MAX_RETRIES = 4
+
 # ── 被害報告誘導セクション(末尾に自動挿入)─────────
 DAMAGE_REPORT_FOOTER = """
 ---
@@ -36,63 +42,56 @@ DAMAGE_REPORT_FOOTER = """
 ※投稿内容は集計データとして公表され、特定の個人や企業を非難する目的では使用されません。
 """
 
-# ── テーマプール(消費者保護・景表法・誇大広告系50テーマ)──
-THEMES = [
-    # ─── A. 景表法・薬機法・誇大広告(17テーマ)─────────
-    ("景表法",   "「No.1表示」のカラクリ。健康食品・サプリで許される表現と禁止される表現"),
-    ("景表法",   "「医師の◯◯%が推奨」広告の真実。アンケート回答数・抽出方法の落とし穴"),
-    ("景表法",   "ビフォーアフター写真が景表法違反になる4つのパターン"),
-    ("景表法",   "「個人の感想です」の但し書きで責任を逃れられない理由"),
-    ("景表法",   "「天然成分100%」「無添加」と謳える本当の条件"),
-    ("景表法",   "「1ヶ月で-10kg」効果保証広告の景表法違反例"),
-    ("景表法",   "「臨床試験で実証」の根拠を疑うべき5つのチェックポイント"),
-    ("景表法",   "「全額返金保証」の落とし穴。実際に返金されないケース"),
-    ("景表法",   "「業界初」「日本初」表示が景表法違反になるケース"),
-    ("景表法",   "ステマ規制(2023年10月施行)で何が変わったか。違反事例も解説"),
-    ("景表法",   "インフルエンサーの「PR」表示義務と違反事例"),
-    ("景表法",   "アフィリエイト広告の景表法違反。誰が責任を負うのか"),
-    ("景表法",   "ランキングサイトの真実。広告料で順位が決まる典型事例"),
-    ("薬機法",   "健康食品の「医薬品的効能効果」表示違反例"),
-    ("薬機法",   "化粧品の薬機法違反フレーズ。「シミが消える」と言えない理由"),
-    ("薬機法",   "「飲むだけで痩せる」が違法な理由。サプリと医薬品の境界線"),
-    ("薬機法",   "「免疫力アップ」と書けない理由。薬機法と健康食品の表現規制"),
+# ── ①素材の3軸(掛け合わせて組み合わせ爆発させる)────────
+# 固定テーマ50個だと使い切って重複する。トピック×読者×切り口を
+# 毎回ランダムに掛け合わせ、同じ素材でも別角度の記事になるようにする。
 
-    # ─── B. 定期購入・契約トラブル(16テーマ)─────────
-    ("契約",     "「初回500円」のカラクリ。総額3万円の罠を見抜く方法"),
-    ("契約",     "定期購入の解約条件。電話のみ・受付時間制限の特商法問題"),
-    ("契約",     "「お試し」「ワンコイン」表示が特商法違反になるケース"),
-    ("契約",     "解約電話が繋がらないときの対処法。記録の取り方"),
-    ("契約",     "クレジットカード会社への異議申し立て手順。チャージバック制度"),
-    ("契約",     "消費者ホットライン188の上手な使い方と相談前の準備"),
-    ("契約",     "クーリングオフが使える通販と使えない通販の違い"),
-    ("契約",     "SNS広告経由の契約。Instagram・TikTokからのトラブル増加事例"),
-    ("契約",     "LINE広告で誘導された定期購入トラブルの典型例"),
-    ("契約",     "「中途解約金」の上限。違法な違約金請求の見抜き方"),
-    ("契約",     "「定期コース」と「都度購入」の見分け方。最終確認画面の重要性"),
-    ("契約",     "健康食品定期購入の解約成功例・失敗例から学ぶこと"),
-    ("契約",     "「いつでも解約OK」の罠。実は条件付きだったケース"),
-    ("契約",     "高齢者の被害が多い健康食品の特徴。家族ができる予防策"),
-    ("契約",     "ネット通販の販売事業者情報の見方。実在しない業者の見分け方"),
-    ("契約",     "2022年特商法改正のポイント。最終確認画面の表示義務"),
+TOPICS = [
+    # ─── A. 成分・薬の知識(サイトの中核。ここを厚くして偏りを消す)──
+    ("成分",   "解熱鎮痛成分の違い(アセトアミノフェン/イブプロフェン/ロキソプロフェン)と使い分け"),
+    ("成分",   "抗ヒスタミン成分の第1世代と第2世代の違い。眠くなる薬・眠くならない薬の見分け方"),
+    ("成分",   "胃薬の種類(H2ブロッカー/制酸剤/健胃生薬)と症状ごとの選び方"),
+    ("成分",   "美白有効成分の違い(トラネキサム酸/ビタミンC誘導体/アルブチン)と何に効くか"),
+    ("成分",   "整腸薬の乳酸菌・ビフィズス菌・酪酸菌の違いと腸内での働き"),
+    ("成分",   "咳止め・去痰成分の分類(中枢性/末梢性/去痰)と咳のタイプ別の選び方"),
+    ("成分",   "外用鎮痛消炎剤(ロキソプロフェン/インドメタシン/フェルビナク/サリチル酸)の強さと違い"),
+    ("成分",   "水虫薬の抗真菌成分の違いと、再発させないための使い方"),
+    ("知識",   "同じ成分でも処方薬と市販薬で用量が違う理由。市販薬の『上限』の考え方"),
+    ("知識",   "『第1類・第2類・第3類』医薬品の区分の意味と、買うときの実際の違い"),
+    ("知識",   "薬の飲み合わせ(のみ合わせ)の基本。市販薬同士・食品との相互作用"),
+    ("知識",   "『眠くなる成分』はなぜ眠くなるのか。運転前に避けるべき市販薬"),
+    ("知識",   "市販薬の『やめどき』。何日使って効かなければ受診すべきかの目安"),
+    ("知識",   "薬の剤形(錠剤/カプセル/顆粒/液剤/テープ)による効き方・使い分けの違い"),
+    ("選び方", "総合感冒薬と単剤(症状別の薬)、どちらを選ぶべきか"),
+    ("選び方", "『成分で選ぶ』とは何か。パッケージの効能書きに頼らない市販薬の選び方"),
 
-    # ─── C. 消費者被害事例・予防(17テーマ)──────────
-    ("被害事例", "過去の健康食品被害事例から学ぶ。プエラリア・酵素飲料の問題"),
-    ("被害事例", "「飲むだけで痩せる」サプリの実態。摂取注意成分一覧"),
-    ("被害事例", "美容ドリンクの肝障害事例。コラーゲン以外の隠れリスク"),
-    ("被害事例", "海外製サプリの危険性。個人輸入で起きた死亡例"),
-    ("被害事例", "カフェイン過剰摂取の事例。エナジードリンク・カフェイン剤の盲点"),
-    ("被害事例", "「眠気覚まし」薬の依存性。市販薬の乱用事例"),
-    ("被害事例", "風邪薬乱用症候群(MOH)。鎮痛剤の連用が引き起こすこと"),
-    ("被害事例", "機能性表示食品の届出撤回事例から見える問題"),
-    ("被害事例", "特定保健用食品(トクホ)で問題になった商品事例"),
-    ("被害事例", "健康食品の添加物リスク。表示されない隠れた成分"),
-    ("被害事例", "「医師監修」「薬剤師推奨」の真実。表示の見極め方"),
-    ("被害事例", "健康食品の科学的根拠の格付け。エビデンスレベルの見方"),
-    ("被害事例", "ダイエット食品の景表法違反事例(消費者庁措置命令から)"),
-    ("被害事例", "育毛剤の効果保証広告問題と過去の摘発事例"),
-    ("被害事例", "「がんに効く」健康食品の摘発事例と被害者の声"),
-    ("被害事例", "美白化粧品のトラブル事例(白斑問題から学ぶこと)"),
-    ("被害事例", "市販の漢方薬・生薬製剤による健康被害の報告例"),
+    # ─── B. 消費者保護(重要だが柱の一つに留める)────────────
+    ("景表法", "誇大広告の見抜き方(No.1表示/体験談/効果保証)と、健康食品広告の落とし穴"),
+    ("薬機法", "健康食品・化粧品が『痩せる』『シミが消える』と書けない理由(医薬品的効能効果)"),
+    ("契約",   "『初回500円』定期購入の総額の罠と、解約できないときの対処・救済制度"),
+    ("被害事例", "サプリ・健康食品・市販薬の乱用や過剰摂取で実際に起きた健康被害から学ぶ"),
+]
+
+# 誰に向けて書くか# 誰に向けて書くか(同じトピックでも読者が変わると事例も語り口も変わる)
+READERS = [
+    "ドラッグストアで薬が多すぎてどれを選べばいいか分からない人",
+    "花粉症や頭痛など、毎年同じ症状で市販薬を買う人",
+    "子ども・家族のために市販薬を選ぶ立場の親",
+    "市販薬を常用していて副作用や飲み合わせが不安な人",
+    "美容・スキンケアの成分にこだわりたい人",
+    "定期購入や健康食品の広告に不安を感じている消費者",
+    "薬の知識はないが、失敗せず賢く選べるようになりたい人",
+]
+
+# どの切り口で書くか(構成パターンとは別の「視点」の軸)
+ANGLES = [
+    "『結局どれを選べばいいか』の結論を先に示し、理由を成分で裏付ける",
+    "よくある勘違い(『強い薬ほど良い』等)を1つずつ事実で正す",
+    "具体的な症状シーン(夜中の頭痛、会議前の花粉症等)を起点に選び方を示す",
+    "成分名の意味を『体の中で何をしているか』から噛み砕いて説明する",
+    "似た製品を成分で見比べて『違いはどこか』を具体的に示す",
+    "『やってはいけない使い方』と『安全に効かせるコツ』を対で示す",
+    "知っておくと得する豆知識・雑学として、軽い読み物調で伝える",
 ]
 
 # ── 構成パターン(5種類からランダム選択して多様化)──────
@@ -186,15 +185,18 @@ C) 過去の健康食品・市販薬による消費者被害事例
 ### 強調・視覚要素のルール
 5. **太字を効果的に使う**:重要な単語・キーワードは **太字** で強調する。1段落に1〜2箇所程度
 6. **引用ブロック (>) を活用する**:法律の条文、消費者庁の見解、印象的なフレーズは `> 〜` の引用ブロックで浮かせる
-7. **テーブルを積極的に使う**:3つ以上の比較・並列情報は箇条書きではなくMarkdownテーブルに整理する。例:「窓口」「用途」「特徴」のような構造化情報
-8. **吹き出し (:::tip / :::warn) は最低2個、最大4個まで**:ポイント・注意点・実践的アドバイスを目立たせる
+7. **テーブルは内容が要求するときだけ**:比較・並列情報が実際にあるときに使う。埋めるために作らない
+8. **吹き出し (:::tip / :::warn) は0〜3個**:必要なときだけ使う。無理に入れない
 9. **「——」(ダッシュ)を効果的に使う**:転換・強調・余韻を作るときに使う。例:「しかし——」「だからこそ——」
 
-### 読者を引き込むテクニック
-10. **読者の内面に刺さる一言を各セクションに1つ入れる**:「『もしかして、私が買ったあの商品も……』」のように、読者の頭に浮かぶ独白や疑問を引用符付きで挿入する
-11. **「Before/After」「Step 1/2/3」「パターン①〜④」**など、わかりやすい型を使って構造化する
-12. **専門用語は必ず噛み砕いて説明**:法律名や条文番号を出した直後に「つまり——」「ざっくり言えば——」の形で平易な言い換えを添える
-13. **問いかけを混ぜる**:「なぜこれが違法なのか?」「あなたはどう動くべきか?」のように、読者に考えさせる疑問文をセクションの冒頭や転換点に置く
+### 読者を引き込くために(手段は記事ごとに変えること)
+以下は「引き出しの候補」であって、全部を毎回使う必要はない。この記事の
+読者と切り口に合うものだけを選び、記事ごとに異なる見せ方をすること。
+毎回同じテクニックを全部盛りにすると、どの記事も同じ声・同じリズムになる。
+- 読者の内面の独白、問いかけ、専門用語の噛み砕き、型(Before/After等)は
+  「使ってもよい道具」。この記事に必要な分だけ、自然に使う。
+- むしろ意識すべきは、指定された『想定読者』の具体的な状況・気持ちに
+  合わせて、語り口そのものを変えること。
 
 ### NGパターン(避けるべき書き方)
 - 「近年、〜が増えています」のような定型的な書き出し
@@ -219,7 +221,7 @@ C) 過去の健康食品・市販薬による消費者被害事例
 画像URLや画像のプレースホルダ(`{IMAGE_BASE_URL}` など)も使用しないこと。
 本文はテキストのみで完結させること。
 
-## 吹き出し記法(必ず2〜3個使うこと)
+## 吹き出し記法(必要な場合のみ使用)
 ::: tip タイトル
 内容
 :::
@@ -237,13 +239,43 @@ C) 過去の健康食品・市販薬による消費者被害事例
 }"""
 
 # ─────────────────────────────────────────────────────────
+def _bigrams(text: str) -> set:
+    t = re.sub(r"\s+", "", text or "")
+    return {t[i:i+2] for i in range(len(t) - 1)} if len(t) >= 2 else {t}
+
+
+def similarity(a: str, b: str) -> float:
+    """文字bi-gramのJaccard類似度(0〜1)。0.5超で「似すぎ」とみなす。"""
+    sa, sb = _bigrams(a), _bigrams(b)
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / len(sa | sb)
+
+
+def is_too_similar(candidate: dict, past: list[dict], threshold: float = SIMILARITY_THRESHOLD) -> tuple[bool, str]:
+    """生成コラムが過去コラムと似すぎていないか判定。
+    タイトルとサマリーを結合して比較し、最も近い過去記事との類似度を見る。"""
+    cand_text = (candidate.get("title", "") + " " + candidate.get("summary", ""))
+    worst = 0.0
+    worst_title = ""
+    for c in past:
+        past_text = (c.get("title", "") + " " + c.get("summary", ""))
+        sim = similarity(cand_text, past_text)
+        # タイトル単独の一致も別途チェック(サマリーで薄まるのを防ぐ)
+        title_sim = similarity(candidate.get("title", ""), c.get("title", ""))
+        sim = max(sim, title_sim)
+        if sim > worst:
+            worst, worst_title = sim, c.get("title", "")
+    return worst >= threshold, f"{worst:.0%} 似ている: 「{worst_title}」"
+
+
 def fetch_recent_columns(limit: int = 20) -> list[dict]:
     """Supabaseから直近のコラムを取得(重複回避用)"""
     sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
     sb_key = os.environ.get("SUPABASE_KEY", "")
     if not sb_url or not sb_key:
         return []
-    url = f"{sb_url}/rest/v1/columns?select=title,tag,summary&order=date.desc&limit={limit}"
+    url = f"{sb_url}/rest/v1/columns?select=title,tag,summary,body&order=date.desc&limit={limit}"
     req = urllib.request.Request(
         url,
         headers={"apikey": sb_key, "Authorization": f"Bearer {sb_key}"},
@@ -266,37 +298,34 @@ def format_past_columns_for_prompt(past: list[dict]) -> str:
         title = c.get("title", "")
         tag = c.get("tag", "")
         summary = c.get("summary", "")
-        lines.append(f"{i}. [{tag}] {title}\n   要約: {summary}")
+        # 冒頭2文だけ抜き出して「書き出しの被り」も検知できるようにする
+        body = (c.get("body") or "").lstrip("#").strip()
+        opening = "".join(body.split("\n"))[:80]
+        lines.append(f"{i}. [{tag}] {title}\n   要約: {summary}\n   書き出し: {opening}…")
     return "\n".join(lines)
 
 
-def pick_theme_smart(slot: int, date_str: str, past: list[dict]) -> tuple[int, str, str]:
-    """過去コラムのタグ分布を見て、偏りを避けてテーマを選定"""
-    # 直近5本のタグを取得
+def pick_theme_smart(slot: int, date_str: str, past: list[dict]) -> tuple[int, str, str, str, str]:
+    """トピック×読者×切り口を掛け合わせて選ぶ。
+    直近の重複を避けつつ、同じトピックでも読者・切り口が変わるので
+    組み合わせが枯渇しにくい(16×6×6=576通り)。"""
     recent_tags = [c.get("tag", "") for c in past[:5]]
-    # 直近5本のタイトルから既出キーワードを抽出(完全一致回避用)
     recent_titles = set(c.get("title", "") for c in past[:20])
 
-    # 候補:直近で使われていないタグを優先
-    candidates = []
-    for i, (tag, desc) in enumerate(THEMES):
-        # すでに完全一致するタイトルが過去にあったらスキップ
-        # (THEMESのdescが直接タイトルになることがあるため)
-        if desc in recent_titles:
-            continue
-        # 直近5本に同じタグが3回以上出ていたら、そのタグはスキップ
-        if recent_tags.count(tag) >= 3:
-            continue
-        candidates.append((i, tag, desc))
+    # トピック候補: 直近5本で同タグ3回以上は避ける
+    topic_candidates = [
+        (i, tag, desc) for i, (tag, desc) in enumerate(TOPICS)
+        if recent_tags.count(tag) < 3
+    ]
+    if not topic_candidates:
+        topic_candidates = [(i, t, d) for i, (t, d) in enumerate(TOPICS)]
 
-    # 候補が空ならフォールバック(全テーマから選ぶ)
-    if not candidates:
-        candidates = [(i, t, d) for i, (t, d) in enumerate(THEMES)]
-
-    # 日付+スロットで擬似ランダム選定(再現性確保)
     seed = int(hashlib.md5(f"{date_str}-{slot}".encode()).hexdigest(), 16)
-    idx, tag, desc = candidates[seed % len(candidates)]
-    return idx, tag, desc
+    idx, tag, desc = topic_candidates[seed % len(topic_candidates)]
+    # 読者と切り口は別のシードで選び、トピックと独立に回す
+    reader = READERS[(seed // 7) % len(READERS)]
+    angle = ANGLES[(seed // 13) % len(ANGLES)]
+    return idx, tag, desc, reader, angle
 
 
 def pick_structure_pattern(date_str: str, slot: int) -> dict:
@@ -305,7 +334,7 @@ def pick_structure_pattern(date_str: str, slot: int) -> dict:
     return STRUCTURE_PATTERNS[seed % len(STRUCTURE_PATTERNS)]
 
 
-def call_claude(theme_tag: str, theme_desc: str, past_columns: list[dict], structure: dict) -> dict | None:
+def call_claude(theme_tag: str, theme_desc: str, reader: str, angle: str, past_columns: list[dict], structure: dict) -> dict | None:
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
     if not api_key:
         print("[gen] ANTHROPIC_API_KEY が未設定", file=sys.stderr)
@@ -315,7 +344,23 @@ def call_claude(theme_tag: str, theme_desc: str, past_columns: list[dict], struc
     system_prompt = SYSTEM_PROMPT_BASE + "\n\n" + structure["instruction"]
 
     # ユーザープロンプトに過去コラム情報を含める
-    user_prompt = f"次のテーマでコラムを書いてください:\n\nテーマ: {theme_desc}\nタグ: {theme_tag}\n\n本文中には画像のMarkdownリンクを一切含めないこと。テキストのみで完結させてください。"
+    user_prompt = f"""次の条件でコラムを1本書いてください。
+
+## トピック領域
+{theme_desc}(タグ: {theme_tag})
+
+## 想定読者(この人に語りかけるつもりで書く)
+{reader}
+
+## この記事の切り口(必ずこの視点を軸にする)
+{angle}
+
+上のトピックを、上の読者に向けて、上の切り口で書いてください。
+トピックが同じでも、読者と切り口が変われば、選ぶ具体例・語り口・構成は
+まったく別物になるはずです。一般論の寄せ集めにせず、この読者のこの状況に
+刺さる記事にしてください。
+
+本文中には画像のMarkdownリンクを一切含めないこと。テキストのみで完結させてください。"""
 
     past_str = format_past_columns_for_prompt(past_columns)
     if past_str:
@@ -334,7 +379,7 @@ def call_claude(theme_tag: str, theme_desc: str, past_columns: list[dict], struc
 - まとめの締め方も定型化させない"""
 
     payload = json.dumps({
-        "model": "claude-opus-4-7",
+        "model": "claude-opus-4-8",
         "max_tokens": 6000,
         "system": system_prompt,
         "messages": [{"role": "user", "content": user_prompt}]
@@ -434,15 +479,21 @@ def run(dry_run=False, theme_index=None):
 
     # テーマ選定
     if theme_index is not None:
-        theme_tag, theme_desc = THEMES[theme_index % len(THEMES)]
-        picked_idx = theme_index % len(THEMES)
+        theme_tag, theme_desc = TOPICS[theme_index % len(TOPICS)]
+        picked_idx = theme_index % len(TOPICS)
+        # 手動指定時も読者・切り口は日付ベースで回す
+        seed = int(hashlib.md5(f"{date_str}-{slot}".encode()).hexdigest(), 16)
+        reader = READERS[(seed // 7) % len(READERS)]
+        angle = ANGLES[(seed // 13) % len(ANGLES)]
     else:
-        picked_idx, theme_tag, theme_desc = pick_theme_smart(slot, date_str, past_columns)
+        picked_idx, theme_tag, theme_desc, reader, angle = pick_theme_smart(slot, date_str, past_columns)
 
     # 構成パターン選定
     structure = pick_structure_pattern(date_str, slot)
 
-    print(f"[gen] テーマ[{picked_idx}]: [{theme_tag}] {theme_desc}")
+    print(f"[gen] トピック[{picked_idx}]: [{theme_tag}] {theme_desc}")
+    print(f"[gen] 想定読者: {reader}")
+    print(f"[gen] 切り口: {angle}")
     print(f"[gen] 構成パターン: {structure['name']}")
     print(f"[gen] コラムID: {col_id}")
 
@@ -454,9 +505,28 @@ def run(dry_run=False, theme_index=None):
         return True
 
     print("[gen] Claude APIでコラム生成中...")
-    col_data = call_claude(theme_tag, theme_desc, past_columns, structure)
+    col_data = None
+    for attempt in range(1, MAX_RETRIES + 1):  # 似すぎたらトピックを変えて再生成
+        candidate = call_claude(theme_tag, theme_desc, reader, angle, past_columns, structure)
+        if not candidate:
+            print(f"[gen] 生成失敗(試行{attempt})", file=sys.stderr)
+            break
+        too_sim, detail = is_too_similar(candidate, past_columns)
+        if not too_sim:
+            col_data = candidate
+            print(f"[gen] 類似チェックOK({detail})")
+            break
+        print(f"[gen] ⚠ 過去記事と{detail} → 別トピックで再生成(試行{attempt})")
+        # 別トピック・別読者・別切り口に振り直す
+        seed = int(hashlib.md5(f"{date_str}-{slot}-retry{attempt}".encode()).hexdigest(), 16)
+        picked_idx2 = seed % len(TOPICS)
+        theme_tag, theme_desc = TOPICS[picked_idx2]
+        reader = READERS[(seed // 7) % len(READERS)]
+        angle = ANGLES[(seed // 13) % len(ANGLES)]
+        structure = pick_structure_pattern(date_str, slot + attempt)
+        print(f"[gen]   → [{theme_tag}] {theme_desc[:30]} / 読者変更 / 切り口変更")
     if not col_data:
-        print("[gen] コラム生成失敗", file=sys.stderr)
+        print("[gen] コラム生成失敗(または全試行で類似)", file=sys.stderr)
         return False
 
     # 念のため:本文内の画像Markdown(![...](...))を全て削除する保険処理
@@ -509,7 +579,7 @@ if __name__ == "__main__":
     p.add_argument("--list",     action="store_true")
     a = p.parse_args()
     if a.list:
-        for i, (tag, desc) in enumerate(THEMES):
+        for i, (tag, desc) in enumerate(TOPICS):
             print(f"[{i:2d}] {tag}: {desc}")
         sys.exit(0)
     ok = run(dry_run=a.dry_run, theme_index=a.theme)
