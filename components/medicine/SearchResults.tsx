@@ -37,7 +37,7 @@ export function SearchResults({ q }: { q: string }) {
 
   if (scored.length === 0) {
     return (
-      <div className="rounded border border-gray-200 bg-white p-8 text-center text-gray-500">
+      <div className="card-static p-8 text-center text-gray-500">
         「{q}」に一致する市販薬は見つかりませんでした。
       </div>
     );

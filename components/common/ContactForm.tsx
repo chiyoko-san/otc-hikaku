@@ -47,7 +47,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
+    <div className="space-y-4 card-static p-6">
       {error && (
         <div className="rounded bg-red-50 p-3 text-sm text-red-700">{error}</div>
       )}

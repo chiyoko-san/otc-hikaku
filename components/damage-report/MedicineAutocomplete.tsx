@@ -162,7 +162,7 @@ export function MedicineAutocomplete({ value, onChange }: Props) {
       {value.name && !open && (
         <div className="mt-2 flex items-center gap-2 text-xs">
           {value.medicine_id && (
-            <span className="rounded bg-brand-light px-2 py-0.5 text-brand-dark">
+            <span className="pill-brand">
               💊 登録薬品から選択
             </span>
           )}
@@ -172,7 +172,7 @@ export function MedicineAutocomplete({ value, onChange }: Props) {
             </span>
           )}
           {value.isFreeText && (
-            <span className="rounded bg-gray-100 px-2 py-0.5 text-gray-600">
+            <span className="pill-muted">
               ✏️ 新規入力
             </span>
           )}
@@ -184,7 +184,7 @@ export function MedicineAutocomplete({ value, onChange }: Props) {
 
       {/* ドロップダウン候補 */}
       {open && query.trim().length >= 1 && (
-        <div className="absolute left-0 right-0 z-20 mt-1 max-h-80 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute left-0 right-0 z-20 mt-1 max-h-80 overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-black/[0.06]">
           {loading && (
             <div className="px-4 py-3 text-sm text-gray-500">検索中…</div>
           )}

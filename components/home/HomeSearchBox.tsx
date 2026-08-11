@@ -125,7 +125,7 @@ export function HomeSearchBox() {
         <ul
           id="search-suggest-list"
           role="listbox"
-          className="absolute left-0 right-0 top-full z-30 mt-1 max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
+          className="absolute left-0 right-0 top-full z-30 mt-1 max-h-96 overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-black/[0.06]"
         >
           {items.map((item, i) => (
             <li key={item.id} role="option" aria-selected={i === active}>

@@ -146,7 +146,7 @@ export function DamageReportForm() {
   const steps = ['商品', '被害', '詳細', '属性', '確認'];
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
+    <div className="card-static p-6">
       {/* ステップインジケータ */}
       <div className="mb-6 flex items-center gap-2">
         {steps.map((s, i) => (
@@ -280,7 +280,7 @@ export function DamageReportForm() {
             />
           </div>
 
-          <div className="rounded border border-gray-200 bg-gray-50 p-4">
+          <div className="rounded-xl bg-gray-50 p-4 ring-1 ring-black/[0.04]">
             <div className="mb-3 text-sm font-bold text-gray-700">
               🌐 Web から購入した場合(任意)
             </div>
@@ -380,13 +380,13 @@ export function DamageReportForm() {
       {step === 5 && (
         <div className="space-y-4">
           <h2 className="text-xl font-bold">内容の確認</h2>
-          <dl className="space-y-2 rounded border border-gray-200 bg-gray-50 p-4 text-sm">
+          <dl className="space-y-2 rounded-xl bg-gray-50 p-4 ring-1 ring-black/[0.04] text-sm">
             <div>
               <dt className="font-bold">商品:</dt>
               <dd className="flex flex-wrap items-center gap-2">
                 <span>{product.name}</span>
                 {product.medicine_id && (
-                  <span className="rounded bg-brand-light px-1.5 py-0.5 text-xs text-brand-dark">
+                  <span className="pill-brand">
                     💊 登録薬品
                   </span>
                 )}

@@ -93,7 +93,7 @@ export default function SwitchDetailPage({ params }: Props) {
 
         <header className="mb-6">
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span className="rounded bg-brand-light px-2 py-0.5 text-xs text-brand-dark">
+            <span className="pill-brand">
               処方薬からの切替
             </span>
             <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
@@ -165,7 +165,7 @@ export default function SwitchDetailPage({ params }: Props) {
         </section>
 
         {/* 制度背景 */}
-        <section className="mb-8 rounded border border-gray-200 bg-gray-50 p-4">
+        <section className="mb-8 rounded-xl bg-gray-50 p-4 ring-1 ring-black/[0.04]">
           <h2 className="mb-2 text-sm font-bold">
             なぜ市販薬への切替が話題になっているのか
           </h2>

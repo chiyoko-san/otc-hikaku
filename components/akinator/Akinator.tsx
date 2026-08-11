@@ -96,7 +96,7 @@ export function Akinator({ categories }: { categories: AkCategory[] }) {
   // 空データ時のフォールバック
   if (!categories || categories.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-600">
+      <div className="card-static p-6 text-gray-600">
         現在アキネーターを準備中です。お手数ですが
         <Link href="/symptoms/" className="text-brand underline">症状一覧</Link>
         からお探しください。
@@ -107,7 +107,7 @@ export function Akinator({ categories }: { categories: AkCategory[] }) {
   // ===== STAGE 1: カテゴリ選択（複数可） =====
   if (phase === 'category') {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="card-static p-6">
         <div className="mb-1 text-sm text-gray-500">ステップ 1 / 2</div>
         <h2 className="mb-1 text-xl font-bold">気になる症状の分野を選んでください</h2>
         <p className="mb-5 text-sm text-gray-600">複数選んでもOKです。</p>
@@ -156,7 +156,7 @@ export function Akinator({ categories }: { categories: AkCategory[] }) {
     const selectedSet = answers[q.id] ?? new Set<string>();
 
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="card-static p-6">
         <div className="mb-4 h-1 overflow-hidden rounded-full bg-gray-200">
           <div className="h-full bg-brand transition-all" style={{ width: `${progress}%` }} />
         </div>

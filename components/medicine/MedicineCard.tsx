@@ -53,7 +53,7 @@ export function MedicineCard({
         </h3>
         <span className="flex flex-shrink-0 items-center gap-1">
           {badge && (
-            <span className="rounded bg-brand-light px-1.5 py-0.5 text-xs font-semibold text-brand-dark">
+            <span className="pill-brand">
               {badge}
             </span>
           )}
@@ -62,7 +62,7 @@ export function MedicineCard({
       </div>
       <div className="mb-2 text-xs text-gray-500">{med.maker}</div>
       <div className="mb-2 flex flex-wrap gap-1">
-        <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+        <span className="pill-muted">
           {getCategoryLabel(med.cat)}
         </span>
         {med.drowsy && (

@@ -265,7 +265,7 @@ export function MedicineBrowser({
               });
             }}
             aria-label="カテゴリで絞り込み"
-            className="rounded-lg border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
+            className="rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
           >
             <option value="">すべてのカテゴリ</option>
             {categories.map((c) => (
@@ -285,7 +285,7 @@ export function MedicineBrowser({
               });
             }}
             aria-label="症状で絞り込み"
-            className="rounded-lg border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
+            className="rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
           >
             <option value="">すべての症状</option>
             {symptomOptions.map(([t, n]) => (
@@ -335,7 +335,7 @@ export function MedicineBrowser({
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
               aria-label="並び替え"
-              className="rounded-lg border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
+              className="rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
             >
               <option value="rec">おすすめ順</option>
               <option value="name">名前順</option>

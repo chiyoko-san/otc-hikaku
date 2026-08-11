@@ -194,7 +194,7 @@ export default async function MedicineDetailPage({ params }: Props) {
             </span>
             <Link
               href={`/categories/${med.cat}/`}
-              className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700 hover:bg-brand-light hover:text-brand"
+              className="pill-muted hover:bg-brand-light hover:text-brand-deep"
             >
               {getCategoryLabel(med.cat)}
             </Link>
@@ -291,7 +291,7 @@ export default async function MedicineDetailPage({ params }: Props) {
 
         {/* 処方薬からの切替導線 */}
         {relatedSwitch.length > 0 && (
-          <section className="mb-8 rounded-lg border border-brand-light bg-brand-light/30 p-4">
+          <section className="hero-card mb-8">
             <h2 className="mb-2 text-sm font-bold text-brand-dark">
               処方薬からの切替をお考えの方へ
             </h2>
@@ -544,7 +544,7 @@ export default async function MedicineDetailPage({ params }: Props) {
 
         {/* PMDA リンク */}
         {med.pmda_url && (
-          <section className="mb-8 rounded border border-gray-200 bg-gray-50 p-4">
+          <section className="card-static mb-8 p-4">
             <h2 className="mb-2 text-sm font-bold">公式情報源</h2>
             <a
               href={med.pmda_url}
