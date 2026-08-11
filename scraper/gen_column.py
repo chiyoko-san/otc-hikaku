@@ -432,7 +432,7 @@ def save_to_supabase(col: dict) -> bool:
                 return True
     except Exception as e:
         print(f"[gen] 重複チェックエラー: {e}", file=sys.stderr)
-    # 保存(status='draft' で保存 → 管理画面で確認後に公開)
+    # 保存(status='published' で保存 → 生成と同時に公開)
     payload = json.dumps({
         "id":         col["id"],
         "title":      col["title"],
@@ -440,7 +440,7 @@ def save_to_supabase(col: dict) -> bool:
         "tag":        col["tag"],
         "summary":    col["summary"],
         "body":       col["body"],
-        "status":     "draft",
+        "status":     "published",
         "updated_at": datetime.now(JST).isoformat(),
     }).encode("utf-8")
     req = urllib.request.Request(
@@ -566,8 +566,7 @@ def run(dry_run=False, theme_index=None):
         print(f"[gen] 画像Markdown: 0箇所(指示通り)")
 
     if save_to_supabase(col):
-        print(f"[gen] ✅ Supabaseに下書き保存しました")
-        print(f"[gen] → admin.html で確認・編集後に公開してください")
+        print(f"[gen] ✅ Supabaseに公開状態で保存しました")
         return True
     return False
 
