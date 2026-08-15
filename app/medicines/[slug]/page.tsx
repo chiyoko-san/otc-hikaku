@@ -133,6 +133,13 @@ export default async function MedicineDetailPage({ params }: Props) {
   const relatedSwitch = findSwitchDrugsForMedicine(med);
   const damageCount = await getDamageReportCountByMedicineId(med.id);
 
+  // 発売元(販売会社)。複数ある場合は「A / B」で入っている
+  const sellers = (med.seller || '')
+    .split('/')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .filter((s) => s !== med.maker);
+
   // FAQ 構造化データ (リッチリザルト対策)
   const sameIngNames = similar
     .filter((s) => s.sameIngredient)
@@ -149,6 +156,14 @@ export default async function MedicineDetailPage({ params }: Props) {
         ? `${med.name}は眠気が出ることがある製品です。服用後の車の運転や機械の操作は避けてください。`
         : `${med.name}は眠気の注意表示がない製品です。ただし体質により眠気を感じる場合は運転を避けてください。`,
     },
+    ...(sellers.length > 0
+      ? [
+          {
+            q: `${med.name}はどこの製品ですか?`,
+            a: `${med.name}は${med.maker}が製造販売し、${sellers.join('、')}が販売しています。`,
+          },
+        ]
+      : []),
     ...(sameIngNames.length > 0
       ? [
           {
@@ -214,7 +229,22 @@ export default async function MedicineDetailPage({ params }: Props) {
           <h1 className="mb-2 text-3xl font-bold leading-tight md:text-4xl">
             {med.name}
           </h1>
-          <p className="text-gray-600">{med.maker}</p>
+
+          {/* 製造販売元 / 発売元 */}
+          <dl className="space-y-0.5 text-sm">
+            {med.maker && (
+              <div className="flex flex-wrap gap-x-2">
+                <dt className="text-gray-500">製造販売元</dt>
+                <dd className="text-gray-700">{med.maker}</dd>
+              </div>
+            )}
+            {sellers.length > 0 && (
+              <div className="flex flex-wrap gap-x-2">
+                <dt className="text-gray-500">発売元</dt>
+                <dd className="text-gray-700">{sellers.join(' / ')}</dd>
+              </div>
+            )}
+          </dl>
         </header>
 
         {/* 効能・効果 */}
