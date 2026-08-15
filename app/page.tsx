@@ -38,13 +38,16 @@ export default function MedicinesIndexPage() {
       <Breadcrumb items={[{ name: 'ホーム', href: '/' }, { name: '薬品一覧' }]} />
 
       <header className="mb-8">
-        <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-brand-ink md:text-4xl">市販薬一覧</h1>
+        <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-brand-ink md:text-4xl">
+          市販薬一覧
+        </h1>
         <p className="mb-6 text-gray-600">
-          詳細情報を整備した市販薬 {all.length} 品をカテゴリ別に掲載しています。
+          PMDA公開情報をもとに整理した市販薬 {all.length.toLocaleString()} 品を、
+          成分・リスク区分から比較できます。
         </p>
         <Link
           href="/switch/"
-          className="mt-4 block max-w-2xl rounded-lg border border-brand-light bg-brand-light/30 p-4 transition hover:border-brand"
+          className="block max-w-2xl rounded-lg border border-brand-light bg-brand-light/30 p-4 transition hover:border-brand"
         >
           <span className="mb-1 block text-sm font-bold text-brand-dark">
             「その薬、市販でも買えますよ」と言われた方へ
@@ -63,42 +66,34 @@ export default function MedicinesIndexPage() {
           count: byCategory.get(c.id)?.length || 0,
         }))}
       >
-      {/* カテゴリリンク */}
-      <nav className="mb-10 flex flex-wrap gap-2">
-        {sortedCats.map((c) => (
-          <Link
-            key={c.id}
-            href={`/categories/${c.id}/`}
-            className="chip hover:border-brand"
-          >
-            {c.label}({byCategory.get(c.id)?.length || 0})
-          </Link>
-        ))}
-      </nav>
-
-      {/* カテゴリごとに薬品カードを表示 */}
-      {sortedCats.map((c) => {
-        const meds = byCategory.get(c.id) || [];
-        if (meds.length === 0) return null;
-        return (
-          <section key={c.id} className="mb-12">
-            <div className="mb-4 flex items-baseline justify-between">
-              <h2 className="text-2xl font-bold">{c.label}</h2>
-              <Link
-                href={`/categories/${c.id}/`}
-                className="text-sm text-brand hover:underline"
-              >
-                すべて見る ({meds.length}件) →
-              </Link>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {meds.slice(0, 6).map((m) => (
-                <MedicineCard key={m.id} med={m} />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+        {/* カテゴリごとに薬品カードを表示 */}
+        {sortedCats.map((c) => {
+          const meds = byCategory.get(c.id) || [];
+          if (meds.length === 0) return null;
+          return (
+            <section key={c.id} className="mb-12">
+              <div className="mb-4 flex items-baseline justify-between border-b border-gray-100 pb-2">
+                <h2 className="text-xl font-bold text-brand-ink md:text-2xl">
+                  {c.label}
+                  <span className="ml-2 text-sm font-medium text-gray-400">
+                    {meds.length.toLocaleString()}件
+                  </span>
+                </h2>
+                <Link
+                  href={`/categories/${c.id}/`}
+                  className="whitespace-nowrap text-sm text-brand hover:underline"
+                >
+                  すべて見る →
+                </Link>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {meds.slice(0, 6).map((m) => (
+                  <MedicineCard key={m.id} med={m} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </MedicineBrowser>
     </div>
   );
