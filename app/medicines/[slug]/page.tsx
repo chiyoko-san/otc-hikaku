@@ -26,10 +26,17 @@ import {
 // ISR: 1日に1回再生成
 export const revalidate = 86400;
 
-// 全 622 件分の静的パスを事前生成(SSG)
+// 一覧に無いページもアクセス時に生成する
+export const dynamicParams = true;
+
+// ビルド時に作るのは主要な製品のみ。
+// 残りは初回アクセス時に生成され、以後キャッシュされる
 export async function generateStaticParams() {
   const enriched = getAllMedicines();
-  return enriched.map((m) => ({ slug: m.slug }));
+  const priority = enriched
+    .filter((m) => m.ings && m.ings.length > 0 && m.effect)
+    .slice(0, 800);
+  return priority.map((m) => ({ slug: m.slug }));
 }
 
 type Props = { params: { slug: string } };
