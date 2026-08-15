@@ -1,7 +1,7 @@
 name: Weekly PMDA Update
 on:
-  schedule:
-    - cron: "0 17 * * 6"
+  #schedule:
+  #  - cron: "0 17 * * 6"
   workflow_dispatch:
     inputs:
       group:
