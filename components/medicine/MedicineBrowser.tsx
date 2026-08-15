@@ -87,6 +87,11 @@ function normalize(s: string): string {
 
 const PAGE_SIZE = 24;
 
+/** 絞り込みパネルで使う共通のセレクト */
+const SELECT_CLASS =
+  'w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 ' +
+  'text-sm text-brand-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand';
+
 /**
  * 一覧ページの絞り込みブラウザ。
  * 絞り込みなし → children(カテゴリ別のサーバーレンダリング一覧)を表示。
@@ -108,6 +113,7 @@ export function MedicineBrowser({
   const [symptom, setSymptom] = useState('');
   const [sort, setSort] = useState<SortKey>('rec');
   const [visible, setVisible] = useState(PAGE_SIZE);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const trackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -146,6 +152,8 @@ export function MedicineBrowser({
     risks.length > 0 ||
     noDrowsy ||
     symptom !== '';
+
+  const advancedCount = risks.length + (noDrowsy ? 1 : 0);
 
   // 症状タグの候補(データから頻度順に集計)
   const symptomOptions = useMemo(() => {
@@ -226,11 +234,12 @@ export function MedicineBrowser({
     <>
       {/* 検索・フィルタパネル(絞り込み中は追従) */}
       <section
-        className={`card mb-8 p-4 md:p-5 ${
-          isFiltering ? 'sticky top-16 z-30' : ''
+        className={`mb-10 rounded-2xl border border-gray-200 bg-white p-5 md:p-7 ${
+          isFiltering ? 'sticky top-16 z-30 shadow-sm' : ''
         }`}
       >
-        <div className="relative mb-3">
+        {/* キーワード検索 */}
+        <div className="relative">
           <svg
             aria-hidden="true"
             className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
@@ -248,111 +257,169 @@ export function MedicineBrowser({
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="商品名・成分・症状・メーカーで検索(例: ロキソニン、頭痛)"
+            placeholder="商品名・成分名で検索"
             aria-label="市販薬を検索"
-            className="w-full rounded-xl border-2 border-gray-200 bg-white py-3 pl-11 pr-4 text-base text-brand-ink placeholder:text-gray-400 focus:border-brand focus:outline-none"
+            className="w-full rounded-xl border border-gray-300 bg-white py-4 pl-12 pr-4 text-base text-brand-ink placeholder:text-gray-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={cat}
-            onChange={(e) => {
-              setCat(e.target.value);
-              trackEvent('explorer_filter', {
-                type: 'cat',
-                value: e.target.value,
-              });
-            }}
-            aria-label="カテゴリで絞り込み"
-            className="rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
-          >
-            <option value="">すべてのカテゴリ</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.label}({c.count})
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={symptom}
-            onChange={(e) => {
-              setSymptom(e.target.value);
-              trackEvent('explorer_filter', {
-                type: 'symptom',
-                value: e.target.value,
-              });
-            }}
-            aria-label="症状で絞り込み"
-            className="rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
-          >
-            <option value="">すべての症状</option>
-            {symptomOptions.map(([t, n]) => (
-              <option key={t} value={t}>
-                {t}({n})
-              </option>
-            ))}
-          </select>
-
-          {RISK_FILTERS.map((rf) => (
-            <button
-              key={rf.value}
-              type="button"
-              onClick={() => toggleRisk(rf.value)}
-              aria-pressed={risks.includes(rf.value)}
-              className={`rounded-full border-2 px-3.5 py-1.5 text-sm font-semibold transition ${
-                risks.includes(rf.value)
-                  ? 'border-brand-dark bg-brand-dark text-white shadow-sm'
-                  : 'border-gray-200 bg-white text-gray-600 hover:border-brand hover:text-brand-dark'
-              }`}
+        {/* 分類・悩み/症状 */}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500">
+              分類
+            </span>
+            <select
+              value={cat}
+              onChange={(e) => {
+                setCat(e.target.value);
+                trackEvent('explorer_filter', {
+                  type: 'cat',
+                  value: e.target.value,
+                });
+              }}
+              aria-label="分類で絞り込み"
+              className={SELECT_CLASS}
             >
-              {rf.label}
-            </button>
-          ))}
+              <option value="">すべての分類</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}({c.count})
+                </option>
+              ))}
+            </select>
+          </label>
 
+          <label className="block">
+            <span className="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500">
+              悩み・症状
+            </span>
+            <select
+              value={symptom}
+              onChange={(e) => {
+                setSymptom(e.target.value);
+                trackEvent('explorer_filter', {
+                  type: 'symptom',
+                  value: e.target.value,
+                });
+              }}
+              aria-label="症状で絞り込み"
+              className={SELECT_CLASS}
+            >
+              <option value="">すべての症状</option>
+              {symptomOptions.map(([t, n]) => (
+                <option key={t} value={t}>
+                  {t}({n})
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        {/* 詳しく絞り込む(普段は閉じておく) */}
+        <div className="mt-4 border-t border-gray-100 pt-3">
           <button
             type="button"
-            onClick={() => {
-              setNoDrowsy((v) => !v);
-              trackEvent('explorer_filter', {
-                type: 'no_drowsy',
-                value: String(!noDrowsy),
-              });
-            }}
-            aria-pressed={noDrowsy}
-            className={`rounded-full border-2 px-3.5 py-1.5 text-sm font-semibold transition ${
-              noDrowsy
-                ? 'border-brand-dark bg-brand-dark text-white shadow-sm'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-brand hover:text-brand-dark'
-            }`}
+            onClick={() => setShowAdvanced((v) => !v)}
+            aria-expanded={showAdvanced}
+            className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-dark"
           >
-            眠気成分なし
+            <svg
+              aria-hidden="true"
+              className={`h-4 w-4 transition-transform ${
+                showAdvanced ? 'rotate-90' : ''
+              }`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <path d="m9 6 6 6-6 6" />
+            </svg>
+            詳しく絞り込む
+            {advancedCount > 0 && (
+              <span className="ml-1 rounded-full bg-brand-dark px-2 py-0.5 text-xs font-semibold text-white">
+                {advancedCount}
+              </span>
+            )}
           </button>
 
-          {isFiltering && (
+          {showAdvanced && (
+            <div className="mt-4 space-y-4">
+              <div>
+                <span className="mb-2 block text-xs font-semibold tracking-wide text-gray-500">
+                  リスク区分
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {RISK_FILTERS.map((rf) => (
+                    <button
+                      key={rf.value}
+                      type="button"
+                      onClick={() => toggleRisk(rf.value)}
+                      aria-pressed={risks.includes(rf.value)}
+                      className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+                        risks.includes(rf.value)
+                          ? 'border-brand-dark bg-brand-dark text-white'
+                          : 'border-gray-300 bg-white text-gray-600 hover:border-brand hover:text-brand-dark'
+                      }`}
+                    >
+                      {rf.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <span className="mb-2 block text-xs font-semibold tracking-wide text-gray-500">
+                  その他の条件
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNoDrowsy((v) => !v);
+                    trackEvent('explorer_filter', {
+                      type: 'no_drowsy',
+                      value: String(!noDrowsy),
+                    });
+                  }}
+                  aria-pressed={noDrowsy}
+                  className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+                    noDrowsy
+                      ? 'border-brand-dark bg-brand-dark text-white'
+                      : 'border-gray-300 bg-white text-gray-600 hover:border-brand hover:text-brand-dark'
+                  }`}
+                >
+                  眠気成分なし
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 並び替え・条件クリア(絞り込み中のみ) */}
+        {isFiltering && (
+          <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-gray-100 pt-3">
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
               aria-label="並び替え"
-              className="rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-brand-ink focus:border-brand focus:outline-none"
+              className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-brand-ink focus:border-brand focus:outline-none"
             >
               <option value="rec">おすすめ順</option>
               <option value="name">名前順</option>
               <option value="risk-asc">リスクが低い順</option>
               <option value="risk-desc">リスクが高い順</option>
             </select>
-          )}
-          {isFiltering && (
             <button
               type="button"
               onClick={clearAll}
-              className="ml-auto rounded-full px-3 py-1.5 text-sm font-medium text-gray-500 underline underline-offset-2 hover:text-brand-dark"
+              className="ml-auto text-sm font-medium text-gray-500 underline underline-offset-2 hover:text-brand-dark"
             >
               条件をクリア
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </section>
 
       {/* ===== 絞り込み中: 検索結果がページ本体 ===== */}
