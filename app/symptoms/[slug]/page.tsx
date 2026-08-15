@@ -11,8 +11,16 @@ import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
 import { buildMetadata, buildBreadcrumbJsonLd, SITE_URL } from '@/lib/seo';
 
-export function generateStaticParams() {
-  return getAllSymptoms().map((s) => ({ slug: s.slug }));
+// 一覧に無いページもアクセス時に生成する
+export const dynamicParams = true;
+
+// ビルド時に作るのは主要製品のみ。残りは初回アクセス時に生成される
+export async function generateStaticParams() {
+  const enriched = getAllMedicines();
+  const priority = enriched
+    .filter((m) => m.ings && m.ings.length > 0 && m.effect)
+    .slice(0, 800);
+  return priority.map((m) => ({ slug: m.slug }));
 }
 
 type Props = { params: { slug: string } };
