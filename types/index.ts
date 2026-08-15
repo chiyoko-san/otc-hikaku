@@ -18,7 +18,7 @@ export type Medicine = {
   source?: string;
   asin?: string;
   rakuten_url?: string;
-
+  seller?: string;
   // 拡張フィールド(ビルド時生成)
   slug: string;
 };
