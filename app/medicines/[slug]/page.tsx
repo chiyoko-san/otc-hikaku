@@ -13,6 +13,11 @@ import { getAllSymptoms } from '@/lib/medicines';
 import { getDamageReportCountByMedicineId } from '@/lib/supabase/damage-reports';
 import { getCategoryLabel } from '@/lib/categories';
 import { normalizeIngredientName } from '@/lib/slug';
+import {
+  normalizeDosageForm,
+  DOSAGE_FORM_LABELS,
+  type DosageFormKey,
+} from '@/lib/dosageForm';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
 import {
@@ -102,7 +107,38 @@ export default async function MedicineDetailPage({ params }: Props) {
   const med = getMedicineBySlug(params.slug);
   if (!med) notFound();
 
-  const similar = getSimilarMedicinesWithReason(med, 6);
+  // ===== 類似薬を剤形で振り分ける =====
+  // 点眼薬と内服薬が同じ成分を含んでいても、配合量を直接比較しても意味がないため、
+  // 比較表は同一剤形のみで構成し、他剤形はリンク一覧として別途案内する。
+  const formOf = (m: { name: string; cat?: string | null }): DosageFormKey =>
+    normalizeDosageForm(m.name, m.cat ?? null, (m as { form?: string | null }).form ?? null);
+
+  const baseForm = formOf(med);
+  // 剤形で絞り込む分、候補は多めに取得する
+  const similarAll = getSimilarMedicinesWithReason(med, 40);
+
+  // 自分の剤形が判定できない製品では従来通り全件を対象にする(空表を出さないため)
+  const similar =
+    baseForm === 'other'
+      ? similarAll.slice(0, 6)
+      : similarAll.filter((s) => formOf(s.med) === baseForm).slice(0, 6);
+
+  // 他剤形にある同成分の製品(剤形ごとにグループ化)
+  const otherFormGroups =
+    baseForm === 'other'
+      ? []
+      : (() => {
+          const map = new Map<DosageFormKey, typeof similarAll>();
+          for (const s of similarAll) {
+            if (!s.sameIngredient) continue;
+            const f = formOf(s.med);
+            if (f === baseForm || f === 'other') continue;
+            const list = map.get(f) || [];
+            if (list.length >= 6) continue;
+            map.set(f, [...list, s]);
+          }
+          return [...map.entries()];
+        })();
 
   // ===== 成分量比較マトリクス用データ =====
   // 列: この薬 + 類似5製品 / 行: 出現順のユニーク成分(この薬の成分を先頭に)
@@ -451,12 +487,17 @@ export default async function MedicineDetailPage({ params }: Props) {
           </div>
         </section>
 
-        {/* 類似薬品 */}
+        {/* 類似薬品(同じ剤形のみ) */}
         {similar.length > 0 && (
           <section className="mb-8">
-            <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
+            <h2 className="mb-1 border-l-4 border-brand pl-3 text-xl font-bold">
               類似薬品・同成分の代替
             </h2>
+            {baseForm !== 'other' && (
+              <p className="mb-3 pl-3 text-sm text-gray-500">
+                {DOSAGE_FORM_LABELS[baseForm]}どうしで比較しています
+              </p>
+            )}
             <div className="card overflow-x-auto">
               <table className="w-full border-collapse text-sm">
                 <thead>
@@ -576,6 +617,52 @@ export default async function MedicineDetailPage({ params }: Props) {
                 `主要${ingRowsCapped.length}成分のみ表示しています。`}
               使用の可否は各製品ページと添付文書をご確認ください。
             </p>
+          </section>
+        )}
+
+        {/* 他の剤形にある同成分の製品 */}
+        {otherFormGroups.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-1 border-l-4 border-brand pl-3 text-xl font-bold">
+              同じ成分を含む他の剤形
+            </h2>
+            <p className="mb-3 pl-3 text-sm text-gray-500">
+              剤形が異なるため配合量の直接比較はできません。用途が異なる点にご注意ください。
+            </p>
+            <div className="space-y-4">
+              {otherFormGroups.map(([form, list]) => (
+                <div key={form} className="card p-4">
+                  <div className="mb-2 text-sm font-bold text-brand-deep">
+                    {DOSAGE_FORM_LABELS[form]}
+                  </div>
+                  <ul className="space-y-1.5">
+                    {list.map((s) => (
+                      <li
+                        key={s.med.id}
+                        className="flex flex-wrap items-center gap-2 text-sm"
+                      >
+                        <Link
+                          href={`/medicines/${s.med.slug}/`}
+                          className="font-semibold text-brand-dark hover:underline"
+                        >
+                          {s.med.name}
+                        </Link>
+                        <span className={riskClass(s.med.risk, s.med.itype)}>
+                          {riskLabel(s.med.risk, s.med.itype)
+                            .replace('医薬品', '')
+                            .replace('分類', '')}
+                        </span>
+                        {s.med.maker && (
+                          <span className="text-xs text-gray-500">
+                            {s.med.maker}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </section>
         )}
 
