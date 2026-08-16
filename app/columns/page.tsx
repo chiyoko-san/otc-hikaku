@@ -4,7 +4,7 @@ import { getPublishedColumns } from '@/lib/supabase/columns';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { buildMetadata } from '@/lib/seo';
 
-// コラムは毎日追加されうるので 1 時間で再生成
+// コラムは毎日追加されうるので短い間隔で再生成
 export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
@@ -14,42 +14,28 @@ export const metadata: Metadata = buildMetadata({
   path: '/columns/',
 });
 
-// サムネイル画像のフォールバック(thumb が無いコラム用)
-function ThumbFallback({ tag }: { tag: string | null }) {
-  // タグごとに色を変える(視覚的多様性)
-  const colorMap: Record<string, string> = {
-    成分: 'from-emerald-100 to-teal-100',
-    安全: 'from-orange-100 to-red-100',
-    比較: 'from-blue-100 to-cyan-100',
-    広告: 'from-purple-100 to-pink-100',
-    契約: 'from-yellow-100 to-orange-100',
+/** "2026-08-15" 等を「2026年8月15日」に。datetime属性用に元の値も返す */
+function formatDate(raw: string | null): { text: string; dt: string } | null {
+  if (!raw) return null;
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return { text: raw, dt: raw };
+  return {
+    text: `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`,
+    dt: d.toISOString().slice(0, 10),
   };
-  const matched = tag
-    ? Object.entries(colorMap).find(([k]) => tag.includes(k))?.[1]
-    : null;
-  const cls = matched || 'from-brand-light to-white';
-
-  return (
-    <div className={`flex h-40 items-center justify-center bg-gradient-to-br ${cls}`}>
-      <div className="text-center">
-        <div className="text-3xl">💊</div>
-        {tag && (
-          <div className="mt-1 text-xs font-bold text-brand-dark">{tag}</div>
-        )}
-      </div>
-    </div>
-  );
 }
 
 export default async function ColumnsIndexPage() {
   const columns = await getPublishedColumns(100);
 
   return (
-    <div className="container-wide py-6 md:py-10">
+    <div className="container-narrow py-6 md:py-10">
       <Breadcrumb items={[{ name: 'ホーム', href: '/' }, { name: 'コラム' }]} />
 
       <header className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold md:text-4xl">コラム</h1>
+        <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-brand-ink md:text-4xl">
+          コラム
+        </h1>
         <p className="text-gray-600">
           市販薬の選び方・安全情報・成分比較について、データに基づいた記事を公開しています。
         </p>
@@ -58,47 +44,36 @@ export default async function ColumnsIndexPage() {
       {columns.length === 0 ? (
         <p className="text-gray-500">公開中のコラムがありません。</p>
       ) : (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {columns.map((c) => (
-            <Link
-              key={c.id}
-              href={`/columns/${c.slug || c.id}/`}
-              className="group block overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:border-brand hover:shadow-md"
-            >
-              {/* サムネイル画像 */}
-              {c.thumb ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={c.thumb}
-                  alt={c.title}
-                  className="h-40 w-full object-contain bg-brand-light transition group-hover:scale-[1.02]"
-                  loading="lazy"
-                />
-              ) : (
-                <ThumbFallback tag={c.tag} />
-              )}
-
-              <div className="p-5">
-                {c.tag && (
-                  <span className="mb-2 inline-block rounded bg-brand-light px-2 py-0.5 text-xs text-brand-dark">
-                    {c.tag}
-                  </span>
-                )}
-                <h2 className="mb-2 text-lg font-bold leading-tight group-hover:text-brand">
-                  {c.title}
-                </h2>
-                {c.summary && (
-                  <p className="line-clamp-3 text-sm text-gray-600">
-                    {c.summary}
-                  </p>
-                )}
-                {c.date && (
-                  <div className="mt-3 text-xs text-gray-500">{c.date}</div>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
+        <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white">
+          {columns.map((c) => {
+            const date = formatDate(c.date);
+            return (
+              <li key={c.id}>
+                <Link
+                  href={`/columns/${c.slug || c.id}/`}
+                  className="group block px-5 py-5 transition hover:bg-brand-light/20 md:px-7"
+                >
+                  <h2 className="mb-1.5 text-base font-bold leading-relaxed text-brand-ink group-hover:text-brand-dark md:text-lg">
+                    {c.title}
+                  </h2>
+                  {c.summary && (
+                    <p className="mb-2 line-clamp-2 text-sm leading-relaxed text-gray-500">
+                      {c.summary}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
+                    {date && <time dateTime={date.dt}>{date.text}</time>}
+                    {c.tag && (
+                      <span className="rounded bg-brand-light px-2 py-0.5 font-medium text-brand-deep">
+                        {c.tag}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );
