@@ -94,15 +94,30 @@ const SELECT_CLASS =
 
 /**
  * 一覧ページの絞り込みブラウザ。
- * 絞り込みなし → children(カテゴリ別のサーバーレンダリング一覧)を表示。
- * 絞り込みあり → childrenを隠し、検索結果をページ本体として全幅表示。
+ *
+ * 【一覧ページ(/medicines/)での使い方】
+ *   絞り込みなし → children(カテゴリ別のサーバーレンダリング一覧)を表示。
+ *   絞り込みあり → childrenを隠し、検索結果をページ本体として全幅表示。
+ *
+ * 【成分ページなどでの使い方】
+ *   restrictTo に対象の slug 配列を渡すと、その範囲内だけを検索対象にする。
+ *   showResultsWithoutQuery を付けると、条件未入力でも結果一覧を表示する。
  */
 export function MedicineBrowser({
   categories,
   children,
+  restrictTo,
+  placeholder = '商品名・成分名で検索',
+  showResultsWithoutQuery = false,
 }: {
   categories: CategoryOption[];
   children: ReactNode;
+  /** 指定したslugの薬だけを検索対象にする(成分ページなどで使用) */
+  restrictTo?: string[];
+  /** 検索窓のプレースホルダ */
+  placeholder?: string;
+  /** 条件未入力でも結果一覧を表示する */
+  showResultsWithoutQuery?: boolean;
 }) {
   const [items, setItems] = useState<IndexItem[] | null>(null);
   const [loadError, setLoadError] = useState(false);
@@ -146,12 +161,22 @@ export function MedicineBrowser({
     };
   }, [q]);
 
-  const isFiltering =
+  // 検索対象を限定する場合のslug集合
+  const restrictSet = useMemo(
+    () => (restrictTo ? new Set(restrictTo) : null),
+    [restrictTo]
+  );
+
+  // ユーザーが何らかの条件を入力しているか
+  const hasCondition =
     q.trim().length > 0 ||
     cat !== '' ||
     risks.length > 0 ||
     noDrowsy ||
     symptom !== '';
+
+  // 結果一覧を表示するか
+  const isFiltering = showResultsWithoutQuery || hasCondition;
 
   const advancedCount = risks.length + (noDrowsy ? 1 : 0);
 
@@ -160,12 +185,13 @@ export function MedicineBrowser({
     if (!items) return [];
     const count = new Map<string, number>();
     for (const it of items) {
+      if (restrictSet && !restrictSet.has(it.s)) continue;
       for (const t of it.g) count.set(t, (count.get(t) || 0) + 1);
     }
     return [...count.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 40);
-  }, [items]);
+  }, [items, restrictSet]);
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -176,6 +202,7 @@ export function MedicineBrowser({
     const out: Scored[] = [];
 
     for (const it of items) {
+      if (restrictSet && !restrictSet.has(it.s)) continue;
       if (cat && it.c !== cat) continue;
       if (risks.length > 0 && !risks.includes(it.r)) continue;
       if (noDrowsy && it.d === 1) continue;
@@ -206,7 +233,7 @@ export function MedicineBrowser({
       out.sort((a, b) => b.score - a.score);
     }
     return out.map((s) => s.item);
-  }, [items, q, cat, risks, noDrowsy, symptom, sort]);
+  }, [items, q, cat, risks, noDrowsy, symptom, sort, restrictSet]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
@@ -232,10 +259,10 @@ export function MedicineBrowser({
 
   return (
     <>
-      {/* 検索・フィルタパネル(絞り込み中は追従) */}
+      {/* 検索・フィルタパネル(条件入力中は追従) */}
       <section
         className={`mb-10 rounded-2xl border border-gray-200 bg-white p-5 md:p-7 ${
-          isFiltering ? 'sticky top-16 z-30 shadow-sm' : ''
+          hasCondition ? 'sticky top-16 z-30 shadow-sm' : ''
         }`}
       >
         {/* キーワード検索 */}
@@ -257,7 +284,7 @@ export function MedicineBrowser({
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="商品名・成分名で検索"
+            placeholder={placeholder}
             aria-label="市販薬を検索"
             className="w-full rounded-xl border border-gray-300 bg-white py-4 pl-12 pr-4 text-base text-brand-ink placeholder:text-gray-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
           />
@@ -397,8 +424,8 @@ export function MedicineBrowser({
           )}
         </div>
 
-        {/* 並び替え・条件クリア(絞り込み中のみ) */}
-        {isFiltering && (
+        {/* 並び替え・条件クリア(条件入力中のみ) */}
+        {hasCondition && (
           <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-gray-100 pt-3">
             <select
               value={sort}
@@ -422,7 +449,7 @@ export function MedicineBrowser({
         )}
       </section>
 
-      {/* ===== 絞り込み中: 検索結果がページ本体 ===== */}
+      {/* ===== 結果一覧 ===== */}
       {isFiltering && (
         <section aria-live="polite">
           {loadError && (
@@ -436,24 +463,27 @@ export function MedicineBrowser({
 
           {items && (
             <>
-              <div className="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <h2 className="text-2xl font-extrabold tracking-tight text-brand-ink">
-                  検索結果{' '}
-                  <span className="text-brand-dark">{filtered.length}</span>
-                  <span className="text-base font-bold">件</span>
-                </h2>
-                <p className="text-sm text-gray-500">
-                  {[
-                    q.trim() && `「${q.trim()}」`,
-                    catLabel,
-                    symptom,
-                    ...risks.map((r) => riskLabel(r)),
-                    noDrowsy && '眠気成分なし',
-                  ]
-                    .filter(Boolean)
-                    .join(' × ')}
-                </p>
-              </div>
+              {/* 見出しは条件入力中のみ(未入力時は呼び出し側の見出しを使う) */}
+              {hasCondition && (
+                <div className="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h2 className="text-2xl font-extrabold tracking-tight text-brand-ink">
+                    検索結果{' '}
+                    <span className="text-brand-dark">{filtered.length}</span>
+                    <span className="text-base font-bold">件</span>
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {[
+                      q.trim() && `「${q.trim()}」`,
+                      catLabel,
+                      symptom,
+                      ...risks.map((r) => riskLabel(r)),
+                      noDrowsy && '眠気成分なし',
+                    ]
+                      .filter(Boolean)
+                      .join(' × ')}
+                  </p>
+                </div>
+              )}
 
               {filtered.length === 0 && (
                 <div className="card p-8 text-center">
