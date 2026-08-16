@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { getAllSymptoms } from '@/lib/medicines';
 import { SYMPTOM_GROUPS } from '@/lib/symptom-groups';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
-import { SymptomPicker } from '@/components/symptom/SymptomPicker';
+import { SymptomPicker } from './SymptomPicker';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
