@@ -92,23 +92,6 @@ export default function IngredientDetailPage({ params }: Props) {
             </div>
           </section>
         )}
-
-        {/* 表記バリエーション */}
-        {ing.rawNames.length > 1 && (
-          <section className="mb-8">
-            <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
-              表記のバリエーション
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {ing.rawNames.map((n) => (
-                <span key={n} className="rounded bg-gray-100 px-3 py-1 text-sm">
-                  {n}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
-
         <section className="mb-8">
           <h2 className="mb-4 border-l-4 border-brand pl-3 text-xl font-bold">
             {ing.name}を含む市販薬({meds.length}件)
