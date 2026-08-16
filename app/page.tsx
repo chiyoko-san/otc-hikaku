@@ -2,7 +2,6 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAllMedicines } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
-import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { MedicineBrowser } from '@/components/medicine/MedicineBrowser';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { buildMetadata } from '@/lib/seo';
@@ -17,20 +16,15 @@ export const metadata: Metadata = buildMetadata({
 export default function MedicinesIndexPage() {
   const all = getAllMedicines();
 
-  // カテゴリ別にグループ化
-  const byCategory = new Map<string, typeof all>();
+  // カテゴリ別の件数(絞り込みプルダウンで使用)
+  const byCategory = new Map<string, number>();
   for (const m of all) {
-    if (!byCategory.has(m.cat)) byCategory.set(m.cat, []);
-    byCategory.get(m.cat)!.push(m);
+    byCategory.set(m.cat, (byCategory.get(m.cat) || 0) + 1);
   }
 
-  // 件数の多いカテゴリから表示
-  const sortedCats = CATEGORIES.filter((c) =>
-    byCategory.has(c.id)
-  ).sort(
-    (a, b) =>
-      (byCategory.get(b.id)?.length || 0) -
-      (byCategory.get(a.id)?.length || 0)
+  // 件数の多いカテゴリから並べる
+  const sortedCats = CATEGORIES.filter((c) => byCategory.has(c.id)).sort(
+    (a, b) => (byCategory.get(b.id) || 0) - (byCategory.get(a.id) || 0)
   );
 
   return (
@@ -39,61 +33,67 @@ export default function MedicinesIndexPage() {
 
       <header className="mb-8">
         <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-brand-ink md:text-4xl">
-          市販薬一覧
+          市販薬を探す
         </h1>
-        <p className="mb-6 text-gray-600">
+        <p className="text-gray-600">
           PMDA公開情報をもとに整理した市販薬 {all.length.toLocaleString()} 品を、
           成分・リスク区分から比較できます。
         </p>
-        <Link
-          href="/switch/"
-          className="block max-w-2xl rounded-lg border border-brand-light bg-brand-light/30 p-4 transition hover:border-brand"
-        >
-          <span className="mb-1 block text-sm font-bold text-brand-dark">
-            「その薬、市販でも買えますよ」と言われた方へ
-          </span>
-          <span className="block text-sm text-gray-700">
-            アレグラ・ロキソニン・ガスターなど、処方薬と同じ成分の市販薬を探す →
-          </span>
-        </Link>
       </header>
 
-      {/* 絞り込み検索 + 結果表示 */}
+      {/* 検索・絞り込み。条件を入れると結果がここに表示される */}
       <MedicineBrowser
         categories={sortedCats.map((c) => ({
           id: c.id,
           label: c.label,
-          count: byCategory.get(c.id)?.length || 0,
+          count: byCategory.get(c.id) || 0,
         }))}
       >
-        {/* カテゴリごとに薬品カードを表示 */}
-        {sortedCats.map((c) => {
-          const meds = byCategory.get(c.id) || [];
-          if (meds.length === 0) return null;
-          return (
-            <section key={c.id} className="mb-12">
-              <div className="mb-4 flex items-baseline justify-between border-b border-gray-100 pb-2">
-                <h2 className="text-xl font-bold text-brand-ink md:text-2xl">
-                  {c.label}
-                  <span className="ml-2 text-sm font-medium text-gray-400">
-                    {meds.length.toLocaleString()}件
-                  </span>
-                </h2>
-                <Link
-                  href={`/categories/${c.id}/`}
-                  className="whitespace-nowrap text-sm text-brand hover:underline"
-                >
-                  すべて見る →
-                </Link>
-              </div>
-              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                {meds.slice(0, 6).map((m) => (
-                  <MedicineCard key={m.id} med={m} />
-                ))}
-              </div>
-            </section>
-          );
-        })}
+        {/* 未検索時の案内 */}
+        <section className="rounded-2xl border border-gray-200 bg-white p-8 text-center md:p-12">
+          <p className="mb-2 text-base font-bold text-brand-ink">
+            商品名・成分名で検索するか、分類・症状から絞り込んでください
+          </p>
+          <p className="mb-8 text-sm text-gray-500">
+            成分・リスク区分・眠気の有無をもとに、同じ成分の薬を比較できます。
+          </p>
+
+          <div className="mx-auto grid max-w-3xl gap-3 text-left sm:grid-cols-3">
+            <Link
+              href="/switch/"
+              className="rounded-lg border border-gray-200 p-4 transition hover:border-brand"
+            >
+              <span className="mb-1 block text-sm font-bold text-brand-dark">
+                処方薬から探す
+              </span>
+              <span className="block text-xs leading-relaxed text-gray-600">
+                アレグラ・ロキソニン・ガスターなど、処方薬と同じ成分の市販薬
+              </span>
+            </Link>
+            <Link
+              href="/symptoms/"
+              className="rounded-lg border border-gray-200 p-4 transition hover:border-brand"
+            >
+              <span className="mb-1 block text-sm font-bold text-brand-dark">
+                症状から探す
+              </span>
+              <span className="block text-xs leading-relaxed text-gray-600">
+                頭痛・胃痛・鼻水など、悩んでいる症状から絞り込む
+              </span>
+            </Link>
+            <Link
+              href="/ingredients/"
+              className="rounded-lg border border-gray-200 p-4 transition hover:border-brand"
+            >
+              <span className="mb-1 block text-sm font-bold text-brand-dark">
+                成分から探す
+              </span>
+              <span className="block text-xs leading-relaxed text-gray-600">
+                有効成分の名前から、それを含む市販薬を一覧で確認する
+              </span>
+            </Link>
+          </div>
+        </section>
       </MedicineBrowser>
     </div>
   );
