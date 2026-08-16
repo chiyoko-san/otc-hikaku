@@ -8,6 +8,7 @@ type IndexItem = {
   n: string; // name
   s: string; // slug
   m: string; // maker
+  sl: string; // seller(発売元)
   c: string; // category id
   r: number; // risk (1/2/2.5/3/0=不明/-1=機能性/-2=医薬部外品)
   d: number; // drowsy 0/1
@@ -220,6 +221,7 @@ export function MedicineBrowser({
       else if (it.i.some((x) => normalize(x).includes(nq))) score = 60;
       else if (it.g.some((x) => normalize(x).includes(nq))) score = 40;
       else if (normalize(it.m).includes(nq)) score = 20;
+      else if (normalize(it.sl || '').includes(nq)) score = 20;
       if (score >= 0) out.push({ item: it, score });
     }
 
@@ -518,8 +520,15 @@ export function MedicineBrowser({
                         </span>
                       </span>
                     </div>
-                    {it.m && (
-                      <div className="mb-1.5 text-xs text-gray-500">{it.m}</div>
+                    {(it.m || it.sl) && (
+                      <div className="mb-1.5 text-xs text-gray-500">
+                        {it.m}
+                        {it.sl && (
+                          <span className={it.m ? 'ml-2' : ''}>
+                            発売元 {it.sl}
+                          </span>
+                        )}
+                      </div>
                     )}
                     {it.g.length > 0 && (
                       <div className="flex flex-wrap gap-1">
