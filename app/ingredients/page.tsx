@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getAllIngredients } from '@/lib/medicines';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
-import { IngredientFinder } from '@/components/ingredient/IngredientFinder';
+import { IngredientFinder } from './IngredientFinder';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
