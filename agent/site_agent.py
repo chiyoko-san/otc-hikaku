@@ -82,17 +82,17 @@ FIELDS = {
     },
     "medicines": {
         "name": ["name", "product_name", "brand_name", "title"],
-        "ingredients": ["ingredients", "active_ingredients", "ingredient", "seibun"],
-        "category": ["category", "classification", "risk_class", "risk", "type"],
+        "ingredients": ["ings", "ingredients", "active_ingredients", "ingredient"],
+        "category": ["cat", "category", "classification", "risk_class", "risk"],
         "form": ["dosage_form", "form", "zaikei"],
     },
     "damage_reports": {
-        "created": ["created_at", "reported_at", "inserted_at", "date"],
+        "created": ["submitted_at", "created_at", "reported_at", "inserted_at", "date"],
         "category": ["category", "type", "kind", "genre"],
     },
     "ad_sightings": {
-        "created": ["created_at", "reported_at", "inserted_at", "date"],
-        "category": ["category", "type", "kind", "media"],
+        "created": ["submitted_at", "created_at", "reported_at", "inserted_at", "date"],
+        "category": ["media", "category", "type", "kind"],
     },
 }
 
