@@ -55,7 +55,7 @@ ANTHROPIC_VERSION = "2023-06-01"
 # モデル名は Anthropic Console の最新値に合わせて調整してください。
 PERSONA_MODEL = os.environ.get("PERSONA_MODEL", "claude-sonnet-5")
 EXEC_MODEL = os.environ.get("EXEC_MODEL", "claude-opus-5")
-MAX_TOKENS = 8000
+MAX_TOKENS = int(os.environ.get("MAX_TOKENS", "16000"))
 
 SUPABASE_URL = (
     os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
@@ -72,6 +72,14 @@ PERSONAS = ["marketer", "psychologist", "physician"]
 
 # コラム記事のURLパス。サイトの実URLが /columns/{id} 以外ならここを直す。
 COLUMN_PATH_PREFIX = "/columns"
+
+# 本文内のリンクが絶対URLで書かれていても内部リンクとして拾うためのドメイン一覧
+SITE_ORIGINS = (
+    "https://www.kusuri-compass.com",
+    "https://kusuri-compass.com",
+    "http://www.kusuri-compass.com",
+    "http://kusuri-compass.com",
+)
 
 # 列名の候補。--inspect の結果を見て、必要ならここを直してください。
 FIELDS = {
@@ -249,6 +257,9 @@ def collect_columns():
         status_count[status] += 1
         raw_body = str(pick(r, f["body"]) or "")
         body = strip_html(raw_body)
+        link_src = raw_body
+        for origin in SITE_ORIGINS:
+            link_src = link_src.replace(origin, "")
         items.append({
             "slug": pick(r, f["slug"]),  # slugがNoneならidに落ちる
             "title": pick(r, f["title"]),
@@ -258,8 +269,8 @@ def collect_columns():
             "summary": strip_html(str(r.get("summary") or ""))[:120],
             "chars": len(body),
             "outlinks": sorted(set(
-                re.findall(r"\]\((/[^)\s]+)\)", raw_body)
-                + re.findall(r'href="(/[^"]+)"', raw_body)
+                re.findall(r"\]\((/[^)\s]+)\)", link_src)
+                + re.findall(r'href="(/[^"]+)"', link_src)
             )),
         })
         if status == "published":
@@ -529,6 +540,8 @@ def call_claude(model, system, user, max_retries=3):
                 continue
             r.raise_for_status()
             data = r.json()
+            if data.get("stop_reason") == "max_tokens":
+                log("  警告: 出力が max_tokens 上限で途切れました")
             return "".join(
                 b.get("text", "") for b in data.get("content", [])
                 if b.get("type") == "text"
@@ -568,8 +581,15 @@ PERSONA_OUTPUT_SPEC = """
   ]
 }
 
-findings は最大6件。重要なものから並べてください。
+findings は最大4件。重要なものから並べてください。
 指摘すべきことがなければ findings は空配列にしてください。
+
+長さの制約（厳守）:
+- steps は1件の提案につき最大4個、各80字以内
+- evidence と why は各200字以内
+- 出力全体で日本語4000字以内
+制約を超えそうな場合は findings の件数を減らし、1件あたりの質を保ってください。
+出力が途中で切れると全体が無効になります。必ず最後の閉じ括弧 } まで出力してください。
 """
 
 EXEC_OUTPUT_SPEC = """
