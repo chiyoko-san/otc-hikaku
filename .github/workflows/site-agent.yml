@@ -1,0 +1,75 @@
+name: site-agent
+
+on:
+  schedule:
+    # 毎週月曜 00:00 UTC = 月曜 09:00 JST
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '実行モード'
+        type: choice
+        required: true
+        default: 'inspect'
+        options:
+          - inspect   # テーブルの列名だけ確認（API課金なし）
+          - collect   # データ収集だけ実行（API課金なし）
+          - dryrun    # 診断まで実行、Issueは作らない
+          - post      # 実行してIssueを作成
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: site-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --quiet requests
+
+      - name: Run agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PERSONA_MODEL: claude-sonnet-5
+          EXEC_MODEL: claude-opus-5
+        run: |
+          MODE="${{ github.event.inputs.mode }}"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            MODE="post"
+          fi
+          echo "mode = $MODE"
+
+          case "$MODE" in
+            inspect) python agent/site_agent.py --inspect ;;
+            collect) python agent/site_agent.py --collect ;;
+            post)    python agent/site_agent.py --post ;;
+            *)       python agent/site_agent.py ;;
+          esac
+
+      - name: Upload output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-agent-${{ github.run_number }}
+          path: agent/out/
+          retention-days: 30
+          if-no-files-found: ignore
