@@ -70,6 +70,9 @@ AGENT_LABEL = "site-agent"
 
 PERSONAS = ["marketer", "psychologist", "physician"]
 
+# コラム記事のURLパス。サイトの実URLが /columns/{id} 以外ならここを直す。
+COLUMN_PATH_PREFIX = "/columns"
+
 # 列名の候補。--inspect の結果を見て、必要ならここを直してください。
 FIELDS = {
     "columns": {
@@ -83,16 +86,15 @@ FIELDS = {
     "medicines": {
         "name": ["name", "product_name", "brand_name", "title"],
         "ingredients": ["ings", "ingredients", "active_ingredients", "ingredient"],
-        "category": ["cat", "category", "classification", "risk_class", "risk"],
-        "form": ["dosage_form", "form", "zaikei"],
+        "category": ["cat", "category", "classification"],
     },
     "damage_reports": {
         "created": ["submitted_at", "created_at", "reported_at", "inserted_at", "date"],
-        "category": ["category", "type", "kind", "genre"],
+        "category": ["damage_types", "category", "type", "kind", "genre"],
     },
     "ad_sightings": {
         "created": ["submitted_at", "created_at", "reported_at", "inserted_at", "date"],
-        "category": ["media", "category", "type", "kind"],
+        "category": ["category", "media", "type", "kind"],
     },
 }
 
@@ -166,17 +168,27 @@ def sb_get(table, select="*", limit=1000, order=None):
     if not SUPABASE_URL or not SUPABASE_KEY:
         raise RuntimeError("Supabaseの環境変数が設定されていません")
     url = f"{SUPABASE_URL}/rest/v1/{table}"
-    params = {"select": select, "limit": str(limit)}
+    params = {"select": select}
     if order:
         params["order"] = order
-    headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Accept": "application/json",
-    }
-    r = requests.get(url, params=params, headers=headers, timeout=60)
-    r.raise_for_status()
-    return r.json()
+    rows = []
+    page = 1000  # PostgRESTの1リクエスト上限
+    for start in range(0, limit, page):
+        end = min(start + page, limit) - 1
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+            "Accept": "application/json",
+            "Range-Unit": "items",
+            "Range": f"{start}-{end}",
+        }
+        r = requests.get(url, params=params, headers=headers, timeout=60)
+        r.raise_for_status()
+        batch = r.json()
+        rows.extend(batch)
+        if len(batch) < (end - start + 1):
+            break
+    return rows
 
 
 def sb_count(table):
@@ -223,40 +235,55 @@ def cmd_inspect():
 # ---------------------------------------------------------------------------
 
 def collect_columns():
-    rows = sb_get("columns", limit=1000)
+    # thumb(base64画像)は巨大なので取得しない。必要な列だけ指名する。
+    rows = sb_get(
+        "columns",
+        select="id,slug,title,tag,status,date,publish_at,summary,body",
+        limit=1000,
+    )
     f = FIELDS["columns"]
     items, bodies = [], []
+    status_count = Counter()
     for r in rows:
-        body = strip_html(str(pick(r, f["body"]) or ""))
-        slug = pick(r, f["slug"])
+        status = str(r.get("status") or "unknown")
+        status_count[status] += 1
+        raw_body = str(pick(r, f["body"]) or "")
+        body = strip_html(raw_body)
         items.append({
-            "slug": slug,
+            "slug": pick(r, f["slug"]),  # slugがNoneならidに落ちる
             "title": pick(r, f["title"]),
             "category": pick(r, f["category"]),
+            "status": status,
             "created": str(pick(r, f["created"]) or "")[:10],
+            "summary": strip_html(str(r.get("summary") or ""))[:120],
             "chars": len(body),
             "outlinks": sorted(set(
-                re.findall(r"\]\((/[^)\s]+)\)", str(pick(r, f["body"]) or ""))
-                + re.findall(r'href="(/[^"]+)"', str(pick(r, f["body"]) or ""))
+                re.findall(r"\]\((/[^)\s]+)\)", raw_body)
+                + re.findall(r'href="(/[^"]+)"', raw_body)
             )),
         })
-        bodies.append(body)
+        if status == "published":
+            bodies.append(body)
 
-    # 内部リンクの受け数を集計
+    published = [i for i in items if i["status"] == "published"]
+
+    # 公開記事間の内部リンク受け数を集計
     inbound = Counter()
-    for it in items:
+    for it in published:
         for link in it["outlinks"]:
             inbound[link.rstrip("/")] += 1
     for it in items:
-        key = f"/columns/{it['slug']}".rstrip("/")
+        key = f"{COLUMN_PATH_PREFIX}/{it['slug']}".rstrip("/")
         it["inbound"] = inbound.get(key, 0)
 
     orphans = [
         {"slug": i["slug"], "title": i["title"]}
-        for i in items if i["inbound"] == 0
+        for i in published if i["inbound"] == 0
     ]
     return {
         "total": len(items),
+        "by_status": dict(status_count),
+        "published": len(published),
         "orphan_count": len(orphans),
         "orphans": orphans[:40],
         "items": [
@@ -268,19 +295,28 @@ def collect_columns():
 
 def collect_medicines(columns_text):
     total = sb_count("medicines")
-    rows = sb_get("medicines", limit=3000)
+    rows = sb_get(
+        "medicines",
+        select="name,cat,itype,risk,risk_label,ings,symptoms,drowsy,status",
+        limit=11000,
+    )
     f = FIELDS["medicines"]
 
     cat = Counter()
-    form = Counter()
+    risk = Counter()
+    sym = Counter()
     ing = Counter()
     for r in rows:
         c = pick(r, f["category"])
         if c:
             cat[str(c)] += 1
-        fo = pick(r, f["form"])
-        if fo:
-            form[str(fo)] += 1
+        rl = r.get("risk_label") or r.get("risk")
+        if rl:
+            risk[str(rl)] += 1
+        for sv in (r.get("symptoms") or []):
+            sv = str(sv).strip()
+            if sv:
+                sym[sv] += 1
         raw = pick(r, f["ingredients"])
         if raw:
             if isinstance(raw, list):
@@ -299,11 +335,19 @@ def collect_medicines(columns_text):
         if name not in columns_text
     ][:50]
 
+    sym_uncovered = [
+        {"symptom": name, "medicine_count": n}
+        for name, n in sym.most_common(80)
+        if name not in columns_text
+    ][:30]
+
     return {
         "total_registered": total,
         "sampled": len(rows),
         "by_category": dict(cat.most_common(30)),
-        "by_dosage_form": dict(form.most_common(30)),
+        "by_risk": dict(risk.most_common(10)),
+        "top_symptoms": dict(sym.most_common(40)),
+        "symptoms_never_mentioned_in_columns": sym_uncovered,
         "top_ingredients": [{"name": n, "count": c} for n, c in top_ing[:60]],
         "ingredients_never_mentioned_in_columns": uncovered,
     }
@@ -317,7 +361,11 @@ def collect_reports(table):
     by_month = Counter()
     for r in rows:
         c = pick(r, f.get("category", []))
-        if c:
+        if isinstance(c, list):
+            for v in c:
+                if v:
+                    cat[str(v)] += 1
+        elif c:
             cat[str(c)] += 1
         d = str(pick(r, f.get("created", [])) or "")[:7]
         if len(d) == 7:
@@ -683,7 +731,8 @@ def render_markdown(res, week, ctx):
     L.append("---\n")
     L.append("<details><summary>今回エージェントが見たデータ</summary>\n")
     L.append(f"- コラム: {ctx.get('columns',{}).get('total','?')}件"
-             f"（うち被リンク0本: {ctx.get('columns',{}).get('orphan_count','?')}件）")
+             f"（公開: {ctx.get('columns',{}).get('published','?')}件 / "
+             f"被リンク0本: {ctx.get('columns',{}).get('orphan_count','?')}件）")
     L.append(f"- 医薬品: {ctx.get('medicines',{}).get('total_registered','?')}件")
     L.append(f"- 被害報告: {ctx.get('damage_reports',{}).get('total','?')}件")
     L.append(f"- 広告目撃: {ctx.get('ad_sightings',{}).get('total','?')}件")
