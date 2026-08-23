@@ -1,93 +1,60 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAllMedicines } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
-import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { MedicineBrowser } from '@/components/medicine/MedicineBrowser';
-import { Breadcrumb } from '@/components/layout/Breadcrumb';
+import { FindByLinks } from '@/components/medicine/FindByLinks';
+import { PageHero } from '@/components/layout/PageHero';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
-  title: '市販薬一覧|成分・リスク区分で比較',
+  title: '市販薬を成分・リスク区分で比較',
   description:
-    '市販薬(OTC医薬品)を成分・カテゴリ・リスク区分から比較。PMDA公開情報ベースの中立情報。',
-  path: '/medicines/',
+    '市販薬(OTC医薬品)1万品以上をPMDA公開情報から成分・症状・リスク区分で比較。広告・案件なしの中立情報サイトです。',
+  path: '/',
 });
 
-export default function MedicinesIndexPage() {
+export default function HomePage() {
   const all = getAllMedicines();
 
-  // カテゴリ別にグループ化
-  const byCategory = new Map<string, typeof all>();
+  // カテゴリ別の件数(絞り込みプルダウンで使用)
+  const byCategory = new Map<string, number>();
   for (const m of all) {
-    if (!byCategory.has(m.cat)) byCategory.set(m.cat, []);
-    byCategory.get(m.cat)!.push(m);
+    byCategory.set(m.cat, (byCategory.get(m.cat) || 0) + 1);
   }
 
-  // 件数の多いカテゴリから表示
-  const sortedCats = CATEGORIES.filter((c) =>
-    byCategory.has(c.id)
-  ).sort(
-    (a, b) =>
-      (byCategory.get(b.id)?.length || 0) -
-      (byCategory.get(a.id)?.length || 0)
+  // 件数の多いカテゴリから並べる
+  const sortedCats = CATEGORIES.filter((c) => byCategory.has(c.id)).sort(
+    (a, b) => (byCategory.get(b.id) || 0) - (byCategory.get(a.id) || 0)
   );
 
   return (
     <div className="container-wide py-6 md:py-10">
-      <Breadcrumb items={[{ name: 'ホーム', href: '/' }, { name: '薬品一覧' }]} />
+      {/* トップページなのでパンくずは出さない(自分自身へのパンくずは誤り) */}
 
-      <header className="mb-8">
-        <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-brand-ink md:text-4xl">市販薬一覧</h1>
-        <p className="text-gray-600">
-          詳細情報を整備した市販薬 {all.length} 品をカテゴリ別に掲載しています。
-        </p>
-      </header>
+      <PageHero title="市販薬を探す">
+        PMDA公開情報をもとに整理した市販薬 {all.length.toLocaleString()} 品を、
+        成分・リスク区分から比較できます。
+      </PageHero>
 
-      {/* 絞り込み検索 + 結果表示 */}
+      {/* 検索・絞り込み。条件を入れると結果がここに表示される */}
       <MedicineBrowser
         categories={sortedCats.map((c) => ({
           id: c.id,
           label: c.label,
-          count: byCategory.get(c.id)?.length || 0,
+          count: byCategory.get(c.id) || 0,
         }))}
       >
-      {/* カテゴリリンク */}
-      <nav className="mb-10 flex flex-wrap gap-2">
-        {sortedCats.map((c) => (
-          <Link
-            key={c.id}
-            href={`/categories/${c.id}/`}
-            className="chip hover:border-brand"
-          >
-            {c.label}({byCategory.get(c.id)?.length || 0})
-          </Link>
-        ))}
-      </nav>
+        {/* 未検索時の案内 */}
+        <section className="rounded-2xl border border-gray-200 bg-white p-8 text-center md:p-12">
+          <p className="mb-2 text-base font-bold text-brand-ink">
+            商品名・成分名で検索するか、分類・症状から絞り込んでください
+          </p>
+          <p className="mb-8 text-sm text-gray-500">
+            成分・リスク区分・眠気の有無をもとに、同じ成分の薬を比較できます。
+          </p>
 
-      {/* カテゴリごとに薬品カードを表示 */}
-      {sortedCats.map((c) => {
-        const meds = byCategory.get(c.id) || [];
-        if (meds.length === 0) return null;
-        return (
-          <section key={c.id} className="mb-12">
-            <div className="mb-4 flex items-baseline justify-between">
-              <h2 className="text-2xl font-bold">{c.label}</h2>
-              <Link
-                href={`/categories/${c.id}/`}
-                className="text-sm text-brand hover:underline"
-              >
-                すべて見る ({meds.length}件) →
-              </Link>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {meds.slice(0, 6).map((m) => (
-                <MedicineCard key={m.id} med={m} />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+          <FindByLinks />
+        </section>
       </MedicineBrowser>
     </div>
   );
