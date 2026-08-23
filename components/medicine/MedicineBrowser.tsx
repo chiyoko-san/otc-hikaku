@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { trackEvent } from '@/lib/analytics';
 
 type IndexItem = {
@@ -103,6 +103,12 @@ const SELECT_CLASS =
  * 【成分ページなどでの使い方】
  *   restrictTo に対象の slug 配列を渡すと、その範囲内だけを検索対象にする。
  *   showResultsWithoutQuery を付けると、条件未入力でも結果一覧を表示する。
+ *
+ * 【スクロール時の挙動】
+ *   絞り込みパネル自体は追従させない(展開すると縦700px級になり、結果一覧を覆うため)。
+ *   代わりに、パネルを通り過ぎたら高さ約56pxの「条件バー」を固定表示する。
+ *   条件はチップで表示し、✕ で個別に外せる。全面的に変えたいときは
+ *   「条件を変更」でパネルまでスクロールして戻る。
  */
 export function MedicineBrowser({
   categories,
@@ -130,7 +136,10 @@ export function MedicineBrowser({
   const [sort, setSort] = useState<SortKey>('rec');
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [barVisible, setBarVisible] = useState(false);
   const trackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let alive = true;
@@ -148,6 +157,18 @@ export function MedicineBrowser({
     return () => {
       alive = false;
     };
+  }, []);
+
+  // パネル直下のセンチネルが画面上端(ヘッダー分)より上に出たら条件バーを出す
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      ([entry]) => setBarVisible(!entry.isIntersecting),
+      { rootMargin: '-72px 0px 0px 0px', threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   // 検索実行の計測(800msデバウンス)
@@ -241,12 +262,12 @@ export function MedicineBrowser({
     setVisible(PAGE_SIZE);
   }, [q, cat, risks, noDrowsy, symptom, sort]);
 
-  const toggleRisk = (value: number) => {
+  const toggleRisk = useCallback((value: number) => {
     setRisks((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
     trackEvent('explorer_filter', { type: 'risk', value: String(value) });
-  };
+  }, []);
 
   const clearAll = () => {
     setQ('');
@@ -259,13 +280,49 @@ export function MedicineBrowser({
 
   const catLabel = cat ? categories.find((c) => c.id === cat)?.label : '';
 
+  // 条件バーの「条件を変更」: 絞り込みパネルまで戻る
+  const scrollToPanel = useCallback(() => {
+    panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    trackEvent('explorer_filter', { type: 'reopen_panel', value: '1' });
+  }, []);
+
+  // 条件バーに並べるチップ(✕ で個別に解除できる)
+  const conditionChips = useMemo(() => {
+    const list: { key: string; label: string; remove: () => void }[] = [];
+    if (q.trim())
+      list.push({ key: 'q', label: `「${q.trim()}」`, remove: () => setQ('') });
+    if (cat)
+      list.push({
+        key: 'cat',
+        label: catLabel || '分類',
+        remove: () => setCat(''),
+      });
+    if (symptom)
+      list.push({ key: 'sym', label: symptom, remove: () => setSymptom('') });
+    for (const r of risks)
+      list.push({
+        key: `risk-${r}`,
+        label: riskLabel(r),
+        remove: () => toggleRisk(r),
+      });
+    if (noDrowsy)
+      list.push({
+        key: 'drowsy',
+        label: '眠気成分なし',
+        remove: () => setNoDrowsy(false),
+      });
+    return list;
+  }, [q, cat, catLabel, symptom, risks, noDrowsy, toggleRisk]);
+
+  const showBar = hasCondition && barVisible;
+
   return (
     <>
-      {/* 検索・フィルタパネル(条件入力中は追従) */}
+      {/* ===== 検索・フィルタパネル ===== */}
+      {/* 追従させない。展開時に縦へ伸びるため、追従させると結果一覧を覆ってしまう */}
       <section
-        className={`mb-10 rounded-2xl border border-gray-200 bg-white p-5 md:p-7 ${
-          hasCondition ? 'sticky top-16 z-30 shadow-sm' : ''
-        }`}
+        ref={panelRef}
+        className="scroll-mt-20 rounded-2xl border border-gray-200 bg-white p-5 md:p-7"
       >
         {/* キーワード検索 */}
         <div className="relative">
@@ -450,6 +507,72 @@ export function MedicineBrowser({
           </div>
         )}
       </section>
+
+      {/* パネル通過の検知点。条件バーの出し入れに使う */}
+      <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
+
+      <div className="mb-10" />
+
+      {/* ===== 条件バー(スクロール時のみ固定表示) ===== */}
+      {/* position:fixed なのでレイアウトを押し下げない = 高さが変わっても表示が跳ねない */}
+      {showBar && (
+        <div className="fixed inset-x-0 top-16 z-30 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur">
+          <div className="container-wide flex items-center gap-3 py-2.5">
+            <span className="hidden flex-shrink-0 text-sm font-bold text-brand-ink sm:inline">
+              {filtered.length.toLocaleString()}
+              <span className="text-xs font-semibold">件</span>
+            </span>
+
+            <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
+              {conditionChips.map((chip) => (
+                <span
+                  key={chip.key}
+                  className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-brand-light py-1 pl-3 pr-1.5 text-xs font-semibold text-brand-deep"
+                >
+                  {chip.label}
+                  <button
+                    type="button"
+                    onClick={chip.remove}
+                    aria-label={`${chip.label}の条件を外す`}
+                    className="rounded-full p-0.5 text-brand-deep/70 transition hover:bg-white hover:text-brand-deep focus:outline-none focus:ring-1 focus:ring-brand"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      className="h-3.5 w-3.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    >
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={scrollToPanel}
+              className="flex flex-shrink-0 items-center gap-1 rounded-full border border-gray-300 px-3.5 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-brand hover:text-brand-dark"
+            >
+              条件を変更
+              <svg
+                aria-hidden="true"
+                className="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <path d="m18 15-6-6-6 6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ===== 結果一覧 ===== */}
       {isFiltering && (
