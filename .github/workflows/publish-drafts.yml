@@ -1,0 +1,84 @@
+name: Publish Drafts
+
+on:
+  schedule:
+    # 毎日 9:00 JST（UTC 0:00）。cronスキップ対策で 12:00 JST にも実行
+    - cron: "0 0 * * *"
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "実際に公開する（false なら判定のみ）"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+      max:
+        description: "1回に公開する上限件数"
+        required: false
+        default: "2"
+      delay_hours:
+        description: "生成から何時間空けるか"
+        required: false
+        default: "6"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 下書きを検査して公開
+        id: pub
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_KEY:         ${{ secrets.SUPABASE_KEY }}
+        run: |
+          # スケジュール実行は常に公開する。手動実行は入力に従う（既定は判定のみ）
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event.inputs.publish }}" = "true" ]; then
+            MODE="--publish"
+          else
+            MODE="--report"
+          fi
+          MAX="${{ github.event.inputs.max }}";                 MAX="${MAX:-2}"
+          DELAY="${{ github.event.inputs.delay_hours }}";       DELAY="${DELAY:-6}"
+          python scraper/publish_drafts.py $MODE --max "$MAX" --delay-hours "$DELAY"
+
+      - name: 保留分をIssueで通知
+        if: steps.pub.outputs.blocked != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "コラム自動公開: $(date -u +%Y-%m-%d) に保留された下書きがあります" \
+            --label "column,auto" \
+            --body "$(cat <<'EOF'
+          品質チェックに通らず、下書きのまま保留されたコラムです。
+          内容を確認し、修正のうえ手動で公開するか、削除してください。
+
+          ${{ steps.pub.outputs.blocked }}
+
+          ---
+          検査ロジック: `scraper/publish_drafts.py`
+          EOF
+          )"
+
+      - name: 失敗時にIssueを起票
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "コラム自動公開が失敗しました（$(date -u +%Y-%m-%d)）" \
+            --label "bug,auto" \
+            --body "ワークフローが失敗しました。ログを確認してください。
+
+          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
