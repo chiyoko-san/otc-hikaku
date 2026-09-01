@@ -1,0 +1,70 @@
+name: Check Themes
+
+# テーマプールの状態確認用。Claude APIを呼ばないので課金は発生しない。
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "確認する内容"
+        required: false
+        default: "status"
+        type: choice
+        options: ["status", "list", "both"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: テーマプールの整合性を検査（Supabase不要）
+        run: |
+          cd scraper
+          python - <<'PY'
+          from collections import Counter
+          from themes import THEMES, active_themes
+
+          keys = [t["key"] for t in THEMES]
+          descs = [t["desc"] for t in THEMES]
+          dup_k = [k for k, v in Counter(keys).items() if v > 1]
+          dup_d = [d for d, v in Counter(descs).items() if v > 1]
+
+          print(f"テーマ総数 : {len(THEMES)}")
+          print(f"有効テーマ : {len(active_themes())}（expires切れを除外後）")
+          print(f"重複key    : {dup_k or 'なし'}")
+          print(f"重複desc   : {dup_d or 'なし'}")
+          print()
+          print("タグ別内訳:")
+          for tag, n in Counter(t["tag"] for t in THEMES).most_common():
+              print(f"  {tag:<12} {n:>3} 件")
+
+          expiring = [t for t in THEMES if t.get("expires")]
+          print()
+          print(f"期限つきテーマ: {len(expiring)} 件")
+          for t in sorted(expiring, key=lambda x: x["expires"]):
+              alive = "有効" if t in active_themes() else "期限切れ"
+              print(f"  [{alive}] 〜{t['expires']}  {t['desc'][:44]}")
+
+          assert not dup_k, "keyが重複しています"
+          assert not dup_d, "descが重複しています"
+          print("\n✅ テーマプールの整合性OK")
+          PY
+
+      - name: 使用済み・未使用の状況（Supabase照会）
+        if: ${{ github.event.inputs.mode != 'list' }}
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          cd scraper
+          python themes.py --status
+
+      - name: テーマ一覧
+        if: ${{ github.event.inputs.mode != 'status' }}
+        run: |
+          cd scraper
+          python themes.py --list
