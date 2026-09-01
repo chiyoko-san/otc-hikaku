@@ -21,14 +21,40 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: テーマプールの整合性を検査（Supabase不要）
+      # まずファイルがどこにあるかを突き止める
+      - name: ファイル配置の診断
         run: |
-          cd scraper
+          echo "=== リポジトリ直下 ==="
+          ls -la | head -30
+          echo
+          echo "=== scraper/ ==="
+          ls -la scraper/ 2>/dev/null || echo "!! scraper/ ディレクトリがありません"
+          echo
+          echo "=== themes を含むファイルを全検索 ==="
+          find . -path ./.git -prune -o -iname '*theme*' -print
+          echo
+          echo "=== 期待する場所にあるか ==="
+          if [ -f scraper/themes.py ]; then
+            echo "OK: scraper/themes.py が存在します"
+            head -3 scraper/themes.py
+          else
+            echo "!! scraper/themes.py が見つかりません"
+            echo "!! 上の検索結果から、実際のファイル名と場所を確認してください"
+            echo "!! よくある原因: ダウンロード時に 'themes (1).py' などへ改名されている"
+            exit 1
+          fi
+
+      - name: テーマプールの整合性を検査（Supabase不要）
+        env:
+          PYTHONPATH: ${{ github.workspace }}/scraper
+        run: |
           python - <<'PY'
+          import sys, os
+          sys.path.insert(0, os.path.join(os.getcwd(), "scraper"))
           from collections import Counter
           from themes import THEMES, active_themes
 
-          keys = [t["key"] for t in THEMES]
+          keys  = [t["key"] for t in THEMES]
           descs = [t["desc"] for t in THEMES]
           dup_k = [k for k, v in Counter(keys).items() if v > 1]
           dup_d = [d for d, v in Counter(descs).items() if v > 1]
@@ -43,11 +69,12 @@ jobs:
               print(f"  {tag:<12} {n:>3} 件")
 
           expiring = [t for t in THEMES if t.get("expires")]
+          alive = {id(t) for t in active_themes()}
           print()
           print(f"期限つきテーマ: {len(expiring)} 件")
           for t in sorted(expiring, key=lambda x: x["expires"]):
-              alive = "有効" if t in active_themes() else "期限切れ"
-              print(f"  [{alive}] 〜{t['expires']}  {t['desc'][:44]}")
+              mark = "有効" if id(t) in alive else "期限切れ"
+              print(f"  [{mark}] 〜{t['expires']}  {t['desc'][:44]}")
 
           assert not dup_k, "keyが重複しています"
           assert not dup_d, "descが重複しています"
@@ -59,12 +86,8 @@ jobs:
         env:
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: |
-          cd scraper
-          python themes.py --status
+        run: python scraper/themes.py --status
 
       - name: テーマ一覧
         if: ${{ github.event.inputs.mode != 'status' }}
-        run: |
-          cd scraper
-          python themes.py --list
+        run: python scraper/themes.py --list
