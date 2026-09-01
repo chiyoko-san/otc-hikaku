@@ -35,12 +35,29 @@ jobs:
         with:
           python-version: "3.11"
 
+      # Secretsの有無を先に確認して、原因のわかるメッセージで止める
+      - name: Secretsの事前チェック
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          MISSING=0
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "::error::SUPABASE_URL がSecretsに設定されていません"
+            MISSING=1
+          fi
+          if [ -z "$SUPABASE_SERVICE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_KEY がSecretsに設定されていません。"
+            echo "::error::anonキーではRLSによりUPDATEが拒否されるため、公開処理には service_role キーが必要です。"
+            MISSING=1
+          fi
+          exit $MISSING
+
       - name: 下書きを検査して公開
         id: pub
         env:
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-          SUPABASE_KEY:         ${{ secrets.SUPABASE_KEY }}
         run: |
           # スケジュール実行は常に公開する。手動実行は入力に従う（既定は判定のみ）
           if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event.inputs.publish }}" = "true" ]; then
@@ -48,37 +65,62 @@ jobs:
           else
             MODE="--report"
           fi
-          MAX="${{ github.event.inputs.max }}";                 MAX="${MAX:-2}"
-          DELAY="${{ github.event.inputs.delay_hours }}";       DELAY="${DELAY:-6}"
+          MAX="${{ github.event.inputs.max }}";           MAX="${MAX:-2}"
+          DELAY="${{ github.event.inputs.delay_hours }}"; DELAY="${DELAY:-6}"
+          echo "mode=$MODE max=$MAX delay=$DELAY"
           python scraper/publish_drafts.py $MODE --max "$MAX" --delay-hours "$DELAY"
+
+      # 通知系はラベル不足などで本体を赤くしないよう continue-on-error にする
+      - name: ラベルを用意
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create column --color 0E8A16 --description "コラム関連" --force || true
+          gh label create auto   --color 1D76DB --description "自動処理"   --force || true
+          gh label create bug    --color D73A4A --description "不具合"     --force || true
 
       - name: 保留分をIssueで通知
         if: steps.pub.outputs.blocked != ''
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BLOCKED:  ${{ steps.pub.outputs.blocked }}
+          RUN_URL:  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          {
+            echo "品質チェックに通らず、下書きのまま保留されたコラムです。"
+            echo "内容を確認し、修正のうえ手動で公開するか、削除してください。"
+            echo
+            printf '%s\n' "$BLOCKED"
+            echo
+            echo "---"
+            echo "検査ロジック: \`scraper/publish_drafts.py\`"
+            echo "実行ログ: $RUN_URL"
+          } > issue_body.md
           gh issue create \
             --title "コラム自動公開: $(date -u +%Y-%m-%d) に保留された下書きがあります" \
-            --label "column,auto" \
-            --body "$(cat <<'EOF'
-          品質チェックに通らず、下書きのまま保留されたコラムです。
-          内容を確認し、修正のうえ手動で公開するか、削除してください。
-
-          ${{ steps.pub.outputs.blocked }}
-
-          ---
-          検査ロジック: `scraper/publish_drafts.py`
-          EOF
-          )"
+            --label column --label auto \
+            --body-file issue_body.md
 
       - name: 失敗時にIssueを起票
         if: failure()
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL:  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          {
+            echo "コラムの自動公開ワークフローが失敗しました。"
+            echo
+            echo "実行ログ: $RUN_URL"
+            echo
+            echo "よくある原因:"
+            echo "- \`SUPABASE_SERVICE_KEY\` がSecretsに未設定、または失効している"
+            echo "- Supabaseのキーをローテートしたあと、Secretsを更新していない"
+          } > fail_body.md
           gh issue create \
             --title "コラム自動公開が失敗しました（$(date -u +%Y-%m-%d)）" \
-            --label "bug,auto" \
-            --body "ワークフローが失敗しました。ログを確認してください。
-
-          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --label bug --label auto \
+            --body-file fail_body.md
