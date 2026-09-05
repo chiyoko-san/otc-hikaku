@@ -1,0 +1,148 @@
+name: PMDA Probe
+
+# 目的: PMDA 旧サイトの詳細ページが生きているか、
+#       生きていれば成分・効能がHTMLのどこにあるかを1回だけ確認する。
+#       データベースには一切書き込まない。
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "調査する detail_url（カンマ区切り）"
+        required: false
+        default: "https://www.info.pmda.go.jp/ogo/J0607000290_05_03,https://www.info.pmda.go.jp/ogo/J1601000007_01_01"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install --quiet requests beautifulsoup4 lxml
+
+      - name: Probe
+        env:
+          TARGET_URLS: ${{ github.event.inputs.urls }}
+        run: |
+          mkdir -p /tmp/out
+          cat > /tmp/probe.py << 'PYEOF'
+          # -*- coding: utf-8 -*-
+          import os, re, sys, time
+          import requests
+          from bs4 import BeautifulSoup
+
+          UA = ("Mozilla/5.0 (compatible; kusuri-compass-bot/1.0; "
+                "+https://kusuri-compass.com)")
+          SLEEP = 2.0
+
+          out = []
+          def w(s=""):
+              print(s, flush=True)
+              out.append(s)
+
+          urls = [u.strip() for u in os.environ.get("TARGET_URLS", "").split(",") if u.strip()]
+
+          s = requests.Session()
+          s.headers.update({"User-Agent": UA, "Accept-Language": "ja,en;q=0.8"})
+
+          for idx, url in enumerate(urls):
+              w(f"## 調査 {idx+1}: `{url}`")
+              w("")
+              try:
+                  r = s.get(url, timeout=40, allow_redirects=True)
+              except Exception as e:
+                  w(f"**取得失敗**: {e}")
+                  w("")
+                  continue
+
+              w(f"- ステータス: `{r.status_code}`")
+              w(f"- 最終URL: `{r.url}`")
+              w(f"- リダイレクト: {'**あり**' if r.url.rstrip('/') != url.rstrip('/') else 'なし'}")
+              w(f"- 宣言エンコーディング: `{r.encoding}`")
+              w(f"- バイト長: {len(r.content):,}")
+
+              # EUC-JP を第一候補に、駄目なら他を試す
+              html, used = None, None
+              for enc in ("euc-jp", "utf-8", "cp932"):
+                  try:
+                      cand = r.content.decode(enc)
+                  except Exception:
+                      continue
+                  # 文字化けの少なさで判定
+                  if cand.count("\ufffd") < 5:
+                      html, used = cand, enc
+                      break
+              if html is None:
+                  html, used = r.content.decode("euc-jp", errors="replace"), "euc-jp(replace)"
+              w(f"- 採用エンコーディング: `{used}`")
+
+              with open(f"/tmp/out/page_{idx+1}.html", "w", encoding="utf-8") as f:
+                  f.write(html)
+
+              soup = BeautifulSoup(html, "lxml")
+              text = soup.get_text("\n", strip=True)
+              w(f"- テキスト長: {len(text):,}字")
+              w("")
+
+              # リニューアル案内ページかどうかの判定
+              if "リニューアル" in text and len(text) < 3000:
+                  w("> **旧サイトは廃止され、転送ページが返っています。**")
+                  w("")
+                  continue
+
+              w("### キーワード出現位置")
+              w("")
+              for kw in ["成分", "分量", "効能", "効果", "はたらき", "用法", "使用上の注意",
+                         "製造販売", "販売会社", "リスク区分"]:
+                  i = text.find(kw)
+                  w(f"- `{kw}`: " + (f"{i} → {text[i:i+60]}".replace("\n", " ") if i >= 0 else "なし"))
+              w("")
+
+              tables = soup.find_all("table")
+              w(f"### テーブル {len(tables)}個")
+              w("")
+              for ti, t in enumerate(tables):
+                  ttext = t.get_text(" ", strip=True)
+                  if not any(k in ttext for k in ["成分", "分量", "効能", "効果", "製造販売", "リスク"]):
+                      continue
+                  rows = t.find_all("tr")
+                  w(f"#### table[{ti}] 行数 {len(rows)}")
+                  w("")
+                  w("```")
+                  for ri, row in enumerate(rows[:20]):
+                      ths = [c.get_text(" ", strip=True)[:40] for c in row.find_all("th")]
+                      tds = [c.get_text(" ", strip=True)[:60] for c in row.find_all("td")]
+                      w(f"r{ri}: TH={ths} | TD={tds}")
+                  if len(rows) > 20:
+                      w(f"... 他 {len(rows)-20} 行")
+                  w("```")
+                  w("")
+
+              w("### 本文の先頭 1500 字")
+              w("")
+              w("```")
+              w(text[:1500])
+              w("```")
+              w("")
+              time.sleep(SLEEP)
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary:
+              with open(summary, "a", encoding="utf-8") as f:
+                  f.write("\n".join(out) + "\n")
+          PYEOF
+          python /tmp/probe.py
+
+      - name: Upload raw HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pmda-raw-html
+          path: /tmp/out/
+          if-no-files-found: warn
