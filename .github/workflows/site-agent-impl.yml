@@ -1,0 +1,62 @@
+# 配置先: .github/workflows/site-agent-impl.yml
+name: site-agent-impl
+
+on:
+  workflow_dispatch:
+    inputs:
+      action_id:
+        description: '実装する提案ID（例: A-36-1）'
+        required: true
+        type: string
+      create_pr:
+        description: 'PRを作成する（false=生成だけしてArtifactで確認）'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: site-agent-impl
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --quiet requests
+
+      - name: Run implementer
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          IMPL_MODEL: claude-opus-5
+        run: |
+          if [ "${{ github.event.inputs.create_pr }}" = "true" ]; then
+            python agent/implement.py "${{ github.event.inputs.action_id }}" --pr
+          else
+            python agent/implement.py "${{ github.event.inputs.action_id }}"
+          fi
+
+      - name: Upload output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: impl-${{ github.run_number }}
+          path: agent/out/
+          retention-days: 30
+          if-no-files-found: ignore
