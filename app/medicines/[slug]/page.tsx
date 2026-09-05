@@ -13,6 +13,7 @@ import { getAllSymptoms } from '@/lib/medicines';
 import { getDamageReportCountByMedicineId } from '@/lib/supabase/damage-reports';
 import { getCategoryLabel } from '@/lib/categories';
 import { normalizeIngredientName } from '@/lib/slug';
+import { isIndexableMedicine } from '@/lib/indexable';
 import {
   normalizeDosageForm,
   DOSAGE_FORM_LABELS,
@@ -34,13 +35,11 @@ export const revalidate = 86400;
 // 一覧に無いページもアクセス時に生成する
 export const dynamicParams = true;
 
-// ビルド時に作るのは主要な製品のみ。
+// ビルド時に作るのは掲載内容が揃っている製品のみ。
 // 残りは初回アクセス時に生成され、以後キャッシュされる
 export async function generateStaticParams() {
   const enriched = getAllMedicines();
-  const priority = enriched
-    .filter((m) => m.ings && m.ings.length > 0 && m.effect)
-    .slice(0, 800);
+  const priority = enriched.filter(isIndexableMedicine).slice(0, 800);
   return priority.map((m) => ({ slug: m.slug }));
 }
 
@@ -59,12 +58,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const desc = `${med.name}(${med.maker})の成分・効能効果・リスク区分・類似薬との比較。${(med.effect || '').slice(0, 100)}`.trim();
 
-  return buildMetadata({
+  const meta = buildMetadata({
     title: titleBase,
     description: desc,
     path: `/medicines/${med.slug}/`,
     type: 'article',
   });
+
+  // 成分・効能が未整備のページは検索結果に出さない。
+  // follow は残すので、内部リンク経由のクロール自体は継続される。
+  if (!isIndexableMedicine(med)) {
+    return {
+      ...meta,
+      robots: {
+        index: false,
+        follow: true,
+        googleBot: { index: false, follow: true },
+      },
+    };
+  }
+
+  return meta;
 }
 
 function riskLabel(risk: number, itype?: string): string {
@@ -106,6 +120,9 @@ function riskClass(risk: number, itype?: string): string {
 export default async function MedicineDetailPage({ params }: Props) {
   const med = getMedicineBySlug(params.slug);
   if (!med) notFound();
+
+  // 掲載内容が揃っているか。noindex 判定と表示内容の両方で使う
+  const indexable = isIndexableMedicine(med);
 
   // ===== 類似薬を剤形で振り分ける =====
   // 点眼薬と内服薬が同じ成分を含んでいても、配合量を直接比較しても意味がないため、
@@ -231,7 +248,9 @@ export default async function MedicineDetailPage({ params }: Props) {
   return (
     <>
       <JsonLd data={buildDrugJsonLd(med)} />
-      <JsonLd data={buildFaqJsonLd(faqs)} />
+      {/* 掲載内容が未整備のページでは FAQ 構造化データを出さない。
+          中身のないページでリッチリザルトを狙うと品質評価を下げる要因になる */}
+      {indexable && <JsonLd data={buildFaqJsonLd(faqs)} />}
       <JsonLd
         data={buildBreadcrumbJsonLd(
           breadcrumbs.map((b) => ({
@@ -293,12 +312,13 @@ export default async function MedicineDetailPage({ params }: Props) {
           </section>
         )}
 
-        {/* 詳細情報が未整備の製品への注記 */}
-        {!med.effect && (
+        {/* 掲載内容が未整備の製品への注記 */}
+        {!indexable && (
           <div className="callout-info mb-8">
             <div className="callout-title">基本情報のみ掲載しています</div>
             <p className="text-sm">
-              この製品は効能・詳細情報の整備を進めている段階です。使用にあたっては製品の添付文書をご確認ください。
+              この製品は成分・効能情報の整備を進めている段階です。使用にあたっては製品の添付文書をご確認ください。
+              {med.pmda_url && '公式情報は下部のPMDAリンクからご覧いただけます。'}
             </p>
           </div>
         )}
