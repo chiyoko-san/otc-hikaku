@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { scoreChoices } from '@/lib/akinator-score';
+import { SafetyNotice } from '@/components/akinator/SafetyNotice';
 import type { AkCategory, AkChoice } from '@/types';
 
 type Phase = 'category' | 'questions' | 'result';
@@ -140,6 +141,7 @@ export function Akinator({ categories }: { categories: AkCategory[] }) {
             次へ（{pickedCats.length}分野を選択中）
           </button>
         </div>
+        <SafetyNotice />
       </div>
     );
   }
@@ -260,7 +262,9 @@ export function Akinator({ categories }: { categories: AkCategory[] }) {
         </p>
       ) : null}
 
-      <div className="border-t border-brand/20 pt-4">
+      <SafetyNotice showLinks />
+
+      <div className="mt-4 border-t border-brand/20 pt-4">
         <button onClick={reset} className="text-sm text-brand underline">
           最初からやり直す
         </button>
