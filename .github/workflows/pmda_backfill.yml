@@ -1,0 +1,50 @@
+name: PMDA Backfill
+
+# 成分・効能が空の医薬品レコードを、PMDA詳細ページから埋める。
+# 進捗はDB自体が持つ（ings が空のものを取る）ので、何回流しても続きから進む。
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "sample = 読むだけ / run = 書き込み"
+        required: true
+        default: sample
+        type: choice
+        options:
+          - sample
+          - run
+      count:
+        description: "処理件数（sample は 20 程度、run は 500〜1000）"
+        required: true
+        default: "20"
+
+permissions:
+  contents: read
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330      # Actions の6時間上限より手前で切る
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install --quiet requests beautifulsoup4 lxml
+
+      - name: Backfill
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          MODE="${{ github.event.inputs.mode }}"
+          COUNT="${{ github.event.inputs.count }}"
+          if [ "$MODE" = "run" ]; then
+            python scraper/pmda_backfill.py --run --limit "$COUNT"
+          else
+            python scraper/pmda_backfill.py --sample "$COUNT"
+          fi
