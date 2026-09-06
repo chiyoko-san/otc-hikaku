@@ -1,7 +1,12 @@
 name: PMDA Backfill
 
 # 成分・効能が空の医薬品レコードを、PMDA詳細ページから埋める。
-# 進捗はDB自体が持つ（ings が空のものを取る）ので、何回流しても続きから進む。
+# 進捗はDB自体が持つ（ings が空 かつ backfill_attempts < 2 のものを取る）ので、
+# 何回流しても続きから進み、死んだレコードは自動的に迂回される。
+#
+# 事前に必要なSQL:
+#   alter table medicines
+#     add column if not exists backfill_attempts integer not null default 0;
 
 on:
   workflow_dispatch:
@@ -25,7 +30,7 @@ permissions:
 jobs:
   backfill:
     runs-on: ubuntu-latest
-    timeout-minutes: 330      # Actions の6時間上限より手前で切る
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
 
@@ -44,7 +49,7 @@ jobs:
           MODE="${{ github.event.inputs.mode }}"
           COUNT="${{ github.event.inputs.count }}"
           if [ "$MODE" = "run" ]; then
-            python scraper/pmda_backfill.py --run --limit "$COUNT"
+            python scraper/pmda_backfill_v2.py --run --limit "$COUNT"
           else
-            python scraper/pmda_backfill.py --sample "$COUNT"
+            python scraper/pmda_backfill_v2.py --sample "$COUNT"
           fi
