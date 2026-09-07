@@ -7,6 +7,38 @@ import type { AkCategory, AkChoice } from '@/types';
 
 type Phase = 'category' | 'questions' | 'result';
 
+// ===== A-37-1: 属性別の相談導線（静的・固定表示） =====
+const CONSULT_ATTRIBUTES = [
+  '妊娠中',
+  '授乳中',
+  '15歳未満',
+  '65歳以上',
+  '持病の治療中・服薬中',
+];
+
+function ConsultNotice({ className = '' }: { className?: string }) {
+  return (
+    <section
+      aria-label="ご相談のご案内"
+      className={`rounded-lg border border-gray-200 bg-gray-50 p-4 ${className}`}
+    >
+      <p className="text-sm leading-relaxed text-gray-700">
+        次のいずれかに当てはまる方は、結果の内容にかかわらず薬剤師・登録販売者または医療機関にご相談ください。
+      </p>
+      <ul className="mt-2 flex flex-wrap gap-2">
+        {CONSULT_ATTRIBUTES.map((a) => (
+          <li
+            key={a}
+            className="rounded border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700"
+          >
+            {a}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function Akinator({ categories }: { categories: AkCategory[] }) {
   const [phase, setPhase] = useState<Phase>('category');
   const [pickedCats, setPickedCats] = useState<string[]>([]);
@@ -110,7 +142,11 @@ export function Akinator({ categories }: { categories: AkCategory[] }) {
       <div className="card-static p-6">
         <div className="mb-1 text-sm text-gray-500">ステップ 1 / 2</div>
         <h2 className="mb-1 text-xl font-bold">気になる症状の分野を選んでください</h2>
-        <p className="mb-5 text-sm text-gray-600">複数選んでもOKです。</p>
+        <p className="mb-4 text-sm text-gray-600">複数選んでもOKです。</p>
+
+        {/* A-37-1: 開始画面は常時表示 */}
+        <ConsultNotice className="mb-5" />
+
         <div className="grid gap-3 sm:grid-cols-2">
           {categories.map((c) => {
             const on = pickedCats.includes(c.id);
@@ -216,6 +252,9 @@ export function Akinator({ categories }: { categories: AkCategory[] }) {
           </ul>
         </div>
       ) : null}
+
+      {/* A-37-1: 成分・分類の提示より前に再掲。redcard 表示時は重複を避けて非表示 */}
+      {result.redcards.length === 0 ? <ConsultNotice className="mb-5" /> : null}
 
       {result.topTags.length > 0 ? (
         <>
