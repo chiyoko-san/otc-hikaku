@@ -14,6 +14,9 @@ import { buildMetadata, buildBreadcrumbJsonLd, SITE_URL } from '@/lib/seo';
 // 一覧に無いページもアクセス時に生成する
 export const dynamicParams = true;
 
+// コラムの追加・更新を1日1回反映する
+export const revalidate = 86400;
+
 // ビルド時に作るのは主要製品のみ。残りは初回アクセス時に生成される
 export async function generateStaticParams() {
   const enriched = getAllMedicines();
@@ -24,6 +27,53 @@ export async function generateStaticParams() {
 }
 
 type Props = { params: { slug: string } };
+
+/* ------------------------------------------------------------------
+   コラム取得
+   columns.tag は編集カテゴリ（安全情報 / 基礎知識 など）が中心で、
+   症状名と一致するタグは 花粉症・胃腸・育毛・漢方・美容・スキンケア のみ。
+   症状グループ名とタグの言い方が違う場合だけ下の表に追記する。
+   例: { 'アレルギー': '花粉症', '胃腸・便通': '胃腸' }
+------------------------------------------------------------------- */
+type ColumnRow = { slug: string; title: string; tag: string | null };
+
+const SYMPTOM_TAG_MAP: Record<string, string> = {};
+
+async function getPublishedColumns(): Promise<ColumnRow[]> {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!base || !key) return [];
+
+  const query = new URLSearchParams({
+    select: 'slug,title,tag',
+    status: 'eq.published',
+    order: 'date.desc.nullslast,slug.asc',
+    limit: '200',
+  });
+
+  try {
+    const res = await fetch(`${base}/rest/v1/columns?${query.toString()}`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return [];
+    const rows = (await res.json()) as ColumnRow[];
+    return Array.isArray(rows) ? rows.filter((r) => r?.slug && r?.title) : [];
+  } catch {
+    // 取得失敗時はセクションごと非表示にする（ビルドは落とさない）
+    return [];
+  }
+}
+
+// slug から決まる開始位置。ページごとに違う3本が出るが、同じページなら常に同じ
+function pickRotating(rows: ColumnRow[], seed: string, n: number): ColumnRow[] {
+  if (rows.length === 0) return [];
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  const start = h % rows.length;
+  const take = Math.min(n, rows.length);
+  return Array.from({ length: take }, (_, i) => rows[(start + i) % rows.length]);
+}
 
 export function generateMetadata({ params }: Props): Metadata {
   const sym = getSymptomBySlug(params.slug);
@@ -36,7 +86,7 @@ export function generateMetadata({ params }: Props): Metadata {
   });
 }
 
-export default function SymptomDetailPage({ params }: Props) {
+export default async function SymptomDetailPage({ params }: Props) {
   const sym = getSymptomBySlug(params.slug);
   if (!sym) notFound();
 
@@ -45,6 +95,20 @@ export default function SymptomDetailPage({ params }: Props) {
   const meds = sym.medicineIds
     .map((id) => medMap.get(id)!)
     .filter(Boolean);
+
+  // タグが症状と一致するものを優先。無ければ全公開記事から振り分ける
+  const columns = await getPublishedColumns();
+  const wanted = [
+    SYMPTOM_TAG_MAP[sym.group ?? ''],
+    SYMPTOM_TAG_MAP[sym.name],
+    sym.group,
+    sym.name,
+  ].filter(Boolean) as string[];
+  const matched = columns
+    .filter((c) => c.tag && wanted.includes(c.tag))
+    .slice(0, 3);
+  const isRelated = matched.length > 0;
+  const columnLinks = isRelated ? matched : pickRotating(columns, sym.slug, 3);
 
   // リスク区分別に分類
   const byRisk: Record<string, typeof meds> = { '1': [], '2': [], '2.5': [], '3': [] };
@@ -117,6 +181,27 @@ export default function SymptomDetailPage({ params }: Props) {
             </section>
           );
         })}
+
+        {/* 解説記事（0件なら非表示） */}
+        {columnLinks.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 border-l-4 border-brand pl-3 text-xl font-bold">
+              {isRelated ? '関連する解説記事' : 'ほかの解説記事'}
+            </h2>
+            <ul className="space-y-2">
+              {columnLinks.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/columns/${c.slug}/`}
+                    className="text-brand underline underline-offset-2 hover:no-underline"
+                  >
+                    {c.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </>
   );
