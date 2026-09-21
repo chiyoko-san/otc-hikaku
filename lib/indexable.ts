@@ -7,6 +7,12 @@
  *
  * PMDA バックフィルで ings / effect が埋まったページは、
  * コードを一切変更しなくても自動的にインデックス対象へ復帰する。
+ *
+ * 2026-09 改訂:
+ *   効能・効果は PMDA の正規表記でも「せき，たん」のように短いものが多く、
+ *   旧しきい値(20文字)では成分表が埋まったページまで noindex のまま残っていた。
+ *   ページの実質コンテンツは成分表(と、そこから生成される類似薬比較)なので、
+ *   判定の主軸は「成分があるか」に置き、効能はプレースホルダ除外だけにする。
  */
 
 export type IndexableMedicine = {
@@ -14,17 +20,35 @@ export type IndexableMedicine = {
   effect?: string | null;
 };
 
-/** 効能・効果としてこの文字数未満はプレースホルダ相当とみなす */
-export const MIN_EFFECT_LENGTH = 20;
+/** 効能・効果がこの文字数未満ならプレースホルダ相当とみなす */
+export const MIN_EFFECT_LENGTH = 2;
+
+/** 効能・効果に入りうる「未取得」を意味する表記。長さに関係なく不可 */
+const EFFECT_PLACEHOLDERS = new Set([
+  '不明',
+  '未定',
+  '未登録',
+  '準備中',
+  '情報準備中',
+  'なし',
+  '—',
+  '－',
+  '―',
+  '-',
+]);
 
 export function isIndexableMedicine(
   med: IndexableMedicine | null | undefined
 ): boolean {
   if (!med) return false;
 
-  const hasIngredients = Array.isArray(med.ings) && med.ings.length > 0;
+  const hasIngredients =
+    Array.isArray(med.ings) &&
+    med.ings.some((s) => typeof s === 'string' && s.trim().length > 0);
+
   const effect = (med.effect ?? '').trim();
-  const hasEffect = effect.length >= MIN_EFFECT_LENGTH;
+  const hasEffect =
+    effect.length >= MIN_EFFECT_LENGTH && !EFFECT_PLACEHOLDERS.has(effect);
 
   return hasIngredients && hasEffect;
 }
