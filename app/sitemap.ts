@@ -8,6 +8,7 @@ import { CATEGORIES } from '@/lib/categories';
 import { SWITCH_DRUGS } from '@/lib/switch-data';
 import { getAllColumnSlugs, getPublishedColumns } from '@/lib/supabase/columns';
 import { SITE_URL } from '@/lib/seo';
+import { isIndexableMedicine } from '@/lib/indexable';
 
 export const revalidate = 3600; // 1時間ごとに再生成
 
@@ -46,13 +47,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'weekly' as const,
   }));
 
-  // 薬品詳細ページ (SEO 主力 622件)
-  const medicinePages: MetadataRoute.Sitemap = getAllMedicines().map((m) => ({
-    url: `${SITE_URL}/medicines/${m.slug}/`,
-    lastModified: now,
-    priority: 0.9,
-    changeFrequency: 'weekly' as const,
-  }));
+  // 薬品詳細ページ (SEO 主力)
+  // generateMetadata と同じ判定でフィルタする。noindex のページを sitemap に載せると
+  // Google に矛盾シグナルを送るので、ここを外してはいけない。
+  const medicinePages: MetadataRoute.Sitemap = getAllMedicines()
+    .filter((m) => isIndexableMedicine(m))
+    .map((m) => ({
+      url: `${SITE_URL}/medicines/${m.slug}/`,
+      lastModified: now,
+      priority: 0.9,
+      changeFrequency: 'weekly' as const,
+    }));
 
   // 成分ページ
   const ingredientPages: MetadataRoute.Sitemap = getAllIngredients().map((i) => ({
