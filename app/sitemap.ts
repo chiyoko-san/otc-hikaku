@@ -9,6 +9,7 @@ import { SWITCH_DRUGS } from '@/lib/switch-data';
 import { getAllColumnSlugs, getPublishedColumns } from '@/lib/supabase/columns';
 import { SITE_URL } from '@/lib/seo';
 import { isIndexableMedicine } from '@/lib/indexable';
+import { OTC_SIMILAR_GROUPS } from '@/lib/otc-similar-77';
 
 export const revalidate = 3600; // 1時間ごとに再生成
 
@@ -21,6 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/medicines/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/switch/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/otc-similar/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/otc-similar/name/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/otc-similar/use/`, lastModified: now, priority: 0.8, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/symptoms/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/ingredients/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/columns/`, lastModified: now, priority: 0.8, changeFrequency: 'daily' },
@@ -37,6 +40,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${SITE_URL}/switch/${d.slug}/`,
     lastModified: now,
     priority: 0.9,
+    changeFrequency: 'weekly' as const,
+  }));
+
+  // OTC類似薬 上乗せ料金: 用途別ページ (12件)
+  const otcSimilarGroupPages: MetadataRoute.Sitemap = OTC_SIMILAR_GROUPS.map((g) => ({
+    url: `${SITE_URL}/otc-similar/use/${g.key}/`,
+    lastModified: now,
+    priority: 0.8,
     changeFrequency: 'weekly' as const,
   }));
 
@@ -88,6 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPages,
     ...switchPages,
+    ...otcSimilarGroupPages,
     ...categoryPages,
     ...medicinePages,
     ...ingredientPages,
