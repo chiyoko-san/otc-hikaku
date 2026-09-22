@@ -1,10 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  buildMetadata,
-  buildBreadcrumbJsonLd,
-  buildFaqJsonLd,
-} from '@/lib/seo';
+import { buildMetadata, buildBreadcrumbJsonLd, buildFaqJsonLd } from '@/lib/seo';
 import { getEnrichedMedicines } from '@/lib/medicines';
 import { normalizeIngredientName } from '@/lib/slug';
 import { SWITCH_DRUGS } from '@/lib/switch-data';
@@ -13,256 +9,274 @@ import {
   OTC_SIMILAR_GROUPS,
   OTC_SIMILAR_META,
   matchesOtcSimilar,
-  type OtcSimilarIngredient,
 } from '@/lib/otc-similar-77';
-import type { Medicine } from '@/types';
+import OtcSimilarFinder, {
+  type FinderName,
+  type FinderRow,
+} from './OtcSimilarFinder';
 
 // 配置先: app/otc-similar/page.tsx  →  https://www.kusuri-compass.com/otc-similar/
+// 想定読者: 60〜80代。医療用語より薬の名前、成分より「対象かどうか」「いくら増えるか」を先に。
 
 const PATH = '/otc-similar/';
-const TITLE =
-  'OTC類似薬「特別料金」対象77成分一覧｜2027年3月から薬剤費の1/4を追加負担';
-const DESCRIPTION =
-  'ロキソニン・アレグラ・ヒルドイドなど、2027年3月から処方時に薬剤費の4分の1が上乗せされるOTC類似薬77成分（厚労省案）を一覧化。各成分について同じ成分の市販薬を成分データベースから自動で表示します。';
 
 export const metadata: Metadata = buildMetadata({
-  title: TITLE,
-  description: DESCRIPTION,
+  title: 'OTC類似薬「特別料金」対象77成分一覧｜2027年3月から薬剤費の1/4を追加負担',
+  description:
+    'ロキソニン・アレグラ・ヒルドイドなど、2027年3月から処方時に薬剤費の4分の1が上乗せされるOTC類似薬77成分（厚労省案）を、薬の名前から探せる一覧に。同じ成分の市販薬も成分データベースから表示します。',
   path: PATH,
 });
 
 const FAQS = [
   {
-    q: 'OTC類似薬は保険が使えなくなるのですか？',
-    a: 'いいえ。保険適用は残ります。通常の1〜3割負担とは別に、対象薬剤の薬剤費の4分の1を「特別の料金」として上乗せで負担する仕組みです。',
+    q: '病院の薬に保険が使えなくなるのですか？',
+    a: 'いいえ。保険は今までどおり使えます。対象の薬だけ、いつもの負担（1〜3割）に加えて薬代の4分の1を上乗せで支払う仕組みです。診察料や調剤料は変わりません。',
   },
   {
     q: 'いつから始まりますか？',
-    a: `${OTC_SIMILAR_META.effectiveLabel}の実施予定です。改正健康保険法は2026年5月に成立しており、詳細な運用ルールは厚生労働省の検討会で整理が続いています。`,
+    a: `${OTC_SIMILAR_META.effectiveLabel}の予定です。法律（改正健康保険法）は2026年5月に成立し、細かい決まりは厚生労働省で検討が続いています。`,
   },
   {
-    q: '追加負担は具体的にいくらですか？',
-    a: '薬剤費100円の薬なら、特別料金25円に加えて残り75円の3割(約23円)を負担し合計約48円。これまでの30円から約18円増えます。技術料(診察料・調剤料など)は変わりません。',
+    q: '上乗せ料金がかからない人はいますか？',
+    a: 'お子さん、がん・難病などで継続治療が必要な方、収入の少ない方、入院中の方、医師が長く使う必要があると判断した方などは、上乗せ料金を求めない方向で検討されています。該当するかは受診先で確認してください。',
   },
   {
-    q: '追加負担を求められない人はいますか？',
-    a: 'こども、がん患者・難病患者など配慮が必要な慢性疾患のある方、低所得の方、入院患者、医師が長期使用等を医療上必要と判断した方などは、特別料金を求めない方向で検討されています。',
+    q: '自分の薬が対象かどうか、どうやって調べますか？',
+    a: 'お薬手帳か薬袋に書いてある薬の名前で、このページの「名前で探す」から探せます。一覧は厚生労働省の案で、最終的な対象は国の告示で決まります。',
   },
   {
-    q: '自分の処方薬が対象か知るには？',
-    a: 'このページの一覧で成分名を確認してください。処方薬の成分名はお薬手帳や薬情(薬の説明書)に記載されています。一覧は厚労省の案で、最終的な対象品目は告示で確定します。',
+    q: '市販薬に替えたほうがいいですか？',
+    a: 'このページは判断材料を提供するもので、切替をすすめるものではありません。続けて使っている薬は、自己判断で中止・変更せず、医師や薬剤師に相談してください。',
   },
 ];
 
-type Row = {
-  ing: OtcSimilarIngredient;
-  otcCount: number;
-  otcTop: Medicine[];
-  guides: { slug: string; rxName: string }[];
+// 頭文字の判定（あ〜わ行 / 英）。漢字始まりの名前は個別に指定する
+const KANA_OVERRIDES: Record<string, string> = {
+  亜鉛華軟膏: 'あ',
+  重曹: 'さ',
+  白色ワセリン: 'は',
+  '冷感湿布（MS冷シップなど）': 'ら',
+  '葛根湯(医療用)': 'か',
 };
+function kanaRow(label: string): string {
+  if (KANA_OVERRIDES[label]) return KANA_OVERRIDES[label];
+  const c = label.charCodeAt(0);
+  const ranges: [number, number, string][] = [
+    [0x30a1, 0x30aa, 'あ'], [0x30f4, 0x30f4, 'あ'],
+    [0x30ab, 0x30b4, 'か'],
+    [0x30b5, 0x30be, 'さ'],
+    [0x30bf, 0x30c9, 'た'],
+    [0x30ca, 0x30ce, 'な'],
+    [0x30cf, 0x30dd, 'は'],
+    [0x30de, 0x30e2, 'ま'],
+    [0x30e3, 0x30e8, 'や'],
+    [0x30e9, 0x30ed, 'ら'],
+    [0x30ef, 0x30f3, 'わ'],
+  ];
+  const hit = ranges.find(([lo, hi]) => c >= lo && c <= hi);
+  return hit ? hit[2] : '英';
+}
 
-function buildRows(): Row[] {
+function buildData(): { rows: FinderRow[]; names: FinderName[] } {
   const meds = getEnrichedMedicines();
   const normed = meds.map((m) => ({
     m,
     ings: (m.ings || []).map((i) => normalizeIngredientName(i)),
   }));
-  return OTC_SIMILAR_77.map((ing) => {
+
+  const rows: FinderRow[] = OTC_SIMILAR_77.map((ing) => {
     const otc = normed.filter(({ ings }) => matchesOtcSimilar(ing, ings)).map((x) => x.m);
     const guides = SWITCH_DRUGS.filter((d) => d.otcSimilarNo === ing.no).map((d) => ({
       slug: d.slug,
       rxName: d.rxName,
     }));
-    return { ing, otcCount: otc.length, otcTop: otc.slice(0, 3), guides };
+    return {
+      no: ing.no,
+      name: ing.name,
+      use: ing.use,
+      group: ing.group,
+      rxExamples: ing.rxExamples ?? [],
+      otcCount: otc.length,
+      otcTop: otc.slice(0, 3).map((m) => ({ name: m.name, slug: m.slug })),
+      guides,
+    };
   });
+
+  // 名前さくいん: 対象成分の代表薬 ＋ 切替ガイドにある対象外の薬
+  const names: FinderName[] = [];
+  for (const ing of OTC_SIMILAR_77) {
+    const guide = SWITCH_DRUGS.find((d) => d.otcSimilarNo === ing.no);
+    for (const label of ing.rxExamples ?? []) {
+      names.push({ label, kana: kanaRow(label), target: true, no: ing.no, guideSlug: guide?.slug });
+    }
+  }
+  for (const d of SWITCH_DRUGS) {
+    if (d.otcSimilarNo == null) {
+      names.push({ label: d.rxName, kana: kanaRow(d.rxName), target: false, no: null, guideSlug: d.slug });
+    }
+  }
+  names.sort((a, b) => a.label.localeCompare(b.label, 'ja'));
+
+  return { rows, names };
 }
 
 export default function OtcSimilarPage() {
-  const rows = buildRows();
-  const totalOtc = rows.reduce((s, r) => s + r.otcCount, 0);
+  const { rows, names } = buildData();
+  const notTargets = SWITCH_DRUGS.filter((d) => d.otcSimilarNo == null);
 
   const breadcrumb = buildBreadcrumbJsonLd([
     { name: 'ホーム', url: '/' },
     { name: '処方薬から探す', url: '/switch/' },
-    { name: 'OTC類似薬 特別料金の対象77成分', url: PATH },
+    { name: 'OTC類似薬 上乗せ料金の対象77成分', url: PATH },
   ]);
   const faq = buildFaqJsonLd(FAQS);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
-      />
+    <div className="mx-auto max-w-3xl px-4 py-8 text-lg leading-relaxed text-gray-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />
 
-      <nav className="mb-4 text-sm text-gray-600" aria-label="パンくず">
-        <ol className="flex flex-wrap gap-1">
-          <li><Link href="/" className="underline">ホーム</Link></li>
-          <li>/</li>
-          <li><Link href="/switch/" className="underline">処方薬から探す</Link></li>
-          <li>/</li>
-          <li>OTC類似薬 特別料金の対象77成分</li>
-        </ol>
+      <nav className="text-base text-gray-700" aria-label="パンくず">
+        <Link href="/" className="underline">ホーム</Link>
+        <span className="mx-1">/</span>
+        <Link href="/switch/" className="underline">処方薬から探す</Link>
+        <span className="mx-1">/</span>
+        <span>上乗せ料金の対象77成分</span>
       </nav>
 
-      <h1 className="text-2xl font-bold leading-snug md:text-3xl">
-        OTC類似薬「特別料金」の対象77成分一覧
-        <span className="mt-1 block text-base font-normal text-gray-700">
-          {OTC_SIMILAR_META.effectiveLabel}から、処方時に薬剤費の4分の1が追加負担に
-        </span>
+      <h1 className="mt-4 text-3xl font-bold leading-snug md:text-4xl">
+        病院でもらう薬の一部に、「上乗せ料金」が始まります
       </h1>
-
-      <p className="mt-4 leading-relaxed">
-        市販薬と同じ成分・同じ使い方の処方薬（OTC類似薬）について、通常の自己負担とは別に
-        <strong>{OTC_SIMILAR_META.feeRatioLabel}</strong>を「特別の料金」として患者が負担する仕組みが、
-        {OTC_SIMILAR_META.lawLabel}により始まります。対象は厚生労働省の案で
-        <strong>{OTC_SIMILAR_META.ingredientCount}成分・{OTC_SIMILAR_META.itemCountLabel}</strong>。
-        このページでは77成分すべてを用途別に並べ、それぞれについて
-        <strong>同じ成分を含む市販薬</strong>（当サイトの成分データベースから自動抽出、計{totalOtc}件）を表示します。
+      <p className="mt-3 text-xl leading-relaxed">
+        <strong>{OTC_SIMILAR_META.effectiveLabel}</strong>から。
+        市販薬と同じ成分の処方薬（OTC類似薬）が対象で、いつもの負担に加えて
+        <strong>薬代の4分の1</strong>を追加で支払います。
+      </p>
+      <p className="mt-2 text-base text-gray-700">
+        対象は厚生労働省の案で{OTC_SIMILAR_META.ingredientCount}成分・{OTC_SIMILAR_META.itemCountLabel}。
+        ロキソニン、アレグラ、ヒルドイドなど、よく処方される薬が含まれています。
       </p>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <section className="rounded-lg border p-4">
-          <h2 className="font-bold">制度の要点</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed">
-            <li>保険適用は残る。定率負担（1〜3割）に加えて、対象薬剤の薬剤費の1/4を別途負担</li>
-            <li>対象は「市販薬と成分・投与経路が同一で、1日最大用量が異ならない医療用医薬品」を機械的に選定した77成分</li>
-            <li>実施は{OTC_SIMILAR_META.effectiveLabel}。令和9年度以降に対象拡大・料率引き上げを検討</li>
-            <li>こども、がん・難病など配慮が必要な慢性疾患、低所得者、入院患者、医師が長期使用を必要と判断した方などは対象外の方向</li>
-          </ul>
-        </section>
-        <section className="rounded-lg border p-4">
-          <h2 className="font-bold">負担額の計算例（薬剤費100円あたり）</h2>
-          <table className="mt-2 w-full text-sm">
-            <thead>
-              <tr className="border-b text-left">
-                <th className="py-1">負担割合</th>
-                <th className="py-1">これまで</th>
-                <th className="py-1">実施後</th>
-                <th className="py-1">増加</th>
+      {/* 目次: このページは3ステップ */}
+      <ol className="mt-6 grid gap-3 sm:grid-cols-3">
+        <li>
+          <a href="#find-by-name" className="block min-h-[64px] rounded-xl bg-[#1f4d3a] px-4 py-3 text-xl font-bold text-white">
+            1. 自分の薬は対象？
+          </a>
+        </li>
+        <li>
+          <a href="#how-much" className="block min-h-[64px] rounded-xl bg-[#1f4d3a] px-4 py-3 text-xl font-bold text-white">
+            2. いくら増える？
+          </a>
+        </li>
+        <li>
+          <a href="#find-by-use" className="block min-h-[64px] rounded-xl bg-[#1f4d3a] px-4 py-3 text-xl font-bold text-white">
+            3. 市販薬に替えるなら
+          </a>
+        </li>
+      </ol>
+
+      {/* いくら増える？ */}
+      <section id="how-much" className="mt-12 scroll-mt-24">
+        <h2 className="text-2xl font-bold leading-snug md:text-3xl">いくら増える？</h2>
+        <p className="mt-2">薬代（薬そのものの値段）が1,000円の薬の場合。</p>
+        <div className="mt-4 overflow-hidden rounded-xl border-2 border-gray-300">
+          <table className="w-full text-left text-xl">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-3 font-bold">窓口負担</th>
+                <th className="px-4 py-3 font-bold">これまで</th>
+                <th className="px-4 py-3 font-bold">これから</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b"><td className="py-1">3割</td><td>30円</td><td>約48円</td><td>+約18円</td></tr>
-              <tr className="border-b"><td className="py-1">2割</td><td>20円</td><td>40円</td><td>+20円</td></tr>
-              <tr><td className="py-1">1割</td><td>10円</td><td>約33円</td><td>+約23円</td></tr>
+              <tr className="border-t-2 border-gray-300">
+                <td className="px-4 py-4">3割の人</td>
+                <td className="px-4 py-4">300円</td>
+                <td className="px-4 py-4 font-bold">約480円<span className="ml-2 text-lg font-normal text-[#b42318]">（+約180円）</span></td>
+              </tr>
+              <tr className="border-t-2 border-gray-300">
+                <td className="px-4 py-4">2割の人</td>
+                <td className="px-4 py-4">200円</td>
+                <td className="px-4 py-4 font-bold">400円<span className="ml-2 text-lg font-normal text-[#b42318]">（+200円）</span></td>
+              </tr>
+              <tr className="border-t-2 border-gray-300">
+                <td className="px-4 py-4">1割の人</td>
+                <td className="px-4 py-4">100円</td>
+                <td className="px-4 py-4 font-bold">約330円<span className="ml-2 text-lg font-normal text-[#b42318]">（+約230円）</span></td>
+              </tr>
             </tbody>
           </table>
-          <p className="mt-2 text-xs text-gray-600">
-            実施後＝特別料金25円＋残り75円×負担割合。診察料・調剤料などの技術料は変わりません。
-          </p>
+        </div>
+        <p className="mt-3 text-base text-gray-700">
+          これから＝上乗せ料金250円（薬代の4分の1）＋残り750円のいつもの負担分。診察料や調剤料は変わりません。
+        </p>
+
+        <div className="mt-6 rounded-xl border-2 border-[#1f4d3a] bg-[#f3f9f5] p-5">
+          <h3 className="text-xl font-bold">上乗せ料金がかからない人（検討中）</h3>
+          <ul className="mt-3 list-disc space-y-2 pl-6">
+            <li>お子さん</li>
+            <li>がん・難病など、続けて治療が必要な病気のある方</li>
+            <li>収入の少ない方</li>
+            <li>入院中の方</li>
+            <li>医師が「長く使う必要がある」と判断した方</li>
+          </ul>
+          <p className="mt-3 text-base text-gray-700">自分が当てはまるかは、受診先の窓口や薬局で確認してください。</p>
+        </div>
+      </section>
+
+      {/* 名前で探す・用途で探す（クライアント側） */}
+      <OtcSimilarFinder rows={rows} groups={OTC_SIMILAR_GROUPS} names={names} />
+
+      {/* よく聞かれる対象外の薬 */}
+      {notTargets.length > 0 && (
+        <section className="mt-12">
+          <h2 className="text-2xl font-bold leading-snug md:text-3xl">よく聞かれる「対象外」の薬</h2>
+          <p className="mt-2">次の薬は、今回の77成分の案には入っていません（上乗せ料金はかかりません）。</p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {notTargets.map((d) => (
+              <li key={d.slug} className="rounded-xl border-2 border-gray-300 bg-white p-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="inline-block rounded-md border-2 border-gray-500 bg-white px-2.5 py-1 text-base font-bold text-gray-800">対象外</span>
+                  <span className="text-xl font-bold">{d.rxName}</span>
+                </div>
+                <p className="mt-1 text-base text-gray-700">成分：{d.genericName}</p>
+                <Link href={`/switch/${d.slug}/`} className="mt-3 inline-block text-lg font-bold text-[#1f4d3a] underline">
+                  同じ成分の市販薬を見る
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
-      </div>
+      )}
 
-      <p className="mt-6 rounded-lg bg-amber-50 p-4 text-sm leading-relaxed">
-        <strong>この一覧は{OTC_SIMILAR_META.listStatus}です。</strong>
-        最終的な対象品目は厚生労働省の告示で確定します。また、当サイトは処方薬から市販薬への切替を推奨するものではありません。
-        継続治療中の薬は、自己判断で中止・変更せず医師・薬剤師に相談してください。
-      </p>
-
-      <nav className="mt-8 rounded-lg border p-4 text-sm" aria-label="用途別リンク">
-        <p className="font-bold">用途から探す</p>
-        <ul className="mt-2 flex flex-wrap gap-2">
-          {OTC_SIMILAR_GROUPS.map((g) => (
-            <li key={g.key}>
-              <a href={`#${g.key}`} className="rounded-full border px-3 py-1 hover:bg-gray-50">
-                {g.label}
-              </a>
-            </li>
-          ))}
+      {/* 注意 */}
+      <section className="mt-12 rounded-xl bg-[#fff4d6] p-5">
+        <h2 className="text-xl font-bold">ご注意</h2>
+        <ul className="mt-3 list-disc space-y-2 pl-6">
+          <li>この一覧は{OTC_SIMILAR_META.listStatus}です。最終的な対象は国の告示で決まります。</li>
+          <li>当サイトは、処方薬から市販薬への切替をすすめるものではありません。</li>
+          <li>続けて使っている薬は、自己判断でやめたり変えたりせず、医師・薬剤師に相談してください。</li>
         </ul>
-      </nav>
+      </section>
 
-      {OTC_SIMILAR_GROUPS.map((g) => {
-        const groupRows = rows.filter((r) => r.ing.group === g.key);
-        if (groupRows.length === 0) return null;
-        return (
-          <section key={g.key} id={g.key} className="mt-10 scroll-mt-20">
-            <h2 className="text-xl font-bold">{g.label}</h2>
-            <p className="mt-1 text-sm text-gray-700">{g.lead}</p>
-            <div className="mt-3 overflow-x-auto">
-              <table className="w-full min-w-[640px] text-sm">
-                <thead>
-                  <tr className="border-b bg-gray-50 text-left">
-                    <th className="px-2 py-2 w-10">No</th>
-                    <th className="px-2 py-2">成分（厚労省表記）</th>
-                    <th className="px-2 py-2">代表的な処方薬</th>
-                    <th className="px-2 py-2">同じ成分の市販薬</th>
-                    <th className="px-2 py-2">切替ガイド</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {groupRows.map(({ ing, otcCount, otcTop, guides }) => (
-                    <tr key={ing.no} className="border-b align-top">
-                      <td className="px-2 py-2 text-gray-500">{ing.no}</td>
-                      <td className="px-2 py-2">
-                        <div className="font-medium">{ing.name}</div>
-                        <div className="text-xs text-gray-600">{ing.use}</div>
-                      </td>
-                      <td className="px-2 py-2">
-                        {ing.rxExamples?.length ? ing.rxExamples.join('、') : <span className="text-gray-400">—</span>}
-                      </td>
-                      <td className="px-2 py-2">
-                        {otcCount === 0 ? (
-                          <span className="text-gray-400">該当なし</span>
-                        ) : (
-                          <>
-                            <span className="text-xs text-gray-600">{otcCount}件</span>
-                            <ul className="mt-1 space-y-0.5">
-                              {otcTop.map((m) => (
-                                <li key={m.slug}>
-                                  <Link href={`/medicines/${m.slug}/`} className="underline">
-                                    {m.name}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </>
-                        )}
-                      </td>
-                      <td className="px-2 py-2">
-                        {guides.length === 0 ? (
-                          <span className="text-gray-400">—</span>
-                        ) : (
-                          <ul className="space-y-0.5">
-                            {guides.map((gd) => (
-                              <li key={gd.slug}>
-                                <Link href={`/switch/${gd.slug}/`} className="underline">
-                                  {gd.rxName} →
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        );
-      })}
-
+      {/* FAQ */}
       <section className="mt-12">
-        <h2 className="text-xl font-bold">よくある質問</h2>
-        <dl className="mt-3 space-y-4">
+        <h2 className="text-2xl font-bold leading-snug md:text-3xl">よくある質問</h2>
+        <dl className="mt-4 divide-y-2 divide-gray-200">
           {FAQS.map((f) => (
-            <div key={f.q}>
-              <dt className="font-medium">Q. {f.q}</dt>
-              <dd className="mt-1 text-sm leading-relaxed text-gray-800">{f.a}</dd>
+            <div key={f.q} className="py-4">
+              <dt className="text-xl font-bold">Q. {f.q}</dt>
+              <dd className="mt-2">{f.a}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <section className="mt-12 text-sm text-gray-700">
-        <h2 className="font-bold">出典（公的機関）</h2>
-        <ul className="mt-2 list-disc space-y-1 pl-5">
+      {/* 出典 */}
+      <section className="mt-12 text-base text-gray-700">
+        <h2 className="text-xl font-bold text-gray-900">出典（厚生労働省）</h2>
+        <ul className="mt-2 list-disc space-y-1 pl-6">
           {OTC_SIMILAR_META.sources.map((s) => (
             <li key={s.url}>
               <a href={s.url} target="_blank" rel="noopener noreferrer" className="underline">
@@ -271,10 +285,8 @@ export default function OtcSimilarPage() {
             </li>
           ))}
         </ul>
-        <p className="mt-4 text-xs text-gray-600">
-          当ページの情報は厚生労働省の公開資料およびPMDA公開情報を元に整理したものです。
-          市販薬の使用にあたっては添付文書を確認し、薬剤師・登録販売者に相談してください。
-          本サイトは医療行為の代替を目的としていません。
+        <p className="mt-4">
+          当ページは厚生労働省の公開資料とPMDA公開情報を元に整理しています。市販薬を使うときは添付文書を確認し、薬剤師・登録販売者に相談してください。本サイトは医療行為の代替を目的としていません。
         </p>
       </section>
     </div>
