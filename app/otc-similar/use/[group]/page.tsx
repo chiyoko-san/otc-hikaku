@@ -9,6 +9,8 @@ import {
   OTC_SIMILAR_PATHS,
   type OtcSimilarRow,
 } from '@/lib/otc-similar-data';
+import OtcSimilarPriceTable from '@/components/OtcSimilarPriceTable';
+import { getYakkaDateLabel } from '@/lib/otc-similar-items';
 
 // 配置先: app/otc-similar/use/[group]/page.tsx  →  /otc-similar/use/allergy/ など12ページ
 // 用途ごとに1ページ。ここに出るのはその用途の成分だけなので、スクロールは短い。
@@ -84,6 +86,7 @@ export default async function OtcSimilarGroupPage({
         <p className="font-bold">ご注意</p>
         <ul className="mt-2 list-disc space-y-1 pl-6 text-base">
           <li>一覧は{OTC_SIMILAR_META.listStatus}です。最終的な対象は国の告示で決まります。</li>
+          <li>上乗せ額は薬価（厚生労働省 {getYakkaDateLabel()}時点）の4分の1として当サイトが計算したものです。実際の負担は上乗せ額＋残りの薬代×負担割合で、診察料・調剤料は別です。</li>
           <li>市販薬への切替をすすめるものではありません。続けて使っている薬は医師・薬剤師に相談してください。</li>
         </ul>
       </section>
@@ -126,6 +129,11 @@ function IngredientCard({ row: r }: { row: OtcSimilarRow }) {
         成分：{r.name}
         <span className="text-gray-600">（{r.use}）</span>
       </p>
+
+      <div className="mt-4">
+        <p className="text-lg font-bold">処方薬の薬価と上乗せ額（代表例）</p>
+        <OtcSimilarPriceTable no={r.no} limit={3} compact />
+      </div>
 
       <div className="mt-4">
         <p className="text-lg font-bold">

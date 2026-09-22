@@ -4,6 +4,7 @@ import { buildMetadata, buildBreadcrumbJsonLd, buildFaqJsonLd } from '@/lib/seo'
 import { SWITCH_DRUGS } from '@/lib/switch-data';
 import { OTC_SIMILAR_GROUPS, OTC_SIMILAR_META } from '@/lib/otc-similar-77';
 import { OTC_SIMILAR_PATHS } from '@/lib/otc-similar-data';
+import { estimate, findItemByName, getYakkaDateLabel, yen } from '@/lib/otc-similar-items';
 
 // 配置先: app/otc-similar/page.tsx  →  https://www.kusuri-compass.com/otc-similar/
 // 想定読者: 60〜80代。このページは「制度の説明」と「探し方の入口」だけを持ち、
@@ -39,8 +40,20 @@ const FAQS = [
   },
 ];
 
+// 実際の薬での例（品名の前方一致で薬価データから引く。数量は一般的な処方量の目安）
+const REAL_EXAMPLES: { prefix: string; label: string; qty: number; qtyLabel: string }[] = [
+  { prefix: 'ロキソニン錠60mg', label: 'ロキソニン錠60mg', qty: 42, qtyLabel: '1日3錠×14日（42錠）' },
+  { prefix: 'アレグラ錠60mg', label: 'アレグラ錠60mg', qty: 60, qtyLabel: '1日2錠×30日（60錠）' },
+  { prefix: 'ヒルドイドソフト軟膏0.3%', label: 'ヒルドイドソフト軟膏', qty: 25, qtyLabel: '25gチューブ1本' },
+  { prefix: 'ロキソニンテープ100mg', label: 'ロキソニンテープ100mg', qty: 70, qtyLabel: '70枚' },
+];
+
 export default function OtcSimilarHubPage() {
   const notTargets = SWITCH_DRUGS.filter((d) => d.otcSimilarNo == null);
+  const examples = REAL_EXAMPLES.map((e) => {
+    const item = findItemByName(e.prefix);
+    return item ? { ...e, item, est: estimate(item, e.qty, 0.3) } : null;
+  }).filter((x): x is NonNullable<typeof x> => x !== null);
 
   const breadcrumb = buildBreadcrumbJsonLd([
     { name: 'ホーム', url: '/' },
@@ -166,6 +179,40 @@ export default function OtcSimilarHubPage() {
         <p className="mt-3 text-base text-gray-700">
           これから＝上乗せ料金250円（薬代の4分の1）＋残り750円のいつもの負担分。診察料や調剤料は変わりません。
         </p>
+
+        {examples.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-xl font-bold">実際の薬だといくら？（3割負担の場合）</h3>
+            <div className="mt-2 overflow-x-auto rounded-xl border-2 border-gray-300">
+              <table className="w-full min-w-[520px] text-left text-lg">
+                <thead className="bg-gray-100 text-base">
+                  <tr>
+                    <th className="px-3 py-2 font-bold">薬と量</th>
+                    <th className="px-3 py-2 font-bold">これまで</th>
+                    <th className="px-3 py-2 font-bold">これから</th>
+                    <th className="px-3 py-2 font-bold text-[#b42318]">増える額</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {examples.map((e) => (
+                    <tr key={e.prefix} className="border-t-2 border-gray-200 align-top">
+                      <td className="px-3 py-2">
+                        <div className="font-bold">{e.label}</div>
+                        <div className="text-base text-gray-600">{e.qtyLabel}・薬価{yen(e.item.price)}×{e.qty}</div>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2">約{yen(e.est.before)}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-bold">約{yen(e.est.after)}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-bold text-[#b42318]">+約{yen(e.est.diff)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-2 text-base text-gray-700">
+              薬価は厚生労働省の薬価基準収載品目リスト（{getYakkaDateLabel()}時点）。数量は一般的な処方量の目安で、実際の処方量・薬価・負担割合により変わります。ジェネリックは薬価が安いぶん上乗せ額も小さくなります。
+            </p>
+          </div>
+        )}
 
         <div className="mt-6 rounded-xl border-2 border-[#1f4d3a] bg-[#f3f9f5] p-5">
           <h3 className="text-xl font-bold">上乗せ料金がかからない人（検討中）</h3>
