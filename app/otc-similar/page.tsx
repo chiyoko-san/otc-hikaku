@@ -1,30 +1,19 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildMetadata, buildBreadcrumbJsonLd, buildFaqJsonLd } from '@/lib/seo';
-import { getEnrichedMedicines } from '@/lib/medicines';
-import { normalizeIngredientName } from '@/lib/slug';
 import { SWITCH_DRUGS } from '@/lib/switch-data';
-import {
-  OTC_SIMILAR_77,
-  OTC_SIMILAR_GROUPS,
-  OTC_SIMILAR_META,
-  matchesOtcSimilar,
-} from '@/lib/otc-similar-77';
-import OtcSimilarFinder, {
-  type FinderName,
-  type FinderRow,
-} from './OtcSimilarFinder';
+import { OTC_SIMILAR_GROUPS, OTC_SIMILAR_META } from '@/lib/otc-similar-77';
+import { OTC_SIMILAR_PATHS } from '@/lib/otc-similar-data';
 
 // 配置先: app/otc-similar/page.tsx  →  https://www.kusuri-compass.com/otc-similar/
-// 想定読者: 60〜80代。医療用語より薬の名前、成分より「対象かどうか」「いくら増えるか」を先に。
-
-const PATH = '/otc-similar/';
+// 想定読者: 60〜80代。このページは「制度の説明」と「探し方の入口」だけを持ち、
+// 一覧そのものは /otc-similar/name/ と /otc-similar/use/<用途>/ に分けている。
 
 export const metadata: Metadata = buildMetadata({
-  title: 'OTC類似薬「特別料金」対象77成分一覧｜2027年3月から薬剤費の1/4を追加負担',
+  title: 'OTC類似薬「特別料金」とは｜2027年3月から病院の薬に上乗せ料金、対象77成分の探し方',
   description:
-    'ロキソニン・アレグラ・ヒルドイドなど、2027年3月から処方時に薬剤費の4分の1が上乗せされるOTC類似薬77成分（厚労省案）を、薬の名前から探せる一覧に。同じ成分の市販薬も成分データベースから表示します。',
-  path: PATH,
+    'ロキソニン・アレグラ・ヒルドイドなど、2027年3月から処方時に薬代の4分の1が上乗せされるOTC類似薬77成分（厚労省案）。なぜ始まるのか、いくら増えるのか、自分の薬が対象かを薬の名前から調べられます。',
+  path: OTC_SIMILAR_PATHS.hub,
 });
 
 const FAQS = [
@@ -42,92 +31,21 @@ const FAQS = [
   },
   {
     q: '自分の薬が対象かどうか、どうやって調べますか？',
-    a: 'お薬手帳か薬袋に書いてある薬の名前で、このページの「名前で探す」から探せます。一覧は厚生労働省の案で、最終的な対象は国の告示で決まります。',
+    a: 'お薬手帳か薬袋に書いてある薬の名前で、「薬の名前で探す」ページから探せます。一覧は厚生労働省の案で、最終的な対象は国の告示で決まります。',
   },
   {
     q: '市販薬に替えたほうがいいですか？',
-    a: 'このページは判断材料を提供するもので、切替をすすめるものではありません。続けて使っている薬は、自己判断で中止・変更せず、医師や薬剤師に相談してください。',
+    a: 'このサイトは判断材料を提供するもので、切替をすすめるものではありません。続けて使っている薬は、自己判断で中止・変更せず、医師や薬剤師に相談してください。',
   },
 ];
 
-// 頭文字の判定（あ〜わ行 / 英）。漢字始まりの名前は個別に指定する
-const KANA_OVERRIDES: Record<string, string> = {
-  亜鉛華軟膏: 'あ',
-  重曹: 'さ',
-  白色ワセリン: 'は',
-  '冷感湿布（MS冷シップなど）': 'ら',
-  '葛根湯(医療用)': 'か',
-};
-function kanaRow(label: string): string {
-  if (KANA_OVERRIDES[label]) return KANA_OVERRIDES[label];
-  const c = label.charCodeAt(0);
-  const ranges: [number, number, string][] = [
-    [0x30a1, 0x30aa, 'あ'], [0x30f4, 0x30f4, 'あ'],
-    [0x30ab, 0x30b4, 'か'],
-    [0x30b5, 0x30be, 'さ'],
-    [0x30bf, 0x30c9, 'た'],
-    [0x30ca, 0x30ce, 'な'],
-    [0x30cf, 0x30dd, 'は'],
-    [0x30de, 0x30e2, 'ま'],
-    [0x30e3, 0x30e8, 'や'],
-    [0x30e9, 0x30ed, 'ら'],
-    [0x30ef, 0x30f3, 'わ'],
-  ];
-  const hit = ranges.find(([lo, hi]) => c >= lo && c <= hi);
-  return hit ? hit[2] : '英';
-}
-
-function buildData(): { rows: FinderRow[]; names: FinderName[] } {
-  const meds = getEnrichedMedicines();
-  const normed = meds.map((m) => ({
-    m,
-    ings: (m.ings || []).map((i) => normalizeIngredientName(i)),
-  }));
-
-  const rows: FinderRow[] = OTC_SIMILAR_77.map((ing) => {
-    const otc = normed.filter(({ ings }) => matchesOtcSimilar(ing, ings)).map((x) => x.m);
-    const guides = SWITCH_DRUGS.filter((d) => d.otcSimilarNo === ing.no).map((d) => ({
-      slug: d.slug,
-      rxName: d.rxName,
-    }));
-    return {
-      no: ing.no,
-      name: ing.name,
-      use: ing.use,
-      group: ing.group,
-      rxExamples: ing.rxExamples ?? [],
-      otcCount: otc.length,
-      otcTop: otc.slice(0, 3).map((m) => ({ name: m.name, slug: m.slug })),
-      guides,
-    };
-  });
-
-  // 名前さくいん: 対象成分の代表薬 ＋ 切替ガイドにある対象外の薬
-  const names: FinderName[] = [];
-  for (const ing of OTC_SIMILAR_77) {
-    const guide = SWITCH_DRUGS.find((d) => d.otcSimilarNo === ing.no);
-    for (const label of ing.rxExamples ?? []) {
-      names.push({ label, kana: kanaRow(label), target: true, no: ing.no, guideSlug: guide?.slug });
-    }
-  }
-  for (const d of SWITCH_DRUGS) {
-    if (d.otcSimilarNo == null) {
-      names.push({ label: d.rxName, kana: kanaRow(d.rxName), target: false, no: null, guideSlug: d.slug });
-    }
-  }
-  names.sort((a, b) => a.label.localeCompare(b.label, 'ja'));
-
-  return { rows, names };
-}
-
-export default function OtcSimilarPage() {
-  const { rows, names } = buildData();
+export default function OtcSimilarHubPage() {
   const notTargets = SWITCH_DRUGS.filter((d) => d.otcSimilarNo == null);
 
   const breadcrumb = buildBreadcrumbJsonLd([
     { name: 'ホーム', url: '/' },
     { name: '処方薬から探す', url: '/switch/' },
-    { name: 'OTC類似薬 上乗せ料金の対象77成分', url: PATH },
+    { name: 'OTC類似薬の上乗せ料金', url: OTC_SIMILAR_PATHS.hub },
   ]);
   const faq = buildFaqJsonLd(FAQS);
 
@@ -141,43 +59,80 @@ export default function OtcSimilarPage() {
         <span className="mx-1">/</span>
         <Link href="/switch/" className="underline">処方薬から探す</Link>
         <span className="mx-1">/</span>
-        <span>上乗せ料金の対象77成分</span>
+        <span>上乗せ料金</span>
       </nav>
 
       <h1 className="mt-4 text-3xl font-bold leading-snug md:text-4xl">
         病院でもらう薬の一部に、「上乗せ料金」が始まります
       </h1>
       <p className="mt-3 text-xl leading-relaxed">
-        <strong>{OTC_SIMILAR_META.effectiveLabel}</strong>から。
-        市販薬と同じ成分の処方薬（OTC類似薬）が対象で、いつもの負担に加えて
-        <strong>薬代の4分の1</strong>を追加で支払います。
-      </p>
-      <p className="mt-2 text-base text-gray-700">
-        対象は厚生労働省の案で{OTC_SIMILAR_META.ingredientCount}成分・{OTC_SIMILAR_META.itemCountLabel}。
-        ロキソニン、アレグラ、ヒルドイドなど、よく処方される薬が含まれています。
+        <strong>{OTC_SIMILAR_META.effectiveLabel}</strong>から。市販薬と同じ成分の処方薬（OTC類似薬）が対象で、
+        いつもの負担に加えて<strong>薬代の4分の1</strong>を追加で支払います。
       </p>
 
-      {/* 目次: このページは3ステップ */}
-      <ol className="mt-6 grid gap-3 sm:grid-cols-3">
-        <li>
-          <a href="#find-by-name" className="block min-h-[64px] rounded-xl bg-[#1f4d3a] px-4 py-3 text-xl font-bold text-white">
-            1. 自分の薬は対象？
-          </a>
-        </li>
-        <li>
-          <a href="#how-much" className="block min-h-[64px] rounded-xl bg-[#1f4d3a] px-4 py-3 text-xl font-bold text-white">
-            2. いくら増える？
-          </a>
-        </li>
-        <li>
-          <a href="#find-by-use" className="block min-h-[64px] rounded-xl bg-[#1f4d3a] px-4 py-3 text-xl font-bold text-white">
-            3. 市販薬に替えるなら
-          </a>
-        </li>
-      </ol>
+      {/* なぜ？ */}
+      <section className="mt-8">
+        <h2 className="text-2xl font-bold leading-snug md:text-3xl">なぜ上乗せ料金がかかるの？</h2>
+        <ul className="mt-4 space-y-4">
+          <li className="rounded-xl border-2 border-gray-300 bg-white p-5">
+            <p className="text-xl font-bold">同じ薬なのに、払う人と払わない人がいたから</p>
+            <p className="mt-2">
+              たとえばロキソニンやアレグラは、薬局では自分のお金で買えます。ところが病院で処方してもらうと、
+              薬代の7〜9割はみんなが払っている保険料でまかなわれます。
+              「同じ薬なのに不公平」という指摘を受けて、処方でもらう場合に一部を上乗せすることになりました。
+            </p>
+          </li>
+          <li className="rounded-xl border-2 border-gray-300 bg-white p-5">
+            <p className="text-xl font-bold">保険料を払う働く世代の負担を軽くするため</p>
+            <p className="mt-2">
+              国は、この仕組みで医療費が年に約900億円減ると見込んでいます。
+            </p>
+          </li>
+          <li className="rounded-xl border-2 border-gray-300 bg-white p-5">
+            <p className="text-xl font-bold">対象になるのは「市販薬とまったく同じ成分・同じ使い方」の薬だけ</p>
+            <p className="mt-2">
+              厚生労働省の案で{OTC_SIMILAR_META.ingredientCount}成分・{OTC_SIMILAR_META.itemCountLabel}。
+              診察そのものや、それ以外の薬の負担は変わりません。
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      {/* 探す入口 */}
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold leading-snug md:text-3xl">自分の薬が対象か調べる</h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <Link
+            href={OTC_SIMILAR_PATHS.name}
+            className="block rounded-xl bg-[#1f4d3a] px-5 py-5 text-white"
+          >
+            <span className="block text-2xl font-bold">薬の名前で探す</span>
+            <span className="mt-1 block text-base">お薬手帳や薬袋の名前から。頭文字を押すだけ</span>
+          </Link>
+          <Link
+            href={OTC_SIMILAR_PATHS.use}
+            className="block rounded-xl border-2 border-[#1f4d3a] bg-white px-5 py-5 text-[#1f4d3a]"
+          >
+            <span className="block text-2xl font-bold">用途で探す</span>
+            <span className="mt-1 block text-base text-gray-800">花粉症、湿布、保湿剤など12の用途から</span>
+          </Link>
+        </div>
+        <ul className="mt-4 flex flex-wrap gap-2">
+          {OTC_SIMILAR_GROUPS.map((g) => (
+            <li key={g.key}>
+              <Link
+                href={OTC_SIMILAR_PATHS.group(g.key)}
+                className="inline-block min-h-[48px] rounded-lg border-2 border-gray-400 bg-white px-4 py-2.5 text-lg font-bold text-gray-900 hover:bg-[#e8f3ec]"
+              >
+                {g.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* いくら増える？ */}
-      <section id="how-much" className="mt-12 scroll-mt-24">
+      <section className="mt-12">
         <h2 className="text-2xl font-bold leading-snug md:text-3xl">いくら増える？</h2>
         <p className="mt-2">薬代（薬そのものの値段）が1,000円の薬の場合。</p>
         <div className="mt-4 overflow-hidden rounded-xl border-2 border-gray-300">
@@ -225,10 +180,7 @@ export default function OtcSimilarPage() {
         </div>
       </section>
 
-      {/* 名前で探す・用途で探す（クライアント側） */}
-      <OtcSimilarFinder rows={rows} groups={OTC_SIMILAR_GROUPS} names={names} />
-
-      {/* よく聞かれる対象外の薬 */}
+      {/* 対象外の薬 */}
       {notTargets.length > 0 && (
         <section className="mt-12">
           <h2 className="text-2xl font-bold leading-snug md:text-3xl">よく聞かれる「対象外」の薬</h2>
@@ -254,7 +206,7 @@ export default function OtcSimilarPage() {
       <section className="mt-12 rounded-xl bg-[#fff4d6] p-5">
         <h2 className="text-xl font-bold">ご注意</h2>
         <ul className="mt-3 list-disc space-y-2 pl-6">
-          <li>この一覧は{OTC_SIMILAR_META.listStatus}です。最終的な対象は国の告示で決まります。</li>
+          <li>対象の一覧は{OTC_SIMILAR_META.listStatus}です。最終的な対象は国の告示で決まります。</li>
           <li>当サイトは、処方薬から市販薬への切替をすすめるものではありません。</li>
           <li>続けて使っている薬は、自己判断でやめたり変えたりせず、医師・薬剤師に相談してください。</li>
         </ul>
