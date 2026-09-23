@@ -114,13 +114,20 @@ export default function OtcSimilarHubPage() {
       {/* 探す入口 */}
       <section className="mt-10">
         <h2 className="text-2xl font-bold leading-snug md:text-3xl">自分の薬が対象か調べる</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <Link
-            href={OTC_SIMILAR_PATHS.simulator}
+            href={OTC_SIMILAR_PATHS.photo}
             className="block rounded-xl bg-[#b42318] px-5 py-5 text-white"
           >
+            <span className="block text-2xl font-bold">お薬手帳を撮るだけ</span>
+            <span className="mt-1 block text-base">写真1枚で、対象の薬といくら増えるかが全部出ます</span>
+          </Link>
+          <Link
+            href={OTC_SIMILAR_PATHS.simulator}
+            className="block rounded-xl border-2 border-[#b42318] bg-white px-5 py-5 text-[#b42318]"
+          >
             <span className="block text-2xl font-bold">いくら増える？</span>
-            <span className="mt-1 block text-base">薬の名前と量を入れると金額が出ます</span>
+            <span className="mt-1 block text-base text-gray-800">薬の名前と量を入れると金額が出ます</span>
           </Link>
           <Link
             href={OTC_SIMILAR_PATHS.name}

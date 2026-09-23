@@ -25,6 +25,12 @@ export default function OtcSimilarBanner({ otcSimilarNo }: { otcSimilarNo?: numb
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
+            href="/otc-similar/photo/"
+            className="inline-block min-h-[52px] rounded-lg bg-[#b42318] px-5 py-3 text-xl font-bold text-white"
+          >
+            お薬手帳を撮るだけ
+          </Link>
+          <Link
             href={NAME}
             className="inline-block min-h-[52px] rounded-lg bg-[#1f4d3a] px-5 py-3 text-xl font-bold text-white"
           >

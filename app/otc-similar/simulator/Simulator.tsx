@@ -80,14 +80,17 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
   const [picked, setPicked] = useState<Picked[]>([]);
   const [rate, setRate] = useState(0.3);
 
-  // ?item=CODE で最初の薬を入れる
+  // ?item=CODE / ?items=CODE,CODE,… で最初の薬を入れる（撮るだけページ・薬価表から）
   useEffect(() => {
-    const code = searchParams.get('item');
-    if (!code) return;
-    const it = items.find((i) => i.code === code);
-    if (it && !picked.some((p) => p.item.code === code)) {
-      setPicked([{ item: it, qty: presetsFor(unitOf(it.spec))[1] }]);
-    }
+    const codes = [searchParams.get('item'), ...(searchParams.get('items') || '').split(',')]
+      .map((c) => (c || '').trim())
+      .filter(Boolean);
+    if (codes.length === 0) return;
+    const initial = codes
+      .map((c) => items.find((i) => i.code === c))
+      .filter((i): i is SlimItem => Boolean(i))
+      .map((it) => ({ item: it, qty: presetsFor(unitOf(it.spec))[1] }));
+    if (initial.length) setPicked(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, items]);
 
@@ -138,6 +141,13 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
             className="w-full rounded-lg border-2 border-gray-500 px-4 py-3 text-xl leading-relaxed focus:border-[#1f4d3a] focus:outline-none focus:ring-2 focus:ring-[#1f4d3a]"
           />
         </label>
+        {!q && picked.length === 0 && (
+          <p className="mt-3 text-base text-gray-700">
+            薬が多いときは
+            <Link href="/otc-similar/photo/" className="font-bold text-[#1f4d3a] underline">お薬手帳を撮るだけ</Link>
+            で全部まとめて入れられます。
+          </p>
+        )}
         {q && (
           <div className="mt-3 rounded-xl border-2 border-gray-300 bg-white">
             {results.length === 0 ? (

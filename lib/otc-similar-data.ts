@@ -16,6 +16,7 @@ export const OTC_SIMILAR_PATHS = {
   name: '/otc-similar/name/',
   use: '/otc-similar/use/',
   simulator: '/otc-similar/simulator/',
+  photo: '/otc-similar/photo/',
   group: (key: string) => `/otc-similar/use/${key}/`,
 } as const;
 
