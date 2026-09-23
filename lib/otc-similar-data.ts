@@ -15,6 +15,7 @@ export const OTC_SIMILAR_PATHS = {
   hub: '/otc-similar/',
   name: '/otc-similar/name/',
   use: '/otc-similar/use/',
+  simulator: '/otc-similar/simulator/',
   group: (key: string) => `/otc-similar/use/${key}/`,
 } as const;
 

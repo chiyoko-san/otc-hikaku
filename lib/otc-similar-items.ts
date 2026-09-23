@@ -1,4 +1,5 @@
 import raw from '@/data/otc-similar-items.json';
+import { OTC_SIMILAR_77 } from './otc-similar-77';
 
 // 配置先: lib/otc-similar-items.ts
 // data/otc-similar-items.json（scraper/build_otc_similar_items.py が薬価基準リストから生成）を読む。
@@ -77,3 +78,31 @@ export const OTC_SIMILAR_ITEMS_META = {
   generatedAt: DATA.generated_at,
   note: DATA.note,
 };
+
+/** シミュレーター（クライアント側）に渡す軽量版 */
+export type SlimItem = {
+  code: string;
+  name: string;
+  spec: string;
+  price: number;
+  kind: string;
+  route: string;
+  ingredient: string;
+  no: number;
+  group: string;
+};
+
+export function getSlimItems(): SlimItem[] {
+  const groupOf = new Map(OTC_SIMILAR_77.map((i) => [i.no, i.group as string]));
+  return DATA.items.map((i) => ({
+    code: i.code,
+    name: i.name,
+    spec: i.spec,
+    price: i.price,
+    kind: i.kind,
+    route: i.route,
+    ingredient: i.ingredient,
+    no: i.no,
+    group: groupOf.get(i.no) ?? 'other',
+  }));
+}

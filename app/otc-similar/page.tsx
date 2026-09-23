@@ -114,7 +114,14 @@ export default function OtcSimilarHubPage() {
       {/* 探す入口 */}
       <section className="mt-10">
         <h2 className="text-2xl font-bold leading-snug md:text-3xl">自分の薬が対象か調べる</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <Link
+            href={OTC_SIMILAR_PATHS.simulator}
+            className="block rounded-xl bg-[#b42318] px-5 py-5 text-white"
+          >
+            <span className="block text-2xl font-bold">いくら増える？</span>
+            <span className="mt-1 block text-base">薬の名前と量を入れると金額が出ます</span>
+          </Link>
           <Link
             href={OTC_SIMILAR_PATHS.name}
             className="block rounded-xl bg-[#1f4d3a] px-5 py-5 text-white"
@@ -179,6 +186,12 @@ export default function OtcSimilarHubPage() {
         <p className="mt-3 text-base text-gray-700">
           これから＝上乗せ料金250円（薬代の4分の1）＋残り750円のいつもの負担分。診察料や調剤料は変わりません。
         </p>
+        <Link
+          href={OTC_SIMILAR_PATHS.simulator}
+          className="mt-4 inline-block min-h-[56px] rounded-xl bg-[#b42318] px-6 py-3 text-xl font-bold text-white"
+        >
+          自分の薬と量で計算する（シミュレーター）
+        </Link>
 
         {examples.length > 0 && (
           <div className="mt-6">

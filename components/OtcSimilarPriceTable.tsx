@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import {
   getItemsByNo,
   getRepresentativeItems,
@@ -36,12 +37,13 @@ export default function OtcSimilarPriceTable({
         <h3 className="text-xl font-bold">処方薬の薬価と上乗せ額（{limit ? `代表${items.length}品目` : `${all.length}品目`}）</h3>
       )}
       <div className="mt-2 overflow-x-auto rounded-xl border-2 border-gray-300">
-        <table className="w-full min-w-[520px] text-left text-lg">
+        <table className="w-full min-w-[600px] text-left text-lg">
           <thead className="bg-gray-100 text-base">
             <tr>
               <th className="px-3 py-2 font-bold">処方薬</th>
               <th className="px-3 py-2 font-bold">薬価</th>
               <th className="px-3 py-2 font-bold text-[#b42318]">上乗せ額</th>
+              <th className="px-3 py-2 font-bold">計算</th>
             </tr>
           </thead>
           <tbody>
@@ -62,6 +64,14 @@ export default function OtcSimilarPriceTable({
                 <td className="whitespace-nowrap px-3 py-2 font-bold text-[#b42318]">
                   +{yen(i.surcharge)}
                   <span className="text-base font-normal text-gray-600">／{unitLabel(i.spec)}</span>
+                </td>
+                <td className="whitespace-nowrap px-3 py-2">
+                  <Link
+                    href={`/otc-similar/simulator/?item=${i.code}`}
+                    className="inline-block min-h-[44px] rounded-lg border-2 border-[#1f4d3a] bg-white px-3 py-2 text-base font-bold text-[#1f4d3a]"
+                  >
+                    自分の量で
+                  </Link>
                 </td>
               </tr>
             ))}

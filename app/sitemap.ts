@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/otc-similar/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/otc-similar/name/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/otc-similar/use/`, lastModified: now, priority: 0.8, changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/otc-similar/simulator/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/symptoms/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/ingredients/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/columns/`, lastModified: now, priority: 0.8, changeFrequency: 'daily' },
