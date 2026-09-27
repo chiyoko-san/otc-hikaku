@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // 配置先: app/otc-similar/pharmacy/PharmacyKit.tsx
-// QRコードは npm パッケージ "qrcode" で生成（package.json の dependencies に "qrcode": "^1.5.4" を追加）
+// QRコードは固定URL（撮るだけページ ?ref=pharmacy）なので、public/qr/otc-similar-photo.svg に
+// 静的に置いてある。npm依存なし。URLを変えるときは画像も作り直すこと。
+const QR_SRC = '/qr/otc-similar-photo.svg';
 
 type Group = { label: string; ingredients: { no: number; name: string; rx: string }[] };
 
@@ -22,17 +24,6 @@ export default function PharmacyKit({
 }) {
   const [pharmacy, setPharmacy] = useState('');
   const [sheet, setSheet] = useState<'pop' | 'list'>('pop');
-  const [qr, setQr] = useState<string | null>(null);
-  const qrUrl = `${siteUrl}${photoPath}?ref=pharmacy`;
-
-  useEffect(() => {
-    let alive = true;
-    import('qrcode')
-      .then((QRCode) => QRCode.toDataURL(qrUrl, { errorCorrectionLevel: 'M', margin: 1, width: 480 }))
-      .then((url) => { if (alive) setQr(url); })
-      .catch(() => { if (alive) setQr(null); });
-    return () => { alive = false; };
-  }, [qrUrl]);
 
   return (
     <div className="mt-8">
@@ -91,12 +82,8 @@ export default function PharmacyKit({
 
             <div className="mt-6 flex items-center gap-6 rounded-xl border-4 border-[#1f4d3a] p-5">
               <div className="shrink-0">
-                {qr ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={qr} alt="QRコード" style={{ width: '52mm', height: '52mm' }} />
-                ) : (
-                  <div style={{ width: '52mm', height: '52mm' }} className="flex items-center justify-center border-2 border-dashed border-gray-400 text-base text-gray-500">QR生成中</div>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={QR_SRC} alt="QRコード（お薬手帳を撮るだけ）" style={{ width: '52mm', height: '52mm' }} />
               </div>
               <div>
                 <p className="text-3xl font-bold leading-snug text-[#1f4d3a]">お薬手帳を<br />撮るだけ</p>
