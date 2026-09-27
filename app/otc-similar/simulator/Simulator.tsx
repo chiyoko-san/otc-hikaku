@@ -82,14 +82,22 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
 
   // ?item=CODE / ?items=CODE,CODE,… で最初の薬を入れる（撮るだけページ・薬価表から）
   useEffect(() => {
-    const codes = [searchParams.get('item'), ...(searchParams.get('items') || '').split(',')]
+    // items=コード:数量,コード:数量（数量は省略可） / item=コード / rate=0.1|0.2|0.3
+    const specs = [searchParams.get('item'), ...(searchParams.get('items') || '').split(',')]
       .map((c) => (c || '').trim())
       .filter(Boolean);
-    if (codes.length === 0) return;
-    const initial = codes
-      .map((c) => items.find((i) => i.code === c))
-      .filter((i): i is SlimItem => Boolean(i))
-      .map((it) => ({ item: it, qty: presetsFor(unitOf(it.spec))[1] }));
+    const r = Number(searchParams.get('rate'));
+    if ([0.1, 0.2, 0.3].includes(r)) setRate(r);
+    if (specs.length === 0) return;
+    const initial = specs
+      .map((sp) => {
+        const [code, q] = sp.split(':');
+        const it = items.find((i) => i.code === code);
+        if (!it) return null;
+        const n = Number(q);
+        return { item: it, qty: n > 0 ? n : presetsFor(unitOf(it.spec))[1] };
+      })
+      .filter((p): p is Picked => p !== null);
     if (initial.length) setPicked(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, items]);
@@ -117,6 +125,16 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
   const remove = (code: string) => setPicked(picked.filter((p) => p.item.code !== code));
 
   const rows = picked.map((p) => ({ ...p, r: calc(p.item, p.qty, rate) }));
+  const shareUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/otc-similar/simulator/?items=${rows.map((x) => `${x.item.code}:${x.qty}`).join(',')}&rate=${rate}`
+      : '';
+  const shareText =
+    `【上乗せ料金の計算結果】\n` +
+    rows.map((x) => `・${x.item.name} × ${x.qty}${unitOf(x.item.spec)}：+${yen(x.r.diff)}`).join('\n') +
+    `\n合計：${yen(rows.reduce((a, x) => a + x.r.before, 0))} → ${yen(rows.reduce((a, x) => a + x.r.after, 0))}（+${yen(rows.reduce((a, x) => a + x.r.diff, 0))}）` +
+    `\n（${Math.round(rate * 10)}割負担・薬代のみ・2027年3月から）\n` + shareUrl;
+  const lineShareUrl = `https://line.me/R/share?text=${encodeURIComponent(shareText)}`;
   const total = rows.reduce(
     (a, x) => ({ before: a.before + x.r.before, after: a.after + x.r.after, diff: a.diff + x.r.diff, surcharge: a.surcharge + x.r.surcharge }),
     { before: 0, after: 0, diff: 0, surcharge: 0 }
@@ -305,6 +323,14 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2">
+            <a
+              href={lineShareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block min-h-[48px] rounded-lg bg-[#06c755] px-4 py-2.5 text-lg font-bold text-white"
+            >
+              この結果を家族にLINEで送る
+            </a>
             {Array.from(new Set(rows.map((x) => x.item.group))).map((g) => (
               <Link
                 key={g}

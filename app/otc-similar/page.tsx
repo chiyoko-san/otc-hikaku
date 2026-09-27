@@ -292,6 +292,17 @@ export default function OtcSimilarHubPage() {
         </dl>
       </section>
 
+      {/* 薬局向け */}
+      <section className="mt-12 rounded-xl border-2 border-gray-300 p-5">
+        <h2 className="text-xl font-bold">薬局・医療機関の方へ</h2>
+        <p className="mt-2 text-base">
+          患者さんへの説明に使えるA4 POP（薬局名入り・QRコード付き）と、対象77成分の早見表を無料で印刷できます。
+        </p>
+        <Link href={OTC_SIMILAR_PATHS.pharmacy} className="mt-3 inline-block text-lg font-bold text-[#1f4d3a] underline">
+          説明キットを印刷する
+        </Link>
+      </section>
+
       {/* 出典 */}
       <section className="mt-12 text-base text-gray-700">
         <h2 className="text-xl font-bold text-gray-900">出典（厚生労働省）</h2>

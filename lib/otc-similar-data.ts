@@ -17,6 +17,7 @@ export const OTC_SIMILAR_PATHS = {
   use: '/otc-similar/use/',
   simulator: '/otc-similar/simulator/',
   photo: '/otc-similar/photo/',
+  pharmacy: '/otc-similar/pharmacy/',
   group: (key: string) => `/otc-similar/use/${key}/`,
 } as const;
 
