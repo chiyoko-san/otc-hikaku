@@ -11,6 +11,7 @@ import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { JsonLd } from '@/components/layout/JsonLd';
 import OtcSimilarBanner from '@/components/OtcSimilarBanner';
 import OtcSimilarPriceTable from '@/components/OtcSimilarPriceTable';
+import { pickRelatedColumns, columnHref } from '@/lib/related-columns';
 import {
   buildMetadata,
   buildBreadcrumbJsonLd,
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export default function SwitchDetailPage({ params }: Props) {
+export default async function SwitchDetailPage({ params }: Props) {
   const entry = getSwitchDrugBySlug(params.slug);
   if (!entry) notFound();
 
@@ -56,6 +57,12 @@ export default function SwitchDetailPage({ params }: Props) {
   const matches = allMatches.slice(0, 12);
   const hasOtc = allMatches.length > 0;
   const isFeeTarget = entry.otcSimilarNo != null;
+
+  const relatedColumns = await pickRelatedColumns({
+    ingredients: [entry.genericName, ...entry.ingredientKeys],
+    keywords: [entry.rxName, entry.categoryLabel],
+    limit: 3,
+  });
 
   const breadcrumbs = [
     { name: 'ホーム', href: '/' },
@@ -205,6 +212,32 @@ export default function SwitchDetailPage({ params }: Props) {
             </Link>
           </p>
         </section>
+
+        {/* 関連コラム */}
+        {relatedColumns.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
+              関連コラム
+            </h2>
+            <ul className="grid gap-3 md:grid-cols-3">
+              {relatedColumns.map((c) => (
+                <li key={c.id} className="card p-4">
+                  <Link href={columnHref(c)} className="block hover:underline">
+                    {c.tag && (
+                      <span className="mb-1 inline-block rounded bg-brand-light px-2 py-0.5 text-xs text-brand-deep">{c.tag}</span>
+                    )}
+                    <span className="block text-base font-bold leading-snug text-brand-dark">{c.title}</span>
+                    {c.summary && (
+                      <span className="mt-1 block text-sm leading-relaxed text-gray-600">
+                        {c.summary.length > 70 ? `${c.summary.slice(0, 70)}…` : c.summary}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* 相談導線(全切替ページ共通の定型文) */}
         <aside className="mt-10 rounded bg-gray-50 p-4 text-sm leading-relaxed text-gray-600">

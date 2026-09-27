@@ -14,6 +14,9 @@ import { getDamageReportCountByMedicineId } from '@/lib/supabase/damage-reports'
 import { getCategoryLabel } from '@/lib/categories';
 import { normalizeIngredientName } from '@/lib/slug';
 import { isIndexableMedicine } from '@/lib/indexable';
+import { findOtcSimilarForIngredients } from '@/lib/otc-similar-77';
+import { getRepresentativeItems, unitLabel, yen } from '@/lib/otc-similar-items';
+import { pickRelatedColumns, columnHref } from '@/lib/related-columns';
 import {
   normalizeDosageForm,
   DOSAGE_FORM_LABELS,
@@ -186,6 +189,26 @@ export default async function MedicineDetailPage({ params }: Props) {
   const relatedSwitch = findSwitchDrugsForMedicine(med);
   const damageCount = await getDamageReportCountByMedicineId(med.id);
 
+  // ===== 上乗せ料金（2027年3月〜）: この製品の成分が処方薬だと対象になるか =====
+  const normIngs = (med.ings || []).map((i) => normalizeIngredientName(i));
+  const feeIngredients = findOtcSimilarForIngredients(normIngs);
+  const feeExamples = feeIngredients.map((ing) => ({
+    ing,
+    item: getRepresentativeItems(ing.no, 1)[0] ?? null,
+  }));
+
+  // ===== 関連コラム =====
+  const relatedColumns = await pickRelatedColumns({
+    ingredients: normIngs,
+    keywords: [
+      med.name,
+      getCategoryLabel(med.cat),
+      ...relatedSwitch.map((s) => s.rxName),
+      ...(med.symptoms || []),
+    ],
+    limit: 3,
+  });
+
   // 発売元(販売会社)。複数ある場合は「A / B」で入っている
   const sellers = (med.seller || '')
     .split('/')
@@ -225,6 +248,14 @@ export default async function MedicineDetailPage({ params }: Props) {
           },
         ]
       : []),
+    ...(feeIngredients.length > 0
+      ? [
+          {
+            q: `${med.name}の成分は上乗せ料金(OTC類似薬の特別料金)の対象ですか?`,
+            a: `${feeIngredients.map((i) => i.name).join('、')}は、病院で処方薬として受け取る場合に2027年3月から薬剤費の4分の1が上乗せされる対象成分(厚生労働省案)です。市販薬として購入する場合は対象外です。最終的な対象は国の告示で確定します。`,
+          },
+        ]
+      : []),
   ];
 
   // 成分と症状の slug マップを取得(リンク用)
@@ -234,6 +265,8 @@ export default async function MedicineDetailPage({ params }: Props) {
     allIngredients.map((i) => [i.name, i.slug])
   );
   const symSlugMap = new Map(allSymptoms.map((s) => [s.name, s.slug]));
+  const firstIngNorm = normIngs[0];
+  const firstIngSlug = firstIngNorm ? ingSlugMap.get(firstIngNorm) : undefined;
 
   const breadcrumbs = [
     { name: 'ホーム', href: '/' },
@@ -378,6 +411,64 @@ export default async function MedicineDetailPage({ params }: Props) {
                   })}
                 </tbody>
               </table>
+            </div>
+          </section>
+        )}
+
+        {/* 上乗せ料金（2027年3月〜）: 処方薬だと対象になる成分 */}
+        {feeIngredients.length > 0 && (
+          <section className="mb-8 rounded-xl border-2 border-[#b42318] bg-[#fff5f4] p-4 md:p-5">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <span className="inline-block rounded-md bg-[#b42318] px-2.5 py-1 text-sm font-bold text-white">
+                2027年3月から
+              </span>
+              <h2 className="text-lg font-bold text-[#b42318] md:text-xl">
+                病院で処方される同じ成分は「上乗せ料金」の対象
+              </h2>
+            </div>
+            <p className="text-base leading-relaxed text-gray-800">
+              この製品の成分（{feeIngredients.map((i) => i.name).join('、')}）は、
+              病院で処方薬として受け取る場合、2027年3月から薬代の4分の1が上乗せされる予定です（厚生労働省案）。
+              市販薬として買う場合は関係ありません。
+            </p>
+            {feeExamples.some((e) => e.item) && (
+              <ul className="mt-3 space-y-1 text-base">
+                {feeExamples.map(
+                  (e) =>
+                    e.item && (
+                      <li key={e.ing.no} className="rounded-lg bg-white px-3 py-2">
+                        処方薬の例：<strong>{e.item.name}</strong>
+                        <span className="text-gray-700">
+                          　薬価{yen(e.item.price)}／{unitLabel(e.item.spec)} →{' '}
+                        </span>
+                        <strong className="text-[#b42318]">上乗せ +{yen(e.item.surcharge)}／{unitLabel(e.item.spec)}</strong>
+                      </li>
+                    )
+                )}
+              </ul>
+            )}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link
+                href="/otc-similar/simulator/"
+                className="inline-block min-h-[44px] rounded-lg bg-[#b42318] px-4 py-2.5 text-base font-bold text-white"
+              >
+                自分の処方薬でいくら増える？
+              </Link>
+              <Link
+                href="/otc-similar/photo/"
+                className="inline-block min-h-[44px] rounded-lg border-2 border-[#b42318] bg-white px-4 py-2.5 text-base font-bold text-[#b42318]"
+              >
+                お薬手帳を撮るだけ
+              </Link>
+              {feeIngredients.slice(0, 1).map((i) => (
+                <Link
+                  key={i.no}
+                  href={`/otc-similar/use/${i.group}/#ing-${i.no}`}
+                  className="inline-block min-h-[44px] rounded-lg border-2 border-gray-400 bg-white px-4 py-2.5 text-base font-bold text-gray-800"
+                >
+                  この成分の対象一覧
+                </Link>
+              ))}
             </div>
           </section>
         )}
@@ -637,6 +728,16 @@ export default async function MedicineDetailPage({ params }: Props) {
                 `主要${ingRowsCapped.length}成分のみ表示しています。`}
               使用の可否は各製品ページと添付文書をご確認ください。
             </p>
+            {firstIngSlug && (
+              <p className="mt-3">
+                <Link
+                  href={`/ingredients/${firstIngSlug}/`}
+                  className="text-base font-semibold text-brand hover:underline"
+                >
+                  → {firstIngNorm}を含む市販薬をすべて見る
+                </Link>
+              </p>
+            )}
           </section>
         )}
 
@@ -683,6 +784,41 @@ export default async function MedicineDetailPage({ params }: Props) {
                 </div>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* 関連コラム */}
+        {relatedColumns.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
+              関連コラム
+            </h2>
+            <ul className="grid gap-3 md:grid-cols-3">
+              {relatedColumns.map((c) => (
+                <li key={c.id} className="card p-4">
+                  <Link href={columnHref(c)} className="block hover:underline">
+                    {c.tag && (
+                      <span className="mb-1 inline-block rounded bg-brand-light px-2 py-0.5 text-xs text-brand-deep">
+                        {c.tag}
+                      </span>
+                    )}
+                    <span className="block text-base font-bold leading-snug text-brand-dark">
+                      {c.title}
+                    </span>
+                    {c.summary && (
+                      <span className="mt-1 block text-sm leading-relaxed text-gray-600">
+                        {c.summary.length > 70 ? `${c.summary.slice(0, 70)}…` : c.summary}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3">
+              <Link href="/columns/" className="text-base font-semibold text-brand hover:underline">
+                → コラム一覧を見る
+              </Link>
+            </p>
           </section>
         )}
 
