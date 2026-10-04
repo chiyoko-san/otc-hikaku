@@ -160,6 +160,12 @@ function IngredientCard({ row: r }: { row: OtcSimilarRow }) {
         )}
       </div>
 
+      <p className="mt-4">
+        <Link href={OTC_SIMILAR_PATHS.ingredient(r.no)} className="text-lg font-bold text-[#1f4d3a] underline">
+          この成分のすべての処方薬（薬価）と市販薬を見る →
+        </Link>
+      </p>
+
       {r.guides.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
           {r.guides.map((gd) => (

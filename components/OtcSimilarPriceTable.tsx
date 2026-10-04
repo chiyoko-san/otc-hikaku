@@ -50,7 +50,9 @@ export default function OtcSimilarPriceTable({
             {items.map((i) => (
               <tr key={i.code} className="border-t-2 border-gray-200 align-top">
                 <td className="px-3 py-2">
-                  <div className="font-bold">{i.name}</div>
+                  <Link href={`/otc-similar/item/${i.code}/`} className="font-bold text-[#1f4d3a] underline">
+                    {i.name}
+                  </Link>
                   <div className="text-base text-gray-600">
                     {i.spec}
                     {i.kind === '先発' && <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-sm">先発</span>}

@@ -9,7 +9,8 @@ import { SWITCH_DRUGS } from '@/lib/switch-data';
 import { getAllColumnSlugs, getPublishedColumns } from '@/lib/supabase/columns';
 import { SITE_URL } from '@/lib/seo';
 import { isIndexableMedicine } from '@/lib/indexable';
-import { OTC_SIMILAR_GROUPS } from '@/lib/otc-similar-77';
+import { OTC_SIMILAR_77, OTC_SIMILAR_GROUPS } from '@/lib/otc-similar-77';
+import { getAllItemCodes } from '@/lib/otc-similar-items';
 
 export const revalidate = 3600; // 1時間ごとに再生成
 
@@ -52,6 +53,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
     priority: 0.8,
     changeFrequency: 'weekly' as const,
+  }));
+
+  // OTC類似薬 上乗せ料金: 成分別ページ (77件) と 医療用品目ページ (688件)
+  const otcSimilarIngredientPages: MetadataRoute.Sitemap = OTC_SIMILAR_77.map((i) => ({
+    url: `${SITE_URL}/otc-similar/ingredient/${i.no}/`,
+    lastModified: now,
+    priority: 0.8,
+    changeFrequency: 'weekly' as const,
+  }));
+  const otcSimilarItemPages: MetadataRoute.Sitemap = getAllItemCodes().map((code) => ({
+    url: `${SITE_URL}/otc-similar/item/${code}/`,
+    lastModified: now,
+    priority: 0.7,
+    changeFrequency: 'monthly' as const,
   }));
 
   // カテゴリページ
@@ -103,6 +118,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticPages,
     ...switchPages,
     ...otcSimilarGroupPages,
+    ...otcSimilarIngredientPages,
+    ...otcSimilarItemPages,
     ...categoryPages,
     ...medicinePages,
     ...ingredientPages,

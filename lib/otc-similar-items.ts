@@ -106,3 +106,21 @@ export function getSlimItems(): SlimItem[] {
     group: groupOf.get(i.no) ?? 'other',
   }));
 }
+
+export function getItemByCode(code: string): OtcSimilarItem | null {
+  return DATA.items.find((i) => i.code === code) || null;
+}
+
+export function getAllItemCodes(): string[] {
+  return DATA.items.map((i) => i.code);
+}
+
+/** 規格の単位（錠・枚・g…）に応じた「よくある処方量」の目安 */
+export function quantityPresets(spec: string): number[] {
+  const u = unitLabel(spec).replace(/^1/, '');
+  if (u === '枚') return [7, 14, 28, 35, 70];
+  if (u === 'g' || u === 'mL') return [10, 25, 50, 100];
+  if (u === '包') return [14, 21, 42, 84];
+  if (u === '本' || u === '個' || u === '管' || u === '瓶') return [1, 2, 3, 5];
+  return [7, 14, 28, 30, 60, 90];
+}

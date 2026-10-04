@@ -4,6 +4,7 @@ import { SWITCH_DRUGS } from './switch-data';
 import {
   OTC_SIMILAR_77,
   OTC_SIMILAR_GROUPS,
+  getOtcSimilarByNo,
   matchesOtcSimilar,
   type OtcSimilarGroup,
 } from './otc-similar-77';
@@ -18,6 +19,8 @@ export const OTC_SIMILAR_PATHS = {
   simulator: '/otc-similar/simulator/',
   photo: '/otc-similar/photo/',
   pharmacy: '/otc-similar/pharmacy/',
+  item: (code: string) => `/otc-similar/item/${code}/`,
+  ingredient: (no: number) => `/otc-similar/ingredient/${no}/`,
   group: (key: string) => `/otc-similar/use/${key}/`,
 } as const;
 
@@ -135,4 +138,14 @@ export function getOtcSimilarNames(): OtcSimilarName[] {
   }
   names.sort((a, b) => a.label.localeCompare(b.label, 'ja'));
   return names;
+}
+
+/** ひとつの対象成分について、同じ成分を含む市販薬（件数と上位 n 件） */
+export function getOtcMatchesForNo(no: number, limit = 12): { count: number; items: OtcSimilarMedicine[] } {
+  const entry = getOtcSimilarByNo(no);
+  if (!entry) return { count: 0, items: [] };
+  const hits = getEnrichedMedicines().filter((m) =>
+    matchesOtcSimilar(entry, (m.ings || []).map((i) => normalizeIngredientName(i)))
+  );
+  return { count: hits.length, items: hits.slice(0, limit).map((m) => ({ name: m.name, slug: m.slug })) };
 }
