@@ -60,8 +60,9 @@ export function unitLabel(spec: string): string {
 }
 
 export function yen(n: number): string {
-  // 1円未満は小数1桁、それ以上は整数丸め（表示用）
-  return n < 10 ? `${Math.round(n * 10) / 10}円` : `${Math.round(n).toLocaleString('ja-JP')}円`;
+  // 100円未満で端数があるものは小数1桁（薬価10.8円など）、それ以外は整数（表示用）
+  if (n < 100 && Math.abs(n - Math.round(n)) >= 0.05) return `${(Math.round(n * 10) / 10).toFixed(1)}円`;
+  return `${Math.round(n).toLocaleString('ja-JP')}円`;
 }
 
 /** 数量をかけたときの「これまで」「これから」（定率負担 rate = 0.1 / 0.2 / 0.3） */

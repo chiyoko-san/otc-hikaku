@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 export const SITE_URL = 'https://www.kusuri-compass.com';
 export const SITE_NAME = 'クスリノコンパス';
 export const SITE_DESCRIPTION =
-  '市販薬7,500品を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。';
+  '市販薬1万品以上を成分・効能・リスク区分から無料で比較。広告なし・PMDA公開情報ベース。';
 export const DEFAULT_OGP = `${SITE_URL}/ogp.png`;
 
 export function buildMetadata(opts: {

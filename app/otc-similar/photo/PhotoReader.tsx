@@ -105,6 +105,7 @@ export default function PhotoReader() {
           お薬手帳か薬袋を撮る
         </h2>
         <ul className="mt-2 list-disc space-y-1 pl-6 text-base text-gray-700">
+          <li>「写真を撮る・選ぶ」を押すとカメラが開きます。「カメラの使用を許可しますか」と出たら「許可」を押してください</li>
           <li>薬の名前が書いてあるページを、明るい場所でまっすぐ撮ってください</li>
           <li>お名前の部分は指で隠すか、写らないようにしてください（写っても読み取りません）</li>
           <li>写真は保存しません。読み取りが終わるとすぐに捨てられます</li>
@@ -133,7 +134,7 @@ export default function PhotoReader() {
               disabled={busy}
               className="min-h-[64px] rounded-xl bg-[#b42318] px-6 py-3 text-2xl font-bold text-white disabled:opacity-60"
             >
-              {busy ? '読み取り中…' : '読み取る'}
+              {busy ? '読み取っています…' : '読み取る'}
             </button>
           )}
         </div>
@@ -143,6 +144,11 @@ export default function PhotoReader() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={preview} alt="選んだ写真" className="max-h-72 rounded-xl border-2 border-gray-300" />
           </div>
+        )}
+        {busy && (
+          <p className="mt-4 rounded-xl bg-[#f3f9f5] p-4 text-lg" aria-live="polite">
+            読み取っています。10秒ほどお待ちください。画面はそのままで大丈夫です。
+          </p>
         )}
         {error && <p className="mt-4 rounded-xl bg-[#fff4d6] p-4 text-lg">{error}</p>}
       </section>
@@ -183,8 +189,8 @@ export default function PhotoReader() {
                       )}
                       {r.status === 'unknown' && (
                         <div className="mt-1 text-lg">
-                          <span className="inline-block rounded-md border-2 border-gray-400 px-2.5 py-1 text-base font-bold text-gray-700">一覧にない</span>
-                          <span className="ml-2 text-base text-gray-700">上乗せ料金の対象外か、読み取りが不正確な可能性があります</span>
+                          <span className="inline-block rounded-md border-2 border-gray-400 px-2.5 py-1 text-base font-bold text-gray-700">対象外の見込み</span>
+                          <span className="ml-2 text-base text-gray-700">対象77成分の処方薬一覧にありません（読み取り違いの場合は「薬の名前で探す」でご確認ください）</span>
                         </div>
                       )}
                     </div>
@@ -243,6 +249,13 @@ export default function PhotoReader() {
                   className="min-h-[64px] rounded-xl border-2 border-[#1f4d3a] bg-white px-6 py-3 text-xl font-bold text-[#1f4d3a]"
                 >
                   撮り直す
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="min-h-[64px] rounded-xl border-2 border-gray-400 bg-white px-6 py-3 text-xl font-bold text-gray-800"
+                >
+                  この一覧を印刷する
                 </button>
               </div>
               {codes.length === 0 && (

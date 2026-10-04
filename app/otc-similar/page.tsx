@@ -82,6 +82,9 @@ export default function OtcSimilarHubPage() {
         <strong>{OTC_SIMILAR_META.effectiveLabel}</strong>から。市販薬と同じ成分の処方薬（OTC類似薬）が対象で、
         いつもの負担に加えて<strong>薬代の4分の1</strong>を追加で支払います。
       </p>
+      <p className="mt-3 rounded-xl border-2 border-[#1f4d3a] bg-[#f3f9f5] px-4 py-3 text-xl font-bold text-[#1f4d3a]">
+        保険は今までどおり使えます。薬がもらえなくなるわけではありません。
+      </p>
 
       {/* なぜ？ */}
       <section className="mt-8">

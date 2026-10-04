@@ -274,7 +274,10 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
             <span className="mr-2 inline-block rounded-full bg-[#1f4d3a] px-3 py-0.5 text-lg text-white align-middle">3</span>
             窓口負担の割合
           </h2>
-          <p className="mt-1 text-base text-gray-700">保険証やマイナポータルで確認できます。70歳以上は1割か2割の方が多いです。</p>
+          <p className="mt-1 text-base text-gray-700">
+            目安：69歳までは3割、70〜74歳は原則2割、75歳以上は原則1割（収入が多い方は2割か3割）。
+            保険証の「負担割合」の欄、または薬局のレシートで確認できます。
+          </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {RATES.map((r) => (
               <button

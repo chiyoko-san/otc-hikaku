@@ -317,9 +317,14 @@ export default async function MedicineDetailPage({ params }: Props) {
           <h1 className="mb-2 text-3xl font-bold leading-tight md:text-4xl">
             {med.name}
           </h1>
+          {riskDescription(med.risk, med.itype) && (
+            <p className="mb-2 text-base text-gray-700">
+              {riskLabel(med.risk, med.itype)}とは：{riskDescription(med.risk, med.itype)}
+            </p>
+          )}
 
           {/* 製造販売元 / 発売元 */}
-          <dl className="space-y-0.5 text-sm">
+          <dl className="space-y-0.5 text-base">
             {med.maker && (
               <div className="flex flex-wrap gap-x-2">
                 <dt className="text-gray-500">製造販売元</dt>
@@ -341,7 +346,7 @@ export default async function MedicineDetailPage({ params }: Props) {
             <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
               効能・効果
             </h2>
-            <p className="leading-relaxed text-gray-800">{med.effect}</p>
+            <p className="text-lg leading-relaxed text-gray-800">{med.effect}</p>
           </section>
         )}
 
@@ -363,7 +368,7 @@ export default async function MedicineDetailPage({ params }: Props) {
               有効成分
             </h2>
             <div className="card overflow-x-auto">
-              <table className="w-full min-w-[560px] border-collapse text-sm">
+              <table className="w-full min-w-[560px] border-collapse text-base">
                 <thead>
                   <tr className="bg-brand-light/60 text-left text-brand-deep">
                     <th className="px-4 py-2.5 font-bold">成分名</th>
@@ -544,7 +549,7 @@ export default async function MedicineDetailPage({ params }: Props) {
               <div className="callout-title">
                 {riskLabel(med.risk, med.itype)} ー {riskDescription(med.risk, med.itype)}
               </div>
-              <p className="text-sm">{med.note}</p>
+              <p className="text-base">{med.note}</p>
             </div>
           </section>
         )}
@@ -556,7 +561,7 @@ export default async function MedicineDetailPage({ params }: Props) {
               要注意成分
             </h2>
             <div className="callout-warn">
-              <ul className="list-disc space-y-1 pl-5 text-sm">
+              <ul className="list-disc space-y-1 pl-5 text-base">
                 {med.warnIngs.map((w, i) => (
                   <li key={i}>{w}</li>
                 ))}
@@ -564,39 +569,6 @@ export default async function MedicineDetailPage({ params }: Props) {
             </div>
           </section>
         )}
-
-        {/* 被害報告 */}
-        <section className="mb-8">
-          <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
-            被害報告
-          </h2>
-          {damageCount > 0 ? (
-            <div className="rounded border border-red-200 bg-red-50 p-4">
-              <p className="mb-2">
-                この薬品について、<strong>{damageCount}件</strong>
-                の被害報告が寄せられています。
-              </p>
-              <Link
-                href={`/damage-reports/?medicine=${encodeURIComponent(med.name)}`}
-                className="text-sm text-red-700 underline"
-              >
-                → 被害報告を見る
-              </Link>
-            </div>
-          ) : (
-            <p className="text-sm text-gray-600">
-              現在、この薬品に関する被害報告は登録されていません。
-            </p>
-          )}
-          <div className="mt-3">
-            <Link
-              href="/damage-reports/submit/"
-              className="btn-outline text-sm"
-            >
-              被害を報告する
-            </Link>
-          </div>
-        </section>
 
         {/* 類似薬品(同じ剤形のみ) */}
         {similar.length > 0 && (
@@ -609,8 +581,28 @@ export default async function MedicineDetailPage({ params }: Props) {
                 {DOSAGE_FORM_LABELS[baseForm]}どうしで比較しています
               </p>
             )}
-            <div className="card overflow-x-auto">
-              <table className="w-full border-collapse text-sm">
+            {/* スマホ向け: 縦並びの一覧（表は md 以上で表示） */}
+            <ul className="mb-3 space-y-2 md:hidden">
+              {similar.slice(0, 5).map((sm) => (
+                <li key={sm.med.id} className="rounded-lg border-2 border-gray-200 bg-white p-3">
+                  <Link href={`/medicines/${sm.med.slug}/`} className="text-lg font-bold text-brand-dark underline">
+                    {sm.med.name}
+                  </Link>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-base">
+                    <span className={sm.sameIngredient ? 'rounded bg-white px-1.5 py-0.5 text-sm font-semibold text-brand-deep ring-1 ring-brand' : 'rounded bg-white px-1.5 py-0.5 text-sm font-semibold text-gray-500 ring-1 ring-gray-300'}>
+                      {sm.sameIngredient ? '同成分' : '同カテゴリ'}
+                    </span>
+                    <span className={riskClass(sm.med.risk, sm.med.itype)}>
+                      {riskLabel(sm.med.risk, sm.med.itype).replace('医薬品', '').replace('分類', '')}
+                    </span>
+                    {sm.med.drowsy && <span className="text-sm text-risk-2x">眠気あり</span>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <p className="mb-2 text-base text-gray-600 md:hidden">成分ごとの配合量は、画面の広い端末（パソコン・タブレット）で表として表示されます。</p>
+            <div className="card hidden overflow-x-auto md:block">
+              <table className="w-full border-collapse text-base">
                 <thead>
                   <tr className="bg-brand-light/60 text-brand-deep">
                     <th className="sticky left-0 z-10 min-w-[9rem] bg-brand-light px-3 py-2.5 text-left font-bold md:min-w-[11rem]">
@@ -821,6 +813,41 @@ export default async function MedicineDetailPage({ params }: Props) {
             </p>
           </section>
         )}
+
+        {/* 被害報告（折りたたみ・最下部） */}
+        <details className="mb-8 rounded-xl border-2 border-gray-300 bg-white p-4">
+          <summary className="cursor-pointer text-lg font-bold">
+            この薬で困ったことがあった方へ（被害報告{damageCount > 0 ? `：${damageCount}件` : ''}）
+          </summary>
+          <div className="mt-3">
+            {damageCount > 0 ? (
+              <div className="rounded border border-red-200 bg-red-50 p-4">
+                <p className="mb-2">
+                  この薬品について、<strong>{damageCount}件</strong>
+                  の被害報告が寄せられています。
+                </p>
+                <Link
+                  href={`/damage-reports/?medicine=${encodeURIComponent(med.name)}`}
+                  className="text-base text-red-700 underline"
+                >
+                  → 被害報告を見る
+                </Link>
+              </div>
+            ) : (
+              <p className="text-base text-gray-600">
+                現在、この薬品に関する被害報告は登録されていません。
+              </p>
+            )}
+            <div className="mt-3">
+              <Link
+                href="/damage-reports/submit/"
+                className="btn-outline text-base"
+              >
+                被害を報告する
+              </Link>
+            </div>
+          </div>
+        </details>
 
         {/* PMDA リンク */}
         {med.pmda_url && (
