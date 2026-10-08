@@ -1,2 +1,3 @@
-// X（Twitter）カード用。opengraph-image と同じ画像を使う
-export { default, size, contentType, runtime } from './opengraph-image';
+export { default, size, contentType } from './opengraph-image';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
