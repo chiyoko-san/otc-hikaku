@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { FontSizeButton } from '@/components/AssistBar';
 
 const NAV_ITEMS = [
   { href: '/switch/', label: '処方薬から探す' },
@@ -38,7 +39,7 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-brand-deep shadow-md">
-        <div className="container-wide flex items-center justify-between gap-4 py-3">
+        <div className="container-wide flex items-center justify-between gap-3 py-3">
           <Link
             href="/"
             className="flex-shrink-0 text-xl font-bold tracking-tight text-white"
@@ -59,54 +60,57 @@ export function Header() {
             ))}
           </nav>
 
-          {/* スマホ: ハンバーガーボタン */}
-          <button
-            type="button"
-            className="md:hidden -mr-2 inline-flex h-10 w-10 items-center justify-center rounded text-white hover:bg-white/10"
-            aria-label={open ? 'メニューを閉じる' : 'メニューを開く'}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? (
-              // ✕ アイコン
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            ) : (
-              // ハンバーガーアイコン
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M4 6h16" />
-                <path d="M4 12h16" />
-                <path d="M4 18h16" />
-              </svg>
-            )}
-          </button>
+          {/* 右側: 文字サイズ + (スマホ)メニュー */}
+          <div className="flex items-center gap-2">
+            <FontSizeButton />
+            <button
+              type="button"
+              className="md:hidden -mr-2 inline-flex h-10 w-10 items-center justify-center rounded text-white hover:bg-white/10"
+              aria-label={open ? 'メニューを閉じる' : 'メニューを開く'}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? (
+                // ✕ アイコン
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              ) : (
+                // ハンバーガーアイコン
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 6h16" />
+                  <path d="M4 12h16" />
+                  <path d="M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* スマホ: フルスクリーンドロワー */}
+      {/* スマホ: ドロワー */}
       {open && (
         <div
           className="fixed inset-0 z-50 md:hidden"
@@ -122,9 +126,9 @@ export function Header() {
           {/* メニュー本体(右からスライドイン風) */}
           <nav
             id="mobile-nav"
-            className="absolute right-0 top-0 h-full w-72 max-w-[85%] overflow-y-auto bg-white shadow-xl"
+            className="absolute right-0 top-0 h-full w-80 max-w-[88%] overflow-y-auto bg-white shadow-xl"
           >
-            <div className="flex items-center justify-between border-b border-gray-200 p-4">
+            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
               <span className="text-base font-bold text-brand-ink">
                 メニュー
               </span>
@@ -132,7 +136,7 @@ export function Header() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="メニューを閉じる"
-                className="-mr-2 inline-flex h-9 w-9 items-center justify-center rounded text-gray-700 hover:bg-gray-100"
+                className="-mr-2 inline-flex h-10 w-10 items-center justify-center rounded text-gray-700 hover:bg-gray-100"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -151,12 +155,12 @@ export function Header() {
               </button>
             </div>
 
-            <ul className="p-2">
+            <ul className="p-3">
               {NAV_ITEMS.map((n) => (
                 <li key={n.href}>
                   <Link
                     href={n.href}
-                    className="flex items-center justify-between rounded px-4 py-3 text-base text-gray-800 hover:bg-brand-light hover:text-brand"
+                    className="flex min-h-[52px] items-center justify-between rounded-lg px-4 py-3 text-lg text-brand-ink hover:bg-brand-light"
                     onClick={() => setOpen(false)}
                   >
                     <span>{n.label}</span>
@@ -166,34 +170,34 @@ export function Header() {
               ))}
             </ul>
 
-            <div className="border-t border-gray-200 p-4">
+            <div className="border-t border-gray-200 p-5">
               <Link
                 href="/akinator/"
-                className="btn-primary w-full justify-center"
+                className="btn-primary min-h-[52px] w-full justify-center text-base"
                 onClick={() => setOpen(false)}
               >
-                💊 症状アキネーターを試す
+                質問に答えて薬を探す
               </Link>
             </div>
 
-            <div className="border-t border-gray-200 px-4 py-3 text-xs text-gray-500">
+            <div className="border-t border-gray-200 px-5 py-4 text-sm text-gray-600">
               <Link
                 href="/about/"
-                className="block py-1 hover:text-brand"
+                className="block py-2 hover:text-brand"
                 onClick={() => setOpen(false)}
               >
                 サイトについて
               </Link>
               <Link
                 href="/privacy/"
-                className="block py-1 hover:text-brand"
+                className="block py-2 hover:text-brand"
                 onClick={() => setOpen(false)}
               >
                 プライバシーポリシー
               </Link>
               <Link
                 href="/contact/"
-                className="block py-1 hover:text-brand"
+                className="block py-2 hover:text-brand"
                 onClick={() => setOpen(false)}
               >
                 お問い合わせ

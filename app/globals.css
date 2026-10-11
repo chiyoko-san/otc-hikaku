@@ -2,15 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* tailwind.config.ts の brand と同じ値。片方だけ変えないこと */
 :root {
-  --brand: #0FAE96;
-  --brand-dark: #0A8473;
-  --brand-deep: #0B4A40;
-  --brand-light: #DCF3EE;
+  --brand: #1f4d3a;
+  --brand-dark: #163a2c;
+  --brand-deep: #1f4d3a;
+  --brand-light: #e8f3ec;
   --ink: #132A26;
   --muted: #5C6678;
   --line: #E5E7EB;
-  --bg: #F1F6F4;
+  --bg: #F4F6F5;
 }
 
 html {
@@ -27,14 +28,43 @@ body {
   color: var(--ink);
   font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* 日本語は行間を広めに取るほうが読みやすい(スマホ・高齢者ほど効く) */
+  line-height: 1.75;
+}
+
+/* ------------------------------------------------------------------
+   スマホ(〜767px)の見出しサイズを3段階に固定する。
+   ページごとに text-3xl / text-2xl が混在していて、画面幅が狭いと
+   見出しが3〜4行に折り返して圧迫感が出ていた。PCの指定(md:)はそのまま。
+------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  h1 {
+    font-size: 1.625rem !important; /* 26px */
+    line-height: 1.35 !important;
+  }
+  h2 {
+    font-size: 1.375rem !important; /* 22px */
+    line-height: 1.4 !important;
+  }
+  h3 {
+    font-size: 1.125rem !important; /* 18px */
+    line-height: 1.5 !important;
+  }
+  /* コラム本文の表は、画面幅を超えたら表だけ横スクロールさせる(ページ全体を横に揺らさない) */
+  .prose-column table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @layer components {
+  /* 左右の余白: スマホ20px / PC24px */
   .container-narrow {
-    @apply mx-auto w-full max-w-5xl px-4 md:px-6;
+    @apply mx-auto w-full max-w-5xl px-5 md:px-6;
   }
   .container-wide {
-    @apply mx-auto w-full max-w-7xl px-4 md:px-6;
+    @apply mx-auto w-full max-w-7xl px-5 md:px-6;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition;
@@ -63,7 +93,7 @@ body {
   .risk-quasi { @apply risk-badge bg-purple-700 text-white; }
   .risk-dquasi { @apply risk-badge bg-indigo-700 text-white; }
 
-  /* 白カード(薄緑サーフェスに浮かせる) — モック基準: 大きめ角丸・やわらかい影 */
+  /* 白カード(薄緑サーフェスに浮かせる) — 大きめ角丸・やわらかい影 */
   .card {
     @apply rounded-2xl bg-white shadow-sm ring-1 ring-black/[0.06] transition hover:shadow-md hover:-translate-y-0.5;
   }
@@ -71,7 +101,11 @@ body {
   .card-static {
     @apply rounded-2xl bg-white shadow-sm ring-1 ring-black/[0.06];
   }
-  /* ピル型タグ(モックのタグ質感に統一) */
+  /* 本文用の白い囲み(枠線は薄いグレー1本。濃い枠を重ねない) */
+  .panel {
+    @apply rounded-2xl border border-gray-200 bg-white p-5;
+  }
+  /* ピル型タグ */
   .pill {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
   }
@@ -135,9 +169,9 @@ body {
   @apply rounded bg-gray-100 px-1 py-0.5 text-sm;
 }
 
-/* tip/warn/danger ボックス (::: tip など) */
+/* tip/warn/danger ボックス (::: tip など)。文字色は本文と同じにして、左の帯だけで種類を示す */
 .callout {
-  @apply my-4 rounded-lg border-l-4 p-4;
+  @apply my-4 rounded-lg border-l-4 p-4 text-brand-ink;
 }
 .callout-tip { @apply callout border-brand bg-brand-light; }
 .callout-warn { @apply callout border-orange-500 bg-orange-50; }
