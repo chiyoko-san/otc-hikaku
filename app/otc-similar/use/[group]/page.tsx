@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { notFound } from 'next/navigation';
 import { buildMetadata, buildBreadcrumbJsonLd } from '@/lib/seo';
 import { OTC_SIMILAR_GROUPS, OTC_SIMILAR_META } from '@/lib/otc-similar-77';
@@ -57,32 +58,31 @@ export default async function OtcSimilarGroupPage({
   ]);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 text-lg leading-relaxed text-gray-900">
+    <div className="mx-auto max-w-3xl px-5 py-6 text-lg leading-relaxed text-brand-ink md:px-6 md:py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
 
-      <nav className="text-base text-gray-700" aria-label="パンくず">
-        <Link href="/" className="underline">ホーム</Link>
-        <span className="mx-1">/</span>
-        <Link href={OTC_SIMILAR_PATHS.hub} className="underline">上乗せ料金</Link>
-        <span className="mx-1">/</span>
-        <Link href={OTC_SIMILAR_PATHS.use} className="underline">用途で探す</Link>
-        <span className="mx-1">/</span>
-        <span>{g.label}</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { name: 'ホーム', href: '/' },
+          { name: '上乗せ料金', href: OTC_SIMILAR_PATHS.hub },
+          { name: '用途で探す', href: OTC_SIMILAR_PATHS.use },
+          { name: g.label },
+        ]}
+      />
 
-      <h1 className="mt-4 text-3xl font-bold leading-snug md:text-4xl">
+      <h1 className="mt-2 text-2xl font-bold leading-snug md:text-4xl">
         {g.label}の薬
-        <span className="mt-1 block text-xl font-normal text-gray-700">上乗せ料金の対象成分（{rows.length}成分）と、同じ成分の市販薬</span>
+        <span className="mt-2 block text-base font-normal text-gray-600 md:text-xl">上乗せ料金の対象成分（{rows.length}成分）と、同じ成分の市販薬</span>
       </h1>
-      <p className="mt-3 text-xl leading-relaxed">{g.lead}</p>
+      <p className="mt-4 md:text-xl">{g.lead}</p>
 
-      <ul className="mt-6 space-y-5">
+      <ul className="mt-8 space-y-4">
         {rows.map((r) => (
           <IngredientCard key={r.no} row={r} />
         ))}
       </ul>
 
-      <section className="mt-10 rounded-xl bg-[#fff4d6] p-5">
+      <section className="mt-12 rounded-2xl border-l-4 border-amber-400 bg-amber-50 p-5">
         <p className="font-bold">ご注意</p>
         <ul className="mt-2 list-disc space-y-1 pl-6 text-base">
           <li>一覧は{OTC_SIMILAR_META.listStatus}です。最終的な対象は国の告示で決まります。</li>
@@ -91,14 +91,14 @@ export default async function OtcSimilarGroupPage({
         </ul>
       </section>
 
-      <section className="mt-10">
+      <section className="mt-12">
         <p className="text-xl font-bold">ほかの用途を見る</p>
         <ul className="mt-3 flex flex-wrap gap-2">
           {OTC_SIMILAR_GROUPS.filter((x) => x.key !== g.key).map((x) => (
             <li key={x.key}>
               <Link
                 href={OTC_SIMILAR_PATHS.group(x.key)}
-                className="inline-block min-h-[48px] rounded-lg border-2 border-gray-400 bg-white px-4 py-2.5 text-lg font-bold text-gray-900 hover:bg-[#e8f3ec]"
+                className="inline-flex min-h-[44px] items-center rounded-full border border-gray-300 bg-white px-4 py-2 text-base text-brand-ink hover:border-brand hover:text-brand"
               >
                 {x.label}
               </Link>
@@ -107,9 +107,9 @@ export default async function OtcSimilarGroupPage({
         </ul>
         <p className="mt-6">
           薬の名前がわかる場合は
-          <Link href={OTC_SIMILAR_PATHS.name} className="font-bold text-[#1f4d3a] underline">薬の名前で探す</Link>
+          <Link href={OTC_SIMILAR_PATHS.name} className="font-bold text-brand underline underline-offset-4">薬の名前で探す</Link>
           が早いです。制度の説明は
-          <Link href={OTC_SIMILAR_PATHS.hub} className="font-bold text-[#1f4d3a] underline">こちら</Link>。
+          <Link href={OTC_SIMILAR_PATHS.hub} className="font-bold text-brand underline underline-offset-4">こちら</Link>。
         </p>
       </section>
     </div>
@@ -118,10 +118,10 @@ export default async function OtcSimilarGroupPage({
 
 function IngredientCard({ row: r }: { row: OtcSimilarRow }) {
   return (
-    <li id={`ing-${r.no}`} className="scroll-mt-24 rounded-xl border-2 border-gray-300 bg-white p-5">
+    <li id={`ing-${r.no}`} className="panel scroll-mt-24">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="inline-block rounded-md bg-[#b42318] px-2.5 py-1 text-base font-bold text-white">上乗せ対象</span>
-        <span className="text-2xl font-bold leading-snug">
+        <span className="inline-block rounded-md bg-alert px-2.5 py-1 text-sm font-bold text-white">上乗せ対象</span>
+        <span className="text-xl font-bold leading-snug md:text-2xl">
           {r.rxExamples.length > 0 ? r.rxExamples.join('・') : r.name}
         </span>
       </div>
@@ -150,7 +150,7 @@ function IngredientCard({ row: r }: { row: OtcSimilarRow }) {
               <li key={m.slug}>
                 <Link
                   href={`/medicines/${m.slug}/`}
-                  className="inline-block min-h-[48px] rounded-lg border-2 border-[#1f4d3a] bg-[#e8f3ec] px-4 py-2.5 text-lg font-bold text-[#1f4d3a]"
+                  className="inline-flex min-h-[44px] items-center rounded-full border border-brand bg-brand-light px-4 py-2 text-base font-bold text-brand"
                 >
                   {m.name}
                 </Link>
@@ -161,7 +161,7 @@ function IngredientCard({ row: r }: { row: OtcSimilarRow }) {
       </div>
 
       <p className="mt-4">
-        <Link href={OTC_SIMILAR_PATHS.ingredient(r.no)} className="text-lg font-bold text-[#1f4d3a] underline">
+        <Link href={OTC_SIMILAR_PATHS.ingredient(r.no)} className="text-base font-bold text-brand underline underline-offset-4 md:text-lg">
           この成分のすべての処方薬（薬価）と市販薬を見る →
         </Link>
       </p>
@@ -172,7 +172,7 @@ function IngredientCard({ row: r }: { row: OtcSimilarRow }) {
             <Link
               key={gd.slug}
               href={`/switch/${gd.slug}/`}
-              className="inline-block min-h-[48px] rounded-lg bg-[#1f4d3a] px-4 py-2.5 text-lg font-bold text-white"
+              className="inline-flex min-h-[48px] items-center rounded-xl bg-brand px-4 py-2.5 text-base font-bold text-white"
             >
               {gd.rxName}を市販薬に替えるときの注意
             </Link>

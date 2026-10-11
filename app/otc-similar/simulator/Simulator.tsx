@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { ShareCard } from '@/components/ShareCard';
 import { useSearchParams } from 'next/navigation';
 import type { SlimItem } from '@/lib/otc-similar-items';
 
@@ -133,8 +134,7 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
     `【上乗せ料金の計算結果】\n` +
     rows.map((x) => `・${x.item.name} × ${x.qty}${unitOf(x.item.spec)}：+${yen(x.r.diff)}`).join('\n') +
     `\n合計：${yen(rows.reduce((a, x) => a + x.r.before, 0))} → ${yen(rows.reduce((a, x) => a + x.r.after, 0))}（+${yen(rows.reduce((a, x) => a + x.r.diff, 0))}）` +
-    `\n（${Math.round(rate * 10)}割負担・薬代のみ・2027年3月から）\n` + shareUrl;
-  const lineShareUrl = `https://line.me/R/share?text=${encodeURIComponent(shareText)}`;
+    `\n（${Math.round(rate * 10)}割負担・薬代のみ・2027年3月から）`;
   const total = rows.reduce(
     (a, x) => ({ before: a.before + x.r.before, after: a.after + x.r.after, diff: a.diff + x.r.diff, surcharge: a.surcharge + x.r.surcharge }),
     { before: 0, after: 0, diff: 0, surcharge: 0 }
@@ -144,8 +144,8 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
     <div className="mt-6">
       {/* ① 探す */}
       <section>
-        <h2 className="text-2xl font-bold">
-          <span className="mr-2 inline-block rounded-full bg-[#1f4d3a] px-3 py-0.5 text-lg text-white align-middle">1</span>
+        <h2 className="text-xl font-bold md:text-2xl">
+          <span className="mr-2 inline-block rounded-full bg-brand px-3 py-0.5 text-base text-white align-middle">1</span>
           薬を探す
         </h2>
         <label className="mt-3 block">
@@ -156,31 +156,31 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="例：ロキソニン、ヒルドイド、湿布"
-            className="w-full rounded-lg border-2 border-gray-500 px-4 py-3 text-xl leading-relaxed focus:border-[#1f4d3a] focus:outline-none focus:ring-2 focus:ring-[#1f4d3a]"
+            className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-xl leading-relaxed focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand"
           />
         </label>
         {!q && picked.length === 0 && (
           <p className="mt-3 text-base text-gray-700">
             薬が多いときは
-            <Link href="/otc-similar/photo/" className="font-bold text-[#1f4d3a] underline">お薬手帳を撮るだけ</Link>
+            <Link href="/otc-similar/photo/" className="font-bold text-brand underline">お薬手帳を撮るだけ</Link>
             で全部まとめて入れられます。
           </p>
         )}
         {q && (
-          <div className="mt-3 rounded-xl border-2 border-gray-300 bg-white">
+          <div className="mt-3 rounded-xl border border-gray-200 bg-white">
             {results.length === 0 ? (
               <p className="p-4">
                 見つかりませんでした。この薬は上乗せ料金の対象外か、名前の表記が違う可能性があります。
                 成分名（お薬手帳の「一般名」）でも探してみてください。
               </p>
             ) : (
-              <ul className="max-h-[420px] divide-y-2 divide-gray-200 overflow-y-auto">
+              <ul className="max-h-[420px] divide-y divide-gray-200 overflow-y-auto">
                 {results.map((i) => (
                   <li key={i.code}>
                     <button
                       type="button"
                       onClick={() => add(i)}
-                      className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-[#e8f3ec]"
+                      className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-brand-light"
                     >
                       <span>
                         <span className="block text-xl font-bold">{i.name}</span>
@@ -190,14 +190,14 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
                           {i.kind === '後発' && '・ジェネリック'}
                         </span>
                       </span>
-                      <span className="shrink-0 rounded-lg bg-[#1f4d3a] px-3 py-2 text-base font-bold text-white">追加</span>
+                      <span className="shrink-0 rounded-lg bg-brand px-3 py-2 text-base font-bold text-white">追加</span>
                     </button>
                   </li>
                 ))}
               </ul>
             )}
             {results.length === 40 && (
-              <p className="border-t-2 border-gray-200 p-3 text-base text-gray-600">たくさん見つかりました。名前をもう少し入れると絞れます。</p>
+              <p className="border-t border-gray-200 p-3 text-base text-gray-600">たくさん見つかりました。名前をもう少し入れると絞れます。</p>
             )}
           </div>
         )}
@@ -205,9 +205,9 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
 
       {/* ② 数量 */}
       {picked.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-2xl font-bold">
-            <span className="mr-2 inline-block rounded-full bg-[#1f4d3a] px-3 py-0.5 text-lg text-white align-middle">2</span>
+        <section className="mt-12">
+          <h2 className="text-xl font-bold md:text-2xl">
+            <span className="mr-2 inline-block rounded-full bg-brand px-3 py-0.5 text-base text-white align-middle">2</span>
             量を入れる
           </h2>
           <p className="mt-1 text-base text-gray-700">1回の処方でもらう量です。薬袋や薬の説明書に書いてあります。</p>
@@ -215,7 +215,7 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
             {picked.map((p) => {
               const unit = unitOf(p.item.spec);
               return (
-                <li key={p.item.code} className="rounded-xl border-2 border-gray-300 bg-white p-4">
+                <li key={p.item.code} className="rounded-xl border border-gray-200 bg-white p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
                       <div className="text-xl font-bold">{p.item.name}</div>
@@ -224,7 +224,7 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
                     <button
                       type="button"
                       onClick={() => remove(p.item.code)}
-                      className="min-h-[44px] rounded-lg border-2 border-gray-400 px-3 text-base font-bold text-gray-700"
+                      className="min-h-[44px] rounded-lg border border-gray-300 px-3 text-base text-gray-700"
                     >
                       削除
                     </button>
@@ -238,7 +238,7 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
                         aria-pressed={p.qty === n}
                         className={
                           'min-h-[48px] rounded-lg border-2 px-4 text-lg font-bold ' +
-                          (p.qty === n ? 'border-[#1f4d3a] bg-[#1f4d3a] text-white' : 'border-gray-400 bg-white text-gray-900')
+                          (p.qty === n ? 'border-brand bg-brand text-white' : 'border-gray-300 bg-white text-brand-ink')
                         }
                       >
                         {n}{unit}
@@ -252,7 +252,7 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
                         min={0}
                         value={p.qty}
                         onChange={(e) => setQty(p.item.code, Number(e.target.value))}
-                        className="w-28 rounded-lg border-2 border-gray-500 px-3 py-2 text-right text-xl"
+                        className="w-28 rounded-lg border-2 border-gray-300 px-3 py-2 text-right text-xl"
                       />
                       <span className="text-lg">{unit}</span>
                     </label>
@@ -269,9 +269,9 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
 
       {/* ③ 負担割合と結果 */}
       {picked.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-2xl font-bold">
-            <span className="mr-2 inline-block rounded-full bg-[#1f4d3a] px-3 py-0.5 text-lg text-white align-middle">3</span>
+        <section className="mt-12">
+          <h2 className="text-xl font-bold md:text-2xl">
+            <span className="mr-2 inline-block rounded-full bg-brand px-3 py-0.5 text-base text-white align-middle">3</span>
             窓口負担の割合
           </h2>
           <p className="mt-1 text-base text-gray-700">
@@ -287,7 +287,7 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
                 aria-pressed={rate === r.value}
                 className={
                   'min-h-[56px] min-w-[96px] rounded-lg border-2 px-5 text-2xl font-bold ' +
-                  (rate === r.value ? 'border-[#1f4d3a] bg-[#1f4d3a] text-white' : 'border-gray-400 bg-white text-gray-900')
+                  (rate === r.value ? 'border-brand bg-brand text-white' : 'border-gray-300 bg-white text-brand-ink')
                 }
               >
                 {r.label}
@@ -295,18 +295,18 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
             ))}
           </div>
 
-          <div className="mt-6 rounded-xl border-2 border-[#b42318] bg-[#fff5f4] p-5" aria-live="polite">
-            <p className="text-xl font-bold">1回の処方でこう変わります（薬代の部分だけ）</p>
+          <div className="mt-6 rounded-xl border-2 border-brand-light bg-white p-5" aria-live="polite">
+            <p className="text-lg font-bold md:text-xl">1回の処方でこう変わります（薬代の部分だけ）</p>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              <div className="rounded-lg bg-white p-3">
+              <div className="rounded-xl bg-gray-50 p-3">
                 <div className="text-base text-gray-700">これまで</div>
                 <div className="text-2xl font-bold md:text-3xl">{yen(total.before)}</div>
               </div>
-              <div className="rounded-lg bg-white p-3">
+              <div className="rounded-xl bg-gray-50 p-3">
                 <div className="text-base text-gray-700">これから</div>
                 <div className="text-2xl font-bold md:text-3xl">{yen(total.after)}</div>
               </div>
-              <div className="rounded-lg bg-[#b42318] p-3 text-white">
+              <div className="rounded-xl bg-alert p-3 text-white">
                 <div className="text-base">増える額</div>
                 <div className="text-2xl font-bold md:text-3xl">+{yen(total.diff)}</div>
               </div>
@@ -314,31 +314,32 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
             <p className="mt-3 text-base text-gray-700">上乗せ料金の合計は{yen(total.surcharge)}（薬価×量÷4）。診察料・調剤料などは別です。</p>
 
             {rows.length > 1 && (
-              <ul className="mt-4 divide-y-2 divide-gray-200 border-t-2 border-gray-200 text-base">
+              <ul className="mt-4 divide-y divide-gray-200 border-t border-gray-200 text-base">
                 {rows.map((x) => (
                   <li key={x.item.code} className="flex flex-wrap justify-between gap-2 py-2">
                     <span className="font-bold">{x.item.name} × {x.qty}{unitOf(x.item.spec)}</span>
-                    <span>{yen(x.r.before)} → {yen(x.r.after)}（<span className="font-bold text-[#b42318]">+{yen(x.r.diff)}</span>）</span>
+                    <span>{yen(x.r.before)} → {yen(x.r.after)}（<span className="font-bold text-alert">+{yen(x.r.diff)}</span>）</span>
                   </li>
                 ))}
               </ul>
             )}
           </div>
 
+          <ShareCard
+            heading="この結果、家族にも送っておきませんか？"
+            lead="親の薬を代わりに調べた人へ。この文章を送れば、本人もそのまま同じ結果を見られます。"
+            message={shareText}
+            url={shareUrl || undefined}
+            xText={`上乗せ料金を計算したら、1回の処方で +${yen(total.diff)} でした（${rows.length}種類・${Math.round(rate * 10)}割負担）。自分の薬は対象？お薬手帳を撮るだけで分かります。`}
+            hashtags={['上乗せ料金', 'OTC類似薬']}
+          />
+
           <div className="mt-6 flex flex-wrap gap-2">
-            <a
-              href={lineShareUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block min-h-[48px] rounded-lg bg-[#06c755] px-4 py-2.5 text-lg font-bold text-white"
-            >
-              この結果を家族にLINEで送る
-            </a>
             {Array.from(new Set(rows.map((x) => x.item.group))).map((g) => (
               <Link
                 key={g}
                 href={`/otc-similar/use/${g}/`}
-                className="inline-block min-h-[48px] rounded-lg border-2 border-[#1f4d3a] bg-white px-4 py-2.5 text-lg font-bold text-[#1f4d3a]"
+                className="inline-flex min-h-[48px] items-center rounded-xl border-2 border-brand bg-white px-4 py-2.5 text-base font-bold text-brand"
               >
                 同じ成分の市販薬を見る
               </Link>

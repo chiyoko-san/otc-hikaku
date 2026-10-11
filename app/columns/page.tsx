@@ -32,11 +32,9 @@ export default async function ColumnsIndexPage() {
     <div className="container-narrow py-6 md:py-10">
       <Breadcrumb items={[{ name: 'ホーム', href: '/' }, { name: 'コラム' }]} />
 
-      <header className="mb-8">
-        <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-brand-ink md:text-4xl">
-          コラム
-        </h1>
-        <p className="text-gray-600">
+      <header className="mb-8 mt-2">
+        <h1 className="text-2xl font-bold text-brand-ink md:text-4xl">コラム</h1>
+        <p className="mt-3 text-base text-gray-600 md:text-lg">
           市販薬の選び方・安全情報・成分比較について、データに基づいた記事を公開しています。
         </p>
       </header>
@@ -44,31 +42,32 @@ export default async function ColumnsIndexPage() {
       {columns.length === 0 ? (
         <p className="text-gray-500">公開中のコラムがありません。</p>
       ) : (
-        <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white">
+        <ul className="space-y-3">
           {columns.map((c) => {
             const date = formatDate(c.date);
             return (
               <li key={c.id}>
                 <Link
                   href={`/columns/${c.slug || c.id}/`}
-                  className="group block px-5 py-5 transition hover:bg-brand-light/20 md:px-7"
+                  className="panel flex items-center justify-between gap-3 hover:border-brand"
                 >
-                  <h2 className="mb-1.5 text-base font-bold leading-relaxed text-brand-ink group-hover:text-brand-dark md:text-lg">
-                    {c.title}
-                  </h2>
-                  {c.summary && (
-                    <p className="mb-2 line-clamp-2 text-sm leading-relaxed text-gray-500">
-                      {c.summary}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
-                    {date && <time dateTime={date.dt}>{date.text}</time>}
-                    {c.tag && (
-                      <span className="rounded bg-brand-light px-2 py-0.5 font-medium text-brand-deep">
-                        {c.tag}
+                  <span className="block min-w-0">
+                    <span className="block text-base font-bold leading-relaxed text-brand-ink md:text-lg">
+                      {c.title}
+                    </span>
+                    {c.summary ? (
+                      <span className="mt-1 line-clamp-2 block text-sm leading-relaxed text-gray-600">
+                        {c.summary}
                       </span>
-                    )}
-                  </div>
+                    ) : null}
+                    <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                      {date ? <time dateTime={date.dt}>{date.text}</time> : null}
+                      {c.tag ? <span className="pill-brand">{c.tag}</span> : null}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-2xl text-brand" aria-hidden="true">
+                    ›
+                  </span>
                 </Link>
               </li>
             );

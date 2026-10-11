@@ -13,13 +13,14 @@ import { buildMetadata, buildBreadcrumbJsonLd, SITE_URL } from '@/lib/seo';
 // 一覧に無いページもアクセス時に生成する
 export const dynamicParams = true;
 
-// ビルド時に作るのは主要製品のみ。残りは初回アクセス時に生成される
+// ビルド時に作るのは薬の多い上位800件。残りは初回アクセス時に生成される
+// 2026-10 修正: 以前は薬のスラッグを返していて（コピペ由来）、成分ページとしては存在しない
+// URLを毎ビルド800件ぶん404として生成していた。成分自体のスラッグを、薬の多い順に800件まで返す。
 export async function generateStaticParams() {
-  const enriched = getAllMedicines();
-  const priority = enriched
-    .filter((m) => m.ings && m.ings.length > 0 && m.effect)
-    .slice(0, 800);
-  return priority.map((m) => ({ slug: m.slug }));
+  const all = [...getAllIngredients()].sort(
+    (a, b) => (b.medicineIds?.length ?? 0) - (a.medicineIds?.length ?? 0)
+  );
+  return all.slice(0, 800).map((x) => ({ slug: x.slug }));
 }
 
 type Props = { params: { slug: string } };

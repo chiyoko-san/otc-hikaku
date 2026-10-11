@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { buildMetadata, buildBreadcrumbJsonLd } from '@/lib/seo';
 import { OTC_SIMILAR_GROUPS } from '@/lib/otc-similar-77';
 import { getOtcSimilarRows, OTC_SIMILAR_PATHS } from '@/lib/otc-similar-data';
@@ -22,44 +23,46 @@ export default function OtcSimilarUseIndexPage() {
     { name: '用途で探す', url: OTC_SIMILAR_PATHS.use },
   ]);
 
+  const crumbs = [
+    { name: 'ホーム', href: '/' },
+    { name: '上乗せ料金', href: OTC_SIMILAR_PATHS.hub },
+    { name: '用途で探す' },
+  ];
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 text-lg leading-relaxed text-gray-900">
+    <div className="mx-auto max-w-3xl px-5 py-6 text-lg leading-relaxed text-brand-ink md:px-6 md:py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
 
-      <nav className="text-base text-gray-700" aria-label="パンくず">
-        <Link href="/" className="underline">ホーム</Link>
-        <span className="mx-1">/</span>
-        <Link href={OTC_SIMILAR_PATHS.hub} className="underline">上乗せ料金</Link>
-        <span className="mx-1">/</span>
-        <span>用途で探す</span>
-      </nav>
+      <Breadcrumb items={crumbs} />
 
-      <h1 className="mt-4 text-3xl font-bold leading-snug md:text-4xl">用途で探す</h1>
-      <p className="mt-3 text-xl leading-relaxed">
+      <h1 className="mt-2 text-2xl font-bold leading-snug md:text-4xl">用途で探す</h1>
+      <p className="mt-4 md:text-xl">
         薬の使いみちから、上乗せ料金の対象となる成分と、同じ成分の市販薬を探せます。
       </p>
 
-      <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+      <ul className="mt-8 grid gap-3 sm:grid-cols-2">
         {OTC_SIMILAR_GROUPS.map((g) => {
           const count = rows.filter((r) => r.group === g.key).length;
           return (
             <li key={g.key}>
               <Link
                 href={OTC_SIMILAR_PATHS.group(g.key)}
-                className="block rounded-xl border-2 border-[#1f4d3a] bg-white px-5 py-4 hover:bg-[#e8f3ec]"
+                className="flex min-h-[80px] items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-5 py-4 hover:border-brand"
               >
-                <span className="block text-2xl font-bold text-[#1f4d3a]">{g.label}</span>
-                <span className="mt-1 block text-base text-gray-800">{g.lead}</span>
-                <span className="mt-1 block text-base text-gray-600">対象 {count}成分</span>
+                <span className="block">
+                  <span className="block text-lg font-bold text-brand md:text-xl">{g.label}</span>
+                  <span className="mt-1 block text-sm text-gray-600 md:text-base">{g.lead}・対象{count}成分</span>
+                </span>
+                <span className="shrink-0 text-2xl text-brand" aria-hidden="true">›</span>
               </Link>
             </li>
           );
         })}
       </ul>
 
-      <p className="mt-8">
+      <p className="mt-10 text-base md:text-lg">
         薬の名前がわかる場合は、
-        <Link href={OTC_SIMILAR_PATHS.name} className="font-bold text-[#1f4d3a] underline">薬の名前で探す</Link>
+        <Link href={OTC_SIMILAR_PATHS.name} className="font-bold text-brand underline underline-offset-4">薬の名前で探す</Link>
         のほうが早く見つかります。
       </p>
     </div>

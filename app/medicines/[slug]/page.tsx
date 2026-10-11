@@ -23,6 +23,7 @@ import {
   type DosageFormKey,
 } from '@/lib/dosageForm';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
+import { ShareCard } from '@/components/ShareCard';
 import { JsonLd } from '@/components/layout/JsonLd';
 import {
   buildMetadata,
@@ -422,12 +423,12 @@ export default async function MedicineDetailPage({ params }: Props) {
 
         {/* 上乗せ料金（2027年3月〜）: 処方薬だと対象になる成分 */}
         {feeIngredients.length > 0 && (
-          <section className="mb-8 rounded-xl border-2 border-[#b42318] bg-[#fff5f4] p-4 md:p-5">
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="inline-block rounded-md bg-[#b42318] px-2.5 py-1 text-sm font-bold text-white">
+          <section className="panel mb-8">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="inline-block rounded-md bg-alert px-2.5 py-1 text-sm font-bold text-white">
                 2027年3月から
               </span>
-              <h2 className="text-lg font-bold text-[#b42318] md:text-xl">
+              <h2 className="text-lg font-bold md:text-xl">
                 病院で処方される同じ成分は「上乗せ料金」の対象
               </h2>
             </div>
@@ -441,27 +442,27 @@ export default async function MedicineDetailPage({ params }: Props) {
                 {feeExamples.map(
                   (e) =>
                     e.item && (
-                      <li key={e.ing.no} className="rounded-lg bg-white px-3 py-2">
+                      <li key={e.ing.no} className="rounded-xl bg-gray-50 px-3 py-2">
                         処方薬の例：<strong>{e.item.name}</strong>
                         <span className="text-gray-700">
                           　薬価{yen(e.item.price)}／{unitLabel(e.item.spec)} →{' '}
                         </span>
-                        <strong className="text-[#b42318]">上乗せ +{yen(e.item.surcharge)}／{unitLabel(e.item.spec)}</strong>
+                        <strong className="text-alert">上乗せ +{yen(e.item.surcharge)}／{unitLabel(e.item.spec)}</strong>
                       </li>
                     )
                 )}
               </ul>
             )}
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap gap-2">
               <Link
                 href="/otc-similar/simulator/"
-                className="inline-block min-h-[44px] rounded-lg bg-[#b42318] px-4 py-2.5 text-base font-bold text-white"
+                className="inline-flex min-h-[44px] items-center rounded-xl bg-alert px-4 py-2.5 text-base font-bold text-white"
               >
                 自分の処方薬でいくら増える？
               </Link>
               <Link
                 href="/otc-similar/photo/"
-                className="inline-block min-h-[44px] rounded-lg border-2 border-[#b42318] bg-white px-4 py-2.5 text-base font-bold text-[#b42318]"
+                className="inline-flex min-h-[44px] items-center rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-base font-bold text-brand-ink"
               >
                 お薬手帳を撮るだけ
               </Link>
@@ -469,7 +470,7 @@ export default async function MedicineDetailPage({ params }: Props) {
                 <Link
                   key={i.no}
                   href={`/otc-similar/use/${i.group}/#ing-${i.no}`}
-                  className="inline-block min-h-[44px] rounded-lg border-2 border-gray-400 bg-white px-4 py-2.5 text-base font-bold text-gray-800"
+                  className="inline-flex min-h-[44px] items-center rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-base font-bold text-brand-ink"
                 >
                   この成分の対象一覧
                 </Link>
@@ -848,6 +849,21 @@ export default async function MedicineDetailPage({ params }: Props) {
             </div>
           </div>
         </details>
+
+        {/* 家族・薬剤師に見せる */}
+        <ShareCard
+          compact
+          heading="家族や薬剤師に見せる"
+          lead="薬の名前・分類・成分が入った文章です。「これ飲んで大丈夫？」の相談にそのまま使えます。"
+          message={
+            `【${med.name}】${riskLabel(med.risk, med.itype)}・${getCategoryLabel(med.cat)}\n` +
+            `成分：${(med.ings || []).slice(0, 6).join('、')}${(med.ings || []).length > 6 ? ' ほか' : ''}` +
+            (med.drowsy ? '\n眠気あり・服用後の運転はできません' : '')
+          }
+          url={`${SITE_URL}/medicines/${med.slug}/`}
+          xText={`${med.name}の成分と注意点を調べた。${(med.ings || []).slice(0, 3).join('、')}${(med.ings || []).length > 3 ? ' など' : ''}。市販薬7,500品を成分で比べられる。`}
+          hashtags={['市販薬', 'クスリノコンパス']}
+        />
 
         {/* PMDA リンク */}
         {med.pmda_url && (

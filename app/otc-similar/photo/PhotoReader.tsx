@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import Link from 'next/link';
+import { ShareCard } from '@/components/ShareCard';
 import { useRouter } from 'next/navigation';
 import type { SlimItem } from '@/lib/otc-similar-items';
 
@@ -100,8 +101,8 @@ export default function PhotoReader() {
     <div className="mt-6">
       {/* ① 撮る */}
       <section>
-        <h2 className="text-2xl font-bold">
-          <span className="mr-2 inline-block rounded-full bg-[#1f4d3a] px-3 py-0.5 text-lg text-white align-middle">1</span>
+        <h2 className="text-xl font-bold md:text-2xl">
+          <span className="mr-2 inline-block rounded-full bg-brand px-3 py-0.5 text-base text-white align-middle">1</span>
           お薬手帳か薬袋を撮る
         </h2>
         <ul className="mt-2 list-disc space-y-1 pl-6 text-base text-gray-700">
@@ -123,7 +124,7 @@ export default function PhotoReader() {
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="min-h-[64px] rounded-xl bg-[#1f4d3a] px-6 py-3 text-2xl font-bold text-white"
+            className="min-h-[60px] rounded-xl bg-brand px-6 py-3 text-xl font-bold text-white"
           >
             写真を撮る・選ぶ
           </button>
@@ -132,7 +133,7 @@ export default function PhotoReader() {
               type="button"
               onClick={read}
               disabled={busy}
-              className="min-h-[64px] rounded-xl bg-[#b42318] px-6 py-3 text-2xl font-bold text-white disabled:opacity-60"
+              className="min-h-[60px] rounded-xl bg-alert px-6 py-3 text-xl font-bold text-white disabled:opacity-60"
             >
               {busy ? '読み取っています…' : '読み取る'}
             </button>
@@ -142,54 +143,54 @@ export default function PhotoReader() {
         {preview && (
           <div className="mt-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={preview} alt="選んだ写真" className="max-h-72 rounded-xl border-2 border-gray-300" />
+            <img src={preview} alt="選んだ写真" className="max-h-72 rounded-xl border border-gray-200" />
           </div>
         )}
         {busy && (
-          <p className="mt-4 rounded-xl bg-[#f3f9f5] p-4 text-lg" aria-live="polite">
+          <p className="mt-4 rounded-xl bg-brand-light p-4 text-lg" aria-live="polite">
             読み取っています。10秒ほどお待ちください。画面はそのままで大丈夫です。
           </p>
         )}
-        {error && <p className="mt-4 rounded-xl bg-[#fff4d6] p-4 text-lg">{error}</p>}
+        {error && <p className="mt-4 rounded-xl bg-amber-50 p-4 text-lg">{error}</p>}
       </section>
 
       {/* ② 確認 */}
       {rows && (
-        <section className="mt-10">
-          <h2 className="text-2xl font-bold">
-            <span className="mr-2 inline-block rounded-full bg-[#1f4d3a] px-3 py-0.5 text-lg text-white align-middle">2</span>
+        <section className="mt-12">
+          <h2 className="text-xl font-bold md:text-2xl">
+            <span className="mr-2 inline-block rounded-full bg-brand px-3 py-0.5 text-base text-white align-middle">2</span>
             読み取った薬を確認
           </h2>
           {active.length === 0 ? (
-            <p className="mt-3 rounded-xl bg-[#fff4d6] p-4 text-lg">
+            <p className="mt-3 rounded-xl bg-amber-50 p-4 text-lg">
               薬の名前が読み取れませんでした。もう少し近づいて、文字がはっきり写るように撮り直してください。
             </p>
           ) : (
             <ul className="mt-3 space-y-3">
               {active.map((r) => (
-                <li key={r.id} className="rounded-xl border-2 border-gray-300 bg-white p-4">
+                <li key={r.id} className="panel">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
                       <div className="text-base text-gray-600">読み取り：{r.text}</div>
                       {r.chosen && (
                         <div className="mt-1 flex flex-wrap items-center gap-2">
-                          <span className="inline-block rounded-md bg-[#b42318] px-2.5 py-1 text-base font-bold text-white">上乗せ対象</span>
+                          <span className="inline-block rounded-md bg-alert px-2.5 py-1 text-sm font-bold text-white">上乗せ対象</span>
                           <span className="text-xl font-bold">{r.chosen.name}</span>
                           <span className="text-base text-gray-600">{r.chosen.spec}・薬価{r.chosen.price}円</span>
                         </div>
                       )}
                       {r.status === 'not_target' && (
                         <div className="mt-1 flex flex-wrap items-center gap-2">
-                          <span className="inline-block rounded-md border-2 border-gray-500 px-2.5 py-1 text-base font-bold text-gray-800">対象外</span>
+                          <span className="inline-block rounded-md border border-gray-300 bg-gray-50 px-2.5 py-1 text-sm font-bold text-gray-700">対象外</span>
                           <span className="text-xl font-bold">{r.label}</span>
                           {r.guideSlug && (
-                            <Link href={`/switch/${r.guideSlug}/`} className="text-base text-[#1f4d3a] underline">同じ成分の市販薬</Link>
+                            <Link href={`/switch/${r.guideSlug}/`} className="text-base text-brand underline">同じ成分の市販薬</Link>
                           )}
                         </div>
                       )}
                       {r.status === 'unknown' && (
                         <div className="mt-1 text-lg">
-                          <span className="inline-block rounded-md border-2 border-gray-400 px-2.5 py-1 text-base font-bold text-gray-700">対象外の見込み</span>
+                          <span className="inline-block rounded-md border border-gray-300 bg-gray-50 px-2.5 py-1 text-sm font-bold text-gray-700">対象外の見込み</span>
                           <span className="ml-2 text-base text-gray-700">対象77成分の処方薬一覧にありません（読み取り違いの場合は「薬の名前で探す」でご確認ください）</span>
                         </div>
                       )}
@@ -197,7 +198,7 @@ export default function PhotoReader() {
                     <button
                       type="button"
                       onClick={() => setRows(rows.map((x) => (x.id === r.id ? { ...x, removed: true } : x)))}
-                      className="min-h-[44px] rounded-lg border-2 border-gray-400 px-3 text-base font-bold text-gray-700"
+                      className="min-h-[44px] rounded-lg border border-gray-300 px-3 text-base text-gray-700"
                     >
                       削除
                     </button>
@@ -215,7 +216,7 @@ export default function PhotoReader() {
                             aria-pressed={r.chosen?.code === c.code}
                             className={
                               'min-h-[48px] rounded-lg border-2 px-3 py-2 text-base font-bold ' +
-                              (r.chosen?.code === c.code ? 'border-[#1f4d3a] bg-[#1f4d3a] text-white' : 'border-gray-400 bg-white text-gray-900')
+                              (r.chosen?.code === c.code ? 'border-brand bg-brand text-white' : 'border-gray-300 bg-white text-brand-ink')
                             }
                           >
                             {c.name}
@@ -230,7 +231,7 @@ export default function PhotoReader() {
           )}
 
           {active.length > 0 && (
-            <div className="mt-6 rounded-xl border-2 border-[#1f4d3a] bg-[#f3f9f5] p-4">
+            <div className="panel mt-6">
               <p className="text-lg">
                 上乗せ対象 <strong>{codes.length}件</strong>、対象外 <strong>{notTargets.length}件</strong>、一覧にないもの <strong>{unknowns.length}件</strong>
               </p>
@@ -239,21 +240,21 @@ export default function PhotoReader() {
                   type="button"
                   onClick={goSimulator}
                   disabled={codes.length === 0}
-                  className="min-h-[64px] rounded-xl bg-[#b42318] px-6 py-3 text-2xl font-bold text-white disabled:opacity-50"
+                  className="min-h-[60px] rounded-xl bg-alert px-6 py-3 text-xl font-bold text-white disabled:opacity-50"
                 >
                   この薬でいくら増えるか計算する
                 </button>
                 <button
                   type="button"
                   onClick={() => { setRows(null); inputRef.current?.click(); }}
-                  className="min-h-[64px] rounded-xl border-2 border-[#1f4d3a] bg-white px-6 py-3 text-xl font-bold text-[#1f4d3a]"
+                  className="min-h-[56px] rounded-xl border-2 border-brand bg-white px-6 py-3 text-lg font-bold text-brand"
                 >
                   撮り直す
                 </button>
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="min-h-[64px] rounded-xl border-2 border-gray-400 bg-white px-6 py-3 text-xl font-bold text-gray-800"
+                  className="min-h-[56px] rounded-xl border border-gray-300 bg-white px-6 py-3 text-lg font-bold text-gray-700"
                 >
                   この一覧を印刷する
                 </button>
@@ -262,6 +263,20 @@ export default function PhotoReader() {
                 <p className="mt-3 text-base text-gray-700">上乗せ対象の薬がないので、計算するものはありません。</p>
               )}
             </div>
+          )}
+
+          {codes.length > 0 && (
+            <ShareCard
+              heading="読み取った結果を、本人や家族に送る"
+              lead="離れて住む親の薬を調べた人へ。送った相手は押すだけで、この薬で計算する画面が開きます。"
+              message={
+                `お薬手帳を読み取ったら、2027年3月からの「上乗せ料金」の対象が${codes.length}件ありました。\n` +
+                active.filter((r) => r.chosen).map((r) => `・${r.chosen!.name}`).join('\n')
+              }
+              url={`${typeof window !== 'undefined' ? window.location.origin : ''}/otc-similar/simulator/?items=${codes.join(',')}`}
+              xText={`お薬手帳を撮って調べたら、2027年3月からの「上乗せ料金」の対象が${codes.length}件ありました。自分の薬は対象？写真1枚で分かります。`}
+              hashtags={['上乗せ料金', 'OTC類似薬']}
+            />
           )}
         </section>
       )}

@@ -4,7 +4,8 @@ import type { ColumnListItem } from '@/lib/supabase/columns';
 import { ColumnRenderer } from '@/components/column/ColumnRenderer';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
-import { buildArticleJsonLd, buildBreadcrumbJsonLd } from '@/lib/seo';
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, SITE_URL } from '@/lib/seo';
+import { ShareCard } from '@/components/ShareCard';
 
 // 配置先: components/column/ColumnArticle.tsx
 // コラム記事の本体。公開ページ(app/columns/[slug]/page.tsx)と
@@ -22,7 +23,7 @@ function RelatedCard({ col }: { col: ColumnListItem }) {
   return (
     <Link
       href={href}
-      className="rounded border border-gray-200 bg-white p-4 hover:border-brand"
+      className="rounded-2xl border border-gray-200 bg-white p-4 hover:border-brand"
     >
       <div className="mb-1 text-sm font-bold">{col.title}</div>
       {col.summary ? (
@@ -91,17 +92,17 @@ export function ColumnArticle({ col, related, isPreview = false }: Props) {
           </div>
         ) : null}
 
-        <header className="mb-8">
+        <header className="mb-8 mt-2">
           {col.tag ? (
-            <span className="mb-3 inline-block rounded bg-brand-light px-3 py-1 text-sm text-brand-dark">
+            <span className="pill-brand mb-3">
               {col.tag}
             </span>
           ) : null}
-          <h1 className="mb-3 text-3xl font-bold leading-tight md:text-4xl">
+          <h1 className="mb-4 text-2xl font-bold leading-snug md:text-4xl">
             {col.title}
           </h1>
           {col.summary ? (
-            <p className="mb-4 text-lg leading-relaxed text-gray-700">
+            <p className="mb-4 text-base leading-relaxed text-gray-600 md:text-lg">
               {col.summary}
             </p>
           ) : null}
@@ -126,6 +127,18 @@ export function ColumnArticle({ col, related, isPreview = false }: Props) {
         ) : null}
 
         {col.body ? <ColumnRenderer body={col.body} /> : null}
+
+        {!isPreview ? (
+          <ShareCard
+            compact
+            heading="この記事を送る"
+            lead="見出しと要点が入った文章です。「読んでおいて」と一言添えて送れます。"
+            message={`${col.title}${col.summary ? `\n${col.summary}` : ''}`}
+            url={`${SITE_URL}${selfPath}`}
+            xText={`${col.title}（クスリノコンパス）`}
+            hashtags={['市販薬', 'クスリノコンパス']}
+          />
+        ) : null}
 
         {related.length > 0 ? (
           <aside className="mt-16 border-t border-gray-200 pt-8">
