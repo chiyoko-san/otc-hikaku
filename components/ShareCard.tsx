@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 
 // 配置先: components/ShareCard.tsx
 //
@@ -60,7 +61,12 @@ export function ShareCard({
     (href ? `&url=${encodeURIComponent(href)}` : '') +
     (hashtags.length ? `&hashtags=${encodeURIComponent(hashtags.join(','))}` : '');
 
+  // GA4: share_click { method: line|x|copy|native, page, surface(見出し) }
+  const track = (method: string) =>
+    trackEvent('share_click', { method, page: typeof location !== 'undefined' ? location.pathname : '', surface: heading });
+
   const copy = async () => {
+    track('copy');
     try {
       await navigator.clipboard.writeText(full);
       setCopied(true);
@@ -71,6 +77,7 @@ export function ShareCard({
   };
 
   const nativeShare = async () => {
+    track('native');
     try {
       await navigator.share({ text: message, url: href || undefined });
     } catch {
@@ -102,6 +109,7 @@ export function ShareCard({
           rel="noopener noreferrer"
           className={`${btn} text-white`}
           style={{ backgroundColor: LINE_GREEN }}
+          onClick={() => track('line')}
         >
           LINEで送る
         </a>
@@ -110,6 +118,7 @@ export function ShareCard({
           target="_blank"
           rel="noopener noreferrer"
           className={`${btn} bg-black text-white`}
+          onClick={() => track('x')}
         >
           Xに投稿する
         </a>

@@ -163,6 +163,12 @@ export default function OtcSimilarHubPage() {
           <EntryCard href={OTC_SIMILAR_PATHS.use} title="用途で探す" note="花粉症、湿布、保湿剤など12の用途から" />
         </div>
 
+        <p className="mt-6 text-base text-gray-600">数字で見る</p>
+        <div className="mt-2 grid gap-3 sm:grid-cols-2">
+          <EntryCard href={OTC_SIMILAR_PATHS.quick} title="よく出る薬21種の早見表" note="ロキソニン・アレグラ・ヒルドイドなど。1回の処方でいくら増えるか" />
+          <EntryCard href={OTC_SIMILAR_PATHS.ranking} title="上乗せが大きい薬ランキング" note="飲み薬・湿布・塗り薬・点鼻薬ごとに。ジェネリックで減る額も" />
+        </div>
+
         <p className="mt-6 text-base text-gray-600">用途から直接えらぶ</p>
         <ul className="mt-2 flex flex-wrap gap-2">
           {OTC_SIMILAR_GROUPS.map((g) => (
@@ -260,6 +266,9 @@ export default function OtcSimilarHubPage() {
             <p className="mt-3 text-sm text-gray-600 md:text-base">
               薬価は厚生労働省の薬価基準収載品目リスト（{getYakkaDateLabel()}時点）。数量は一般的な処方量の目安で、実際の処方量・薬価・負担割合により変わります。ジェネリックは薬価が安いぶん上乗せ額も小さくなります。
             </p>
+            <Link href={OTC_SIMILAR_PATHS.quick} className="mt-3 inline-block text-base font-bold text-brand underline underline-offset-4 md:text-lg">
+              よく出る薬21種の早見表を見る ›
+            </Link>
           </div>
         )}
 

@@ -28,6 +28,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/otc-similar/simulator/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/otc-similar/photo/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/otc-similar/pharmacy/`, lastModified: now, priority: 0.7, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/otc-similar/ranking/`, lastModified: now, priority: 0.8, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/otc-similar/quick/`, lastModified: now, priority: 0.9, changeFrequency: 'monthly' },
     { url: `${SITE_URL}/symptoms/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/ingredients/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/columns/`, lastModified: now, priority: 0.8, changeFrequency: 'daily' },
