@@ -136,9 +136,14 @@ def fetch_published_titles() -> set[str]:
 
 
 def publish(col_id: str) -> None:
+    # 2026-10 変更: date を「生成日」から「公開日」に書き換える。
+    # 一覧とサイトマップは date 順なので、これが無いと後から公開した記事が
+    # 古い記事の下に埋まり、Googleにも古い記事として見える。
+    now = datetime.now(JST)
     payload = json.dumps({
         "status": "published",
-        "updated_at": datetime.now(JST).isoformat(),
+        "date": now.strftime("%Y-%m-%d"),
+        "updated_at": now.isoformat(),
     }).encode("utf-8")
     _request("PATCH", f"{TABLE}?id=eq.{col_id}", payload,
              {"Prefer": "return=minimal"})
