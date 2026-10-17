@@ -17,6 +17,7 @@ export function Footer() {
           <ul className="space-y-2 text-sm text-gray-700">
             <li><Link href="/switch/">処方薬から探す</Link></li>
             <li><Link href="/medicines/">薬を探す</Link></li>
+            <li><Link href="/medicines/index/">薬の一覧（50音順）</Link></li>
             <li><Link href="/symptoms/">症状から選ぶ</Link></li>
             <li><Link href="/ingredients/">成分辞典</Link></li>
             <li><Link href="/akinator/">症状アキネーター</Link></li>
@@ -26,6 +27,7 @@ export function Footer() {
           <h3 className="mb-3 text-sm font-bold">読む</h3>
           <ul className="space-y-2 text-sm text-gray-700">
             <li><Link href="/columns/">コラム</Link></li>
+            <li><Link href="/otc-similar/all/">上乗せ料金の対象77成分</Link></li>
             <li><Link href="/damage-reports/">被害報告一覧</Link></li>
             <li><Link href="/damage-reports/submit/">被害を報告する</Link></li>
           </ul>

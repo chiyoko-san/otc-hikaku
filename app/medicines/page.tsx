@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getAllMedicines } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
+import Link from 'next/link';
 import { MedicineBrowser } from '@/components/medicine/MedicineBrowser';
 import { FindByLinks } from '@/components/medicine/FindByLinks';
 import { PageHero } from '@/components/layout/PageHero';
@@ -35,6 +36,12 @@ export default function HomePage() {
         PMDA公開情報をもとに整理した市販薬 {all.length.toLocaleString()} 品を、
         成分・リスク区分から比較できます。
       </PageHero>
+
+      <p className="mb-6 text-base text-gray-600 md:text-lg">
+        商品名の頭文字から探すなら
+        <Link href="/medicines/index/" className="mx-1 font-bold text-brand underline underline-offset-4">50音順の一覧</Link>
+        へ。
+      </p>
 
       {/* 検索・絞り込み。条件を入れると結果がここに表示される */}
       <MedicineBrowser

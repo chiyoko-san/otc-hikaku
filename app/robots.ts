@@ -16,6 +16,13 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    // 目次（sitemapindex）1本と、中身の4本。どちらからでも辿れる
+    sitemap: [
+      `${SITE_URL}/sitemap.xml`,
+      `${SITE_URL}/sitemap/0.xml`,
+      `${SITE_URL}/sitemap/1.xml`,
+      `${SITE_URL}/sitemap/2.xml`,
+      `${SITE_URL}/sitemap/3.xml`,
+    ],
   };
 }

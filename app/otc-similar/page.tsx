@@ -163,6 +163,11 @@ export default function OtcSimilarHubPage() {
           <EntryCard href={OTC_SIMILAR_PATHS.use} title="用途で探す" note="花粉症、湿布、保湿剤など12の用途から" />
         </div>
 
+        <p className="mt-6 text-base text-gray-600">対象の薬を知る</p>
+        <div className="mt-2 grid gap-3">
+          <EntryCard href={OTC_SIMILAR_PATHS.all} title="対象77成分の一覧" note="花粉症・湿布・保湿・ステロイド外用・みずむしなど、用途別に代表的な薬と上乗せ額" />
+        </div>
+
         <p className="mt-6 text-base text-gray-600">数字で見る</p>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
           <EntryCard href={OTC_SIMILAR_PATHS.quick} title="よく出る薬21種の早見表" note="ロキソニン・アレグラ・ヒルドイドなど。1回の処方でいくら増えるか" />

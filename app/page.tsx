@@ -1,12 +1,25 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllMedicines } from '@/lib/medicines';
+import { isIndexableMedicine } from '@/lib/indexable';
 import { buildMetadata, buildWebsiteJsonLd } from '@/lib/seo';
 import { JsonLd } from '@/components/layout/JsonLd';
 
 // 配置先: app/page.tsx（トップページ）
 // 高齢者向けに「用件を選ぶ」から始める。検索フォームは /search/?q= に送る。
 // 2026-10 スマホ向け見直し: 色は緑1色＋赤（上乗せ料金だけ）、囲みは白地に薄線、余白を広く。
+
+// 1日1回作り直す（「今日の薬」のリンクを日替わりにするため）
+export const revalidate = 86400;
+
+/** 日付から決まる12品。検索エンジンがトップから毎日違う薬ページを見つけられるようにする */
+function pickTodaysMedicines(count = 12) {
+  const pool = getAllMedicines().filter((m) => isIndexableMedicine(m));
+  if (pool.length === 0) return [];
+  const day = Math.floor(Date.now() / 86400000);
+  const start = (day * 7919) % pool.length; // 7919は素数。日ごとに離れた位置から取る
+  return Array.from({ length: Math.min(count, pool.length) }, (_, i) => pool[(start + i * 613) % pool.length]);
+}
 
 export const metadata: Metadata = buildMetadata({
   title: '市販薬を成分・リスク区分で比較|クスリノコンパス',
@@ -34,6 +47,7 @@ function EntryCard({ href, title, note }: { href: string; title: string; note: s
 
 export default function HomePage() {
   const total = getAllMedicines().length;
+  const todays = pickTodaysMedicines();
 
   return (
     <>
@@ -110,8 +124,35 @@ export default function HomePage() {
             <li>
               <EntryCard href="/damage-reports/" title="被害報告を見る・報告する" note="市販薬や健康食品で困ったことがあれば" />
             </li>
+            <li>
+              <EntryCard href="/medicines/index/" title="薬の一覧（50音順）" note="商品名の頭文字から。あ行〜わ行、英字、漢方" />
+            </li>
+            <li>
+              <EntryCard href="/otc-similar/all/" title="上乗せ料金の対象77成分" note="花粉症・湿布・保湿など、用途別に代表的な薬と金額" />
+            </li>
           </ul>
         </section>
+
+        {/* 今日の薬（日替わり） */}
+        {todays.length > 0 ? (
+          <section className="mt-12">
+            <h2 className="text-xl font-bold md:text-2xl">今日の薬</h2>
+            <p className="mt-2 text-sm text-gray-600 md:text-base">毎日入れ替わります。見かけたことのある薬があれば、成分を見てみてください。</p>
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+              {todays.map((m) => (
+                <li key={m.id}>
+                  <Link href={`/medicines/${m.slug}/`} className="flex min-h-[52px] items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-2 hover:border-brand">
+                    <span className="min-w-0">
+                      <span className="block text-base text-brand-ink">{m.name}</span>
+                      <span className="block text-xs text-gray-500">{m.maker}</span>
+                    </span>
+                    <span className="shrink-0 text-gray-400" aria-hidden="true">›</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         {/* 信頼 */}
         <section className="mt-12 rounded-2xl bg-gray-100 p-5 text-sm text-gray-600 md:text-base">

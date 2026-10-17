@@ -1,131 +1,84 @@
 import type { MetadataRoute } from 'next';
-import {
-  getAllMedicines,
-  getAllIngredients,
-  getAllSymptoms,
-} from '@/lib/medicines';
+import { getAllMedicines, getAllIngredients, getAllSymptoms } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
 import { SWITCH_DRUGS } from '@/lib/switch-data';
-import { getAllColumnSlugs, getPublishedColumns } from '@/lib/supabase/columns';
+import { getPublishedColumns } from '@/lib/supabase/columns';
 import { SITE_URL } from '@/lib/seo';
 import { isIndexableMedicine } from '@/lib/indexable';
 import { OTC_SIMILAR_77, OTC_SIMILAR_GROUPS } from '@/lib/otc-similar-77';
 import { getAllItemCodes } from '@/lib/otc-similar-items';
+import { getIndexRows } from '@/lib/kana-index';
+import medicinesRaw from '@/data/medicines.json';
+import otcRaw from '@/data/otc-similar-items.json';
+import { SITEMAP_IDS } from '@/lib/sitemap-ids';
 
-export const revalidate = 3600; // 1時間ごとに再生成
+// 配置先: app/sitemap.ts
+//
+// 2026-10 作り直し:
+//   1) 4ファイルに分割（/sitemap/0.xml 〜 /sitemap/3.xml）。Search Console でサイトマップごとに
+//      「送信/登録」の数が見えるので、上乗せ料金のページが何件登録されたかを追える。
+//      0 = 固定ページ・切替・分類・成分・症状・50音一覧  1 = 上乗せ料金（成分77・用途12・処方薬688）
+//      2 = 薬ページ（中身がそろっている約7,300品）     3 = コラム
+//      /sitemap.xml は app/sitemap.xml/route.ts が4本をまとめた目次（sitemapindex）を返す。
+//   2) lastModified を本当の更新日に。以前は全ページが「ビルドした日時」で、Google から見ると
+//      毎日全ページが更新されたことになり、更新日を信用されなくなっていた。
+//      薬・成分・症状・分類 → data/medicines.json の updated_at
+//      上乗せ料金           → data/otc-similar-items.json の generated_at
+//      コラム               → 各記事の updated_at（無ければ date）
+//      固定ページ           → STATIC_UPDATED（ページの文言を変えたら日付を進める）
+//   priority / changeFrequency は Google が使わないので外した。
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date().toISOString();
+export const revalidate = 3600;
 
-  // 固定ページ
-  const staticPages: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/`, lastModified: now, priority: 1.0, changeFrequency: 'daily' },
-    { url: `${SITE_URL}/medicines/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/switch/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/otc-similar/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/otc-similar/name/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/otc-similar/use/`, lastModified: now, priority: 0.8, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/otc-similar/simulator/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/otc-similar/photo/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/otc-similar/pharmacy/`, lastModified: now, priority: 0.7, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/otc-similar/ranking/`, lastModified: now, priority: 0.8, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/otc-similar/quick/`, lastModified: now, priority: 0.9, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/symptoms/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/ingredients/`, lastModified: now, priority: 0.9, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/columns/`, lastModified: now, priority: 0.8, changeFrequency: 'daily' },
-    { url: `${SITE_URL}/damage-reports/`, lastModified: now, priority: 0.7, changeFrequency: 'daily' },
-    { url: `${SITE_URL}/damage-reports/submit/`, lastModified: now, priority: 0.5, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/akinator/`, lastModified: now, priority: 0.7, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/about/`, lastModified: now, priority: 0.4, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/privacy/`, lastModified: now, priority: 0.3, changeFrequency: 'yearly' },
-    { url: `${SITE_URL}/contact/`, lastModified: now, priority: 0.3, changeFrequency: 'yearly' },
-  ];
+/** 固定ページの最終更新日。トップや制度説明の文言を変えたらここを進める */
+const STATIC_UPDATED = '2026-10-17';
 
-  // 処方薬→市販薬 切替ページ (制度変更で伸びる新規需要の主力)
-  const switchPages: MetadataRoute.Sitemap = SWITCH_DRUGS.map((d) => ({
-    url: `${SITE_URL}/switch/${d.slug}/`,
-    lastModified: now,
-    priority: 0.9,
-    changeFrequency: 'weekly' as const,
-  }));
+const MEDICINES_UPDATED = ((medicinesRaw as { updated_at?: string }).updated_at ?? STATIC_UPDATED).slice(0, 10);
+const OTC_UPDATED = ((otcRaw as { generated_at?: string }).generated_at ?? STATIC_UPDATED).slice(0, 10);
 
-  // OTC類似薬 上乗せ料金: 用途別ページ (12件)
-  const otcSimilarGroupPages: MetadataRoute.Sitemap = OTC_SIMILAR_GROUPS.map((g) => ({
-    url: `${SITE_URL}/otc-similar/use/${g.key}/`,
-    lastModified: now,
-    priority: 0.8,
-    changeFrequency: 'weekly' as const,
-  }));
+export function generateSitemaps() {
+  return SITEMAP_IDS.map((id) => ({ id }));
+}
 
-  // OTC類似薬 上乗せ料金: 成分別ページ (77件) と 医療用品目ページ (688件)
-  const otcSimilarIngredientPages: MetadataRoute.Sitemap = OTC_SIMILAR_77.map((i) => ({
-    url: `${SITE_URL}/otc-similar/ingredient/${i.no}/`,
-    lastModified: now,
-    priority: 0.8,
-    changeFrequency: 'weekly' as const,
-  }));
-  const otcSimilarItemPages: MetadataRoute.Sitemap = getAllItemCodes().map((code) => ({
-    url: `${SITE_URL}/otc-similar/item/${code}/`,
-    lastModified: now,
-    priority: 0.7,
-    changeFrequency: 'monthly' as const,
-  }));
+function entry(path: string, lastModified: string): MetadataRoute.Sitemap[number] {
+  return { url: `${SITE_URL}${path}`, lastModified };
+}
 
-  // カテゴリページ
-  const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((c) => ({
-    url: `${SITE_URL}/categories/${c.id}/`,
-    lastModified: now,
-    priority: 0.7,
-    changeFrequency: 'weekly' as const,
-  }));
+export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+  if (id === 0) {
+    const staticPaths = [
+      '/', '/medicines/', '/medicines/index/', '/switch/', '/symptoms/', '/ingredients/', '/columns/',
+      '/damage-reports/', '/damage-reports/submit/', '/akinator/', '/about/', '/privacy/', '/contact/',
+      '/otc-similar/', '/otc-similar/all/', '/otc-similar/quick/', '/otc-similar/ranking/',
+      '/otc-similar/name/', '/otc-similar/use/', '/otc-similar/simulator/', '/otc-similar/photo/', '/otc-similar/pharmacy/',
+    ];
+    return [
+      ...staticPaths.map((p) => entry(p, p.startsWith('/otc-similar/') ? OTC_UPDATED : STATIC_UPDATED)),
+      ...SWITCH_DRUGS.map((d) => entry(`/switch/${d.slug}/`, OTC_UPDATED)),
+      ...CATEGORIES.map((c) => entry(`/categories/${c.id}/`, MEDICINES_UPDATED)),
+      ...getAllIngredients().map((i) => entry(`/ingredients/${i.slug}/`, MEDICINES_UPDATED)),
+      ...getAllSymptoms().map((s) => entry(`/symptoms/${s.slug}/`, MEDICINES_UPDATED)),
+      ...getIndexRows().map((r) => entry(`/medicines/index/${r.key}/`, MEDICINES_UPDATED)),
+    ];
+  }
 
-  // 薬品詳細ページ (SEO 主力)
-  // generateMetadata と同じ判定でフィルタする。noindex のページを sitemap に載せると
-  // Google に矛盾シグナルを送るので、ここを外してはいけない。
-  const medicinePages: MetadataRoute.Sitemap = getAllMedicines()
-    .filter((m) => isIndexableMedicine(m))
-    .map((m) => ({
-      url: `${SITE_URL}/medicines/${m.slug}/`,
-      lastModified: now,
-      priority: 0.9,
-      changeFrequency: 'weekly' as const,
-    }));
+  if (id === 1) {
+    return [
+      ...OTC_SIMILAR_GROUPS.map((g) => entry(`/otc-similar/use/${g.key}/`, OTC_UPDATED)),
+      ...OTC_SIMILAR_77.map((i) => entry(`/otc-similar/ingredient/${i.no}/`, OTC_UPDATED)),
+      ...getAllItemCodes().map((code) => entry(`/otc-similar/item/${code}/`, OTC_UPDATED)),
+    ];
+  }
 
-  // 成分ページ
-  const ingredientPages: MetadataRoute.Sitemap = getAllIngredients().map((i) => ({
-    url: `${SITE_URL}/ingredients/${i.slug}/`,
-    lastModified: now,
-    priority: 0.8,
-    changeFrequency: 'weekly' as const,
-  }));
+  if (id === 2) {
+    return getAllMedicines()
+      .filter((m) => isIndexableMedicine(m))
+      .map((m) => entry(`/medicines/${m.slug}/`, MEDICINES_UPDATED));
+  }
 
-  // 症状ページ
-  const symptomPages: MetadataRoute.Sitemap = getAllSymptoms().map((s) => ({
-    url: `${SITE_URL}/symptoms/${s.slug}/`,
-    lastModified: now,
-    priority: 0.8,
-    changeFrequency: 'weekly' as const,
-  }));
-
-  // コラム(最新の日付を利用)
+  // id === 3: コラム
   const columns = await getPublishedColumns(500);
-  const columnPages: MetadataRoute.Sitemap = columns.map((c) => ({
-    url: `${SITE_URL}/columns/${c.slug || c.id}/`,
-    lastModified: c.updated_at || c.date || now,
-    priority: 0.6,
-    changeFrequency: 'monthly' as const,
-  }));
-
-  return [
-    ...staticPages,
-    ...switchPages,
-    ...otcSimilarGroupPages,
-    ...otcSimilarIngredientPages,
-    ...otcSimilarItemPages,
-    ...categoryPages,
-    ...medicinePages,
-    ...ingredientPages,
-    ...symptomPages,
-    ...columnPages,
-  ];
+  return columns.map((c) =>
+    entry(`/columns/${c.slug || c.id}/`, (c.updated_at || c.date || STATIC_UPDATED).slice(0, 10))
+  );
 }
