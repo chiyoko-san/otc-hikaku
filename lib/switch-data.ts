@@ -1,7 +1,8 @@
 import type { Medicine } from '@/types';
-import { getEnrichedMedicines } from './medicines';
 import { normalizeIngredientName } from './slug';
 import { getOtcSimilarByNo, type OtcSimilarIngredient } from './otc-similar-77';
+import { estimate, findItemByName, type OtcSimilarItem } from './otc-similar-items';
+import { getAllMedicines, getEnrichedMedicines } from './medicines';
 
 /**
  * 処方薬 → 市販薬 切替データ
@@ -25,6 +26,31 @@ export type SwitchDrug = {
   caution: string;         // 切替時の注意
   altNote?: string;        // 同成分の市販薬が見つからない場合の案内
   otcSimilarNo: number | null; // 特別料金 対象77成分（案）の番号。null=対象外
+  /** ページ本文を最後に見直した日（サイトマップの lastModified に使う）。無ければ薬価データの日付 */
+  updated?: string;
+  /**
+   * 2026-10 作り直し: 冒頭1画面に「同じ成分の市販薬・ネットで買える区分・上乗せ額・処方薬との違い」の
+   * 4点を出す新レイアウト用のデータ。これが入っている薬だけ新レイアウトで表示する（無い薬は従来どおり）。
+   * 30ページに広げるときは、各薬にこの answer を書き足していく。
+   */
+  answer?: SwitchAnswer;
+};
+
+export type SwitchAnswer = {
+  /** 同じ成分の市販薬の区分（代表的なもの）。1=第1類 2=第2類 2.5=指定第2類 3=第3類 */
+  otcRisk: 1 | 2 | 2.5 | 3;
+  /** 処方薬と「同じ」点（成分・1回の量・用法）。添付文書と照合済みの文章を入れる */
+  same: string;
+  /** 処方薬と「違う」点（対象年齢・使える症状の範囲など） */
+  differs: string;
+  /** 「1か月でいくら増えるか」の計算に使う処方薬（品名の前方一致。/otc-similar/quick/ と同じ流儀）と量 */
+  monthly: { itemPrefix: string; qty: number; qtyLabel: string };
+  /** PMDAデータの成分欄が空で成分検索に引っかからない市販薬を、製品名で足す（例: アレルビ） */
+  extraOtcNames?: string[];
+  /** 別の成分が足された製品を一覧から外す（正規化済み成分名の部分一致。例: プソイドエフェドリン） */
+  excludeOtcKeys?: string[];
+  /** 外した製品についての一言（「鼻づまり用の別の薬です」など） */
+  variantNote?: string;
 };
 
 export const SWITCH_DRUGS: SwitchDrug[] = [
@@ -37,8 +63,24 @@ export const SWITCH_DRUGS: SwitchDrug[] = [
     doseNote:
       '医療用は1回60mgを1日2回が一般的です。市販のフェキソフェナジン製剤(アレグラFXなど)も1回60mg・1日2回で、含有量は同等です。',
     caution:
-      '7日間程度服用しても症状が良くならない場合は、服用を中止して医師・薬剤師に相談してください。',
+      '7日間程度服用しても症状が良くならない場合は、服用を中止して医師・薬剤師に相談してください。市販薬は15歳未満には使えません（ジュニア製品は7歳から14歳）。',
     otcSimilarNo: 51,
+    updated: '2026-10-18',
+    // 出典: アレグラFX 添付文書（久光製薬／PMDA）、アレグラ錠 添付文書（サノフィ／PMDA）
+    answer: {
+      otcRisk: 2,
+      same:
+        '有効成分（フェキソフェナジン塩酸塩）も1回の量も同じです。処方のアレグラ錠60mgは1回1錠を1日2回、市販のアレグラFXやアレルビも1回60mg（1錠）を1日2回です。',
+      differs:
+        '市販薬が使えるのは15歳以上（ジュニア製品は7歳から14歳）で、効能は花粉症・ハウスダストによる鼻の症状（くしゃみ・鼻水・鼻づまり）だけです。処方薬にある「じんましん・皮膚のかゆみ」には市販薬は使えません。',
+      monthly: { itemPrefix: 'アレグラ錠60mg', qty: 60, qtyLabel: '1日2錠×30日分（60錠）' },
+      // アレルビ（皇漢堂製薬）は PMDA データの成分欄が空で成分検索に出ないため、名前で足す。
+      // pmda_backfill で成分が埋まれば二重には出ない（同じ製品は1回しか数えない）。
+      extraOtcNames: ['アレルビ'],
+      excludeOtcKeys: ['プソイドエフェドリン'],
+      variantNote:
+        'アレグラFXプレミアム（鼻づまり用）はフェキソフェナジンにプソイドエフェドリンが加わった別の薬で、処方薬ではディレグラにあたります。上の一覧には入れていません。',
+    },
   },
   {
     slug: 'loxonin',
@@ -418,21 +460,92 @@ export function getOtcSimilarForSwitch(entry: SwitchDrug): OtcSimilarIngredient 
 
 /**
  * 切替エントリに対応する同成分の市販薬を medicines.json から抽出
+ *
+ * answer がある薬は、
+ *   - excludeOtcKeys に当たる製品（別成分が足された製品）を外す
+ *   - extraOtcNames の製品（成分欄が空で引っかからない製品）を名前で足す
+ *   - 処方薬名で始まる製品（アレグラFX など）→ 名前で足した製品 → その他 の順に並べる
  */
 export function getOtcMatchesForSwitch(entry: SwitchDrug, limit = 12): Medicine[] {
-  const enriched = getEnrichedMedicines();
-  const result: Medicine[] = [];
-  for (const med of enriched) {
+  const a = entry.answer;
+  const exclude = a?.excludeOtcKeys ?? [];
+  const extra = a?.extraOtcNames ?? [];
+  const brand = entry.rxName.replace(/[(（].*$/, '');
+
+  const hits: Medicine[] = [];
+  const seen = new Set<number>();
+  for (const med of getEnrichedMedicines()) {
     const normIngs = (med.ings || []).map((i) => normalizeIngredientName(i));
-    const hit = entry.ingredientKeys.some((key) =>
-      normIngs.some((n) => n.includes(key))
-    );
-    if (hit) {
-      result.push(med);
-      if (result.length >= limit) break;
+    const hit = entry.ingredientKeys.some((key) => normIngs.some((n) => n.includes(key)));
+    if (!hit) continue;
+    if (exclude.length > 0 && normIngs.some((n) => exclude.some((x) => n.includes(x)))) continue;
+    hits.push(med);
+    seen.add(med.id);
+  }
+  if (extra.length > 0) {
+    for (const med of getAllMedicines()) {
+      if (seen.has(med.id)) continue;
+      if (extra.some((name) => med.name.includes(name))) {
+        hits.push(med);
+        seen.add(med.id);
+      }
     }
   }
-  return result;
+  if (a) {
+    const rank = (m: Medicine) =>
+      m.name.startsWith(brand) ? 0 : extra.some((name) => m.name.includes(name)) ? 1 : 2;
+    hits.sort((x, y) => rank(x) - rank(y)); // 同順位は元の並び（安定ソート）
+  }
+  return hits.slice(0, limit);
+}
+
+/** answer.excludeOtcKeys で一覧から外した製品（「別の薬です」と注記するために返す） */
+export function getOtcVariantsForSwitch(entry: SwitchDrug): Medicine[] {
+  const exclude = entry.answer?.excludeOtcKeys ?? [];
+  if (exclude.length === 0) return [];
+  return getEnrichedMedicines().filter((med) => {
+    const normIngs = (med.ings || []).map((i) => normalizeIngredientName(i));
+    const hit = entry.ingredientKeys.some((key) => normIngs.some((n) => n.includes(key)));
+    return hit && normIngs.some((n) => exclude.some((x) => n.includes(x)));
+  });
+}
+
+export type SwitchMonthly = {
+  item: OtcSimilarItem;
+  qty: number;
+  qtyLabel: string;
+  /** 1割・2割・3割負担それぞれの「これまで／これから／増える額」 */
+  e1: ReturnType<typeof estimate>;
+  e2: ReturnType<typeof estimate>;
+  e3: ReturnType<typeof estimate>;
+};
+
+/** 「1か月分でいくら増えるか」。薬価データに品名が無ければ null（ページ側で非表示にする） */
+export function getSwitchMonthly(entry: SwitchDrug): SwitchMonthly | null {
+  const a = entry.answer;
+  if (!a || entry.otcSimilarNo == null) return null;
+  const item = findItemByName(a.monthly.itemPrefix);
+  if (!item) return null;
+  const { qty, qtyLabel } = a.monthly;
+  return {
+    item,
+    qty,
+    qtyLabel,
+    e1: estimate(item, qty, 0.1),
+    e2: estimate(item, qty, 0.2),
+    e3: estimate(item, qty, 0.3),
+  };
+}
+
+/** 同じ用途のほかの処方薬（同じ表示カテゴリ、または対象77成分で同じグループ） */
+export function getSwitchSiblings(entry: SwitchDrug, limit = 8): SwitchDrug[] {
+  const group = entry.otcSimilarNo != null ? getOtcSimilarByNo(entry.otcSimilarNo)?.group ?? null : null;
+  return SWITCH_DRUGS.filter((d) => {
+    if (d.slug === entry.slug) return false;
+    if (d.categoryLabel === entry.categoryLabel) return true;
+    if (group && d.otcSimilarNo != null) return getOtcSimilarByNo(d.otcSimilarNo)?.group === group;
+    return false;
+  }).slice(0, limit);
 }
 
 /**

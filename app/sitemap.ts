@@ -54,7 +54,7 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     ];
     return [
       ...staticPaths.map((p) => entry(p, p.startsWith('/otc-similar/') ? OTC_UPDATED : STATIC_UPDATED)),
-      ...SWITCH_DRUGS.map((d) => entry(`/switch/${d.slug}/`, OTC_UPDATED)),
+      ...SWITCH_DRUGS.map((d) => entry(`/switch/${d.slug}/`, d.updated ?? OTC_UPDATED)),
       ...CATEGORIES.map((c) => entry(`/categories/${c.id}/`, MEDICINES_UPDATED)),
       ...getAllIngredients().map((i) => entry(`/ingredients/${i.slug}/`, MEDICINES_UPDATED)),
       ...getAllSymptoms().map((s) => entry(`/symptoms/${s.slug}/`, MEDICINES_UPDATED)),

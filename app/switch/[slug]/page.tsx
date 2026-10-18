@@ -17,6 +17,14 @@ import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from '@/lib/seo';
+import SwitchAnswerPage, { switchAnswerSummary } from '@/components/switch/SwitchAnswerPage';
+import { yen } from '@/lib/otc-similar-items';
+
+// 2026-10 作り直し:
+//   lib/switch-data.ts で answer が入っている薬は components/switch/SwitchAnswerPage.tsx の
+//   新レイアウト（冒頭1画面で「市販薬・ネットで買える区分・上乗せ額・違い」に答える）で表示する。
+//   answer が無い薬は、このファイル下部の従来レイアウトのまま。30ページ分の answer が揃ったら
+//   従来レイアウトは削除してよい。
 
 // ISR: 1日に1回再生成
 export const revalidate = 86400;
@@ -30,6 +38,30 @@ type Props = { params: { slug: string } };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const entry = getSwitchDrugBySlug(params.slug);
   if (!entry) return { title: 'ページが見つかりません' };
+
+  if (entry.answer) {
+    const { matches, monthly, risk, topNames } = switchAnswerSummary(entry);
+    const n = matches.length;
+    const fee =
+      entry.otcSimilarNo != null
+        ? monthly
+          ? `2027年3月からの上乗せ料金は${monthly.qtyLabel}で+約${yen(monthly.e3.diff)}（3割負担）。`
+          : '2027年3月からの上乗せ料金の対象（厚労省案）。'
+        : '2027年3月からの上乗せ料金は対象外（厚労省案）。';
+    return buildMetadata({
+      title:
+        n > 0
+          ? `${entry.rxName}と同じ成分の市販薬${n}品｜ネットで買える？上乗せ料金はいくら？`
+          : `${entry.rxName}と同じ成分の市販薬はある？｜上乗せ料金の対象と処方薬との違い`,
+      description:
+        (n > 0
+          ? `${entry.rxName}（${entry.genericName}）と同じ成分の市販薬は${topNames.join('・')}など${n}品。${risk.label}なので${risk.short}。`
+          : `${entry.rxName}（${entry.genericName}）と同じ成分の市販薬の有無と代わりの選び方。`) +
+        `${fee}処方薬との違い（対象年齢・使える症状）と購入時の注意も解説。PMDA・厚労省の公開情報ベース。`,
+      path: `/switch/${entry.slug}/`,
+      type: 'article',
+    });
+  }
 
   const matches = getOtcMatchesForSwitch(entry, 9999);
   const feeNote =
@@ -52,6 +84,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SwitchDetailPage({ params }: Props) {
   const entry = getSwitchDrugBySlug(params.slug);
   if (!entry) notFound();
+
+  // 新レイアウト（answer がある薬）
+  if (entry.answer) return <SwitchAnswerPage entry={entry} />;
 
   const allMatches = getOtcMatchesForSwitch(entry, 9999);
   const matches = allMatches.slice(0, 12);
