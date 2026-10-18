@@ -14,11 +14,17 @@ export default async function Image({ params }: { params: { slug: string } }) {
   const n = getOtcMatchesForSwitch(entry, 9999).length;
   const monthly = getSwitchMonthly(entry);
   const target = entry.otcSimilarNo != null;
+  const partial = entry.answer?.partialMatchLabel;
+  const subtitle = partial
+    ? `同じ組み合わせの市販薬はなし・${partial.replace(/（.*$/, '')}${n}品`
+    : n > 0
+      ? `市販薬${n}品・${entry.genericName}`
+      : `${entry.genericName}・同じ成分の市販薬はありません`;
   return ogImage({
     tag: target ? '上乗せ対象' : '対象外',
     kicker: target ? '2027年3月から' : '2027年3月の上乗せ料金は',
     title: `${entry.rxName}と同じ成分の市販薬`,
-    subtitle: n > 0 ? `市販薬${n}品・${entry.genericName}` : `${entry.genericName}・同じ成分の市販薬はありません`,
+    subtitle,
     big: monthly ? `+約${yen(monthly.e3.diff)}` : undefined,
     bigLabel: monthly ? `${monthly.qtyLabel.replace(/（.*$/, '')}・3割負担で増える額` : undefined,
   });

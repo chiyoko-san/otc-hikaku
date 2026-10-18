@@ -11,7 +11,7 @@ import {
 } from '@/lib/switch-data';
 import { OTC_SIMILAR_META, getOtcSimilarByNo } from '@/lib/otc-similar-77';
 import { OTC_SIMILAR_PATHS } from '@/lib/otc-similar-data';
-import { getItemsByNo, getYakkaDateLabel, unitLabel, yen } from '@/lib/otc-similar-items';
+import { getItemsByNo, getYakkaDateLabel, yen } from '@/lib/otc-similar-items';
 import { pickRelatedColumns, columnHref } from '@/lib/related-columns';
 import { SITE_URL, buildBreadcrumbJsonLd, buildFaqJsonLd } from '@/lib/seo';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
@@ -65,12 +65,16 @@ export function riskInfoFor(risk: number): RiskInfo {
 }
 
 const KIDS_RE = /ジュニア|こども|子ども|子供|小児|キッズ/;
+/** 貼り薬・塗り薬（外用）らしい製品名。groupBy: 'route' のときだけ使う */
+const TOPICAL_RE = /テープ|パップ|ゲル|ローション|クリーム|軟膏|スプレー|プラスター|シップ|湿布|液|貼|塗|外用/;
 
 /** ページ本文・meta・OG画像が共通で使う要約（市販薬一覧・1か月の上乗せ・区分・代表製品名2つ） */
 export function switchAnswerSummary(entry: SwitchDrug) {
   const matches = getOtcMatchesForSwitch(entry, 9999);
   const monthly = getSwitchMonthly(entry);
   const risk = riskInfoFor(entry.answer?.otcRisk ?? 2);
+  /** 区分の一言。otcRiskNote があればそれを優先 */
+  const riskLine = entry.answer?.otcRiskNote ?? risk.short;
   // 代表製品名: 処方薬名で始まる製品（アレグラFX）と、名前で足した製品（アレルビ）を優先して2つ
   const brand = entry.rxName.replace(/[(（].*$/, '');
   const extra = entry.answer?.extraOtcNames ?? [];
@@ -83,7 +87,7 @@ export function switchAnswerSummary(entry: SwitchDrug) {
     if (picks.length >= 2) break;
     if (!picks.includes(m.name)) picks.push(m.name);
   }
-  return { matches, monthly, risk, topNames: picks };
+  return { matches, monthly, risk, riskLine, topNames: picks };
 }
 
 function H2({ id, children }: { id?: string; children: ReactNode }) {
@@ -107,12 +111,16 @@ function MedicineGrid({ list }: { list: Medicine[] }) {
 export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug }) {
   const a = entry.answer;
   if (!a) return null;
-  const { matches, monthly, risk, topNames } = switchAnswerSummary(entry);
+  const { matches, monthly, risk, riskLine, topNames } = switchAnswerSummary(entry);
   const variants = getOtcVariantsForSwitch(entry);
   const siblings = getSwitchSiblings(entry);
   const count = matches.length;
-  const kids = matches.filter((m) => KIDS_RE.test(m.name));
-  const adults = matches.filter((m) => !KIDS_RE.test(m.name));
+  const partial = a.partialMatchLabel ?? null; // 「同じ組み合わせは無いが一部同じ」ページ
+  const exact = count > 0 && !partial;
+  const groupBy = a.groupBy ?? 'age';
+  const groupA = groupBy === 'age' ? matches.filter((m) => !KIDS_RE.test(m.name)) : groupBy === 'route' ? matches.filter((m) => !TOPICAL_RE.test(m.name)) : matches;
+  const groupB = groupBy === 'age' ? matches.filter((m) => KIDS_RE.test(m.name)) : groupBy === 'route' ? matches.filter((m) => TOPICAL_RE.test(m.name)) : [];
+  const groupLabels = groupBy === 'route' ? ['飲み薬', '貼り薬・塗り薬'] : ['大人用', '子ども用'];
   const isTarget = entry.otcSimilarNo != null;
   const ing = isTarget && entry.otcSimilarNo != null ? getOtcSimilarByNo(entry.otcSimilarNo) : null;
   const rxItems = isTarget && entry.otcSimilarNo != null ? getItemsByNo(entry.otcSimilarNo) : [];
@@ -137,14 +145,18 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
   const faqs = [
     {
       q: `${entry.rxName}と同じ成分の市販薬はありますか？`,
-      a:
-        count > 0
-          ? `あります。${entry.rxName}の有効成分（${entry.genericName}）を含む市販薬は${topNames.join('・')}など${count}品です。${a.same}`
-          : entry.altNote || `${entry.genericName}を含む市販薬は現在確認できません。`,
+      a: exact
+        ? `あります。${entry.rxName}の有効成分（${entry.genericName}）を含む市販薬は${topNames.join('・')}など${count}品です。${a.same}`
+        : partial
+          ? `${a.same} ${a.differs}`
+          : `${a.same} ${entry.altNote ?? ''}`.trim(),
     },
     {
       q: `${entry.rxName}と同じ成分の市販薬はネット通販で買えますか？`,
-      a: `${risk.label}なので買えます。${risk.detail}`,
+      a:
+        count > 0
+          ? `${risk.label}なので買えます。${riskLine} ${risk.detail}`
+          : '同じ成分の市販薬が販売されていないため、ネットでも店頭でも買えません。',
     },
     {
       q: `${entry.rxName}は2027年3月からの上乗せ料金（OTC類似薬の特別料金）の対象ですか？`,
@@ -154,7 +166,7 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
     },
     {
       q: '処方薬と市販薬で何が違いますか？',
-      a: `${a.same} 違うのは使える範囲です。${a.differs}`,
+      a: exact ? `${a.same} 違うのは使える範囲です。${a.differs}` : `${a.same} ${a.differs}`,
     },
     {
       q: '購入するときに気をつけることはありますか？',
@@ -164,15 +176,19 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
 
   const shareMessage =
     `【${entry.rxName}と同じ成分の市販薬】\n` +
-    (count > 0 ? `・市販薬は${count}品（${topNames.join('、')} など）\n` : `・同じ成分の市販薬はありません\n`) +
-    `・${risk.label}：${risk.short}\n` +
+    (exact
+      ? `・市販薬は${count}品（${topNames.join('、')} など）\n`
+      : partial
+        ? `・同じ組み合わせの市販薬はなし。${partial}が${count}品\n`
+        : `・同じ成分の市販薬はありません\n`) +
+    (count > 0 ? `・${risk.label}：${riskLine}\n` : '') +
     (isTarget
       ? monthly
         ? `・2027年3月から処方の${entry.rxName}は上乗せ料金の対象。${monthly.qtyLabel}で3割負担なら+約${yen(monthly.e3.diff)}`
         : `・2027年3月から処方の${entry.rxName}は上乗せ料金の対象`
       : `・2027年3月からの上乗せ料金は対象外（厚労省案）`);
   const shareX =
-    count > 0
+    exact
       ? `${entry.rxName}と同じ成分の市販薬は${count}品。${risk.label}なので${risk.short.replace('ます', 'る')}。` +
         (monthly ? `3月からの上乗せ料金は${monthly.qtyLabel.replace(/（.*$/, '')}で+約${yen(monthly.e3.diff)}。` : '')
       : `${entry.rxName}と同じ成分の市販薬は、いまのところありません。`;
@@ -205,13 +221,23 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
             <div className="py-3">
               <dt className="text-base font-bold text-gray-600">同じ成分の市販薬</dt>
               <dd className="mt-1">
-                {count > 0 ? (
+                {exact ? (
                   <>
                     <span className="text-2xl font-bold">{count}品</span>
                     <span className="ml-2">あります（{topNames.join('、')} など）</span>
                     <a href="#otc" className="ml-2 whitespace-nowrap font-bold text-brand underline">
                       一覧へ
                     </a>
+                  </>
+                ) : partial ? (
+                  <>
+                    <span className="text-2xl font-bold">同じ組み合わせはありません</span>
+                    <span className="mt-1 block text-base text-gray-700">
+                      {partial}は{count}品あります
+                      <a href="#otc" className="ml-2 whitespace-nowrap font-bold text-brand underline">
+                        一覧へ
+                      </a>
+                    </span>
                   </>
                 ) : (
                   <span className="text-2xl font-bold">ありません</span>
@@ -221,9 +247,18 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
             <div className="py-3">
               <dt className="text-base font-bold text-gray-600">ネットで買える？</dt>
               <dd className="mt-1">
-                <span className="text-2xl font-bold">買えます</span>
-                <span className={`${risk.cls} ml-2 align-middle`}>{risk.label}</span>
-                <span className="mt-1 block text-base text-gray-700">{risk.short}</span>
+                {count > 0 ? (
+                  <>
+                    <span className="text-2xl font-bold">買えます</span>
+                    <span className={`${risk.cls} ml-2 align-middle`}>{risk.label}</span>
+                    <span className="mt-1 block text-base text-gray-700">{riskLine}</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-2xl font-bold">買えません</span>
+                    <span className="mt-1 block text-base text-gray-700">同じ成分の市販薬が販売されていません</span>
+                  </>
+                )}
               </dd>
             </div>
             <div className="py-3">
@@ -286,14 +321,18 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
         {count > 0 && (
           <section className="mb-10">
             <H2 id="otc">
-              {entry.rxName}と同じ成分の市販薬 {count}品
+              {partial ? `${partial}（${count}品）` : `${entry.rxName}と同じ成分の市販薬 ${count}品`}
             </H2>
-            {kids.length > 0 && adults.length > 0 ? (
+            {groupA.length > 0 && groupB.length > 0 ? (
               <>
-                <h3 className="mb-3 text-lg font-bold">大人用（{adults.length}品）</h3>
-                <MedicineGrid list={adults} />
-                <h3 className="mb-3 mt-6 text-lg font-bold">子ども用（{kids.length}品）</h3>
-                <MedicineGrid list={kids} />
+                <h3 className="mb-3 text-lg font-bold">
+                  {groupLabels[0]}（{groupA.length}品）
+                </h3>
+                <MedicineGrid list={groupA} />
+                <h3 className="mb-3 mt-6 text-lg font-bold">
+                  {groupLabels[1]}（{groupB.length}品）
+                </h3>
+                <MedicineGrid list={groupB} />
               </>
             ) : (
               <MedicineGrid list={matches} />
@@ -325,18 +364,19 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
           <section className="mb-10">
             <H2>同じ成分の市販薬は確認できません</H2>
             <div className="callout-warn">
-              <p className="text-base">{entry.altNote}</p>
+              <p className="text-base">{entry.altNote ?? a.same}</p>
             </div>
           </section>
         )}
 
         {/* ── ネットで買える区分 ── */}
+        {count > 0 && (
         <section className="mb-10">
           <H2 id="online">ネットで買えるか（{risk.label}）</H2>
           <div className="panel">
             <p>
               <span className={`${risk.cls} mr-2 align-middle`}>{risk.label}</span>
-              <span className="font-bold">{risk.short}</span>
+              <span className="font-bold">{riskLine}</span>
             </p>
             <p className="mt-2 text-base text-gray-700">{risk.detail}</p>
             <p className="mt-2 text-base text-gray-700">
@@ -345,6 +385,7 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
             </p>
           </div>
         </section>
+        )}
 
         {/* ── 上乗せ料金 ── */}
         <section className="mb-10">
@@ -360,7 +401,7 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
                 <div className="panel mt-4">
                   <p className="text-base font-bold text-gray-600">1か月分の目安</p>
                   <p className="mt-1">
-                    {monthly.item.name}（薬価{yen(monthly.item.price)}／{unitLabel(monthly.item.spec)}）を{monthly.qtyLabel}もらった場合
+                    {monthly.item.name}（薬価{yen(monthly.item.price)}／{monthly.item.spec}）を{monthly.qtyLabel}もらった場合
                   </p>
                   <ul className="mt-2 space-y-1 text-base">
                     <li>
