@@ -38,6 +38,16 @@ DEFAULT_MAX   = 2      # 1回の実行で公開する上限（一気に出さな
 
 TABLE = "columns"
 
+# 資格・監修を名乗る表現（このサイトに監修者はいない。1つでもあれば保留）
+CREDENTIAL_CLAIMS = [
+    r"監修",
+    r"薬剤師が(解説|教える|選ぶ|答える|語る)",
+    r"医師が(解説|教える|選ぶ|答える|語る)",
+    r"薬剤師(です|として|の私|の筆者)",
+    r"医師(です|として|の私|の筆者)",
+    r"専門家が(解説|教える|選ぶ|答える)",
+]
+
 BANNED = [
     "必ず治", "確実に治", "誰でも治", "すぐ治ります",
     "副作用はありません", "副作用はない", "副作用の心配はありません",
@@ -191,6 +201,11 @@ def inspect(col: dict, published_titles: set[str], check_images: bool) -> list[s
     for w in BANNED:
         if w in body:
             ng.append(f"断定的な表現が含まれる: 「{w}」")
+
+    # 監修者はいないので、資格・肩書を名乗る表現があれば公開しない
+    for pat in CREDENTIAL_CLAIMS:
+        if re.search(pat, title) or re.search(pat, col.get("summary") or "") or re.search(pat, body):
+            ng.append(f"資格・監修を名乗る表現が含まれる: 「{pat}」")
 
     if "出典" not in body:
         ng.append("出典の記載がない")

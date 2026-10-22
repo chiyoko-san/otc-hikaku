@@ -59,6 +59,10 @@ export default function AboutPage() {
           <p className="mt-3 text-sm text-gray-600">
             情報は随時更新していますが、最新の添付文書・成分情報は必ず公式サイトでもご確認ください。
           </p>
+          <p className="mt-3 text-sm text-gray-600">
+            本サイトは薬剤師・医師による監修を受けていません。記事やガイドは、厚生労働省・PMDAの公開資料と各製品の添付文書をもとに作成し、出典を記載しています。
+            誤りにお気づきの方は、お問い合わせフォームからご指摘ください。確認のうえ修正します。
+          </p>
         </section>
 
         <section>

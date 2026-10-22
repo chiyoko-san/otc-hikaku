@@ -8,7 +8,8 @@ import { buildMetadata } from '@/lib/seo';
 export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
-  title: '市販薬コラム|薬剤師監修の市販薬選び方ガイド',
+  // 2026-10: 「薬剤師監修」は事実でないため削除（監修者はいない。出典は厚労省・PMDAの公開情報）
+  title: '市販薬コラム|市販薬の選び方・成分比較・上乗せ料金の解説',
   description:
     '市販薬の選び方・安全情報・成分比較など、薬と健康にまつわるコラムを毎日更新。',
   path: '/columns/',
