@@ -11,6 +11,7 @@ import {
   unitLabel,
   yen,
   type OtcSimilarItem,
+  unitPrice,
 } from '@/lib/otc-similar-items';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { ShareCard } from '@/components/ShareCard';
@@ -59,8 +60,8 @@ const ROWS: RowDef[] = [
 function cheapestAlternative(item: OtcSimilarItem): OtcSimilarItem | null {
   const unit = unitLabel(item.spec);
   const c = getItemsByNo(item.no)
-    .filter((i) => i.code !== item.code && i.route === item.route && unitLabel(i.spec) === unit && i.price < item.price)
-    .sort((a, b) => a.price - b.price)[0];
+    .filter((i) => i.code !== item.code && i.route === item.route && unitLabel(i.spec) === unit && unitPrice(i) < unitPrice(item))
+    .sort((a, b) => unitPrice(a) - unitPrice(b))[0];
   return c ?? null;
 }
 
@@ -91,7 +92,7 @@ export default function OtcSimilarQuickPage() {
     {
       q: '上乗せ料金はいくらですか？',
       a: first
-        ? `薬代（薬価×数量）の4分の1です。たとえば${first.item.name}を${first.qtyLabel}もらうと、薬価${yen(first.item.price)}×${first.qty}＝約${yen(first.e3.drugCost)}の4分の1で、約${yen(first.e3.surcharge)}の上乗せです。3割負担の方の薬代は約${yen(first.e3.before)}から約${yen(first.e3.after)}（+約${yen(first.e3.diff)}）になります。`
+        ? `薬代（薬価×数量）の4分の1です。たとえば${first.item.name}を${first.qtyLabel}もらうと、薬価${yen(unitPrice(first.item))}／${unitLabel(first.item.spec)}×${first.qty}＝約${yen(first.e3.drugCost)}の4分の1で、約${yen(first.e3.surcharge)}の上乗せです。3割負担の方の薬代は約${yen(first.e3.before)}から約${yen(first.e3.after)}（+約${yen(first.e3.diff)}）になります。`
         : '薬代（薬価×数量）の4分の1です。',
     },
     {

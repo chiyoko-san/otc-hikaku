@@ -56,6 +56,22 @@ function unitOf(spec: string): string {
   return m ? m[1] : '単位';
 }
 
+/**
+ * 規格が「10g」「10mL」のように複数単位ぶんの薬価になっている薬の、その数（lib/otc-similar-items.ts の unitInfo と同じ規則。
+ * クライアント側に688品目のJSONを持ち込まないため、ここに小さく複製している）
+ * 2026-10-24: 以前はこれを無視して10gの薬価を1gの薬価として計算し、金額が10倍になっていた
+ */
+function unitN(spec: string): number {
+  const m = spec.match(/(\d+(?:\.\d+)?)?(錠|カプセル|包|g|mL|枚|管|瓶|個|本|袋)$/);
+  const n = m && m[1] ? Number(m[1]) : 1;
+  return n > 0 ? n : 1;
+}
+
+function yen1(n: number): string {
+  if (n < 100 && Math.abs(n - Math.round(n)) >= 0.05) return `${(Math.round(n * 10) / 10).toFixed(1)}円`;
+  return `${Math.round(n).toLocaleString('ja-JP')}円`;
+}
+
 function presetsFor(unit: string): number[] {
   if (unit === '枚') return [7, 14, 28, 35, 70];
   if (unit === 'g' || unit === 'mL') return [10, 25, 50, 100, 200];
@@ -68,7 +84,8 @@ function yen(n: number): string {
 }
 
 function calc(item: SlimItem, qty: number, rate: number) {
-  const drugCost = item.price * qty;
+  // qty は単位の数（錠・g・mL…）。薬価が10gあたりの薬は 1g あたりに直してから掛ける
+  const drugCost = (item.price / unitN(item.spec)) * qty;
   const before = drugCost * rate;
   const surcharge = drugCost / 4;
   const after = surcharge + (drugCost - surcharge) * rate;
@@ -219,7 +236,10 @@ export default function Simulator({ items }: { items: SlimItem[] }) {
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
                       <div className="text-xl font-bold">{p.item.name}</div>
-                      <div className="text-base text-gray-600">{p.item.spec}・薬価{p.item.price}円／1{unit}</div>
+                      <div className="text-base text-gray-600">
+                        薬価{p.item.price}円／{unitN(p.item.spec) === 1 ? `1${unit}` : p.item.spec}
+                        {unitN(p.item.spec) !== 1 && `（1${unit}あたり${yen1(p.item.price / unitN(p.item.spec))}）`}
+                      </div>
                     </div>
                     <button
                       type="button"

@@ -692,7 +692,7 @@ export const SWITCH_DRUGS: SwitchDrug[] = [
         '市販の白色ワセリンは処方の白色ワセリンと同じものです。プロペト ピュアベールは処方のプロペトと同じ高い精製度のワセリンです。',
       differs:
         '市販品は製品によって精製度が違います。目の周りや傷口、赤ちゃんに使う場合は、プロペトのような精製度の高い製品を選んでください。',
-      monthly: { itemPrefix: 'プロペト', qty: 5, qtyLabel: '約50g（10g×5）' },
+      monthly: { itemPrefix: 'プロペト', qty: 50, qtyLabel: '50g（1か月分の目安）' }, // 薬価は10gあたり31.6円。qty は g で渡す
       // 代表製品を先頭に出すため（名前の順位付けにだけ効く）
       extraOtcNames: ['プロペト'],
       groupBy: 'none',

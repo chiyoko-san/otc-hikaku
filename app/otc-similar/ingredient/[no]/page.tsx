@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { buildMetadata, buildBreadcrumbJsonLd, buildFaqJsonLd } from '@/lib/seo';
 import { OTC_SIMILAR_77, OTC_SIMILAR_META, getOtcSimilarByNo } from '@/lib/otc-similar-77';
 import { getOtcSimilarGroup, getOtcMatchesForNo, OTC_SIMILAR_PATHS } from '@/lib/otc-similar-data';
-import { getItemsByNo, getRepresentativeItems, getYakkaDateLabel, unitLabel, yen } from '@/lib/otc-similar-items';
+import { getItemsByNo, getRepresentativeItems, getYakkaDateLabel, priceLabel, unitLabel, unitPrice, unitSurcharge, yen } from '@/lib/otc-similar-items';
 import { getSwitchDrugsByOtcSimilarNo } from '@/lib/switch-data';
 import OtcSimilarPriceTable from '@/components/OtcSimilarPriceTable';
 
@@ -43,7 +43,8 @@ export default async function OtcSimilarIngredientPage({ params }: { params: Par
   const otc = getOtcMatchesForNo(ing.no, 12);
   const guides = getSwitchDrugsByOtcSimilarNo(ing.no);
   const dateLabel = getYakkaDateLabel();
-  const prices = items.map((i) => i.price);
+  // 薬価は「1単位あたり」に揃えて比べる（規格が10g・10mLの薬は薬価÷10）
+  const prices = items.map((i) => unitPrice(i));
   const minP = prices.length ? Math.min(...prices) : 0;
   const maxP = prices.length ? Math.max(...prices) : 0;
   const title = ing.rxExamples?.length ? `${ing.rxExamples.join('・')}（${ing.name}）` : ing.name;
@@ -56,7 +57,7 @@ export default async function OtcSimilarIngredientPage({ params }: { params: Par
     ...(rep
       ? [{
           q: `${ing.name}の処方薬は、いくら上乗せされますか？`,
-          a: `例えば${rep.name}は薬価${yen(rep.price)}／${unitLabel(rep.spec)}なので、上乗せ額は約${yen(rep.surcharge)}／${unitLabel(rep.spec)}です。該当する処方薬${items.length}品目の薬価は${yen(minP)}〜${yen(maxP)}で、薬価が安い薬ほど上乗せも小さくなります。`,
+          a: `例えば${rep.name}は${priceLabel(rep)}なので、上乗せ額は約${yen(unitSurcharge(rep))}／${unitLabel(rep.spec)}です。該当する処方薬${items.length}品目の薬価は1単位あたり${yen(minP)}〜${yen(maxP)}で、薬価が安い薬ほど上乗せも小さくなります。`,
         }]
       : []),
     ...(otc.count > 0
@@ -103,18 +104,21 @@ export default async function OtcSimilarIngredientPage({ params }: { params: Par
       <p className="mt-4">
         {ing.name}は、2027年3月から始まる「上乗せ料金」の対象成分です（厚生労働省案）。
         病院で処方薬として受け取ると、いつもの負担に加えて薬代の4分の1を追加で支払う見込みです。
-        該当する処方薬は{items.length}品目（薬価{yen(minP)}〜{yen(maxP)}）、同じ成分の市販薬は{otc.count}件あります。
+        該当する処方薬は{items.length}品目（薬価は1単位あたり{yen(minP)}〜{yen(maxP)}）、同じ成分の市販薬は{otc.count}件あります。
       </p>
 
       {rep && (
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <div className="rounded-xl border-2 border-gray-300 bg-white p-5">
             <div className="text-base text-gray-700">例：{rep.name}の薬価（{unitLabel(rep.spec)}あたり）</div>
-            <div className="text-3xl font-bold">{yen(rep.price)}</div>
+            <div className="text-3xl font-bold">{yen(unitPrice(rep))}</div>
+            {unitPrice(rep) !== rep.price && (
+              <div className="mt-1 text-sm text-gray-600">薬価基準では{rep.spec}で{yen(rep.price)}</div>
+            )}
           </div>
           <div className="rounded-xl border-2 border-[#b42318] bg-[#fff5f4] p-5">
             <div className="text-base text-gray-700">上乗せ額（{unitLabel(rep.spec)}あたり）</div>
-            <div className="text-3xl font-bold text-[#b42318]">+{yen(rep.surcharge)}</div>
+            <div className="text-3xl font-bold text-[#b42318]">+{yen(unitSurcharge(rep))}</div>
           </div>
         </div>
       )}

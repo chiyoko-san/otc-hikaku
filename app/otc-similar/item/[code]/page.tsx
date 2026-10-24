@@ -19,6 +19,9 @@ import {
   quantityPresets,
   unitLabel,
   yen,
+  unitPrice,
+  unitSurcharge,
+  priceLabel,
 } from '@/lib/otc-similar-items';
 import { getSwitchDrugsByOtcSimilarNo } from '@/lib/switch-data';
 
@@ -39,8 +42,8 @@ export async function generateMetadata({ params }: { params: Params | Promise<Pa
   if (!item) return {};
   const unit = unitLabel(item.spec);
   return buildMetadata({
-    title: `${item.name}の上乗せ料金はいくら？｜薬価${yen(item.price)}→+${yen(item.surcharge)}／${unit}（2027年3月〜）`,
-    description: `${item.name}（${item.ingredient}、${item.maker}）は2027年3月からのOTC類似薬「上乗せ料金」の対象（厚労省案）。薬価${yen(item.price)}／${unit}なので上乗せ額は+${yen(item.surcharge)}／${unit}。処方量と負担割合別の金額、ジェネリックとの差、同じ成分の市販薬を掲載。`,
+    title: `${item.name}の上乗せ料金はいくら？｜${unit}あたり+${yen(unitSurcharge(item))}（2027年3月〜）`,
+    description: `${item.name}（${item.ingredient}、${item.maker}）は2027年3月からのOTC類似薬「上乗せ料金」の対象（厚労省案）。${priceLabel(item)}なので上乗せ額は+${yen(unitSurcharge(item))}／${unit}。処方量と負担割合別の金額、ジェネリックとの差、同じ成分の市販薬を掲載。`,
     path: OTC_SIMILAR_PATHS.item(item.code),
     type: 'article',
   });
@@ -57,9 +60,9 @@ export default async function OtcSimilarItemPage({ params }: { params: Params | 
   const typical = presets[1] ?? presets[0];
   const siblings = getItemsByNo(item.no)
     .filter((i) => i.code !== item.code)
-    .sort((a, b) => a.price - b.price)
+    .sort((a, b) => unitPrice(a) - unitPrice(b))
     .slice(0, 10);
-  const cheapest = getItemsByNo(item.no).reduce((m, i) => (i.price < m.price ? i : m), item);
+  const cheapest = getItemsByNo(item.no).reduce((m, i) => (unitPrice(i) < unitPrice(m) ? i : m), item);
   const otc = getOtcMatchesForNo(item.no, 6);
   const guides = getSwitchDrugsByOtcSimilarNo(item.no);
   const dateLabel = getYakkaDateLabel();
@@ -73,12 +76,12 @@ export default async function OtcSimilarItemPage({ params }: { params: Params | 
     },
     {
       q: `${item.name}の上乗せ料金はいくらですか？`,
-      a: `薬価${yen(item.price)}／${unit}の4分の1で、${unit}あたり約${yen(item.surcharge)}です。${typical}${unit.replace(/^1/, '')}なら上乗せ額は約${yen(e3.surcharge)}。3割負担の方は薬代が約${yen(e3.before)}から約${yen(e3.after)}（+約${yen(e3.diff)}）、1割負担の方は約${yen(e1.before)}から約${yen(e1.after)}（+約${yen(e1.diff)}）になります。診察料・調剤料は別です。`,
+      a: `${priceLabel(item)}の4分の1で、${unit}あたり約${yen(unitSurcharge(item))}です。${typical}${unit.replace(/^1/, '')}なら上乗せ額は約${yen(e3.surcharge)}。3割負担の方は薬代が約${yen(e3.before)}から約${yen(e3.after)}（+約${yen(e3.diff)}）、1割負担の方は約${yen(e1.before)}から約${yen(e1.after)}（+約${yen(e1.diff)}）になります。診察料・調剤料は別です。`,
     },
     ...(cheapest.code !== item.code
       ? [{
           q: `ジェネリックに変えると上乗せ料金は減りますか？`,
-          a: `同じ成分で薬価が最も安いのは${cheapest.name}（薬価${yen(cheapest.price)}／${unitLabel(cheapest.spec)}、上乗せ+${yen(cheapest.surcharge)}）です。上乗せ額は薬価の4分の1なので、薬価が安い薬ほど上乗せも小さくなります。変更は医師・薬剤師に相談してください。`,
+          a: `同じ成分で薬価が最も安いのは${cheapest.name}（${priceLabel(cheapest)}、上乗せ+${yen(unitSurcharge(cheapest))}／${unitLabel(cheapest.spec)}）です。上乗せ額は薬価の4分の1なので、薬価が安い薬ほど上乗せも小さくなります。変更は医師・薬剤師に相談してください。`,
         }]
       : []),
     ...(otc.count > 0
@@ -130,11 +133,14 @@ export default async function OtcSimilarItemPage({ params }: { params: Params | 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <div className="panel">
           <div className="text-sm text-gray-600 md:text-base">薬価（{unit}あたり）</div>
-          <div className="mt-1 text-3xl font-bold md:text-4xl">{yen(item.price)}</div>
+          <div className="mt-1 text-3xl font-bold md:text-4xl">{yen(unitPrice(item))}</div>
+          {unitPrice(item) !== item.price && (
+            <div className="mt-1 text-sm text-gray-600">薬価基準では{item.spec}で{yen(item.price)}</div>
+          )}
         </div>
         <div className="rounded-2xl bg-alert p-5 text-white">
           <div className="text-sm md:text-base">上乗せ額（{unit}あたり・薬価の4分の1）</div>
-          <div className="mt-1 text-3xl font-bold md:text-4xl">+{yen(item.surcharge)}</div>
+          <div className="mt-1 text-3xl font-bold md:text-4xl">+{yen(unitSurcharge(item))}</div>
         </div>
       </div>
 
@@ -211,8 +217,8 @@ export default async function OtcSimilarItemPage({ params }: { params: Params | 
                       <Link href={OTC_SIMILAR_PATHS.item(s.code)} className="font-bold text-brand underline underline-offset-4">{s.name}</Link>
                       <span className="ml-2 text-sm text-gray-600">{s.spec}{s.kind === '後発' ? '・ジェネリック' : s.kind === '先発' ? '・先発' : ''}</span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2">{yen(s.price)}<span className="text-sm text-gray-600">／{unitLabel(s.spec)}</span></td>
-                    <td className="whitespace-nowrap px-3 py-2 font-bold text-alert">+{yen(s.surcharge)}</td>
+                    <td className="whitespace-nowrap px-3 py-2">{yen(unitPrice(s))}<span className="text-sm text-gray-600">／{unitLabel(s.spec)}</span></td>
+                    <td className="whitespace-nowrap px-3 py-2 font-bold text-alert">+{yen(unitSurcharge(s))}</td>
                   </tr>
                 ))}
               </tbody>

@@ -4,7 +4,7 @@ import { buildMetadata, buildBreadcrumbJsonLd, buildFaqJsonLd } from '@/lib/seo'
 import { SWITCH_DRUGS } from '@/lib/switch-data';
 import { OTC_SIMILAR_GROUPS, OTC_SIMILAR_META } from '@/lib/otc-similar-77';
 import { OTC_SIMILAR_PATHS } from '@/lib/otc-similar-data';
-import { estimate, findItemByName, getYakkaDateLabel, yen } from '@/lib/otc-similar-items';
+import { estimate, findItemByName, getYakkaDateLabel, yen, unitPrice, unitLabel } from '@/lib/otc-similar-items';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 
 // 配置先: app/otc-similar/page.tsx  →  https://www.kusuri-compass.com/otc-similar/
@@ -258,7 +258,7 @@ export default function OtcSimilarHubPage() {
                     <tr key={e.prefix} className="border-t border-gray-200 align-top">
                       <td className="px-4 py-3">
                         <div className="font-bold">{e.label}</div>
-                        <div className="text-sm text-gray-600">{e.qtyLabel}・薬価{yen(e.item.price)}×{e.qty}</div>
+                        <div className="text-sm text-gray-600">{e.qtyLabel}・薬価{yen(unitPrice(e.item))}／{unitLabel(e.item.spec)}×{e.qty}</div>
                       </td>
                       <td className="whitespace-nowrap px-4 py-3">約{yen(e.est.before)}</td>
                       <td className="whitespace-nowrap px-4 py-3 font-bold">約{yen(e.est.after)}</td>

@@ -30,6 +30,9 @@ from datetime import datetime, timezone, timedelta, date
 
 DATA_DIR = Path(__file__).parent
 MED_JSON = DATA_DIR / "medicines.json"
+REPO_ROOT = DATA_DIR.parent
+SWITCH_TS = REPO_ROOT / "lib" / "switch-data.ts"              # 30薬の切替データ（テーマの元）
+ITEMS_JSON = REPO_ROOT / "data" / "otc-similar-items.json"     # 薬価と上乗せ額（数字の元）
 JST      = timezone(timedelta(hours=9))
 
 # ══════════════════════════════════════════════════════════
@@ -70,6 +73,7 @@ POLICY_CONTEXT = """## OTC類似薬「特別の料金」（当サイトでは「
 """
 
 POLICY_TAGS = {"上乗せ料金", "制度解説"}
+SWITCH_TAG = "同じ成分の市販薬"   # /switch/ 連動テーマA（上乗せの話は短く、市販薬の選び方が主役）
 
 # ══════════════════════════════════════════════════════════
 #  テーマプール
@@ -229,11 +233,183 @@ GENERAL_THEMES = [
     {"tag": "安全情報", "desc": "定期購入トラブル急増。健康食品・サプリの契約に潜む罠"},
 ]
 
-ALL_THEMES = POLICY_THEMES + GENERAL_THEMES
+# ══════════════════════════════════════════════════════════
+#  2026-10-24 方針変更（本人決定）: コラムは週2本、テーマは /switch/ の30薬に固定する。
+#    A「〇〇と同じ成分の市販薬を選ぶときの注意」  B「〇〇の上乗せ料金はいくら」
+#  テーマの文章と数字は lib/switch-data.ts と data/otc-similar-items.json から毎回読む
+#  （手で二重管理しない。切替ページを直せばコラムの事実も変わる）。
+#  旧テーマは使用済みの記録（キー tNN）を壊さないよう残すが、ローテーションには入れない。
+# ══════════════════════════════════════════════════════════
+
+# 需要順（Search Console の表示が出ている花粉症 → よく出る薬 → その他）
+SWITCH_ORDER = [
+    "allegra", "alesion", "claritin", "zyrtec", "talion", "zaditen", "flunase",
+    "loxonin", "hirudoid", "voltaren", "seltouch", "calonal", "gaster",
+    "mucodyne", "pl", "magmitt", "laxoberon", "teleminsoft",
+    "rinderon-v", "rinderon-vg", "lamisil", "zovirax", "isodine", "propeto", "keratinamin",
+    "lopemin", "nauzelin", "kakkonto", "mohrus", "xyzal",
+]
+
+
+def _ts_field(block: str, name: str) -> str:
+    """TSデータの `name: '...'` を1つ取り出す（値は改行をはさんでもよい。文字列内に ' は無い前提）"""
+    m = re.search(name + r":\s*\n?\s*'([^']*)'", block)
+    return m.group(1).strip() if m else ""
+
+
+def load_switch_drugs() -> list[dict]:
+    """lib/switch-data.ts の SWITCH_DRUGS を読む（answer があるものだけ）"""
+    if not SWITCH_TS.exists():
+        return []
+    ts = SWITCH_TS.read_text(encoding="utf-8")
+    drugs = []
+    for block in re.split(r"\n  \{\n    slug: '", ts)[1:]:
+        slug = block.split("'", 1)[0]
+        if "answer: {" not in block:
+            continue
+        head, ans = block.split("answer: {", 1)
+        no_m = re.search(r"otcSimilarNo:\s*(\d+|null)", head)
+        mon = re.search(r"monthly:\s*\{\s*itemPrefix:\s*'([^']+)',\s*qty:\s*(\d+),\s*qtyLabel:\s*'([^']+)'", ans)
+        risk_m = re.search(r"otcRisk:\s*([\d.]+)", ans)
+        drugs.append({
+            "slug": slug,
+            "rx": _ts_field(head, "rxName"),
+            "generic": _ts_field(head, "genericName"),
+            "category": _ts_field(head, "categoryLabel"),
+            "no": int(no_m.group(1)) if no_m and no_m.group(1) != "null" else None,
+            "caution": _ts_field(head, "caution"),
+            "alt_note": _ts_field(head, "altNote"),
+            "same": _ts_field(ans, "same"),
+            "differs": _ts_field(ans, "differs"),
+            "risk": risk_m.group(1) if risk_m else "",
+            "risk_note": _ts_field(ans, "otcRiskNote"),
+            "monthly": {"prefix": mon.group(1), "qty": int(mon.group(2)), "label": mon.group(3)} if mon else None,
+        })
+    return drugs
+
+
+_RISK_LABEL = {"1": "第1類医薬品", "2": "第2類医薬品", "2.5": "指定第2類医薬品", "3": "第3類医薬品"}
+
+
+def _unit_n(spec: str) -> tuple[float, str]:
+    """規格 '10g' → (10, 'g')、'60mg1錠' → (1, '錠')。lib/otc-similar-items.ts の unitInfo と同じ規則"""
+    m = re.search(r"(\d+(?:\.\d+)?)?(錠|カプセル|包|g|mL|枚|管|瓶|個|本|袋)$", spec)
+    if not m:
+        return 1.0, "単位"
+    n = float(m.group(1)) if m.group(1) else 1.0
+    return (n if n > 0 else 1.0), m.group(2)
+
+
+def _yen(v: float) -> str:
+    if v < 100 and abs(v - round(v)) >= 0.05:
+        return f"{round(v * 10) / 10:.1f}円"
+    return f"{round(v):,}円"
+
+
+def monthly_facts(d: dict) -> str:
+    """薬価データから「1か月分でいくら増えるか」を計算して文章にする（サイトの表示と同じ計算）"""
+    if not d.get("no") or not d.get("monthly") or not ITEMS_JSON.exists():
+        return ""
+    try:
+        items = json.loads(ITEMS_JSON.read_text(encoding="utf-8")).get("items", [])
+    except Exception:
+        return ""
+    it = next((i for i in items if i["name"].startswith(d["monthly"]["prefix"])), None)
+    if not it:
+        return ""
+    n, unit = _unit_n(it["spec"])
+    unit_price = it["price"] / n
+    qty = d["monthly"]["qty"]
+    cost = unit_price * qty
+    sur = cost / 4
+    def diff(rate):
+        return (sur + (cost - sur) * rate) - cost * rate
+    return (f"{it['name']}（薬価{_yen(it['price'])}／{it['spec']}）を{d['monthly']['label']}もらう場合: "
+            f"薬代約{_yen(cost)}、上乗せ額約{_yen(sur)}。増える額は3割負担で約{_yen(diff(0.3))}、"
+            f"2割負担で約{_yen(diff(0.2))}、1割負担で約{_yen(diff(0.1))}（診察料・調剤料は別）。")
+
+
+def build_switch_themes() -> list[dict]:
+    """30薬 × 2テーマ。順番: 花粉症7薬のA/B → 対象薬のB → 残りのA → 対象外のB"""
+    by = {d["slug"]: d for d in load_switch_drugs()}
+    drugs = [by[s] for s in SWITCH_ORDER if s in by] + [d for s, d in by.items() if s not in SWITCH_ORDER]
+
+    def theme_a(d):
+        target = "2027年3月からの上乗せ料金の対象（厚労省案）" if d["no"] else "2027年3月からの上乗せ料金は対象外（厚労省案、今後拡大の可能性あり）"
+        risk = _RISK_LABEL.get(d["risk"], "")
+        risk_line = d["risk_note"] or (f"同じ成分の市販薬は{risk}。" if risk else "")
+        facts = "\n".join(x for x in [
+            f"処方薬{d['rx']}（有効成分 {d['generic']}）は{target}。",
+            f"同じところ: {d['same']}" if d["same"] else "",
+            f"違うところ: {d['differs']}" if d["differs"] else "",
+            f"区分: {risk_line}" if risk_line else "",
+            f"注意: {d['caution']}" if d["caution"] else "",
+            f"補足: {d['alt_note']}" if d["alt_note"] else "",
+            "市販薬の値段は販売店で違うので書かない。処方薬から市販薬への切替を勧めない。判断材料を並べ、薬剤師・医師への相談で締める。",
+        ] if x)
+        links = [f"/switch/{d['slug']}/", "/otc-similar/name/"]
+        desc = f"{d['rx']}と同じ成分の市販薬を選ぶときの注意。{d['generic']}の含有量・対象年齢・使える症状の違い"
+        if d["slug"] == "rinderon-vg":
+            desc = "リンデロンVGと同じ組み合わせの市販薬はない。ステロイドだけ同じ市販薬（リンデロンVs）と、化膿した湿疹に市販薬が使えない理由"
+        return {"key": f"sw-{d['slug']}-otc", "tag": SWITCH_TAG, "desc": desc, "facts": facts, "links": links}
+
+    def theme_b(d):
+        if d["no"]:
+            mf = monthly_facts(d)
+            facts = "\n".join(x for x in [
+                f"{d['rx']}（{d['generic']}）は厚生労働省案の77成分（No.{d['no']}）に含まれ、2027年3月から処方時に薬剤費の4分の1が上乗せされる見込み。市販薬として買う場合は上乗せなし。",
+                mf,
+                f"同じ成分の市販薬: {d['same']}" if d["same"] else "",
+                f"市販薬で違う点: {d['differs']}" if d["differs"] else "",
+                "対象外の人（こども・配慮が必要な慢性疾患・低所得・入院・医師が長期使用を必要と判断）は検討中の案であり、最終的には国の告示で確定する、と必ず書く。",
+            ] if x)
+            links = [f"/switch/{d['slug']}/", f"/otc-similar/ingredient/{d['no']}/", "/otc-similar/simulator/"]
+            desc = f"{d['rx']}の上乗せ料金はいくら？2027年3月からの負担額と、同じ成分の市販薬・ジェネリックという選択肢"
+        else:
+            facts = "\n".join(x for x in [
+                f"{d['rx']}（{d['generic']}）は厚生労働省案の77成分に含まれておらず、2027年3月時点では上乗せ料金の対象外。令和9年度以降に対象の拡大が検討されているため今後変わる可能性がある（断定しない）。",
+                f"同じ成分の市販薬: {d['same']}" if d["same"] else "",
+                f"補足: {d['differs']}" if d["differs"] else "",
+                f"補足: {d['alt_note']}" if d["alt_note"] else "",
+            ] if x)
+            links = [f"/switch/{d['slug']}/", "/otc-similar/all/", "/otc-similar/name/"]
+            desc = f"{d['rx']}は上乗せ料金の対象外。理由と、今後の見直しで変わる可能性、同じ成分の市販薬の有無"
+        return {"key": f"sw-{d['slug']}-fee", "tag": "上乗せ料金", "desc": desc, "facts": facts, "links": links}
+
+    NO_OTC = {"xyzal", "nauzelin"}  # 同じ成分の市販薬が無い薬は、テーマAを作らない（Bの中で「ありません」と書く）
+
+    themes: list[dict] = []
+    allergy = [d for d in drugs if d["slug"] in SWITCH_ORDER[:7]]
+    rest = [d for d in drugs if d["slug"] not in SWITCH_ORDER[:7]]
+    for d in allergy:
+        if d["slug"] not in NO_OTC:
+            themes.append(theme_a(d))
+        themes.append(theme_b(d))
+    for d in rest:
+        if d["no"]:
+            themes.append(theme_b(d))
+    for d in rest:
+        if d["slug"] not in NO_OTC:
+            themes.append(theme_a(d))
+    for d in rest:
+        if not d["no"]:
+            themes.append(theme_b(d))
+    return themes
+
+
+SWITCH_THEMES = build_switch_themes()
+
+# 旧テーマは「使用済み」の記録と番号指定を壊さないよう、元の番号をキーとして残す（ローテーションには入れない）
+for _i, _t in enumerate(POLICY_THEMES + GENERAL_THEMES):
+    _t.setdefault("key", f"t{_i:02d}")
+
+ALL_THEMES = SWITCH_THEMES if SWITCH_THEMES else POLICY_THEMES + GENERAL_THEMES
 
 
 def theme_key(index: int) -> str:
-    return f"t{index:02d}"
+    """コラムIDの末尾に付くテーマのキー。新テーマは sw-<slug>-otc / sw-<slug>-fee、旧テーマは tNN"""
+    t = ALL_THEMES[index] if 0 <= index < len(ALL_THEMES) else None
+    return (t or {}).get("key") or f"t{index:02d}"
 
 
 # ══════════════════════════════════════════════════════════
@@ -581,7 +757,7 @@ def used_theme_keys() -> set[str]:
         return set()
     used = set()
     for row in rows:
-        m = re.search(r'_(t\d{2})$', str(row.get("id", "")))
+        m = re.search(r'_(t\d{2}|sw-[a-z0-9-]+-(?:otc|fee))$', str(row.get("id", "")))
         if m:
             used.add(m.group(1))
     return used

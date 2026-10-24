@@ -1,11 +1,5 @@
 import Link from 'next/link';
-import {
-  getItemsByNo,
-  getRepresentativeItems,
-  getYakkaDateLabel,
-  unitLabel,
-  yen,
-} from '@/lib/otc-similar-items';
+import { getItemsByNo, getRepresentativeItems, getYakkaDateLabel, unitLabel, yen, unitPrice, unitSurcharge } from '@/lib/otc-similar-items';
 
 // 配置先: components/OtcSimilarPriceTable.tsx
 //
@@ -27,7 +21,7 @@ export default function OtcSimilarPriceTable({
   if (all.length === 0) return null;
   const items = limit ? getRepresentativeItems(no, limit) : [...all].sort((a, b) => {
     const k = (x: string) => (x === '先発' ? 0 : x === '後発' ? 1 : 2);
-    return k(a.kind) - k(b.kind) || b.price - a.price || a.name.localeCompare(b.name, 'ja');
+    return k(a.kind) - k(b.kind) || unitPrice(b) - unitPrice(a) || a.name.localeCompare(b.name, 'ja');
   });
   const dateLabel = getYakkaDateLabel();
 
@@ -60,11 +54,14 @@ export default function OtcSimilarPriceTable({
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-3 py-2">
-                  {yen(i.price)}
+                  {yen(unitPrice(i))}
                   <span className="text-base text-gray-600">／{unitLabel(i.spec)}</span>
+                  {unitPrice(i) !== i.price && (
+                    <div className="text-sm text-gray-600">（{i.spec}で{yen(i.price)}）</div>
+                  )}
                 </td>
                 <td className="whitespace-nowrap px-3 py-2 font-bold text-[#b42318]">
-                  +{yen(i.surcharge)}
+                  +{yen(unitSurcharge(i))}
                   <span className="text-base font-normal text-gray-600">／{unitLabel(i.spec)}</span>
                 </td>
                 <td className="whitespace-nowrap px-3 py-2">

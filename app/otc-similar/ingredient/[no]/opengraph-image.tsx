@@ -1,6 +1,6 @@
 import { ogImage, OG_SIZE, OG_CONTENT_TYPE } from '@/lib/og';
 import { getOtcSimilarByNo } from '@/lib/otc-similar-77';
-import { getItemsByNo, getRepresentativeItems, unitLabel, yen } from '@/lib/otc-similar-items';
+import { getItemsByNo, getRepresentativeItems, unitLabel, unitSurcharge, yen } from '@/lib/otc-similar-items';
 
 // 配置先: app/otc-similar/ingredient/[no]/opengraph-image.tsx
 export const runtime = 'nodejs';
@@ -17,7 +17,7 @@ export default async function Image({ params }: { params: { no: string } }) {
     tag: '上乗せ対象',
     title: `${name}の上乗せ料金`,
     subtitle: `対象の処方薬${n}品目の薬価と、同じ成分の市販薬`,
-    big: rep ? `+${yen(rep.surcharge)}` : undefined,
+    big: rep ? `+${yen(unitSurcharge(rep))}` : undefined,
     bigLabel: rep ? `${rep.name}／${unitLabel(rep.spec)}` : undefined,
   });
 }
