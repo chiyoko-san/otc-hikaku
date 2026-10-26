@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllMedicines, getAllIngredients, getAllSymptoms } from '@/lib/medicines';
 import { CATEGORIES } from '@/lib/categories';
-import { SWITCH_DRUGS } from '@/lib/switch-data';
+import { getAllSwitchDrugs } from '@/lib/switch-data';
 import { getPublishedColumns } from '@/lib/supabase/columns';
 import { SITE_URL } from '@/lib/seo';
 import { isIndexableMedicine } from '@/lib/indexable';
@@ -54,7 +54,10 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     ];
     return [
       ...staticPaths.map((p) => entry(p, p.startsWith('/otc-similar/') ? OTC_UPDATED : STATIC_UPDATED)),
-      ...SWITCH_DRUGS.map((d) => entry(`/switch/${d.slug}/`, d.updated ?? OTC_UPDATED)),
+      // 切替ページ: 手書き30薬＋生成薬。noindex のページ（市販薬なし・対象外で文章未承認）はサイトマップに載せない
+      ...getAllSwitchDrugs()
+        .filter((d) => d.index !== false)
+        .map((d) => entry(`/switch/${d.slug}/`, d.updated ?? OTC_UPDATED)),
       ...CATEGORIES.map((c) => entry(`/categories/${c.id}/`, MEDICINES_UPDATED)),
       ...getAllIngredients().map((i) => entry(`/ingredients/${i.slug}/`, MEDICINES_UPDATED)),
       ...getAllSymptoms().map((s) => entry(`/symptoms/${s.slug}/`, MEDICINES_UPDATED)),

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { SWITCH_DRUGS, getOtcMatchesForSwitch } from '@/lib/switch-data';
+import { SWITCH_DRUGS, getAllSwitchDrugs, getOtcMatchesForSwitch } from '@/lib/switch-data';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
 import OtcSimilarBanner from '@/components/OtcSimilarBanner';
@@ -81,6 +81,44 @@ export default function SwitchIndexPage() {
             );
           })}
         </div>
+
+        {/* ── 処方数量の多い処方薬（NDBオープンデータ上位）── */}
+        <section className="mb-8">
+          <h2 className="mb-2 text-2xl font-bold">よく処方されている薬から探す</h2>
+          <p className="mb-4 text-base text-gray-700">
+            厚生労働省のNDBオープンデータ（処方数量）で上位の処方薬です。同じ成分の市販薬があるかどうか、上乗せ料金の対象かどうかを薬ごとにまとめています。
+          </p>
+          {Object.entries(
+            getAllSwitchDrugs()
+              .filter((d) => d.source === 'generated')
+              .reduce<Record<string, typeof SWITCH_DRUGS>>((acc, d) => {
+                (acc[d.categoryLabel] ??= []).push(d);
+                return acc;
+              }, {})
+          )
+            .sort((a, b) => b[1].length - a[1].length)
+            .map(([label, list]) => (
+              <div key={label} className="mb-4">
+                <h3 className="mb-2 text-lg font-bold">{label}</h3>
+                <ul className="flex flex-wrap gap-2">
+                  {list.map((d) => (
+                    <li key={d.slug}>
+                      <Link
+                        href={`/switch/${d.slug}/`}
+                        className={`inline-block rounded-lg border px-3 py-2 text-base ${
+                          d.index === false ? 'border-gray-200 text-gray-700' : 'border-brand font-bold text-brand'
+                        }`}
+                      >
+                        {d.rxName}
+                        {d.index !== false && <span className="ml-1 text-sm">●</span>}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          <p className="text-sm text-gray-600">● は同じ成分を含む市販薬がある薬、または上乗せ料金の対象（案）の薬。</p>
+        </section>
 
         <aside className="rounded bg-gray-50 p-4 text-sm leading-relaxed text-gray-600">
           <p>

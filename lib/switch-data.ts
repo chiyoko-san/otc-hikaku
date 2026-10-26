@@ -3,6 +3,7 @@ import { normalizeIngredientName } from './slug';
 import { getOtcSimilarByNo, type OtcSimilarIngredient } from './otc-similar-77';
 import { estimate, findItemByName, type OtcSimilarItem } from './otc-similar-items';
 import { getAllMedicines, getEnrichedMedicines } from './medicines';
+import { generatedSwitchDrugs, type GeneratedRxItem } from './switch-generated';
 
 /**
  * 処方薬 → 市販薬 切替データ
@@ -29,11 +30,23 @@ export type SwitchDrug = {
   /** ページ本文を最後に見直した日（サイトマップの lastModified に使う）。無ければ薬価データの日付 */
   updated?: string;
   /**
-   * 2026-10 作り直し: 冒頭1画面に「同じ成分の市販薬・ネットで買える区分・上乗せ額・処方薬との違い」の
-   * 4点を出す新レイアウト用のデータ。これが入っている薬だけ新レイアウトで表示する（無い薬は従来どおり）。
-   * 30ページに広げるときは、各薬にこの answer を書き足していく。
+   * 冒頭1画面に「同じ成分の市販薬・ネットで買える区分・上乗せ額・処方薬との違い」の4点を出すレイアウト用のデータ。
+   * 手書き30薬は全部これを持つ。生成300薬（lib/switch-generated.ts）は same/differs が空のまま（Phase1）で始まり、
+   * data/switch-text.json に承認済みの文章が入ると埋まる（Phase2）。
    */
   answer?: SwitchAnswer;
+  /** 手書き（curated）か、NDBから生成（generated）か */
+  source?: 'curated' | 'generated';
+  /** false なら noindex（生成薬で、同じ成分の市販薬が無く上乗せ対象でもないもの）。省略時は index */
+  index?: boolean;
+  /** 薬効分類コード（3桁。生成薬のみ） */
+  catCode?: string;
+  /** 似た用途の市販薬カテゴリ（lib/categories.ts の id。生成薬のみ） */
+  siteCategory?: string;
+  /** 処方薬の一覧（先発・ジェネリック・薬価。生成薬のみ、処方数量順） */
+  rxItems?: GeneratedRxItem[];
+  /** NDB処方数量による順位（生成薬のみ） */
+  rank?: number;
 };
 
 export type SwitchAnswer = {
@@ -61,6 +74,12 @@ export type SwitchAnswer = {
   partialMatchLabel?: string;
   /** 外した製品についての一言（「鼻づまり用の別の薬です」など） */
   variantNote?: string;
+  /** 生成薬用: 同じ成分だけでできた市販薬の id。これがあれば成分名の照合はしない */
+  otcIds?: number[];
+  /** 生成薬用: 同じ成分にほかの成分が加わった市販薬の id（「ほかの成分も入った市販薬」として別枠で出す） */
+  otcComboIds?: number[];
+  /** 文章の出典URL（承認済みの文章に付く） */
+  sources?: string[];
 };
 
 export const SWITCH_DRUGS: SwitchDrug[] = [
@@ -800,13 +819,26 @@ export const SWITCH_DRUGS: SwitchDrug[] = [
   },
 ];
 
+/** 手書き30薬 ＋ NDBから生成した薬（data/switch-drugs.json）。ページ・サイトマップ・逆引きはこちらを使う */
+let _all: SwitchDrug[] | null = null;
+export function getAllSwitchDrugs(): SwitchDrug[] {
+  if (!_all) {
+    const curatedSlugs = new Set(SWITCH_DRUGS.map((d) => d.slug));
+    _all = [
+      ...SWITCH_DRUGS.map((d) => ({ ...d, source: 'curated' as const })),
+      ...generatedSwitchDrugs().filter((d) => !curatedSlugs.has(d.slug)),
+    ];
+  }
+  return _all;
+}
+
 export function getSwitchDrugBySlug(slug: string): SwitchDrug | null {
-  return SWITCH_DRUGS.find((d) => d.slug === slug) || null;
+  return getAllSwitchDrugs().find((d) => d.slug === slug) || null;
 }
 
 /** 特別料金 対象77成分（案）の番号から切替ガイドを引く */
 export function getSwitchDrugsByOtcSimilarNo(no: number): SwitchDrug[] {
-  return SWITCH_DRUGS.filter((d) => d.otcSimilarNo === no);
+  return getAllSwitchDrugs().filter((d) => d.otcSimilarNo === no);
 }
 
 /** 切替ガイドに対応する対象成分（案）の情報。null なら対象外 */
@@ -825,6 +857,14 @@ export function getOtcSimilarForSwitch(entry: SwitchDrug): OtcSimilarIngredient 
  */
 export function getOtcMatchesForSwitch(entry: SwitchDrug, limit = 12): Medicine[] {
   const a = entry.answer;
+  if (a?.otcIds) {
+    // 生成薬: 照合済みの id をそのまま使う（処方薬名で始まる製品を先頭に）
+    const ids = new Set(a.otcIds);
+    const brand = entry.rxName.replace(/[(（].*$/, '');
+    const list = getAllMedicines().filter((m) => ids.has(m.id));
+    list.sort((x, y) => Number(y.name.startsWith(brand)) - Number(x.name.startsWith(brand)));
+    return list.slice(0, limit);
+  }
   const exclude = a?.excludeOtcKeys ?? [];
   const excludeNames = a?.excludeOtcNames ?? [];
   const extra = a?.extraOtcNames ?? [];
@@ -858,6 +898,14 @@ export function getOtcMatchesForSwitch(entry: SwitchDrug, limit = 12): Medicine[
     hits.sort((x, y) => rank(x) - rank(y)); // 同順位は元の並び（安定ソート）
   }
   return hits.slice(0, limit);
+}
+
+/** 生成薬用: 同じ成分にほかの成分が加わった市販薬（配合剤） */
+export function getOtcCombosForSwitch(entry: SwitchDrug, limit = 12): Medicine[] {
+  const ids = entry.answer?.otcComboIds;
+  if (!ids || ids.length === 0) return [];
+  const set = new Set(ids);
+  return getAllMedicines().filter((m) => set.has(m.id)).slice(0, limit);
 }
 
 /** answer.excludeOtcKeys で一覧から外した製品（「別の薬です」と注記するために返す） */
@@ -901,12 +949,16 @@ export function getSwitchMonthly(entry: SwitchDrug): SwitchMonthly | null {
 /** 同じ用途のほかの処方薬（同じ表示カテゴリ、または対象77成分で同じグループ） */
 export function getSwitchSiblings(entry: SwitchDrug, limit = 8): SwitchDrug[] {
   const group = entry.otcSimilarNo != null ? getOtcSimilarByNo(entry.otcSimilarNo)?.group ?? null : null;
-  return SWITCH_DRUGS.filter((d) => {
+  const picked = getAllSwitchDrugs().filter((d) => {
     if (d.slug === entry.slug) return false;
+    if (entry.catCode && d.catCode === entry.catCode) return true;
     if (d.categoryLabel === entry.categoryLabel) return true;
     if (group && d.otcSimilarNo != null) return getOtcSimilarByNo(d.otcSimilarNo)?.group === group;
     return false;
-  }).slice(0, limit);
+  });
+  // 検索エンジンに出すページ（市販薬あり・対象薬）を先に
+  picked.sort((x, y) => Number(y.index !== false) - Number(x.index !== false));
+  return picked.slice(0, limit);
 }
 
 /**
@@ -914,7 +966,12 @@ export function getSwitchSiblings(entry: SwitchDrug, limit = 8): SwitchDrug[] {
  */
 export function findSwitchDrugsForMedicine(med: Medicine): SwitchDrug[] {
   const normIngs = (med.ings || []).map((i) => normalizeIngredientName(i));
-  return SWITCH_DRUGS.filter((entry) =>
+  const curated = SWITCH_DRUGS.filter((entry) =>
     entry.ingredientKeys.some((key) => normIngs.some((n) => n.includes(key)))
   );
+  // 生成薬は照合済みの id で逆引き（単剤・配合どちらでも）
+  const generated = getAllSwitchDrugs().filter(
+    (d) => d.source === 'generated' && (d.answer?.otcIds?.includes(med.id) || d.answer?.otcComboIds?.includes(med.id))
+  );
+  return [...curated, ...generated];
 }

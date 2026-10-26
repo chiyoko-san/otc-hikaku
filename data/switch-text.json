@@ -1,0 +1,4 @@
+{
+ "_note": "承認済みの「処方薬との違い」文章。slug をキーに { same, differs, caution?, sources[] , approved: 'YYYY-MM-DD' }。週1のワークフローが下書きのPRを作り、本人がPreviewで読んでマージすると公開される。ここに無い薬は Phase1（データだけ）の表示。",
+ "_entries": {}
+}

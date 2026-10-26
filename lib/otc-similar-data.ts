@@ -1,6 +1,6 @@
 import { getEnrichedMedicines } from './medicines';
 import { normalizeIngredientName } from './slug';
-import { SWITCH_DRUGS } from './switch-data';
+import { getAllSwitchDrugs } from './switch-data';
 import {
   OTC_SIMILAR_77,
   OTC_SIMILAR_GROUPS,
@@ -62,7 +62,7 @@ export function getOtcSimilarRows(): OtcSimilarRow[] {
 
   return OTC_SIMILAR_77.map((ing) => {
     const otc = normed.filter(({ ings }) => matchesOtcSimilar(ing, ings)).map((x) => x.m);
-    const guides = SWITCH_DRUGS.filter((d) => d.otcSimilarNo === ing.no).map((d) => ({
+    const guides = getAllSwitchDrugs().filter((d) => d.otcSimilarNo === ing.no).map((d) => ({
       slug: d.slug,
       rxName: d.rxName,
     }));
@@ -115,7 +115,7 @@ export function kanaRow(label: string): string {
 export function getOtcSimilarNames(): OtcSimilarName[] {
   const names: OtcSimilarName[] = [];
   for (const ing of OTC_SIMILAR_77) {
-    const guide = SWITCH_DRUGS.find((d) => d.otcSimilarNo === ing.no);
+    const guide = getAllSwitchDrugs().find((d) => d.otcSimilarNo === ing.no);
     for (const label of ing.rxExamples ?? []) {
       names.push({
         label,
@@ -127,7 +127,7 @@ export function getOtcSimilarNames(): OtcSimilarName[] {
       });
     }
   }
-  for (const d of SWITCH_DRUGS) {
+  for (const d of getAllSwitchDrugs()) {
     if (d.otcSimilarNo == null) {
       names.push({
         label: d.rxName,

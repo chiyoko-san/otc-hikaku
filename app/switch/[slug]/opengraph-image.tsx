@@ -12,6 +12,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
   const entry = getSwitchDrugBySlug(params.slug);
   if (!entry) return ogImage({ title: '処方薬と同じ成分の市販薬', kicker: '処方薬から探す' });
   const n = getOtcMatchesForSwitch(entry, 9999).length;
+  const combo = entry.answer?.otcComboIds?.length ?? 0;
   const monthly = getSwitchMonthly(entry);
   const target = entry.otcSimilarNo != null;
   const partial = entry.answer?.partialMatchLabel;
@@ -19,7 +20,9 @@ export default async function Image({ params }: { params: { slug: string } }) {
     ? `同じ組み合わせの市販薬はなし・${partial.replace(/（.*$/, '')}${n}品`
     : n > 0
       ? `市販薬${n}品・${entry.genericName}`
-      : `${entry.genericName}・同じ成分の市販薬はありません`;
+      : combo > 0
+        ? `単剤の市販薬はなし・ほかの成分を加えた市販薬${combo}品`
+        : `${entry.genericName}・同じ成分の市販薬はありません`;
   return ogImage({
     tag: target ? '上乗せ対象' : '対象外',
     kicker: target ? '2027年3月から' : '2027年3月の上乗せ料金は',

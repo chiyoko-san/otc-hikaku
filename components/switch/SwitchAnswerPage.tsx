@@ -4,11 +4,14 @@ import type { Medicine } from '@/types';
 import {
   type SwitchDrug,
   type SwitchMonthly,
+  getOtcCombosForSwitch,
   getOtcMatchesForSwitch,
   getOtcVariantsForSwitch,
   getSwitchMonthly,
   getSwitchSiblings,
 } from '@/lib/switch-data';
+import { GENERATED_SOURCE_LABEL } from '@/lib/switch-generated';
+import { getCategoryLabel } from '@/lib/categories';
 import { OTC_SIMILAR_META, getOtcSimilarByNo } from '@/lib/otc-similar-77';
 import { OTC_SIMILAR_PATHS } from '@/lib/otc-similar-data';
 import { getItemsByNo, getYakkaDateLabel, yen } from '@/lib/otc-similar-items';
@@ -113,8 +116,14 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
   if (!a) return null;
   const { matches, monthly, risk, riskLine, topNames } = switchAnswerSummary(entry);
   const variants = getOtcVariantsForSwitch(entry);
+  const combos = getOtcCombosForSwitch(entry, 12);
+  const comboCount = entry.answer?.otcComboIds?.length ?? 0;
   const siblings = getSwitchSiblings(entry);
   const count = matches.length;
+  // Phase1（生成薬で文章が未承認）: 「同じ／違う」の文章は出さず、データだけで組む
+  const hasText = a.same.trim().length > 0 || a.differs.trim().length > 0;
+  const generated = entry.source === 'generated';
+  const rxList = entry.rxItems ?? []; // 生成薬の処方薬一覧（NDB順）
   const partial = a.partialMatchLabel ?? null; // 「同じ組み合わせは無いが一部同じ」ページ
   const exact = count > 0 && !partial;
   const groupBy = a.groupBy ?? 'age';
@@ -146,10 +155,12 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
     {
       q: `${entry.rxName}と同じ成分の市販薬はありますか？`,
       a: exact
-        ? `あります。${entry.rxName}の有効成分（${entry.genericName}）を含む市販薬は${topNames.join('・')}など${count}品です。${a.same}`
+        ? `あります。${entry.rxName}の有効成分（${entry.genericName}）を含む市販薬は${topNames.join('・')}など${count}品です。${a.same}`.trim()
         : partial
           ? `${a.same} ${a.differs}`
-          : `${a.same} ${entry.altNote ?? ''}`.trim(),
+          : comboCount > 0
+            ? `${entry.genericName}だけでできた市販薬はありませんが、${entry.genericName}にほかの成分が加わった市販薬が${comboCount}品あります。${entry.altNote ?? ''}`.trim()
+            : `${a.same} ${entry.altNote ?? ''}`.trim(),
     },
     {
       q: `${entry.rxName}と同じ成分の市販薬はネット通販で買えますか？`,
@@ -164,15 +175,20 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
         ? `厚生労働省の案では対象です。処方のときに薬代の4分の1が上乗せされる見込みで、${monthly ? `${monthly.item.name}を${feeLine(monthly)}。` : ''}市販薬として買う場合は上乗せはありません。お子さん、がん・難病など配慮が必要な方、低所得の方、入院中の方、医師が長期使用を必要と判断した方などは対象外の方向で検討されています。最終的な対象は国の告示で決まります。`
         : `厚生労働省の案（77成分）には含まれていないため、現時点では対象外です。ただし令和9年度以降に対象範囲の拡大が検討されており、今後変わる可能性があります。`,
     },
-    {
-      q: '処方薬と市販薬で何が違いますか？',
-      a: exact ? `${a.same} 違うのは使える範囲です。${a.differs}` : `${a.same} ${a.differs}`,
-    },
+    ...(hasText
+      ? [
+          {
+            q: '処方薬と市販薬で何が違いますか？',
+            a: exact ? `${a.same} 違うのは使える範囲です。${a.differs}` : `${a.same} ${a.differs}`,
+          },
+        ]
+      : []),
     {
       q: '購入するときに気をつけることはありますか？',
       a: `${entry.caution} 症状が続く場合や判断に迷う場合は、自己判断せず医師・薬剤師に相談してください。`,
     },
   ];
+  const similarCategory = entry.siteCategory ? { id: entry.siteCategory, label: getCategoryLabel(entry.siteCategory) } : null;
 
   const shareMessage =
     `【${entry.rxName}と同じ成分の市販薬】\n` +
@@ -239,6 +255,16 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
                       </a>
                     </span>
                   </>
+                ) : comboCount > 0 ? (
+                  <>
+                    <span className="text-2xl font-bold">単剤はありません</span>
+                    <span className="mt-1 block text-base text-gray-700">
+                      {entry.genericName}にほかの成分が加わった市販薬は{comboCount}品あります
+                      <a href="#combo" className="ml-2 whitespace-nowrap font-bold text-brand underline">
+                        一覧へ
+                      </a>
+                    </span>
+                  </>
                 ) : (
                   <span className="text-2xl font-bold">ありません</span>
                 )}
@@ -252,6 +278,11 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
                     <span className="text-2xl font-bold">買えます</span>
                     <span className={`${risk.cls} ml-2 align-middle`}>{risk.label}</span>
                     <span className="mt-1 block text-base text-gray-700">{riskLine}</span>
+                  </>
+                ) : comboCount > 0 ? (
+                  <>
+                    <span className="text-2xl font-bold">配合剤なら買えます</span>
+                    <span className="mt-1 block text-base text-gray-700">同じ成分だけの市販薬は無く、ほかの成分が加わった製品になります。区分は製品ごとに違います。</span>
                   </>
                 ) : (
                   <>
@@ -293,17 +324,26 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
             <div className="py-3">
               <dt className="text-base font-bold text-gray-600">処方薬との違い</dt>
               <dd className="mt-1 text-base">
-                <span className="font-bold">同じ：</span>
-                {a.same}
-                <span className="mt-1 block">
-                  <span className="font-bold">違う：</span>
-                  {a.differs}
-                </span>
+                {hasText ? (
+                  <>
+                    <span className="font-bold">同じ：</span>
+                    {a.same}
+                    <span className="mt-1 block">
+                      <span className="font-bold">違う：</span>
+                      {a.differs}
+                    </span>
+                  </>
+                ) : count > 0 || comboCount > 0 ? (
+                  <>市販薬は製品ごとに対象年齢・使える症状・1回の量が違います。購入の前にパッケージと添付文書で確認してください。処方薬との詳しい違いは、添付文書を照合したうえで順次追記します。</>
+                ) : (
+                  <>{entry.altNote}</>
+                )}
               </dd>
             </div>
           </dl>
           <p className="mt-3 text-sm text-gray-600">
             市販薬の一覧はPMDA（医薬品医療機器総合機構）の承認情報、上乗せ額は厚生労働省の薬価基準（{dateLabel}時点）から計算。
+            {generated && `処方薬の一覧は${GENERATED_SOURCE_LABEL}から作成。`}
             対象は厚労省案で、最終的には国の告示で決まります。
           </p>
         </section>
@@ -360,12 +400,70 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
           </section>
         )}
 
-        {count === 0 && (
+        {comboCount > 0 && (
+          <section className="mb-10">
+            <H2 id="combo">{entry.genericName}にほかの成分が加わった市販薬 {comboCount}品</H2>
+            <p className="mb-3 text-base text-gray-700">
+              {entry.rxName}の成分に、別の成分を組み合わせた製品です。同じ成分が入っていても、ほかの成分の分だけ効能や注意点が変わります。
+            </p>
+            <MedicineGrid list={combos} />
+            {comboCount > combos.length && (
+              <p className="mt-2 text-sm text-gray-600">処方数量の多い順に{combos.length}品を表示（全{comboCount}品）。</p>
+            )}
+          </section>
+        )}
+
+        {count === 0 && comboCount === 0 && (
           <section className="mb-10">
             <H2>同じ成分の市販薬は確認できません</H2>
             <div className="callout-warn">
               <p className="text-base">{entry.altNote ?? a.same}</p>
             </div>
+            {similarCategory && (
+              <p className="mt-3">
+                <Link href={`/categories/${similarCategory.id}/`} className="font-bold text-brand underline">
+                  似た用途の市販薬（{similarCategory.label}）を成分で探す →
+                </Link>
+                <span className="ml-1 text-sm text-gray-600">成分は違うので、処方薬の代わりになるとは限りません。</span>
+              </p>
+            )}
+          </section>
+        )}
+
+        {/* ── 処方薬の一覧（生成薬で、上乗せ対象でない薬）── */}
+        {generated && entry.otcSimilarNo == null && rxList.length > 0 && (
+          <section className="mb-10">
+            <H2 id="rx">{entry.rxName}の処方薬一覧（先発・ジェネリック・薬価）</H2>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[520px] text-left text-base">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 font-bold">処方薬</th>
+                    <th className="px-3 py-2 font-bold">区分</th>
+                    <th className="px-3 py-2 font-bold">薬価</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rxList.slice(0, 10).map((it) => (
+                    <tr key={`${it.code}-${it.name}`} className="border-t border-gray-200">
+                      <td className="px-3 py-2">
+                        {it.name}
+                        <span className="ml-2 text-sm text-gray-600">{it.maker}</span>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2 text-sm">{it.kind === '後発' ? 'ジェネリック' : it.kind}</td>
+                      <td className="whitespace-nowrap px-3 py-2">
+                        {yen(it.price)}
+                        <span className="text-sm text-gray-600">／{it.spec}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              処方数量の多い順に{Math.min(10, rxList.length)}品目（全{rxList.length}品目）。薬価は{dateLabel}時点の薬価基準。
+              {entry.rxName}は2027年3月からの上乗せ料金の対象（厚労省案）に入っていないため、薬代に上乗せはありません。
+            </p>
           </section>
         )}
 
@@ -453,17 +551,32 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
 
         {/* ── 処方薬との違い・注意 ── */}
         <section className="mb-10">
-          <H2 id="diff">処方薬と市販薬の違い・切り替えるときの注意</H2>
-          <div className="panel">
-            <p>
-              <span className="font-bold">同じところ：</span>
-              {a.same}
-            </p>
-            <p className="mt-3">
-              <span className="font-bold">違うところ：</span>
-              {a.differs}
-            </p>
-          </div>
+          <H2 id="diff">{hasText ? '処方薬と市販薬の違い・切り替えるときの注意' : '切り替えるときの注意'}</H2>
+          {hasText && (
+            <div className="panel">
+              <p>
+                <span className="font-bold">同じところ：</span>
+                {a.same}
+              </p>
+              <p className="mt-3">
+                <span className="font-bold">違うところ：</span>
+                {a.differs}
+              </p>
+              {a.sources && a.sources.length > 0 && (
+                <p className="mt-3 text-sm text-gray-600">
+                  出典：
+                  {a.sources.map((u, i) => (
+                    <span key={u}>
+                      {i > 0 && '、'}
+                      <a href={u} target="_blank" rel="noopener noreferrer" className="underline">
+                        {u.replace(/^https?:\/\//, '').slice(0, 40)}
+                      </a>
+                    </span>
+                  ))}
+                </p>
+              )}
+            </div>
+          )}
           <div className="callout-warn mt-4">
             <div className="callout-title">注意</div>
             <p className="text-base leading-relaxed">{entry.caution}</p>
