@@ -1,0 +1,58 @@
+name: Switch candidates (NDB → 300薬)
+
+# NDBオープンデータ・薬価基準・PMDAの市販薬から「処方薬名×市販」の候補を作り直す（手動）。
+#   出力: data/switch-drugs.json（ページ生成用）、data/switch-candidates.csv（目視用）
+#   使いどころ: NDB の新しい回が出たとき、薬価基準・medicines.json を更新したとき
+# 本体: scripts/build_switch_candidates.py（data/ndb/*.xlsx と data/yakka/*.xlsx を読む）
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "候補の数（空欄=300）"
+        required: false
+        default: "300"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install openpyxl
+
+      - name: 候補を作る
+        run: |
+          python scripts/build_switch_candidates.py --limit ${{ github.event.inputs.limit || '300' }} | tee cand.log
+          {
+            echo "## Switch candidates"
+            echo '```'
+            cat cand.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: PR を作る（変更があれば）
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- data/switch-drugs.json data/switch-candidates.csv; then
+            echo "変更なし。"
+            exit 0
+          fi
+          STAMP=$(date -u +%Y%m%d)
+          BRANCH="switch-candidates/$STAMP"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add data/switch-drugs.json data/switch-candidates.csv
+          git commit -m "切替ページの候補を更新 $STAMP"
+          git push -u origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" --title "切替ページの候補を更新（$STAMP）" --body "scripts/build_switch_candidates.py の再実行結果。data/switch-candidates.csv を見て、一覧がおかしい薬があればマージ前に教えてください。"

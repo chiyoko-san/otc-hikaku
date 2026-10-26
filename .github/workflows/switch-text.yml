@@ -1,0 +1,85 @@
+name: Switch text drafts (週1・20薬)
+
+# 切替ページ（NDBから生成した薬）の「処方薬との違い」文章を、添付文書を根拠にAIが下書きし、PRにする。
+#   本人が Vercel Preview で該当ページを読む → 問題なければマージ（＝公開）。直したい文は PR 上で
+#   data/switch-text.json を編集してからマージ。怪しい薬はその薬の項目を消してからマージ。
+# 本体: scripts/draft_switch_text.py（使う添付文書は web 検索で取得、出典URL必須）
+
+on:
+  schedule:
+    - cron: "0 21 * * 0"   # 毎週月曜 06:00 JST（UTC 日曜 21:00）
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "下書きする薬の数（空欄=20）"
+        required: false
+        default: "20"
+      slugs:
+        description: "特定の薬だけ（カンマ区切りの slug。空欄=未承認の薬から自動で選ぶ）"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 下書き
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ARGS="--limit ${{ github.event.inputs.limit || '20' }}"
+          if [ -n "${{ github.event.inputs.slugs }}" ]; then
+            ARGS="$ARGS --slugs ${{ github.event.inputs.slugs }}"
+          fi
+          python scripts/draft_switch_text.py $ARGS | tee draft.log
+          {
+            echo "## Switch text drafts"
+            echo '```'
+            cat draft.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: PR を作る
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- data/switch-text.json; then
+            echo "下書きなし（変更なし）。PRは作りません。"
+            exit 0
+          fi
+          STAMP=$(date -u +%Y%m%d)
+          BRANCH="switch-text/$STAMP"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add data/switch-text.json
+          git commit -m "切替ページの文章 下書き $STAMP"
+          git push -u origin "$BRANCH"
+          {
+            echo "AIが添付文書を根拠に下書きした「処方薬との違い」です。Vercel Preview で該当ページを読んで、問題なければマージしてください。"
+            echo
+            echo "- 直したい文: このPRで \`data/switch-text.json\` を編集してからマージ"
+            echo "- 公開したくない薬: その薬の項目を消してからマージ（Phase1 のまま残ります）"
+            echo
+            cat draft_summary.md 2>/dev/null || true
+            echo
+            echo "確認用ページ（Preview のドメインに付けて開く）:"
+            python - <<'PY'
+          import json
+          t = json.load(open("data/switch-text.json"))
+          for slug, e in t["_entries"].items():
+              if not e.get("approved"):
+                  print(f"- /switch/{slug}/")
+          PY
+          } > pr_body.md
+          gh pr create --base main --head "$BRANCH" --title "切替ページの文章 下書き（$STAMP）" --body-file pr_body.md
