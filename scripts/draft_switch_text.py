@@ -50,13 +50,18 @@ SYSTEM = """あなたは、PMDA（医薬品医療機器総合機構）の添付�
 - 薬剤師・医師などの資格や「監修」を名乗らない。「〜と言われています」のような伝聞で逃げない
 - 処方薬から市販薬への切替を勧めない。判断材料を並べ、「医師・薬剤師に相談」で締める
 - 市販薬の値段は書かない（販売店で違う）
+- 処方薬の適応・用量は、その薬の飲み薬（錠剤・カプセル・シロップ）または塗り薬の添付文書を根拠にする。注射剤だけにある適応（例: 巨赤芽球性貧血）は書かない
+- 括弧は全角（）を使う
 - 高齢者にも読める平易な日本語。1文は60字以内。専門用語には短い説明を添える
 - 出力は JSON だけ。前置き・コードフェンス・説明文は書かない"""
 
 
-def nfkc(s):
-    import unicodedata
-    return unicodedata.normalize("NFKC", str(s)).strip() if s is not None else ""
+def clean(s) -> str:
+    """本文の整形。文字正規化（NFKC）はしない（全角括弧・全角記号をそのまま残すため）。括弧だけ全角に揃える"""
+    if s is None:
+        return ""
+    t = str(s).strip().replace("(", "（").replace(")", "）")
+    return t
 
 
 def load():
@@ -190,9 +195,9 @@ def main() -> int:
             skipped.append((d["slug"], "応答なし"))
             continue
         entry = {
-            "same": nfkc(out.get("same", "")),
-            "differs": nfkc(out.get("differs", "")),
-            "caution": nfkc(out.get("caution", "")),
+            "same": clean(out.get("same", "")),
+            "differs": clean(out.get("differs", "")),
+            "caution": clean(out.get("caution", "")),
             "sources": [str(u) for u in (out.get("sources") or []) if u][:5],
             "drafted": today,
             "approved": None,
