@@ -1,4 +1,4 @@
-name: Switch text drafts (週1・20薬)
+name: Switch text drafts (毎週土曜18時・20薬)
 
 # 切替ページ（NDBから生成した薬）の「処方薬との違い」文章を、添付文書を根拠にAIが下書きし、PRにする。
 #   本人が Vercel Preview で該当ページを読む → 問題なければマージ（＝公開）。直したい文は PR 上で
@@ -7,7 +7,7 @@ name: Switch text drafts (週1・20薬)
 
 on:
   schedule:
-    - cron: "0 21 * * 0"   # 毎週月曜 06:00 JST（UTC 日曜 21:00）
+    - cron: "0 9 * * 6"    # 毎週土曜 18:00 JST（UTC 土曜 09:00）。2026-10-31 本人の希望で月曜6時から変更
   workflow_dispatch:
     inputs:
       limit:
