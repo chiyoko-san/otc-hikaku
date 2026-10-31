@@ -286,7 +286,7 @@ def match_otc(ingredient: str, index) -> tuple[list[dict], list[dict]]:
     return single, combo
 
 
-RISK_LABEL = {1: "第1類", 2: "第2類", 2.5: "指定第2類", 3: "第3類"}
+RISK_LABEL = {0: "要指導", 1: "第1類", 2: "第2類", 2.5: "指定第2類", 3: "第3類"}
 
 
 # ---------------------------------------------------------------- 既存30薬
@@ -401,7 +401,8 @@ def build(limit: int) -> tuple[list[dict], list[dict], dict]:
         single, combo = match_otc(r["ingredient"], oidx)
         r["otc_single"] = single
         r["otc_combo"] = combo
-        risks = Counter(m.get("risk") for m in single if m.get("risk"))
+        # risk 0 = 要指導医薬品（ネット販売不可）。0 も数える
+        risks = Counter(m.get("risk") for m in single if m.get("risk") is not None)
         r["otc_risk"] = risks.most_common(1)[0][0] if risks else None
         nos = {code_to_no[p["code"]] for p in r["products"] if p["code"] in code_to_no}
         r["otc_similar_no"] = sorted(nos)[0] if nos else None

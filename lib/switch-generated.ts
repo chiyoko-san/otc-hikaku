@@ -66,7 +66,7 @@ const CAT_TO_SITE: Record<string, string> = {
 };
 
 const toRisk = (r: number | null): SwitchAnswer['otcRisk'] =>
-  r === 1 || r === 2 || r === 2.5 || r === 3 ? r : 2;
+  r === 0 || r === 1 || r === 2 || r === 2.5 || r === 3 ? r : 2;
 
 export const GENERATED_SOURCE_LABEL = DATA.generated_from;
 

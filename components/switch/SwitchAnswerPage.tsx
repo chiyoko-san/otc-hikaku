@@ -34,6 +34,13 @@ type RiskInfo = { label: string; cls: string; short: string; detail: string };
 
 /** 区分ごとの「ネットで買えるか」。一般用医薬品（第1〜3類）はいずれもネット販売可、要指導医薬品は不可 */
 const RISK_INFO: Record<string, RiskInfo> = {
+  '0': {
+    label: '要指導医薬品',
+    cls: 'risk-1',
+    short: 'ネットでは買えません（薬局で薬剤師と対面）',
+    detail:
+      '要指導医薬品は、薬剤師が対面で説明してから販売する区分です。ネット通販では買えません。薬剤師のいる薬局・ドラッグストアの店頭で、本人が購入します。',
+  },
   '1': {
     label: '第1類医薬品',
     cls: 'risk-1',
@@ -165,7 +172,9 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
     {
       q: `${entry.rxName}と同じ成分の市販薬はネット通販で買えますか？`,
       a:
-        count > 0
+        count > 0 && a.otcRisk === 0
+          ? `買えません。${risk.label}なので、薬剤師のいる薬局の店頭で対面で購入します。${risk.detail}`
+          : count > 0
           ? `${risk.label}なので買えます。${riskLine} ${risk.detail}`
           : '同じ成分の市販薬が販売されていないため、ネットでも店頭でも買えません。',
     },
@@ -273,7 +282,13 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
             <div className="py-3">
               <dt className="text-base font-bold text-gray-600">ネットで買える？</dt>
               <dd className="mt-1">
-                {count > 0 ? (
+                {count > 0 && a.otcRisk === 0 ? (
+                  <>
+                    <span className="text-2xl font-bold">店頭のみ</span>
+                    <span className={`${risk.cls} ml-2 align-middle`}>{risk.label}</span>
+                    <span className="mt-1 block text-base text-gray-700">{riskLine}</span>
+                  </>
+                ) : count > 0 ? (
                   <>
                     <span className="text-2xl font-bold">買えます</span>
                     <span className={`${risk.cls} ml-2 align-middle`}>{risk.label}</span>
@@ -479,7 +494,9 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
             <p className="mt-2 text-base text-gray-700">{risk.detail}</p>
             <p className="mt-2 text-base text-gray-700">
               市販薬には「要指導医薬品」「第1類」「指定第2類」「第2類」「第3類」の区分があり、要指導医薬品だけはネットで買えません（薬剤師と対面が必要）。
-              {entry.rxName}と同じ成分の市販薬は{risk.label}なので、この制限はありません。
+              {a.otcRisk === 0
+                ? `${entry.rxName}と同じ成分の市販薬は${risk.label}なので、ネットでは買えません。`
+                : `${entry.rxName}と同じ成分の市販薬は${risk.label}なので、この制限はありません。`}
             </p>
           </div>
         </section>

@@ -6039,7 +6039,7 @@
     "内用薬"
    ],
    "otcSimilarNo": null,
-   "otcRisk": null,
+   "otcRisk": 0,
    "otcSingleIds": [
     205011
    ],
@@ -26012,7 +26012,7 @@
     "外用薬"
    ],
    "otcSimilarNo": 50,
-   "otcRisk": null,
+   "otcRisk": 0,
    "otcSingleIds": [
     159630,
     786898,
@@ -28816,7 +28816,7 @@
     "外用薬"
    ],
    "otcSimilarNo": 59,
-   "otcRisk": null,
+   "otcRisk": 0,
    "otcSingleIds": [
     567418,
     731294,
@@ -31918,7 +31918,7 @@
     "内用薬"
    ],
    "otcSimilarNo": null,
-   "otcRisk": null,
+   "otcRisk": 0,
    "otcSingleIds": [
     997643
    ],
@@ -39555,7 +39555,7 @@
     "内用薬"
    ],
    "otcSimilarNo": null,
-   "otcRisk": null,
+   "otcRisk": 0,
    "otcSingleIds": [
     491204
    ],
@@ -48357,7 +48357,7 @@
     "外用薬"
    ],
    "otcSimilarNo": null,
-   "otcRisk": null,
+   "otcRisk": 0,
    "otcSingleIds": [
     894568
    ],
@@ -49128,7 +49128,7 @@
     "外用薬"
    ],
    "otcSimilarNo": null,
-   "otcRisk": null,
+   "otcRisk": 0,
    "otcSingleIds": [
     707733
    ],
