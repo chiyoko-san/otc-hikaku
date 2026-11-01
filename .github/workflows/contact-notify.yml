@@ -1,0 +1,56 @@
+name: Contact notify (お問い合わせ通知)
+
+# /contact/ のフォームに新しい問い合わせが来たら、ラベル contact の Issue を立てて @chiyoko-san に知らせる（GitHub からメールが届く）。
+#   Issue には件数・種別・日時だけ。名前・メール・本文は Supabase の contact_messages で読む。
+#   1日5回（9・12・15・18・21時 JST）確認。本体: scripts/contact_notify.py
+
+on:
+  schedule:
+    - cron: "0 0,3,6,9,12 * * *"   # 09・12・15・18・21時 JST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: ラベルを用意
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh label create contact --color 0E8A16 --description "お問い合わせ通知" --force || true
+
+      - name: 通知済みの問い合わせを集める
+        id: known
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IDS=$(gh issue list --label contact --state all --limit 500 --json body --jq '.[].body' \
+            | grep -o 'contact-ids: [0-9a-zA-Z,_-]*' | sed 's/contact-ids: //' | tr '\n' ',' )
+          echo "ids=$IDS" >> "$GITHUB_OUTPUT"
+
+      - name: 新着を確認
+        env:
+          SUPABASE_URL:         ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          NOTIFIED_IDS:         ${{ steps.known.outputs.ids }}
+        run: python scripts/contact_notify.py
+
+      - name: 新着があれば Issue を立てる
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -f new_contacts.md ]; then
+            echo "新着なし"
+            exit 0
+          fi
+          gh issue create --title "$(cat new_contacts_title.txt)" --label contact --body-file new_contacts.md
