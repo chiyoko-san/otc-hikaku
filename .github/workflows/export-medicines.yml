@@ -1,0 +1,54 @@
+name: Export medicines (Supabase → medicines.json)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "overrides-only＝手直しだけ ／ preview＝何件埋まるか見るだけ ／ apply＝書き込む"
+        type: choice
+        options:
+          - overrides-only
+          - preview
+          - apply
+        default: overrides-only
+  schedule:
+    - cron: "0 20 * * 6"   # 毎週日曜 05:00 JST（apply）
+
+permissions:
+  contents: write
+
+concurrency:
+  group: export-medicines
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      MODE: ${{ github.event.inputs.mode || 'apply' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Export
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python scripts/export_medicines.py --mode "$MODE"
+
+      - name: Commit
+        if: env.MODE != 'preview'
+        run: |
+          if git diff --quiet -- data/medicines.json; then
+            echo "変更なし"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+          git add data/medicines.json
+          git commit -m "data: medicines.json を更新（$MODE）"
+          git push
