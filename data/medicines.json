@@ -918,31 +918,6 @@
    "price_updated_at": ""
   },
   {
-   "id": 52,
-   "cat": "cough",
-   "name": "ムコダインS（カルボシステイン）",
-   "maker": "各社",
-   "price": 1298,
-   "risk": 2,
-   "drowsy": false,
-   "symptoms": [
-    "たん",
-    "鼻づまり",
-    "せき"
-   ],
-   "effect": "たん・鼻づまりを伴うせきに。粘液を薄め排出促進。",
-   "ings": [
-    "L-カルボシステイン(750mg)"
-   ],
-   "warnIngs": [],
-   "note": "去痰薬。副作用少なく比較的安全。",
-   "noteType": "",
-   "asin": "",
-   "rakuten_url": "",
-   "amazon_tag": "",
-   "price_updated_at": ""
-  },
-  {
    "id": 53,
    "cat": "cough",
    "name": "龍角散ダイレクト",
@@ -1524,31 +1499,6 @@
    "warnIngs": [],
    "note": "殺菌成分配合。長年親しまれてきたマルチ外用薬。",
    "noteType": "",
-   "asin": "",
-   "rakuten_url": "",
-   "amazon_tag": "",
-   "price_updated_at": ""
-  },
-  {
-   "id": 85,
-   "cat": "ext_skin",
-   "name": "リンデロンVGクリーム",
-   "maker": "塩野義製薬",
-   "price": 1628,
-   "risk": 2,
-   "drowsy": false,
-   "symptoms": [
-    "湿疹・かぶれ",
-    "かゆみ"
-   ],
-   "effect": "湿疹・皮膚炎・かぶれ・あせもの炎症・かゆみに。",
-   "ings": [
-    "ベタメタゾン吉草酸エステル(0.12%)",
-    "ゲンタマイシン硫酸塩(0.1%)"
-   ],
-   "warnIngs": [],
-   "note": "中強度ステロイド＋抗菌薬。長期・広範囲・顔面使用不可。",
-   "noteType": "warn",
    "asin": "",
    "rakuten_url": "",
    "amazon_tag": "",
