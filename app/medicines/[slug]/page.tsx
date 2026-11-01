@@ -14,6 +14,7 @@ import { getDamageReportCountByMedicineId } from '@/lib/supabase/damage-reports'
 import { getCategoryLabel } from '@/lib/categories';
 import { normalizeIngredientName } from '@/lib/slug';
 import { isIndexableMedicine } from '@/lib/indexable';
+import { buildMedicineDescription, buildMedicineTitle, isDrowsyMedicine } from '@/lib/medicine-seo';
 import { findOtcSimilarForIngredients } from '@/lib/otc-similar-77';
 import { getRepresentativeItems, unitLabel, yen } from '@/lib/otc-similar-items';
 import { pickRelatedColumns, columnHref } from '@/lib/related-columns';
@@ -53,14 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const med = getMedicineBySlug(params.slug);
   if (!med) return { title: '薬品が見つかりません' };
 
-  const firstIng = med.ings?.[0]
-    ? normalizeIngredientName(med.ings[0])
-    : '';
-  const titleBase = firstIng
-    ? `${med.name}(${firstIng}配合)|成分・効能・類似薬の比較`
-    : `${med.name}|成分・効能・類似薬の比較`;
-
-  const desc = `${med.name}(${med.maker})の成分・効能効果・リスク区分・類似薬との比較。${(med.effect || '').slice(0, 100)}`.trim();
+  // 2026-11-01: 検索語（効果・成分・眠くなる・違い）に答える形に変更。組み立ては lib/medicine-seo.ts
+  const titleBase = buildMedicineTitle(med);
+  const desc = buildMedicineDescription(med);
 
   const meta = buildMetadata({
     title: titleBase,
@@ -229,9 +225,9 @@ export default async function MedicineDetailPage({ params }: Props) {
     },
     {
       q: `${med.name}を飲むと眠くなりますか?`,
-      a: med.drowsy
-        ? `${med.name}は眠気が出ることがある製品です。服用後の車の運転や機械の操作は避けてください。`
-        : `${med.name}は眠気の注意表示がない製品です。ただし体質により眠気を感じる場合は運転を避けてください。`,
+      a: isDrowsyMedicine(med)
+        ? `${med.name}は眠くなる成分を含む製品です。服用後の車の運転や機械の操作はしないでください。`
+        : `${med.name}には、眠くなる代表的な成分（抗ヒスタミン薬・鎮静成分・コデイン類）は含まれていません。ただし体質により眠気を感じる場合は運転を避けてください。`,
     },
     ...(sellers.length > 0
       ? [
@@ -309,7 +305,7 @@ export default async function MedicineDetailPage({ params }: Props) {
             >
               {getCategoryLabel(med.cat)}
             </Link>
-            {med.drowsy && (
+            {isDrowsyMedicine(med) && (
               <span className="rounded bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">
                 眠気あり・運転不可
               </span>
@@ -596,7 +592,7 @@ export default async function MedicineDetailPage({ params }: Props) {
                     <span className={riskClass(sm.med.risk, sm.med.itype)}>
                       {riskLabel(sm.med.risk, sm.med.itype).replace('医薬品', '').replace('分類', '')}
                     </span>
-                    {sm.med.drowsy && <span className="text-sm text-risk-2x">眠気あり</span>}
+                    {isDrowsyMedicine(sm.med) && <span className="text-sm text-risk-2x">眠気あり</span>}
                   </div>
                 </li>
               ))}
@@ -675,7 +671,7 @@ export default async function MedicineDetailPage({ params }: Props) {
                         key={col.med.id}
                         className={`px-3 py-2 ${i === 0 ? 'bg-brand-light/30' : ''}`}
                       >
-                        {col.med.drowsy ? (
+                        {isDrowsyMedicine(col.med) ? (
                           <span className="font-semibold text-risk-2x">あり</span>
                         ) : (
                           <span className="text-gray-500">なし</span>
@@ -858,7 +854,7 @@ export default async function MedicineDetailPage({ params }: Props) {
           message={
             `【${med.name}】${riskLabel(med.risk, med.itype)}・${getCategoryLabel(med.cat)}\n` +
             `成分：${(med.ings || []).slice(0, 6).join('、')}${(med.ings || []).length > 6 ? ' ほか' : ''}` +
-            (med.drowsy ? '\n眠気あり・服用後の運転はできません' : '')
+            (isDrowsyMedicine(med) ? '\n眠気あり・服用後の運転はできません' : '')
           }
           url={`${SITE_URL}/medicines/${med.slug}/`}
           xText={`${med.name}の成分と注意点を調べた。${(med.ings || []).slice(0, 3).join('、')}${(med.ings || []).length > 3 ? ' など' : ''}。市販薬7,500品を成分で比べられる。`}
