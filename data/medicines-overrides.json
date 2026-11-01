@@ -1,0 +1,7 @@
+{
+  "_note": "medicines.json への手直し。export_medicines.py が書き出すたびに最後に当たる。delete_ids＝削除するid、patch＝{\"id\": {列: 値}} で上書き（穴埋めより優先）、add＝JSONに無い薬を丸ごと追加、treat_zero_as_empty＝0を空欄とみなして埋める列（risk の0は区分未取得のため）",
+  "delete_ids": [52, 85],
+  "patch": {},
+  "add": [],
+  "treat_zero_as_empty": ["risk"]
+}
