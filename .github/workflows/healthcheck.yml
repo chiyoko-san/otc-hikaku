@@ -1,0 +1,72 @@
+name: Health Check（毎朝8:30・見張り）
+
+# 毎朝、サイトが壊れていないかだけを確かめる。何も書き換えない。
+#   異常があればラベル healthcheck の Issue を1本だけ立てて（続いている間は同じ Issue にコメント）、
+#   直ったら自動で閉じる。本体: scraper/healthcheck.py
+# 打ち手（タイトル差し替えなど）は土曜の Growth agent だけが行う。
+
+on:
+  schedule:
+    - cron: "30 23 * * *"   # 毎朝 08:30 JST（UTC 23:30）
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+  statuses: read
+
+concurrency:
+  group: healthcheck
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install --quiet google-auth requests
+
+      - name: 確認
+        id: hc
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY || secrets.SUPABASE_SERVICE_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if python scraper/healthcheck.py; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+          cat healthcheck.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Issue で知らせる / 閉じる
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create healthcheck --color b42318 --description "毎朝の見張りで見つかった異常" 2>/dev/null || true
+          OPEN=$(gh issue list --label healthcheck --state open --json number --jq '.[0].number')
+          if [ "${{ steps.hc.outputs.ok }}" = "true" ]; then
+            if [ -n "$OPEN" ]; then
+              gh issue comment "$OPEN" --body "直りました。$(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') JST の確認ですべて正常でした。"
+              gh issue close "$OPEN"
+            fi
+            exit 0
+          fi
+          if [ -n "$OPEN" ]; then
+            gh issue comment "$OPEN" --body-file healthcheck.md
+          else
+            gh issue create --title "サイトの見張りで異常（$(date -u -d '+9 hours' '+%m/%d')）" --label healthcheck --body-file healthcheck.md
+          fi
