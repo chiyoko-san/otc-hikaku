@@ -49,6 +49,8 @@ MAX_TITLE_CHANGES = 8
 MAX_SAGASU_ADD = 3
 FEATURED_MAX = 12
 REVERT_AFTER_DAYS = 21
+INDEX_GRACE_DAYS = 21          # 公開からこの日数たっても未登録のページだけを課題にする
+SAGASU_LAUNCH = "2026-11-03"   # /sagasu/ の最初の15ページを公開した日
 
 SCOPES = [
     "https://www.googleapis.com/auth/analytics.readonly",
@@ -577,20 +579,31 @@ def plan(dry: bool) -> int:
             "solution": "成分データから条件に合う薬の一覧ページを作る",
         })
 
-    # ── 5) 条件ページのインデックス状況（最大20URL）
+    # ── 5) 条件ページのインデックス状況（公開から3週間たったページだけ、最大20URL）
+    #    公開したばかりのページが未登録なのは当たり前なので、課題にしない
     try:
-        targets = [f"{SITE}/sagasu/"] + [f"{SITE}/sagasu/{a}/{b}/" for a, b in sorted(existing - skip)][:19]
+        published = {(a, b): SAGASU_LAUNCH for a, b in existing - skip}
+        for target, when in added_on.items():
+            m_ = re.fullmatch(r"/sagasu/([a-z-]+)/([a-z-]+)/", target)
+            if m_ and (m_.group(1), m_.group(2)) in published and when:
+                published[(m_.group(1), m_.group(2))] = when
+        cutoff = d(TODAY - dt.timedelta(days=INDEX_GRACE_DAYS))
+        old_pages = sorted(k for k, v in published.items() if v <= cutoff)
+        targets = ([f"{SITE}/sagasu/"] if SAGASU_LAUNCH <= cutoff else []) + \
+                  [f"{SITE}/sagasu/{a}/{b}/" for a, b in old_pages]
+        targets = targets[:20]
         not_indexed = []
         for u in targets:
             st = gsc_inspect(s, site, u)
             if st != "PASS":
                 not_indexed.append((u, st))
-        state["metrics"]["sagasu_index"] = {"checked": len(targets), "not_indexed": len(not_indexed)}
-        if not_indexed and len(not_indexed) >= len(targets) // 2:
+        state["metrics"]["sagasu_index"] = {"checked": len(targets), "not_indexed": len(not_indexed),
+                                            "young_pages": len(published) - len(old_pages)}
+        if not_indexed:
             state["issues"].append({
-                "kind": "index", "impact": 30,
-                "problem": f"条件で探すページ{len(targets)}件のうち{len(not_indexed)}件がまだGoogleに登録されていない",
-                "solution": "トップ・薬ページからのリンクを増やし、Bing には IndexNow で知らせる。Google は2〜4週間待って再確認",
+                "kind": "index", "impact": 10 * len(not_indexed),
+                "problem": f"公開から3週間以上たった「条件で探す」ページ{len(targets)}件のうち{len(not_indexed)}件が、まだGoogleに登録されていない",
+                "solution": "トップ・薬ページからのリンクを増やし、Bing には IndexNow で知らせる。4週間たっても未登録なら、中身が薄いと見られている可能性があるので一覧の説明を厚くする",
             })
             state["changed_urls"] += [u for u, _ in not_indexed]
     except requests.HTTPError as e:
