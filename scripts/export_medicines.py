@@ -8,7 +8,10 @@ Supabase の medicines テーブル → data/medicines.json の空欄を埋め�
   apply           空欄の穴埋め＋手直しを data/medicines.json に書く（毎週の自動実行もこれ）
 
 守ること:
-  - 入っている値は上書きしない（空欄だけ埋める）。例外は overrides の patch（手直しが最優先）
+  - 入っている値は上書きしない（空欄だけ埋める）。例外は overrides の patch（手直しが最優先）と、下の「修理」
+  - 修理（2026-11）: Supabase で source が pmda_refetch / pmda_mismatch になった薬は、成分ずれを
+    pmda_backfill_v2.py --recheck で直したもの。ings・effect・risk・maker・source を Supabase の値で上書きし、
+    成分から決まる drowsy・warnIngs・note・noteType・symptoms・cat も作り直す
   - JSON に無い薬（id）は追加しない。件数と例だけ報告する
   - 列名は大文字小文字と _ - の違いを無視して対応づける（risk_class と riskClass は同じ列）
   - 型が違う値（JSON は配列なのに Supabase は文字列、など）は埋めずに報告する
@@ -150,7 +153,8 @@ def fetch_supabase(test_json: str | None):
 # ---------- 本体 ----------
 
 def ingredient_keys(keys) -> list[str]:
-    return [k for k in keys if any(w in norm_key(k) for w in ("ingredient", "成分", "component"))]
+    return [k for k in keys
+            if norm_key(k) == "ings" or any(w in norm_key(k) for w in ("ingredient", "成分", "component"))]
 
 
 def fill_from_supabase(meds: list[dict], sb_rows: list[dict], zero_empty: set[str]) -> dict:
@@ -230,6 +234,75 @@ def fill_from_supabase(meds: list[dict], sb_rows: list[dict], zero_empty: set[st
     }
 
 
+REPAIR_SOURCES = {"pmda_refetch", "pmda_mismatch"}
+REPAIR_FIELDS = ("ings", "effect", "risk", "maker", "source")
+
+
+def _load_enrich_rules():
+    """scraper/pmda_selenium.py と同じ判定（警告成分・眠気成分・分類・症状）を読み込む。
+    selenium を import しないで済むよう、定数だけをソースから取り出す"""
+    import ast
+    src = (ROOT / "scraper" / "pmda_selenium.py").read_text(encoding="utf-8")
+    want = {"WARN_CHECK", "DROWSY_CHECK", "CAT_MAP", "SYM_MAP"}
+    found = {}
+    for node in ast.parse(src).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            n = node.targets[0].id
+            if n in want:
+                found[n] = ast.literal_eval(node.value)
+    return found
+
+
+def _enrich(m: dict, rules: dict) -> None:
+    ings = m.get("ings") or []
+    effect = m.get("effect") or ""
+    ing_str = " ".join(str(i) for i in ings)
+    warn = [w for w in rules.get("WARN_CHECK", []) if w in ing_str]
+    m["drowsy"] = any(k in ing_str for k in rules.get("DROWSY_CHECK", []))
+    m["warnIngs"] = warn
+    if effect or ings:
+        text = f"{effect} {ing_str} {m.get('name', '')}"
+        for cid, kws in rules.get("CAT_MAP", []):
+            if any(k in text for k in kws):
+                m["cat"] = cid
+                break
+    if "SYM_MAP" in rules:
+        m["symptoms"] = [sym for sym, kws in rules["SYM_MAP"] if any(k in effect for k in kws)]
+    notes = []
+    for w in warn:
+        if "アリルイソプロピルアセチル尿素" in w:
+            notes.append("⚠ア尿素含有：2023年AU全面規制・2025年KR麻薬類指定。依存リスクあり。")
+        elif "コデイン" in w or "ジヒドロコデイン" in w:
+            notes.append("⚠コデイン系：12歳未満禁忌。依存リスクあり。")
+        elif "ブロムワレリル" in w:
+            notes.append("⚠ブロム尿素含有：依存性成分。連用注意。")
+    notes = list(dict.fromkeys(notes))
+    m["note"] = " ".join(notes)
+    m["noteType"] = "danger" if any("禁忌" in n or "依存" in n for n in notes) else ("warn" if notes else "nn")
+
+
+def repair_from_supabase(meds: list[dict], sb_rows: list[dict]) -> dict:
+    """成分ずれを直した薬（source が pmda_refetch / pmda_mismatch）を Supabase の値で上書きする"""
+    sb_by_id = {str(r.get(ID_KEY)): r for r in sb_rows if r.get("source") in REPAIR_SOURCES}
+    rules = _load_enrich_rules() if sb_by_id else {}
+    res = {"refetch": 0, "mismatch": 0, "examples": []}
+    for m in meds:
+        r = sb_by_id.get(str(m.get(ID_KEY)))
+        if not r or m.get("source") == r.get("source"):
+            continue  # 修理の対象外か、すでに反映済み
+        before = list(m.get("ings") or [])[:2]
+        for k in REPAIR_FIELDS:
+            if k in r:
+                m[k] = r[k] if r[k] is not None else ([] if k == "ings" else ("" if k in ("effect", "maker") else r[k]))
+        if r.get("detail_url"):
+            m["pmda_url"] = r["detail_url"]
+        _enrich(m, rules)
+        res["refetch" if r["source"] == "pmda_refetch" else "mismatch"] += 1
+        if len(res["examples"]) < 5:
+            res["examples"].append(f"{m.get('name', '')}：{', '.join(map(str, before))} → {', '.join(map(str, (m.get('ings') or [])[:2])) or '（空）'}")
+    return res
+
+
 def apply_overrides(meds: list[dict], ov: dict) -> tuple[int, int, int]:
     dels = {str(i) for i in ov.get("delete_ids", [])}
     before = len(meds)
@@ -299,6 +372,13 @@ def main() -> None:
     if args.mode in ("preview", "apply"):
         sb = fetch_supabase(args.supabase_json)
         out(f"- Supabase `{TABLE}`: {len(sb):,} 行")
+        rep = repair_from_supabase(meds, sb)
+        if rep["refetch"] or rep["mismatch"]:
+            out("### 成分ずれの修理（pmda_backfill_v2.py --recheck の結果）")
+            out(f"- 正しい成分で上書き: **{rep['refetch']:,} 件** ／ 別の製品だったので空に: **{rep['mismatch']:,} 件**")
+            for e in rep["examples"]:
+                out(f"  - {e}")
+            out("")
         res = fill_from_supabase(meds, sb, zero_empty)
         report_fill(res, meds)
         out("")

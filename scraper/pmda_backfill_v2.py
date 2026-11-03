@@ -18,6 +18,19 @@ v1 からの変更:
 使い方:
     python pmda_backfill_v2.py --sample 20          # 読むだけ
     python pmda_backfill_v2.py --run --limit 1000   # 書き込み
+
+2026-11 追加（成分ずれの修理）:
+  8月の取り込み分（id 1,000,000 以上・source "pmda"、約3,200品）で、成分・効能が別の製品のものに
+  なっていた。原因は「取ったページが本当にその製品のページか」を確かめずに書いていたこと
+  （rev を前後にずらして開いたページや、販売終了で別の文書が返ったページをそのまま採用していた）。
+    1. 書き込む前に、ページの製品名とレコードの名前が合っているかを必ず確かめる。合わなければ書かない
+    2. --recheck で、すでに書いてしまった約3,200品を開き直して確かめる
+         名前が合う    → 成分・効能・区分・メーカーをページの内容で上書きし、source を "pmda_refetch" に
+         合わない/消えた → 成分・効能を空にし、source を "pmda_mismatch" に（空なのでページは自動で noindex）
+         名前が読めない → 何もしない（件数だけ報告）
+       source が変わったものは対象から外れるので、何回に分けて流しても続きから進む。
+    python pmda_backfill_v2.py --recheck --sample 30           # 確かめるだけ（書かない）
+    python pmda_backfill_v2.py --recheck --run --limit 1000    # 修理を書き込む
 """
 
 import argparse
@@ -26,11 +39,13 @@ import os
 import re
 import sys
 import time
+import unicodedata
 
 import requests
 from bs4 import BeautifulSoup
 
-SCRIPT_VERSION = "pmda_backfill_v2"
+SCRIPT_VERSION = "pmda_backfill_v2.1"
+QUARANTINE_MIN_ID = 1_000_000
 
 UA = ("Mozilla/5.0 (compatible; kusuri-compass-bot/1.0; "
       "+https://kusuri-compass.com)")
@@ -47,6 +62,31 @@ SKIP_ING_LABELS = {"添加物", "成分", "分量", "内訳", "成分分量", ""
 
 # 取得結果の種別
 OK, EMPTY, ERROR = "ok", "empty", "error"
+
+
+# ------------------------------------------------------------------ 名前の照合
+
+_NAME_NOTE = re.compile(r"[(（\[［〈《＜<【〔][^)）\]］〉》＞>】〕]*[)）\]］〉》＞>】〕]")
+_NAME_DROP = re.compile(r"[\s「」『』\"'“”‘’・･｢｣]")
+_NAME_SPLIT = re.compile(r"[、,，/／|｜]|又は|または")
+
+
+def norm_name(s):
+    """全角半角をそろえ、括弧の付記（（ポンプ）など）と記号・空白を外す"""
+    s = unicodedata.normalize("NFKC", s or "")
+    s = _NAME_NOTE.sub("", s)
+    return _NAME_DROP.sub("", s).lower()
+
+
+def name_matches(row_name, page_name):
+    """レコードの名前とページの製品名が同じ製品か。
+    ページに販売名が複数並ぶことがあるので、区切って1つずつ完全一致で比べる。
+    「ルグナン錠EXα」と「ルグナン錠EXαプレミアム」のような兄弟製品を同じとみなさないよう、部分一致は使わない"""
+    a = norm_name(row_name)
+    if not a:
+        return False
+    cands = [page_name or ""] + _NAME_SPLIT.split(page_name or "")
+    return any(a == norm_name(c) for c in cands if c)
 
 
 # ------------------------------------------------------------------ 整形
@@ -145,8 +185,16 @@ def parse_detail(html):
         "maker": clean(lm.get("製造販売会社", "")),
         "risk_label": risk_label,
         "risk": RISK_MAP.get(risk_label.replace(" ", "")),
-        "name": clean(lm.get("製品名", "")),
+        "name": page_name(soup, lm),
     }
+
+
+def page_name(soup, lm):
+    for k in ("製品名", "販売名", "一般用医薬品の販売名", "商品名", "名称"):
+        if clean(lm.get(k, "")):
+            return clean(lm.get(k, ""))
+    t = soup.find("title")
+    return clean(t.get_text(" ", strip=True)) if t else ""
 
 
 # ------------------------------------------------------------------ 取得
@@ -244,6 +292,21 @@ class Supa:
         r.raise_for_status()
         return r.json()
 
+    def fetch_recheck_targets(self, limit):
+        """成分ずれの疑いがある取り込み分（id 1,000,000 以上・source "pmda"・成分あり）"""
+        params = {
+            "select": "id,name,detail_url,rev,effect,maker,risk,risk_label,ings,source",
+            "id": f"gte.{QUARANTINE_MIN_ID}",
+            "source": "eq.pmda",
+            "detail_url": "not.is.null",
+            "order": "id.asc",
+            "limit": str(limit),
+        }
+        r = requests.get(f"{self.url}/rest/v1/medicines",
+                         headers=self.h, params=params, timeout=60)
+        r.raise_for_status()
+        return [x for x in r.json() if x.get("ings")]
+
     def patch(self, row_id, payload):
         r = requests.patch(
             f"{self.url}/rest/v1/medicines?id=eq.{row_id}",
@@ -288,7 +351,15 @@ def main():
                     help="N件を取得して結果を表示するだけ（書き込みなし）")
     ap.add_argument("--run", action="store_true", help="実際に書き込む")
     ap.add_argument("--limit", type=int, default=1000, help="--run 時の処理件数")
+    ap.add_argument("--recheck", action="store_true",
+                    help="成分ずれの疑いがある取り込み分を開き直して確かめる（2026-11）")
     args = ap.parse_args()
+
+    if args.recheck:
+        if not args.sample and not args.run:
+            sys.exit("--recheck には --sample N か --run を付けてください")
+        recheck(args.sample if args.sample else args.limit, bool(args.run))
+        return
 
     if not args.sample and not args.run:
         sys.exit("--sample N か --run のどちらかを指定してください")
@@ -342,6 +413,18 @@ def main():
             continue
 
         parsed = parse_detail(html)
+
+        # --- 別の製品のページだった（rev違い・販売終了で別の文書が返る など）。書かない
+        if not name_matches(row.get("name"), parsed["name"]):
+            no_data += 1
+            print(f"[{i}/{len(rows)}] ≠ {name} — ページの製品名が違う（{parsed['name'][:30] or '読めない'}）")
+            if write:
+                try:
+                    supa.bump_attempts(row)
+                except Exception as e:
+                    print(f"    カウンタ更新失敗: {e}", file=sys.stderr)
+            continue
+
         payload = build_payload(row, parsed, actual)
 
         # --- 成分が取れなかった（綿棒・検査キット等）
@@ -399,6 +482,108 @@ def main():
                         "時間を空けて再実行してください。\n")
             if lines:
                 f.write("\n### 取得例\n\n" + "\n".join(lines) + "\n")
+
+
+# ------------------------------------------------------------------ recheck（成分ずれの修理）
+
+def recheck(limit, write):
+    supa = Supa()
+    fet = Fetcher()
+    rows = supa.fetch_recheck_targets(limit)
+    print(f"[{SCRIPT_VERSION} recheck] 対象 {len(rows)} 件 / "
+          f"モード: {'書き込み' if write else '確かめるだけ'}\n")
+    fixed = cleared = unknown = errors = 0
+    same = 0  # 名前は合っていて、成分も今と同じだった件数
+    consecutive_error = 0
+    aborted = False
+    ex_fixed, ex_cleared, ex_unknown = [], [], []
+
+    for i, row in enumerate(rows, 1):
+        name = row.get("name") or f"id={row['id']}"
+        kind, html, actual = fet.fetch_with_rev_fallback(row["detail_url"])
+
+        if kind == ERROR:
+            errors += 1
+            consecutive_error += 1
+            print(f"[{i}/{len(rows)}] ! {name} — 通信エラー")
+            if consecutive_error >= MAX_CONSECUTIVE_ERROR:
+                print(f"\n!! 通信エラーが {MAX_CONSECUTIVE_ERROR} 件連続。中断します。")
+                aborted = True
+                break
+            continue
+        consecutive_error = 0
+
+        if kind == EMPTY:
+            cleared += 1
+            print(f"[{i}/{len(rows)}] × {name} — ページなし → 成分・効能を空に")
+            if len(ex_cleared) < 8:
+                ex_cleared.append(f"{name}（ページなし）／今の成分: {', '.join(row['ings'][:2])}")
+            if write:
+                supa.patch(row["id"], {"ings": [], "effect": "", "source": "pmda_mismatch"})
+            continue
+
+        parsed = parse_detail(html)
+        if not parsed["name"]:
+            unknown += 1
+            print(f"[{i}/{len(rows)}] ? {name} — ページの製品名が読めない（何もしない）")
+            if len(ex_unknown) < 5:
+                ex_unknown.append(f"{name} {actual}")
+            continue
+
+        if name_matches(row.get("name"), parsed["name"]) and parsed["ings"]:
+            fixed += 1
+            if parsed["ings"] == row.get("ings"):
+                same += 1
+            print(f"[{i}/{len(rows)}] ○ {name} — 名前一致・成分{len(parsed['ings'])}件")
+            if len(ex_fixed) < 8 and parsed["ings"] != row.get("ings"):
+                ex_fixed.append(f"{name}：{', '.join(row['ings'][:2])} → {', '.join(parsed['ings'][:2])}")
+            if write:
+                p = {"ings": parsed["ings"], "source": "pmda_refetch"}
+                if parsed["effect"]:
+                    p["effect"] = parsed["effect"]
+                if parsed["maker"]:
+                    p["maker"] = parsed["maker"]
+                if parsed["risk_label"]:
+                    p["risk_label"] = parsed["risk_label"]
+                if parsed["risk"] is not None:
+                    p["risk"] = parsed["risk"]
+                if actual and actual != row.get("detail_url"):
+                    m = RE_DETAIL.search(actual)
+                    if m:
+                        p["detail_url"], p["rev"] = actual, m.group(2)
+                supa.patch(row["id"], p)
+            continue
+
+        cleared += 1
+        why = "成分表なし" if not parsed["ings"] else f"別の製品「{parsed['name'][:24]}」"
+        print(f"[{i}/{len(rows)}] ≠ {name} — {why} → 成分・効能を空に")
+        if len(ex_cleared) < 8:
+            ex_cleared.append(f"{name}（{why}）／今の成分: {', '.join(row['ings'][:2])}")
+        if write:
+            supa.patch(row["id"], {"ings": [], "effect": "", "source": "pmda_mismatch"})
+
+    total = fixed + cleared + unknown
+    lines = [
+        f"## 成分ずれの修理（{'書き込み' if write else '確かめるだけ'}）", "",
+        f"- 対象: {len(rows)} 件 ／ リクエスト {fet.requests_made} 回",
+        f"- ○ 名前が一致 → ページの内容で上書き: **{fixed}**（うち成分が今と同じ {same}）",
+        f"- ≠ 別の製品・ページなし → 成分・効能を空に: **{cleared}**",
+        f"- ? 製品名が読めない（何もしない）: {unknown}",
+        f"- ! 通信エラー: {errors}",
+    ]
+    if total:
+        lines.append(f"- 一致した割合: {fixed / total * 100:.0f}%")
+    if aborted:
+        lines.append("\n> **通信エラー連続により中断しました。** 時間を空けて再実行してください。")
+    for title, ex in (("上書きの例（今 → 正しい）", ex_fixed), ("空にする例", ex_cleared), ("製品名が読めなかった例", ex_unknown)):
+        if ex:
+            lines += ["", f"### {title}", ""] + [f"- {x}" for x in ex]
+    text = "\n".join(lines)
+    print("\n" + text)
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with open(summary, "a", encoding="utf-8") as f:
+            f.write(text + "\n")
 
 
 if __name__ == "__main__":
