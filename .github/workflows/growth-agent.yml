@@ -1,0 +1,146 @@
+name: Growth agent（毎週土曜6時・ユーザー数を増やす）
+
+# 成長エージェント。Search Console と GA4 から課題を出し、決まった打ち手だけ自動で反映して、
+# 「今ある課題」「解決策」「実際にやったこと」の3項目だけの Issue（ラベル growth-agent）を立てる。
+#   - エージェントが書き換えるのは data/agent/*.json だけ（コードは触らない）
+#   - scripts/validate_agent_data.py の検査に通れば main に直接反映、通らなければ PR で止める
+#   - 本体: agent/growth.py
+# 手動実行: mode=dryrun は数字と案を出すだけ（何も書き換えず、Issue も立てない。結果は Summary に出る）
+
+on:
+  schedule:
+    - cron: "0 21 * * 5"   # 毎週土曜 06:00 JST（UTC 金曜 21:00）
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "run=本番どおり反映して Issue を立てる / dryrun=試し（書き換えない）"
+        type: choice
+        required: true
+        default: dryrun
+        options:
+          - dryrun
+          - run
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: growth-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MODE: ${{ github.event.inputs.mode || 'run' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install --quiet requests google-auth
+
+      - name: 調べる・決める
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+          GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ "$MODE" = "dryrun" ]; then
+            python agent/growth.py plan --dry
+          else
+            python agent/growth.py plan
+          fi
+
+      - name: 検査して反映
+        id: apply
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "$MODE" = "dryrun" ]; then
+            echo "status=dryrun" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git diff --quiet -- data/agent; then
+            echo "変更なし"
+            echo "status=applied" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          STAMP=$(date -u +%Y%m%d)
+          if python scripts/validate_agent_data.py; then
+            git add data/agent
+            git commit -m "成長エージェント 週次の反映 $STAMP"
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo "status=applied" >> "$GITHUB_OUTPUT"
+            else
+              echo "status=failed" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            BRANCH="growth-agent/$STAMP"
+            git checkout -b "$BRANCH"
+            git add data/agent
+            git commit -m "成長エージェント 週次の変更（検査不合格・要確認）$STAMP"
+            git push -u origin "$BRANCH"
+            python scripts/validate_agent_data.py > validate.log 2>&1 || true
+            { echo "検査に通らなかったので main に入れずに止めています。内容を見て、直すか閉じてください。"; echo; echo '```'; cat validate.log; echo '```'; } > pr_body.md
+            URL=$(gh pr create --base main --head "$BRANCH" --title "成長エージェント 週次の変更（要確認）$STAMP" --body-file pr_body.md)
+            echo "status=pr" >> "$GITHUB_OUTPUT"
+            echo "pr_url=$URL" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bing に知らせる（IndexNow）
+        if: steps.apply.outputs.status == 'applied'
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          KEY = "7130201bd923212ce1d0cfc1692f7493"
+          SITE = "https://www.kusuri-compass.com"
+          try:
+              urls = [u.strip() for u in open("agent/out/growth/changed_urls.txt") if u.strip().startswith(SITE)]
+          except FileNotFoundError:
+              urls = []
+          if not urls:
+              print("送るURLなし")
+          else:
+              body = json.dumps({"host": "www.kusuri-compass.com", "key": KEY,
+                                 "keyLocation": f"{SITE}/{KEY}.txt", "urlList": urls}).encode()
+              req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body, method="POST",
+                                           headers={"Content-Type": "application/json; charset=utf-8"})
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      print(f"IndexNow {len(urls)}件 → {r.status}")
+              except Exception as e:
+                  print("IndexNow 失敗（続行）:", e)
+          PY
+
+      - name: 報告
+        if: always()
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          STATUS="${{ steps.apply.outputs.status }}"
+          [ -z "$STATUS" ] && STATUS=failed
+          if [ "$MODE" = "dryrun" ]; then
+            python agent/growth.py report --status dryrun --no-post
+          else
+            python agent/growth.py report --status "$STATUS" --pr-url "${{ steps.apply.outputs.pr_url }}"
+          fi
+          cat agent/out/growth/report.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: 記録を残す
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-agent-${{ github.run_number }}
+          path: agent/out/growth/
+          retention-days: 60
+          if-no-files-found: ignore

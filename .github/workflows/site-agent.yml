@@ -1,9 +1,7 @@
 name: site-agent
 
+# 2026-11: 毎週の自動実行は止めた（土曜の成長エージェント growth-agent.yml に置き換え）。手動実行だけ残す
 on:
-  schedule:
-    # 毎週月曜 00:00 UTC = 月曜 09:00 JST
-    - cron: '0 0 * * 1'
   workflow_dispatch:
     inputs:
       mode:
