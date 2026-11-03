@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { PAGES, SYMPTOMS, CONDS, getPageData } from '@/lib/sagasu'
+import { getPages, SYMPTOMS, CONDS, getPageData } from '@/lib/sagasu'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: '条件で市販薬を探す｜眠くならない・カフェインなし・子ども用など',
   description:
     '風邪薬・鼻炎薬・咳止め・頭痛薬などを、「眠気の注意がある成分を含まない」「カフェインなし」「子ども用」などの条件で絞り込んだ一覧です。PMDAの添付文書データの成分から作っています。',
-  alternates: { canonical: 'https://kusuri-compass.com/sagasu/' },
-}
+  path: '/sagasu/',
+})
 
 export default function SagasuIndex() {
   const groups = Object.keys(SYMPTOMS)
-    .map((s) => ({ s, conds: PAGES.filter(([a]) => a === s).map(([, c]) => c) }))
+    .map((s) => ({ s, conds: getPages().filter(([a]) => a === s).map(([, c]) => c) }))
     .filter((g) => g.conds.length > 0)
   return (
     <main className="mx-auto max-w-3xl px-5 pb-16 pt-6">

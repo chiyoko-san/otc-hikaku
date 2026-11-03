@@ -1,55 +1,31 @@
 // 症状×条件の一覧ページ（/sagasu/）のデータと判定
-// - data/medicines.json を読み、成分データだけで判定する（医療判断はしない）
-// - 「眠気の注意がある成分」は成分名リストと drowsy フラグのどちらかで判定（どちらかに当たれば除く＝安全側）
-// - id 1,000,000 以上は 2026-08-15 取り込み分で成分が別の製品とずれている例が多いため、修正まで一覧から外す
-import fs from 'fs'
-import path from 'path'
+// - 薬データは lib/medicines の getAllMedicines()（slug 付き）を使う
+// - 成分データだけで判定する（医療判断はしない）
+// - 「眠気の注意がある成分」は薬ページと同じ isDrowsyMedicine に加え、念のため追加の成分でも除く（安全側）
+// - id 1,000,000 以上・source "pmda" は成分ずれの隔離対象なので一覧から外す（lib/indexable.ts と同じ判定）
+// - data/agent/sagasu-extra.json の組（成長エージェントが追加）も、該当5品以上ならページになる
+import type { Medicine } from '@/types'
+import { getAllMedicines } from '@/lib/medicines'
+import { isDrowsyMedicine } from '@/lib/medicine-seo'
+import { isQuarantinedMedicine } from '@/lib/indexable'
+import medicinesRaw from '@/data/medicines.json'
+import extraRaw from '@/data/agent/sagasu-extra.json'
 
-export type Med = {
-  id: number
-  cat: string
-  name: string
-  maker: string
-  risk: number | null
-  drowsy: boolean
-  symptoms: string[]
-  ings: string[]
-  itype?: string | null
-}
+export type Med = Medicine
 
-type Raw = { updated_at?: string; medicines?: Med[] } | Med[]
-
-let cache: { meds: Med[]; updatedAt: string } | null = null
-
-function load() {
-  if (cache) return cache
-  const raw = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), 'data', 'medicines.json'), 'utf8'),
-  ) as Raw
-  const meds = Array.isArray(raw) ? raw : raw.medicines ?? []
-  const updatedAt = Array.isArray(raw) ? '' : raw.updated_at ?? ''
-  cache = { meds, updatedAt }
-  return cache
-}
-
-// 薬ページのURL（形が違う場合はここだけ直す）
 export function medicineHref(m: Med) {
-  return `/medicines/${m.id}`
+  return `/medicines/${m.slug}/`
 }
 
-const ingName = (s: string) => s.replace(/[(（[［].*$/, '').trim()
-const names = (m: Med) => m.ings.map(ingName)
-const hasAny = (m: Med, keys: string[]) =>
-  names(m).some((n) => keys.some((k) => n.includes(k)))
-const sym = (m: Med, ...s: string[]) => s.some((x) => m.symptoms.includes(x))
+const ingName = (s: string) => String(s).replace(/[(（[［].*$/, '').trim()
+const names = (m: Med) => (m.ings || []).map(ingName)
+const hasAny = (m: Med, keys: string[]) => names(m).some((n) => keys.some((k) => n.includes(k)))
+const sym = (m: Med, ...s: string[]) => s.some((x) => (m.symptoms || []).includes(x))
 
-export const SEDATING = [
-  'クロルフェニラミン', 'ジフェンヒドラミン', 'カルビノキサミン', 'クレマスチン',
-  'ジフェニルピラリン', 'プロメタジン', 'メキタジン', 'トリプロリジン', 'シプロヘプタジン',
-  'アリメマジン', 'イソチペンジル', 'ケトチフェン', 'エピナスチン', 'セチリジン', 'エバスチン',
-  'アゼラスチン', 'ベポタスチン', 'ジメンヒドリナート', 'メクリジン', 'スコポラミン',
-  'ジヒドロコデイン', 'コデイン', 'ブロモバレリル尿素', 'ブロムワレリル尿素',
-  'アリルイソプロピルアセチル尿素',
+/** 薬ページの判定（isDrowsyMedicine）に加えて除く成分。一覧は「含まない」と言い切るので広めに取る */
+const SEDATING_EXTRA = [
+  'エピナスチン', 'エバスチン', 'アゼラスチン', 'ベポタスチン', 'ジヒドロコデイン', 'クロルフェニラミン',
+  'ジフェンヒドラミン', 'メキタジン', 'ケトチフェン', 'セチリジン',
 ]
 export const CAFFEINE = ['カフェイン']
 export const STEROID = [
@@ -65,7 +41,7 @@ const NOSE = ['鼻水', '鼻づまり', 'くしゃみ', '花粉症']
 const KIDS = /小児|こども|子ども|子供|キッズ|ジュニア|幼児|ベビー/
 const ORAL_FORM = /内服|シロップ|ドリンク|錠|カプセル|顆粒|細粒|丸|散/
 
-export const isDrowsy = (m: Med) => m.drowsy === true || hasAny(m, SEDATING)
+const hasSedating = (m: Med) => isDrowsyMedicine(m) || hasAny(m, SEDATING_EXTRA)
 const isSogo = (m: Med) => m.cat === 'cold' && sym(m, ...NOSE) && sym(m, '発熱', 'せき', 'のど痛')
 
 type SymptomDef = { label: string; noun: string; test: (m: Med) => boolean }
@@ -98,8 +74,8 @@ type CondDef = { label: string; test: (m: Med) => boolean; how: string }
 export const CONDS: Record<string, CondDef> = {
   'nemuke-nashi': {
     label: '眠気の注意がある成分を含まない',
-    test: (m) => !isDrowsy(m),
-    how: `次の成分のどれかを含む製品を除きました：${SEDATING.join('、')}。眠気の注意が出やすい抗ヒスタミン成分・せき止め成分・鎮静成分です。`,
+    test: (m) => !hasSedating(m),
+    how: '抗ヒスタミン成分（クロルフェニラミン・ジフェンヒドラミン・メキタジンなど）、せき止めのコデイン類、鎮静成分（アリルイソプロピルアセチル尿素・ブロモバレリル尿素）、乗り物酔いのスコポラミンなど、眠気の注意が出る成分を1つでも含む製品を除きました。',
   },
   'caffeine-nashi': {
     label: 'カフェインを含まない',
@@ -113,7 +89,7 @@ export const CONDS: Record<string, CondDef> = {
   },
   tanzai: {
     label: '成分が1つだけ',
-    test: (m) => m.ings.length === 1,
+    test: (m) => (m.ings || []).length === 1,
     how: '有効成分が1つだけの製品を集めました。漢方薬は1つのエキスとして数えています。',
   },
   'steroid-nashi': {
@@ -123,7 +99,8 @@ export const CONDS: Record<string, CondDef> = {
   },
 }
 
-export const PAGES: [string, string][] = [
+/** 本人が選んだ15ページ（2026-11-03） */
+const BASE_PAGES: [string, string][] = [
   ['kaze', 'nemuke-nashi'], ['kaze', 'caffeine-nashi'], ['kaze', 'kodomo'],
   ['bien', 'nemuke-nashi'], ['bien', 'caffeine-nashi'], ['bien', 'kodomo'], ['bien', 'tanzai'],
   ['seki', 'nemuke-nashi'], ['seki', 'caffeine-nashi'],
@@ -133,24 +110,54 @@ export const PAGES: [string, string][] = [
 ]
 export const MIN_ITEMS = 5
 
-export const isPage = (s: string, c: string) => PAGES.some(([a, b]) => a === s && b === c)
-
 const usable = (m: Med) =>
-  m.id < 1000000 && (m.itype === 'otc' || m.itype == null) && m.ings.length > 0
+  !isQuarantinedMedicine(m) && (m.itype === 'otc' || m.itype == null) && (m.ings || []).length > 0
 
-export function getPageData(s: string, c: string) {
-  const { meds, updatedAt } = load()
+type PageData = { S: SymptomDef; C: CondDef; items: Med[]; baseCount: number; kampo: number }
+const _cache = new Map<string, PageData>()
+
+export function getPageData(s: string, c: string): PageData {
+  const key = `${s}/${c}`
+  const hit = _cache.get(key)
+  if (hit) return hit
   const S = SYMPTOMS[s]
   const C = CONDS[c]
-  const base = meds.filter((m) => usable(m) && S.test(m))
+  const base = getAllMedicines().filter((m) => usable(m) && S.test(m))
   const seen = new Set<string>()
   const items = base
     .filter(C.test)
     .filter((m) => (seen.has(m.name) ? false : (seen.add(m.name), true)))
     .sort((a, b) => a.name.localeCompare(b.name, 'ja'))
-  const baseNames = new Set(base.map((m) => m.name)).size
-  const kampo = items.filter((m) => /湯|散|丸/.test(m.name) || m.ings.every((i) => i.includes('エキス'))).length
-  return { S, C, items, baseCount: baseNames, kampo, updatedAt }
+  const baseCount = new Set(base.map((m) => m.name)).size
+  const kampo = items.filter((m) => /湯|散|丸/.test(m.name) || (m.ings || []).every((i) => String(i).includes('エキス'))).length
+  const data = { S, C, items, baseCount, kampo }
+  _cache.set(key, data)
+  return data
+}
+
+let _pages: [string, string][] | null = null
+
+/** ページになる組（本人が選んだ15＋エージェントの追加分のうち5品以上のもの） */
+export function getPages(): [string, string][] {
+  if (_pages) return _pages
+  const out: [string, string][] = [...BASE_PAGES]
+  const extra = ((extraRaw as { pages?: unknown }).pages ?? []) as unknown[]
+  for (const p of extra) {
+    if (!Array.isArray(p) || p.length !== 2) continue
+    const [s, c] = p as [string, string]
+    if (!SYMPTOMS[s] || !CONDS[c]) continue
+    if (out.some(([a, b]) => a === s && b === c)) continue
+    if (getPageData(s, c).items.length < MIN_ITEMS) continue
+    out.push([s, c])
+  }
+  _pages = out
+  return out
+}
+
+export const isPage = (s: string, c: string) => getPages().some(([a, b]) => a === s && b === c)
+
+export function getSagasuPaths(): string[] {
+  return ['/sagasu/', ...getPages().map(([s, c]) => `/sagasu/${s}/${c}/`)]
 }
 
 export function pageTitle(s: string, c: string, n: number) {
@@ -171,7 +178,7 @@ export function pageTitle(s: string, c: string, n: number) {
   }
 }
 
-export const RISK_GROUPS: { key: string; label: string; test: (r: number | null) => boolean }[] = [
+export const RISK_GROUPS: { key: string; label: string; test: (r: number | null | undefined) => boolean }[] = [
   { key: '1', label: '第1類医薬品', test: (r) => r === 1 },
   { key: '2.5', label: '指定第2類医薬品', test: (r) => r === 2.5 },
   { key: '2', label: '第2類医薬品', test: (r) => r === 2 },
@@ -180,11 +187,11 @@ export const RISK_GROUPS: { key: string; label: string; test: (r: number | null)
 ]
 
 export function shortIngs(m: Med, max = 3) {
-  const list = m.ings.map(ingName).filter(Boolean)
+  const list = (m.ings || []).map(ingName).filter(Boolean)
   return list.length > max ? `${list.slice(0, max).join('、')} ほか${list.length - max}成分` : list.join('、')
 }
 
 export function dataDate() {
-  const d = load().updatedAt
+  const d = (medicinesRaw as { updated_at?: string }).updated_at ?? ''
   return d ? d.slice(0, 10) : ''
 }

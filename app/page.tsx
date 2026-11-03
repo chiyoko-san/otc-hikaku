@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllMedicines } from '@/lib/medicines';
+import { getAllMedicines, getMedicineBySlug } from '@/lib/medicines';
+import featuredRaw from '@/data/agent/featured.json';
 import { isIndexableMedicine } from '@/lib/indexable';
 import { buildMetadata, buildWebsiteJsonLd } from '@/lib/seo';
 import { JsonLd } from '@/components/layout/JsonLd';
@@ -19,6 +20,23 @@ function pickTodaysMedicines(count = 12) {
   const day = Math.floor(Date.now() / 86400000);
   const start = (day * 7919) % pool.length; // 7919は素数。日ごとに離れた位置から取る
   return Array.from({ length: Math.min(count, pool.length) }, (_, i) => pool[(start + i * 613) % pool.length]);
+}
+
+/**
+ * よく調べられている薬（成長エージェントが毎週土曜に選ぶ）。
+ * 検索で8〜20位にいる薬ページをトップから直接リンクして、評価を押し上げる。
+ * 存在しない・noindex の薬は出さない。
+ */
+function pickFeaturedMedicines(max = 12) {
+  const slugs = ((featuredRaw as { medicines?: unknown }).medicines ?? []) as unknown[];
+  const out: ReturnType<typeof getAllMedicines> = [];
+  for (const s of slugs) {
+    if (typeof s !== 'string') continue;
+    const m = getMedicineBySlug(s);
+    if (m && isIndexableMedicine(m)) out.push(m);
+    if (out.length >= max) break;
+  }
+  return out;
 }
 
 export const metadata: Metadata = buildMetadata({
@@ -47,7 +65,9 @@ function EntryCard({ href, title, note }: { href: string; title: string; note: s
 
 export default function HomePage() {
   const total = getAllMedicines().length;
-  const todays = pickTodaysMedicines();
+  const featured = pickFeaturedMedicines();
+  const featuredIds = new Set(featured.map((m) => m.id));
+  const todays = pickTodaysMedicines().filter((m) => !featuredIds.has(m.id));
 
   return (
     <>
@@ -113,6 +133,9 @@ export default function HomePage() {
           <h2 className="text-xl font-bold md:text-2xl">ほかの調べ方</h2>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             <li>
+              <EntryCard href="/sagasu/" title="条件で探す" note="眠くならない・カフェインなし・子ども用など、条件に合う薬の一覧" />
+            </li>
+            <li>
               <EntryCard href="/ingredients/" title="成分辞典" note="成分の名前から、はたらきと、それを含む市販薬を見る" />
             </li>
             <li>
@@ -132,6 +155,27 @@ export default function HomePage() {
             </li>
           </ul>
         </section>
+
+        {/* よく調べられている薬（成長エージェントが毎週選ぶ） */}
+        {featured.length > 0 ? (
+          <section className="mt-12">
+            <h2 className="text-xl font-bold md:text-2xl">よく調べられている薬</h2>
+            <p className="mt-2 text-sm text-gray-600 md:text-base">最近、検索で調べられることが多い薬です。</p>
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+              {featured.map((m) => (
+                <li key={m.id}>
+                  <Link href={`/medicines/${m.slug}/`} className="flex min-h-[52px] items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-2 hover:border-brand">
+                    <span className="min-w-0">
+                      <span className="block text-base text-brand-ink">{m.name}</span>
+                      <span className="block text-xs text-gray-500">{m.maker}</span>
+                    </span>
+                    <span className="shrink-0 text-gray-400" aria-hidden="true">›</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         {/* 今日の薬（日替わり） */}
         {todays.length > 0 ? (

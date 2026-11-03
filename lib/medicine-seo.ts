@@ -2,6 +2,12 @@ import type { Medicine } from '@/types';
 import { normalizeIngredientName } from './slug';
 import { getSimilarMedicinesWithReason } from './medicines';
 import { normalizeDosageForm } from './dosageForm';
+import seoOverridesRaw from '@/data/agent/seo-overrides.json';
+
+// 成長エージェント（agent/growth.py）が差し替えたタイトル・説明文。キーは slug。
+// 検査（scripts/validate_agent_data.py）に通ったものだけが data/agent/seo-overrides.json に入る。
+type SeoOverride = { title?: string; description?: string };
+const SEO_OVERRIDES = ((seoOverridesRaw as { medicines?: Record<string, SeoOverride> }).medicines ?? {}) as Record<string, SeoOverride>;
 
 // 配置先: lib/medicine-seo.ts
 //
@@ -81,6 +87,13 @@ function shortEffect(med: Medicine, max = 42): string {
 }
 
 export function buildMedicineTitle(med: Medicine): string {
+  const o = SEO_OVERRIDES[med.slug];
+  if (o?.title) return o.title;
+  return buildDefaultMedicineTitle(med);
+}
+
+/** エージェントの差し替えが無いときのタイトル（差し替えを戻すとこれに戻る） */
+export function buildDefaultMedicineTitle(med: Medicine): string {
   const name = med.name;
   const oral = isOral(med) && med.itype !== 'functional';
   const tail = oral ? '眠くなる？似た薬との違い' : '使い方と似た薬との違い';
@@ -92,6 +105,12 @@ export function buildMedicineTitle(med: Medicine): string {
 }
 
 export function buildMedicineDescription(med: Medicine): string {
+  const o = SEO_OVERRIDES[med.slug];
+  if (o?.description) return o.description;
+  return buildDefaultMedicineDescription(med);
+}
+
+export function buildDefaultMedicineDescription(med: Medicine): string {
   const parts: string[] = [];
   const risk = riskShort(med);
   parts.push(risk ? `${med.name}（${med.maker}）は${risk}。` : `${med.name}（${med.maker}）。`);

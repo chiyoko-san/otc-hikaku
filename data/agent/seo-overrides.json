@@ -1,0 +1,4 @@
+{
+  "_note": "成長エージェント（agent/growth.py）が書き換える。薬ページのタイトル・説明文の差し替え。キーは薬ページの slug。scripts/validate_agent_data.py の検査に通ったものだけ反映される",
+  "medicines": {}
+}

@@ -2,16 +2,17 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
-  PAGES, SYMPTOMS, CONDS, MIN_ITEMS, isPage, getPageData, pageTitle,
+  getPages, SYMPTOMS, CONDS, MIN_ITEMS, isPage, getPageData, pageTitle,
   RISK_GROUPS, shortIngs, medicineHref, dataDate,
 } from '@/lib/sagasu'
+import { buildMetadata } from '@/lib/seo'
 
 type Props = { params: { symptom: string; cond: string } }
 
 export const dynamicParams = false
 
 export function generateStaticParams() {
-  return PAGES.map(([symptom, cond]) => ({ symptom, cond }))
+  return getPages().map(([symptom, cond]) => ({ symptom, cond }))
 }
 
 export function generateMetadata({ params }: Props): Metadata {
@@ -20,13 +21,12 @@ export function generateMetadata({ params }: Props): Metadata {
   const { items, S, C } = getPageData(symptom, cond)
   const title = pageTitle(symptom, cond, items.length)
   const description = `${S.label}のうち、${C.label}市販薬${items.length}品を、PMDAの添付文書データの成分から一覧にしました。区分ごとに製品名・メーカー・主な成分を載せています。`
-  return {
+  return buildMetadata({
     title,
     description,
-    alternates: { canonical: `https://kusuri-compass.com/sagasu/${symptom}/${cond}/` },
-    robots: items.length >= MIN_ITEMS ? undefined : { index: false, follow: true },
-    openGraph: { title, description },
-  }
+    path: `/sagasu/${symptom}/${cond}/`,
+    noindex: items.length < MIN_ITEMS,
+  })
 }
 
 function Lead({ symptom, cond, n, base, kampo }: { symptom: string; cond: string; n: number; base: number; kampo: number }) {

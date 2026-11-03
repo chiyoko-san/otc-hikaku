@@ -11,6 +11,7 @@ import { getIndexRows } from '@/lib/kana-index';
 import medicinesRaw from '@/data/medicines.json';
 import otcRaw from '@/data/otc-similar-items.json';
 import { SITEMAP_IDS } from '@/lib/sitemap-ids';
+import { getSagasuPaths } from '@/lib/sagasu';
 
 // 配置先: app/sitemap.ts
 //
@@ -62,6 +63,8 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
       ...getAllIngredients().map((i) => entry(`/ingredients/${i.slug}/`, MEDICINES_UPDATED)),
       ...getAllSymptoms().map((s) => entry(`/symptoms/${s.slug}/`, MEDICINES_UPDATED)),
       ...getIndexRows().map((r) => entry(`/medicines/index/${r.key}/`, MEDICINES_UPDATED)),
+      // 条件で探す（/sagasu/）。2026-11 追加
+      ...getSagasuPaths().map((p) => entry(p, MEDICINES_UPDATED)),
     ];
   }
 

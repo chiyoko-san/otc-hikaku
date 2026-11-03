@@ -1,14 +1,9 @@
 import type { MetadataRoute } from 'next'
-import { PAGES, dataDate } from '@/lib/sagasu'
+import { getSagasuPaths, dataDate } from '@/lib/sagasu'
+import { SITE_URL } from '@/lib/seo'
 
-const BASE = 'https://kusuri-compass.com'
-
-// /sagasu/sitemap.xml として出る（Search Console に別途送信）
+// /sagasu/sitemap.xml（同じURLは /sitemap/0.xml にも載っている。どちらか一方でも辿れる）
 export default function sitemap(): MetadataRoute.Sitemap {
-  const d = dataDate()
-  const lastModified = d ? new Date(d) : undefined
-  return [
-    { url: `${BASE}/sagasu/`, lastModified },
-    ...PAGES.map(([s, c]) => ({ url: `${BASE}/sagasu/${s}/${c}/`, lastModified })),
-  ]
+  const lastModified = dataDate() || undefined
+  return getSagasuPaths().map((p) => ({ url: `${SITE_URL}${p}`, lastModified }))
 }
