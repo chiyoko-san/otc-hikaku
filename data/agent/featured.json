@@ -1,18 +1,18 @@
 {
   "_note": "成長エージェントが書き換える。トップの「よく調べられている薬」に出す薬ページの slug（最大12）。存在しない・noindex の薬は表示時に自動で外れる",
-  "updated": "2026-11-03",
+  "updated": "2026-11-07",
   "medicines": [
     "rugunanpuremiamu",
     "arutesuminfuasuto-2",
-    "rukinonesuneo",
+    "peakoru",
+    "bitakurupuremiamuns",
     "hariesupuremiamu",
     "meridonev",
-    "rikoripurasuesua",
-    "peakoru",
     "safuioex40puremiamu",
+    "rikoripurasuesua",
+    "ricchi",
     "seshionap",
-    "bitakurupuremiamuns",
-    "bassarutoaii",
-    "ricchi"
+    "hari-2",
+    "popadona"
   ]
 }
