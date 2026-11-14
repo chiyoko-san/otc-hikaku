@@ -1,7 +1,12 @@
 name: Growth agent（毎週土曜6時・ユーザー数を増やす）
 
-# 成長エージェント。Search Console と GA4 から課題を出し、決まった打ち手だけ自動で反映して、
+# 成長エージェント。週1回の高速PDCA。
+#   1) 前週までの改修を数字で判定（伸ばす／直す／捨てる）
+#   2) 母数（来る人の数）の天井を決めている原因を掘り、今週の大改修を1つだけ出す
+#   3) 決まった種類の小さな打ち手は自動で反映
 # 「今ある課題」「解決策」「実際にやったこと」の3項目だけの Issue（ラベル growth-agent）を立てる。
+#   - 改修の記録は data/agent/experiments.json
+#   - 大改修を反映した日に mode=start で動かすと「開始」が記録され、次の土曜から判定が始まる
 #   - エージェントが書き換えるのは data/agent/*.json だけ（コードは触らない）
 #   - scripts/validate_agent_data.py の検査に通れば main に直接反映、通らなければ PR で止める
 #   - 本体: agent/growth.py
@@ -13,13 +18,19 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "run=本番どおり反映して Issue を立てる / dryrun=試し（書き換えない）"
+        description: "dryrun=試し（書き換えない） / run=本番どおり反映して Issue を立てる / start=今週の大改修を「開始した」と記録する"
         type: choice
         required: true
         default: dryrun
         options:
           - dryrun
           - run
+          - start
+      experiment_id:
+        description: "start のときだけ: 開始する案の id（空欄ならいちばん新しい案）"
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -36,6 +47,7 @@ jobs:
     timeout-minutes: 30
     env:
       MODE: ${{ github.event.inputs.mode || 'run' }}
+      EXPERIMENT_ID: ${{ github.event.inputs.experiment_id || '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,7 +65,9 @@ jobs:
           GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ "$MODE" = "dryrun" ]; then
+          if [ "$MODE" = "start" ]; then
+            python agent/growth.py start --id "$EXPERIMENT_ID"
+          elif [ "$MODE" = "dryrun" ]; then
             python agent/growth.py plan --dry
           else
             python agent/growth.py plan
@@ -76,7 +90,8 @@ jobs:
           STAMP=$(date -u +%Y%m%d)
           if python scripts/validate_agent_data.py; then
             git add data/agent
-            git commit -m "成長エージェント 週次の反映 $STAMP"
+            if [ "$MODE" = "start" ]; then MSG="成長エージェント 改修の開始を記録 $STAMP"; else MSG="成長エージェント 週次の反映 $STAMP"; fi
+            git commit -m "$MSG"
             if git pull --rebase origin main && git push origin HEAD:main; then
               echo "status=applied" >> "$GITHUB_OUTPUT"
             else
@@ -96,7 +111,7 @@ jobs:
           fi
 
       - name: Bing に知らせる（IndexNow）
-        if: steps.apply.outputs.status == 'applied'
+        if: steps.apply.outputs.status == 'applied' && env.MODE != 'start'
         run: |
           python - <<'PY'
           import json, urllib.request
@@ -129,7 +144,9 @@ jobs:
         run: |
           STATUS="${{ steps.apply.outputs.status }}"
           [ -z "$STATUS" ] && STATUS=failed
-          if [ "$MODE" = "dryrun" ]; then
+          if [ "$MODE" = "start" ]; then
+            echo "（開始の記録だけ。Issue は立てません）"
+          elif [ "$MODE" = "dryrun" ]; then
             python agent/growth.py report --status dryrun --no-post
           else
             python agent/growth.py report --status "$STATUS" --pr-url "${{ steps.apply.outputs.pr_url }}"
