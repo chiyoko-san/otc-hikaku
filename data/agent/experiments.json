@@ -1,0 +1,27 @@
+{
+  "_note": "成長エージェントの改修の記録（毎週1つの大改修と、その判定）。status: proposed=案 / running=判定待ち / fix=直し中 / grow=伸ばす / drop=捨てた / skipped=見送り。案を始めた日は Actions の Growth agent を mode=start で動かすと記録される",
+  "experiments": [
+    {
+      "id": "2026-10-26-1",
+      "name": "処方薬名×市販薬ページを30薬から330薬に拡張",
+      "kind": "search",
+      "targets": ["/switch/"],
+      "status": "running",
+      "proposed": "2026-10-25",
+      "started": "2026-10-26",
+      "fix_count": 0,
+      "checks": []
+    },
+    {
+      "id": "2026-11-03-1",
+      "name": "条件で探すページ（/sagasu/）を新設",
+      "kind": "search",
+      "targets": ["/sagasu/"],
+      "status": "running",
+      "proposed": "2026-11-02",
+      "started": "2026-11-03",
+      "fix_count": 0,
+      "checks": []
+    }
+  ]
+}

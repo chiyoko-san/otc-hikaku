@@ -11,6 +11,7 @@ validate_agent_data.py — 成長エージェントが書き換えた data/agent
   - 説明文: 20〜130文字 / 同じ禁止語がない / 「眠くなる」の記述が元の説明文と食い違っていない
   - トップに出す薬: 12件以内、slug の形
   - /sagasu/ の追加: lib/sagasu.ts にある症状・条件の組だけ
+  - 改修の記録（experiments.json）: id・状態・対象・開始日の形
 使い方: python scripts/validate_agent_data.py   （0=合格、1=不合格）
 """
 from __future__ import annotations
@@ -28,6 +29,10 @@ BANNED = [
     "http", "<", ">",
 ]
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+
+EXP_STATUS = {"proposed", "running", "fix", "grow", "drop", "skipped"}
+EXP_PATH_RE = re.compile(r"^/(?:[a-z0-9][a-z0-9-]*/)*$")
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 DROWSY_YES = "眠くなる成分を含み"
 DROWSY_NO = "眠くなる成分は含まれていません"
@@ -150,6 +155,37 @@ def main() -> int:
             errors.append("history.json: runs / actions がリストでない")
     except Exception as ex:  # noqa: BLE001
         errors.append(f"history.json が読めない: {ex}")
+
+    try:
+        ex = load("experiments.json")
+        lst = ex.get("experiments")
+        if not isinstance(lst, list):
+            errors.append("experiments.json: experiments がリストでない")
+            lst = []
+        ids = set()
+        for e in lst:
+            if not isinstance(e, dict):
+                errors.append("experiments.json: 辞書でない行がある")
+                continue
+            eid = e.get("id")
+            if not isinstance(eid, str) or not eid or eid in ids:
+                errors.append(f"experiments.json: id が空か重複 {eid!r}")
+            ids.add(eid)
+            if e.get("status") not in EXP_STATUS:
+                errors.append(f"experiments.json: {eid} の status が決まり外 {e.get('status')!r}")
+            if e.get("kind") not in ("search", "channel"):
+                errors.append(f"experiments.json: {eid} の kind が決まり外 {e.get('kind')!r}")
+            t = e.get("targets")
+            if not isinstance(t, list) or not t or not all(isinstance(x, str) and x for x in t):
+                errors.append(f"experiments.json: {eid} の targets が空")
+            elif e.get("kind") == "search" and not all(EXP_PATH_RE.match(x) for x in t):
+                errors.append(f"experiments.json: {eid} の targets がパスの形でない {t!r}")
+            if e.get("status") in ("running", "fix", "grow", "drop") and not DATE_RE.match(str(e.get("started") or "")):
+                errors.append(f"experiments.json: {eid} は開始済みなのに started が日付でない")
+    except FileNotFoundError:
+        pass   # まだ無いのは構わない
+    except Exception as ex_:  # noqa: BLE001
+        errors.append(f"experiments.json が読めない: {ex_}")
 
     if errors:
         print("不合格:")
