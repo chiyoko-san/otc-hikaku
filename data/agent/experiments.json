@@ -5,22 +5,59 @@
       "id": "2026-10-26-1",
       "name": "処方薬名×市販薬ページを30薬から330薬に拡張",
       "kind": "search",
-      "targets": ["/switch/"],
-      "status": "running",
+      "targets": [
+        "/switch/"
+      ],
+      "status": "grow",
       "proposed": "2026-10-25",
       "started": "2026-10-26",
       "fix_count": 0,
-      "checks": []
+      "checks": [
+        {
+          "date": "2026-11-15",
+          "pre_per_day": 2.0,
+          "post_per_day": 8.4,
+          "post_days": 7,
+          "verdict": "grow"
+        }
+      ],
+      "lesson": "伸ばす → /switch/ の型（処方薬名＋市販薬名の組み合わせページ）を、平均順位18位で止まっている330薬以外の処方薬にも広げ、対象を500薬以上に拡張する。"
     },
     {
       "id": "2026-11-03-1",
       "name": "条件で探すページ（/sagasu/）を新設",
       "kind": "search",
-      "targets": ["/sagasu/"],
-      "status": "running",
+      "targets": [
+        "/sagasu/"
+      ],
+      "status": "fix",
       "proposed": "2026-11-02",
       "started": "2026-11-03",
+      "fix_count": 1,
+      "checks": [
+        {
+          "date": "2026-11-15",
+          "pre_per_day": 0.0,
+          "post_per_day": 1.6,
+          "post_days": 7,
+          "verdict": "fix"
+        }
+      ],
+      "lesson": "直す → 16件のうち表示があるのは2件だけ（sitemap登録16件に対し表示URL数3件）。ページタイトルに「〇〇なし」「〇〇含まない」という具体的な言葉が入っていないことが原因と見る。タイトルと見出しを「カフェインなしの風邪薬 一覧」のように検索語に合わせた形に変える。"
+    },
+    {
+      "id": "2026-11-15-1",
+      "name": "症状ページのタイトル・構成を検索順位圏内の型に作り直す",
+      "kind": "search",
+      "targets": [
+        "/symptoms/"
+      ],
+      "status": "proposed",
+      "proposed": "2026-11-15",
+      "started": null,
       "fix_count": 0,
+      "what": "症状ページ85件のタイトル・H1・ページ構造を、「〇〇に使う市販薬 成分比較」という1問1答の型に統一する。次に押す場所は「成分で比べる」の1つだけにする。",
+      "metric_week": "症状ページの1日あたり表示回数が55回以上を維持、かつ表示のあったURL数が10件以上（現在7件）",
       "checks": []
     }
   ]

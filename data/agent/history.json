@@ -21,6 +21,13 @@
       "users_prev": 129,
       "gsc_week_clicks": 30,
       "gsc_prev_week_clicks": 50
+    },
+    {
+      "date": "2026-11-15",
+      "users": 169,
+      "users_prev": 119,
+      "gsc_week_clicks": 34,
+      "gsc_prev_week_clicks": 44
     }
   ],
   "actions": [
@@ -50,6 +57,12 @@
     },
     {
       "date": "2026-11-14",
+      "type": "featured",
+      "target": "/",
+      "detail": "トップの「よく調べられている薬」を12件に更新（新しく1件）"
+    },
+    {
+      "date": "2026-11-15",
       "type": "featured",
       "target": "/",
       "detail": "トップの「よく調べられている薬」を12件に更新（新しく1件）"
