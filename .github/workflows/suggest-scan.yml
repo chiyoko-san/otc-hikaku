@@ -1,0 +1,68 @@
+name: Suggest scan（検索候補で薬名×悩み語を調べる）
+
+# Googleの検索候補で「薬名×悩み語」に検索があるかを調べる（広告アカウント不要・無料）。
+#   毎日 1回、最大 2,500件ずつゆっくり調べて、結果を main に保存する（途中で止められても次回は続きから）。
+#   全部（約3.5万件・2週間ほど）調べ終わったら、30日より古いものから調べ直す。
+#   出力: data/keywords/suggest.json（結果）、adopted.json（検索がある組み合わせ）、suggest-words.csv（薬名に続く言葉の集計）
+# 本体: scripts/suggest_scan.py（入力は data/keywords/brands.json と worry-words.json）
+
+on:
+  schedule:
+    - cron: "17 18 * * *"   # 毎日 03:17 JST
+  workflow_dispatch:
+    inputs:
+      budget:
+        description: "今回調べる件数の上限（空欄=2500）"
+        required: false
+        default: "2500"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: suggest-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 調べる
+        run: |
+          python scripts/suggest_scan.py scan --budget ${{ github.event.inputs.budget || '2500' }} | tee scan.log
+
+      - name: まとめる
+        if: always()
+        run: |
+          python scripts/suggest_scan.py report | tee report.log
+          {
+            echo "## Suggest scan"
+            echo '```'
+            tail -n 3 scan.log
+            echo
+            cat report.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 保存する
+        if: always()
+        run: |
+          git add data/keywords/suggest.json data/keywords/adopted.json data/keywords/suggest-words.csv
+          if git diff --cached --quiet; then
+            echo "変更なし"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "data: 検索候補の調査結果 $(date -u +%Y%m%d)"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            sleep 10
+          done
+          exit 1
