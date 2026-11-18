@@ -45,6 +45,44 @@ REFRESH_DAYS = 30
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0'
 
 
+# 悩み語（data/keywords/worry-words.json があればそちらを優先）
+DEFAULT_WORDS = [
+    {"word": "効果", "answer": "data", "for": ["otc", "kampo", "rx"]},
+    {"word": "成分", "answer": "data", "for": ["otc", "kampo"]},
+    {"word": "違い", "answer": "data", "for": ["otc", "kampo", "rx"]},
+    {"word": "眠くなる", "answer": "data", "for": ["otc", "kampo", "rx"]},
+    {"word": "運転", "answer": "data", "for": ["otc", "rx"]},
+    {"word": "市販", "answer": "data", "for": ["rx", "kampo"]},
+    {"word": "同じ成分", "answer": "data", "for": ["otc", "rx"]},
+    {"word": "ジェネリック", "answer": "data", "for": ["rx"]},
+    {"word": "値段", "answer": "data", "for": ["otc", "rx"]},
+    {"word": "副作用", "answer": "label", "for": ["otc", "kampo", "rx"]},
+    {"word": "何歳から", "answer": "label", "for": ["otc", "kampo"]},
+    {"word": "子供", "answer": "label", "for": ["otc", "kampo", "rx"]},
+    {"word": "妊娠中", "answer": "label", "for": ["otc", "kampo", "rx"]},
+    {"word": "授乳中", "answer": "label", "for": ["otc", "kampo", "rx"]},
+    {"word": "高齢者", "answer": "label", "for": ["otc", "kampo"]},
+    {"word": "飲み合わせ", "answer": "label", "for": ["otc", "kampo", "rx"]},
+    {"word": "併用", "answer": "label", "for": ["otc", "rx"]},
+    {"word": "お酒", "answer": "label", "for": ["otc", "rx"]},
+    {"word": "空腹時", "answer": "label", "for": ["otc"]},
+    {"word": "飲むタイミング", "answer": "label", "for": ["otc", "kampo"]},
+    {"word": "何時間あける", "answer": "label", "for": ["otc"]},
+    {"word": "1日何回", "answer": "label", "for": ["otc", "kampo"]},
+    {"word": "何日まで", "answer": "label", "for": ["otc", "kampo"]},
+    {"word": "効かない", "answer": "none", "for": ["otc", "kampo", "rx"]},
+    {"word": "口コミ", "answer": "none", "for": ["otc", "kampo"]}
+]
+
+
+def load_words():
+    p = os.path.join(KW, 'worry-words.json')
+    if os.path.exists(p):
+        with open(p, encoding='utf-8') as fp:
+            return json.load(fp)['words']
+    return DEFAULT_WORDS
+
+
 def today():
     return dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).date().isoformat()
 
@@ -157,7 +195,8 @@ def scan(a):
     brands = load_json(os.path.join(KW, 'brands.json'), None)
     if not brands:
         sys.exit('data/keywords/brands.json がありません（scripts/build_keyword_combos.py step1 で作る）')
-    words = load_json(os.path.join(KW, 'worry-words.json'), {})['words']
+    os.makedirs(KW, exist_ok=True)
+    words = load_words()
     state = load_json(STATE, {'brands': {}, 'combos': {}})
     queue = plan_queue(brands, words, state)
     print(f'残り {len(queue)} 件（今回は最大 {a.budget} 件）')
@@ -206,8 +245,10 @@ def scan(a):
 # ---------------------------------------------------------------- まとめる
 
 def report(_):
-    brands = load_json(os.path.join(KW, 'brands.json'), {})
-    words = {w['word']: w for w in load_json(os.path.join(KW, 'worry-words.json'), {})['words']}
+    brands = load_json(os.path.join(KW, 'brands.json'), None)
+    if not brands:
+        sys.exit('data/keywords/brands.json がありません')
+    words = {w['word']: w for w in load_words()}
     state = load_json(STATE, {'brands': {}, 'combos': {}})
 
     # 薬名の検索候補の何番目に出たか（上ほど多く検索されている）
