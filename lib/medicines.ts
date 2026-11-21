@@ -7,6 +7,7 @@ import {
   uniquifySlug,
 } from './slug';
 import { SYMPTOM_GROUPS } from './symptom-groups';
+import { symptomSlug } from './symptom-slugs';
 import medicinesRaw from '@/data/medicines.json';
 
 // 成分辞書(医学的な説明文)
@@ -291,7 +292,8 @@ export function getAllSymptoms(): Symptom[] {
   for (const med of enriched) {
     for (const sym of med.symptoms || []) {
       if (!map.has(sym)) {
-        const slug = uniquifySlug(symptomNameToSlug(sym), slugSet);
+        // 2026-11-21: URLは lib/symptom-slugs.ts の表で固定する（旧: かな変換で unnamed-N になっていた）
+        const slug = uniquifySlug(symptomSlug(sym), slugSet);
         map.set(sym, {
           name: sym,
           slug,
@@ -314,6 +316,37 @@ export function getAllSymptoms(): Symptom[] {
  */
 export function getSymptomBySlug(slug: string): Symptom | null {
   return getAllSymptoms().find((s) => s.slug === slug) || null;
+}
+
+/**
+ * 旧URL（2026-11-21 まで）の slug → いまの slug。
+ * 旧方式（かな→ローマ字、漢字だけの名前は unnamed-N）を同じ順番で再現して対応表を作る。
+ * /symptoms/unnamed-45/ のような古いURLを新しいURLへ転送するためだけに使う。
+ */
+let _legacySymptomSlugs: Map<string, string> | null = null;
+
+export function getLegacySymptomSlugMap(): Map<string, string> {
+  if (_legacySymptomSlugs) return _legacySymptomSlugs;
+
+  const current = new Map(getAllSymptoms().map((s) => [s.name, s.slug]));
+  const legacy = new Map<string, string>();
+  const seen = new Set<string>();
+  const slugSet = new Set<string>();
+
+  for (const med of getEnrichedMedicines()) {
+    for (const sym of med.symptoms || []) {
+      if (seen.has(sym)) continue;
+      seen.add(sym);
+      const old = uniquifySlug(symptomNameToSlug(sym), slugSet);
+      const now = current.get(sym);
+      if (now && old !== now) legacy.set(old, now);
+    }
+  }
+  // いまのURLとして使われている文字列は転送しない（別の症状へ飛ばさないため）
+  for (const now of current.values()) legacy.delete(now);
+
+  _legacySymptomSlugs = legacy;
+  return legacy;
 }
 
 /**

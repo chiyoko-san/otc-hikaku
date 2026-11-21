@@ -14,6 +14,7 @@ import { getDamageReportCountByMedicineId } from '@/lib/supabase/damage-reports'
 import { getCategoryLabel } from '@/lib/categories';
 import { normalizeIngredientName } from '@/lib/slug';
 import { isIndexableMedicine } from '@/lib/indexable';
+import { getPeerMedicines } from '@/lib/medicine-links';
 import { buildMedicineDescription, buildMedicineTitle, isDrowsyMedicine } from '@/lib/medicine-seo';
 import { findOtcSimilarForIngredients } from '@/lib/otc-similar-77';
 import { getRepresentativeItems, unitLabel, yen } from '@/lib/otc-similar-items';
@@ -183,6 +184,13 @@ export default async function MedicineDetailPage({ params }: Props) {
     const mm = hit.match(/[(（]([^)）]+)[)）]/);
     return mm ? mm[1] : '配合';
   };
+  // ===== あわせて見られている薬（薬ページ同士を均等につなぐ。lib/medicine-links.ts） =====
+  // 上の「類似薬品」「他の剤形」に出した薬は重ねない
+  const peers = getPeerMedicines(med, 8, [
+    ...similar.map((s) => s.med.id),
+    ...otherFormGroups.flatMap(([, list]) => list.map((s) => s.med.id)),
+  ]);
+
   const relatedSwitch = findSwitchDrugsForMedicine(med);
   const damageCount = await getDamageReportCountByMedicineId(med.id);
 
@@ -773,6 +781,37 @@ export default async function MedicineDetailPage({ params }: Props) {
                 </div>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* あわせて見られている薬（同じ主成分・同じ分類。どの薬にも同じ数のリンクが届くよう輪でつなぐ） */}
+        {peers && (
+          <section className="mb-8">
+            <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold">
+              {peers.label}
+            </h2>
+            <ul className="grid gap-2 md:grid-cols-2">
+              {peers.items.map((p) => (
+                <li key={p.id}>
+                  <Link
+                    href={`/medicines/${p.slug}/`}
+                    className="card flex min-h-[56px] flex-wrap items-center gap-2 p-4 hover:border-brand"
+                  >
+                    <span className="text-base font-semibold text-brand-dark">
+                      {p.name}
+                    </span>
+                    {riskLabel(p.risk, p.itype) !== '分類不明' && (
+                      <span className={riskClass(p.risk, p.itype)}>
+                        {riskLabel(p.risk, p.itype).replace('医薬品', '')}
+                      </span>
+                    )}
+                    {p.maker && (
+                      <span className="text-xs text-gray-500">{p.maker}</span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 
