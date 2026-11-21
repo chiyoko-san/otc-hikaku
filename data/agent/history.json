@@ -28,6 +28,13 @@
       "users_prev": 119,
       "gsc_week_clicks": 34,
       "gsc_prev_week_clicks": 44
+    },
+    {
+      "date": "2026-11-21",
+      "users": 231,
+      "users_prev": 150,
+      "gsc_week_clicks": 33,
+      "gsc_prev_week_clicks": 36
     }
   ],
   "actions": [
@@ -66,6 +73,24 @@
       "type": "featured",
       "target": "/",
       "detail": "トップの「よく調べられている薬」を12件に更新（新しく1件）"
+    },
+    {
+      "date": "2026-11-21",
+      "type": "title",
+      "target": "/medicines/rebyua/",
+      "detail": "タイトル差し替え「レビューA錠の効果・成分｜眠くなる？似た薬との違い」→「レビューA錠の効果と成分｜イブプロフェン配合の第2類医薬品」（表示135回・クリック率0.7%）"
+    },
+    {
+      "date": "2026-11-21",
+      "type": "title",
+      "target": "/medicines/hariesupuremiamu/",
+      "detail": "タイトル差し替え「ハリーエースプレミアムαの効果・成分｜眠くなる？似た薬との違い」→「ハリーエースプレミアムαは眠くなる？成分・効果を確認」（表示165回・クリック率0.6%）"
+    },
+    {
+      "date": "2026-11-21",
+      "type": "featured",
+      "target": "/",
+      "detail": "トップの「よく調べられている薬」を12件に更新（新しく4件）"
     }
   ],
   "sagasu_skip": []
