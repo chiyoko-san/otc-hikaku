@@ -45,9 +45,9 @@ function Lead({ symptom, cond, n, base, kampo }: { symptom: string; cond: string
   }
   return (
     <section className="panel mt-6 p-5">
-      <h2 className="text-lg font-bold">まず結論</h2>
-      {lines.map((l) => (
-        <p key={l} className="mt-2 leading-relaxed">{l}</p>
+      {/* 1行目が答え。大きく出す（見出し「まず結論」は 2026-11-22 に外した） */}
+      {lines.map((l, i) => (
+        <p key={l} className={i === 0 ? 'text-xl font-bold leading-snug md:text-2xl' : 'mt-2 leading-relaxed'}>{l}</p>
       ))}
     </section>
   )

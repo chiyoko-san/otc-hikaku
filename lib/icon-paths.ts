@@ -8,6 +8,12 @@
 // どの症状・剤形にどのアイコンを使うかは lib/icon-map.ts。
 
 export const ICON_PATHS: Record<string, string> = {
+  // 買い物かご: 「ネットで買える？」
+  'cart':
+    "<path d=\"M5 9h6l4 20h21l4-14H13\"/><circle cx=\"18\" cy=\"37\" r=\"2.6\"/><circle cx=\"33\" cy=\"37\" r=\"2.6\"/>",
+  // 円: 上乗せ料金
+  'en':
+    "<circle cx=\"24\" cy=\"24\" r=\"17\"/><path d=\"M17.500 15l6.500 9 6.500-9M24 24v10M18.500 28h11\"/>",
   // 薬の箱: 剤形（錠剤・目薬など）が名前からわからない薬のカードに使う
   'hako':
     "<rect x=\"7\" y=\"12\" width=\"34\" height=\"27\" rx=\"3\"/><path d=\"M7 20h34\"/><rect x=\"14\" y=\"26\" width=\"14\" height=\"7\" rx=\"3.5\"/>",

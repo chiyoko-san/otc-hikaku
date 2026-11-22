@@ -152,7 +152,6 @@ export default async function IngredientDetailPage({ params }: Props) {
         {/* まず結論: 検索語（市販で買える? 何に使う? 区分は?）に1画面で答える */}
         {meds.length > 0 ? (
           <section className="panel mb-8">
-            <h2 className="mb-3 text-base font-bold text-gray-500">まず結論</h2>
             {/* いちばん知りたい答え（買えるか・何品か）を大きく */}
             <p className="mb-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-2xl font-extrabold leading-snug text-brand-ink md:text-3xl">
               {sum.medicineCount > 0 ? (

@@ -22,6 +22,67 @@ import { JsonLd } from '@/components/layout/JsonLd';
 import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { ShareCard } from '@/components/ShareCard';
 import OtcSimilarPriceTable from '@/components/OtcSimilarPriceTable';
+import { Icon } from '@/components/icons/Icon';
+
+/* ---- 答えの札（絵・問い・大きな答え・補足） ---- */
+function AnswerTile({
+  icon,
+  question,
+  children,
+}: {
+  icon: string;
+  question: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="card-static flex h-full flex-col p-5">
+      <div className="mb-3 flex items-center gap-3">
+        <span className="flex flex-none rounded-xl bg-brand-light p-2 text-brand">
+          <Icon name={icon} size={28} />
+        </span>
+        <h2 className="text-base font-bold text-gray-600">{question}</h2>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function AnswerBig({ children }: { children: ReactNode }) {
+  return <p className="text-2xl font-extrabold leading-snug text-brand-ink md:text-3xl">{children}</p>;
+}
+
+function AnswerNote({ children }: { children: ReactNode }) {
+  return <p className="mt-2 text-base leading-relaxed text-gray-700">{children}</p>;
+}
+
+function AnswerLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <p className="mt-auto pt-3">
+      <a href={href} className="text-base font-bold text-brand underline underline-offset-2">
+        ↓ {children}
+      </a>
+    </p>
+  );
+}
+
+/** 文章を「。」で1文ずつに分ける。かっこ（）の中の「。」では切らない */
+function splitSentences(text: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let cur = '';
+  for (const ch of text) {
+    cur += ch;
+    if (ch === '（' || ch === '(') depth++;
+    else if (ch === '）' || ch === ')') depth = Math.max(0, depth - 1);
+    else if (ch === '。' && depth === 0) {
+      if (cur.trim()) out.push(cur.trim());
+      cur = '';
+    }
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return Array.from(new Set(out));
+}
+
 
 // 配置先: components/switch/SwitchAnswerPage.tsx
 //
@@ -237,125 +298,151 @@ export default async function SwitchAnswerPage({ entry }: { entry: SwitchDrug })
           <p className="text-gray-600">有効成分：{entry.genericName}</p>
         </header>
 
-        {/* ── 答えの箱（この1画面で4点に答える） ── */}
-        <section className="panel mb-8" aria-labelledby="answer-title">
-          <h2 id="answer-title" className="mb-3 text-base font-bold text-gray-600">
-            まず結論
+        {/* ── 答え（この1画面で4点に答える） ──
+            2026-11-22: 1つの箱に文章で並べていたのを、3枚の札＋「同じ／違う」の2枚に分けた。
+            見出しの「まず結論」はやめ、札ごとに 絵・問い・大きな答え・補足1行 の順に置く。 */}
+        <section className="mb-8" aria-label="この薬の要点">
+          <div className="grid gap-3 md:grid-cols-3">
+            {/* 1. 同じ成分の市販薬はあるか */}
+            <AnswerTile icon="hako" question="同じ成分の市販薬">
+              {exact ? (
+                <>
+                  <AnswerBig>
+                    <span className="text-4xl text-brand md:text-5xl">{count}</span> 品あります
+                  </AnswerBig>
+                  <AnswerNote>{topNames.join('、')} など</AnswerNote>
+                  <AnswerLink href="#otc">一覧を見る</AnswerLink>
+                </>
+              ) : partial ? (
+                <>
+                  <AnswerBig>同じ組み合わせはありません</AnswerBig>
+                  <AnswerNote>
+                    {partial}は{count}品あります
+                  </AnswerNote>
+                  <AnswerLink href="#otc">一覧を見る</AnswerLink>
+                </>
+              ) : comboCount > 0 ? (
+                <>
+                  <AnswerBig>単剤はありません</AnswerBig>
+                  <AnswerNote>
+                    {entry.genericName}にほかの成分が加わった市販薬は{comboCount}品あります
+                  </AnswerNote>
+                  <AnswerLink href="#combo">一覧を見る</AnswerLink>
+                </>
+              ) : (
+                <AnswerBig>ありません</AnswerBig>
+              )}
+            </AnswerTile>
+
+            {/* 2. ネットで買えるか */}
+            <AnswerTile icon="cart" question="ネットで買える？">
+              {count > 0 && a.otcRisk === 0 ? (
+                <>
+                  <AnswerBig>店頭のみ</AnswerBig>
+                  <div className="mt-2">
+                    <span className={risk.cls}>{risk.label}</span>
+                  </div>
+                  <AnswerNote>{riskLine}</AnswerNote>
+                </>
+              ) : count > 0 ? (
+                <>
+                  <AnswerBig>買えます</AnswerBig>
+                  <div className="mt-2">
+                    <span className={risk.cls}>{risk.label}</span>
+                  </div>
+                  <AnswerNote>{riskLine}</AnswerNote>
+                </>
+              ) : comboCount > 0 ? (
+                <>
+                  <AnswerBig>配合剤なら買えます</AnswerBig>
+                  <AnswerNote>
+                    同じ成分だけの市販薬は無く、ほかの成分が加わった製品になります。区分は製品ごとに違います。
+                  </AnswerNote>
+                </>
+              ) : (
+                <>
+                  <AnswerBig>買えません</AnswerBig>
+                  <AnswerNote>同じ成分の市販薬が販売されていません</AnswerNote>
+                </>
+              )}
+            </AnswerTile>
+
+            {/* 3. 上乗せ料金 */}
+            <AnswerTile icon="en" question="2027年3月からの上乗せ料金">
+              {isTarget ? (
+                monthly ? (
+                  <>
+                    <AnswerBig>
+                      <span className="text-alert">+約{yen(monthly.e3.diff)}</span>
+                    </AnswerBig>
+                    <AnswerNote>
+                      処方の{monthly.item.name}を{monthly.qtyLabel}もらうと（3割負担）
+                    </AnswerNote>
+                    <AnswerNote>
+                      2割負担なら+約{yen(monthly.e2.diff)}、1割負担なら+約{yen(monthly.e1.diff)}
+                    </AnswerNote>
+                    <AnswerNote>市販薬として買う場合、上乗せはありません。</AnswerNote>
+                  </>
+                ) : (
+                  <>
+                    <AnswerBig>対象</AnswerBig>
+                    <AnswerNote>市販薬として買う場合、上乗せはありません。</AnswerNote>
+                  </>
+                )
+              ) : (
+                <>
+                  <AnswerBig>対象外</AnswerBig>
+                  <AnswerNote>厚労省案の77成分に入っていません</AnswerNote>
+                </>
+              )}
+            </AnswerTile>
+          </div>
+
+          {/* 4. 処方薬との違い（同じところ／違うところ を左右に分け、1文ずつ箇条書きに） */}
+          <h2 className="mb-3 mt-8 border-l-4 border-brand pl-3 text-xl font-bold">
+            処方薬との違い
           </h2>
-          <dl className="divide-y divide-gray-200">
-            <div className="py-3">
-              <dt className="text-base font-bold text-gray-600">同じ成分の市販薬</dt>
-              <dd className="mt-1">
-                {exact ? (
-                  <>
-                    <span className="text-2xl font-bold">{count}品</span>
-                    <span className="ml-2">あります（{topNames.join('、')} など）</span>
-                    <a href="#otc" className="ml-2 whitespace-nowrap font-bold text-brand underline">
-                      一覧へ
-                    </a>
-                  </>
-                ) : partial ? (
-                  <>
-                    <span className="text-2xl font-bold">同じ組み合わせはありません</span>
-                    <span className="mt-1 block text-base text-gray-700">
-                      {partial}は{count}品あります
-                      <a href="#otc" className="ml-2 whitespace-nowrap font-bold text-brand underline">
-                        一覧へ
-                      </a>
-                    </span>
-                  </>
-                ) : comboCount > 0 ? (
-                  <>
-                    <span className="text-2xl font-bold">単剤はありません</span>
-                    <span className="mt-1 block text-base text-gray-700">
-                      {entry.genericName}にほかの成分が加わった市販薬は{comboCount}品あります
-                      <a href="#combo" className="ml-2 whitespace-nowrap font-bold text-brand underline">
-                        一覧へ
-                      </a>
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-2xl font-bold">ありません</span>
-                )}
-              </dd>
-            </div>
-            <div className="py-3">
-              <dt className="text-base font-bold text-gray-600">ネットで買える？</dt>
-              <dd className="mt-1">
-                {count > 0 && a.otcRisk === 0 ? (
-                  <>
-                    <span className="text-2xl font-bold">店頭のみ</span>
-                    <span className={`${risk.cls} ml-2 align-middle`}>{risk.label}</span>
-                    <span className="mt-1 block text-base text-gray-700">{riskLine}</span>
-                  </>
-                ) : count > 0 ? (
-                  <>
-                    <span className="text-2xl font-bold">買えます</span>
-                    <span className={`${risk.cls} ml-2 align-middle`}>{risk.label}</span>
-                    <span className="mt-1 block text-base text-gray-700">{riskLine}</span>
-                  </>
-                ) : comboCount > 0 ? (
-                  <>
-                    <span className="text-2xl font-bold">配合剤なら買えます</span>
-                    <span className="mt-1 block text-base text-gray-700">同じ成分だけの市販薬は無く、ほかの成分が加わった製品になります。区分は製品ごとに違います。</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-2xl font-bold">買えません</span>
-                    <span className="mt-1 block text-base text-gray-700">同じ成分の市販薬が販売されていません</span>
-                  </>
-                )}
-              </dd>
-            </div>
-            <div className="py-3">
-              <dt className="text-base font-bold text-gray-600">2027年3月からの上乗せ料金</dt>
-              <dd className="mt-1">
-                {isTarget ? (
-                  <>
-                    <span className="text-2xl font-bold">対象</span>
-                    {monthly && (
-                      <>
-                        <span className="ml-2">
-                          処方の{monthly.item.name}を{monthly.qtyLabel}もらうと
+          {hasText ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              {a.same.trim().length > 0 && (
+                <div className="rounded-2xl bg-brand-light p-5">
+                  <div className="mb-2 text-lg font-bold text-brand-dark">同じところ</div>
+                  <ul className="space-y-2 text-base leading-relaxed">
+                    {splitSentences(a.same).map((t) => (
+                      <li key={t} className="flex gap-2">
+                        <span className="flex-none font-bold text-brand" aria-hidden="true">
+                          ＝
                         </span>
-                        <span className="mt-1 block">
-                          <span className="text-2xl font-bold text-alert">+約{yen(monthly.e3.diff)}</span>
-                          <span className="ml-1 text-base text-gray-700">
-                            （3割負担。2割なら+約{yen(monthly.e2.diff)}、1割なら+約{yen(monthly.e1.diff)}）
-                          </span>
+                        <span>{t}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {a.differs.trim().length > 0 && (
+                <div className="rounded-2xl border border-gray-300 bg-white p-5">
+                  <div className="mb-2 text-lg font-bold text-brand-ink">違うところ</div>
+                  <ul className="space-y-2 text-base leading-relaxed">
+                    {splitSentences(a.differs).map((t) => (
+                      <li key={t} className="flex gap-2">
+                        <span className="flex-none font-bold text-gray-500" aria-hidden="true">
+                          ≠
                         </span>
-                      </>
-                    )}
-                    <span className="mt-1 block text-base text-gray-700">市販薬として買う場合、上乗せはありません。</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-2xl font-bold">対象外</span>
-                    <span className="ml-2 text-base text-gray-700">厚労省案の77成分に入っていません</span>
-                  </>
-                )}
-              </dd>
+                        <span>{t}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-            <div className="py-3">
-              <dt className="text-base font-bold text-gray-600">処方薬との違い</dt>
-              <dd className="mt-1 text-base">
-                {hasText ? (
-                  <>
-                    <span className="font-bold">同じ：</span>
-                    {a.same}
-                    <span className="mt-1 block">
-                      <span className="font-bold">違う：</span>
-                      {a.differs}
-                    </span>
-                  </>
-                ) : count > 0 || comboCount > 0 ? (
-                  <>市販薬は製品ごとに対象年齢・使える症状・1回の量が違います。購入の前にパッケージと添付文書で確認してください。処方薬との詳しい違いは、添付文書を照合したうえで順次追記します。</>
-                ) : (
-                  <>{entry.altNote}</>
-                )}
-              </dd>
-            </div>
-          </dl>
+          ) : (
+            <p className="panel text-base leading-relaxed">
+              {count > 0 || comboCount > 0
+                ? '市販薬は製品ごとに対象年齢・使える症状・1回の量が違います。購入の前にパッケージと添付文書で確認してください。処方薬との詳しい違いは、添付文書を照合したうえで順次追記します。'
+                : entry.altNote}
+            </p>
+          )}
+
           <p className="mt-3 text-sm text-gray-600">
             市販薬の一覧はPMDA（医薬品医療機器総合機構）の承認情報、上乗せ額は厚生労働省の薬価基準（{dateLabel}時点）から計算。
             {generated && `処方薬の一覧は${GENERATED_SOURCE_LABEL}から作成。`}
