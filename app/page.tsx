@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Icon } from '@/components/icons/Icon';
 import { getAllMedicines, getMedicineBySlug } from '@/lib/medicines';
 import featuredRaw from '@/data/agent/featured.json';
 import { isIndexableMedicine } from '@/lib/indexable';
@@ -46,13 +47,18 @@ export const metadata: Metadata = buildMetadata({
   path: '/',
 });
 
-function EntryCard({ href, title, note }: { href: string; title: string; note: string }) {
+function EntryCard({ href, title, note, icon }: { href: string; title: string; note: string; icon?: string }) {
   return (
     <Link
       href={href}
-      className="flex min-h-[72px] items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-5 py-4 hover:border-brand"
+      className="flex min-h-[72px] items-center gap-4 rounded-2xl border border-gray-200 bg-white px-5 py-4 hover:border-brand"
     >
-      <span className="block">
+      {icon && (
+        <span className="flex flex-none rounded-xl bg-brand-light p-2 text-brand">
+          <Icon name={icon} size={32} />
+        </span>
+      )}
+      <span className="block flex-1">
         <span className="block text-lg font-bold text-brand md:text-xl">{title}</span>
         <span className="mt-1 block text-sm text-gray-600 md:text-base">{note}</span>
       </span>
@@ -95,9 +101,9 @@ export default function HomePage() {
               ›
             </span>
           </Link>
-          <EntryCard href="/symptoms/" title="症状から市販薬を探す" note="頭痛、胃の痛み、鼻水、かゆみ…。困っている症状から" />
-          <EntryCard href="/switch/" title="処方薬と同じ成分の市販薬" note="ロキソニン、アレグラ、ヒルドイドなど、病院の薬の名前から" />
-          <EntryCard href="/akinator/" title="質問に答えて薬を探す" note="いくつかの質問に答えると、候補を絞り込みます" />
+          <EntryCard icon="hatsunetsu" href="/symptoms/" title="症状から市販薬を探す" note="頭痛、胃の痛み、鼻水、かゆみ…。困っている症状から" />
+          <EntryCard icon="capsule" href="/switch/" title="処方薬と同じ成分の市販薬" note="ロキソニン、アレグラ、ヒルドイドなど、病院の薬の名前から" />
+          <EntryCard icon="shitsumon" href="/akinator/" title="質問に答えて薬を探す" note="いくつかの質問に答えると、候補を絞り込みます" />
         </div>
 
         {/* 名前で検索 */}

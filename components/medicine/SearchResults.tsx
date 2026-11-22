@@ -48,7 +48,7 @@ export function SearchResults({ q }: { q: string }) {
       <p className="mb-4 text-sm text-gray-600">
         {scored.length} 件ヒット(全 {all.length} 件中)
       </p>
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-2">
         {scored.slice(0, 60).map(({ m }) => (
           <MedicineCard key={m.id} med={m} />
         ))}

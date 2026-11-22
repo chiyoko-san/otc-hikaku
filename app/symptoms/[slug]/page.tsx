@@ -7,7 +7,7 @@ import {
   getAllMedicines,
   getLegacySymptomSlugMap,
 } from '@/lib/medicines';
-import { MedicineCard } from '@/components/medicine/MedicineCard';
+import { MedicineGrid } from '@/components/medicine/MedicineGrid';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
 import { buildMetadata, buildBreadcrumbJsonLd, SITE_URL } from '@/lib/seo';
@@ -220,11 +220,7 @@ export default async function SymptomDetailPage({ params }: Props) {
               <h2 className="mb-4 border-l-4 border-brand pl-3 text-xl font-bold">
                 {riskLabel}({list.length}件)
               </h2>
-              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                {list.map((m) => (
-                  <MedicineCard key={m.id} med={m} />
-                ))}
-              </div>
+              <MedicineGrid meds={list} />
             </section>
           );
         })}
@@ -237,11 +233,7 @@ export default async function SymptomDetailPage({ params }: Props) {
             <p className="mb-4 pl-3 text-sm text-gray-500">
               リスク区分のデータが取れていない製品です。区分は製品の外箱・添付文書で確認してください。
             </p>
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {unknownRisk.map((m) => (
-                <MedicineCard key={m.id} med={m} />
-              ))}
-            </div>
+            <MedicineGrid meds={unknownRisk} />
           </section>
         )}
 
@@ -255,11 +247,7 @@ export default async function SymptomDetailPage({ params }: Props) {
                 機能性表示食品は医薬品ではありません。病気の治療や予防を目的としたものではありません。
               </p>
             )}
-            <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {foods.map((m) => (
-                <MedicineCard key={m.id} med={m} />
-              ))}
-            </div>
+            <MedicineGrid meds={foods} />
           </section>
         )}
 

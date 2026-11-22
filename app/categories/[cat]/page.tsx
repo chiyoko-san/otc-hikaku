@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getMedicinesByCategory } from '@/lib/medicines';
 import { CATEGORIES, getCategoryLabel } from '@/lib/categories';
-import { MedicineCard } from '@/components/medicine/MedicineCard';
+import { MedicineGrid } from '@/components/medicine/MedicineGrid';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
 import { buildMetadata, buildBreadcrumbJsonLd } from '@/lib/seo';
@@ -58,11 +58,7 @@ export default function CategoryPage({ params }: Props) {
           </p>
         </header>
 
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {meds.map((m) => (
-            <MedicineCard key={m.id} med={m} />
-          ))}
-        </div>
+        <MedicineGrid meds={meds} first={24} />
       </div>
     </>
   );

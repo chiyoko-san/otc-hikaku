@@ -56,8 +56,10 @@ export default function SymptomsIndexPage() {
       {/* ===== メイン: 症状アキネーター ===== */}
       <section className="mb-10 rounded-2xl border border-gray-200 bg-white p-8 text-center md:p-12">
         <div className="mx-auto max-w-md">
-          <div className="mb-4 text-4xl" aria-hidden="true">
-            💊
+          <div className="mb-4 flex justify-center">
+            <span className="flex rounded-2xl bg-brand-light p-3 text-brand">
+              <Icon name="shitsumon" size={44} />
+            </span>
           </div>
           <h2 className="mb-2 text-xl font-bold text-brand-ink">
             症状アキネーター

@@ -8,6 +8,12 @@
 // どの症状・剤形にどのアイコンを使うかは lib/icon-map.ts。
 
 export const ICON_PATHS: Record<string, string> = {
+  // 薬の箱: 剤形（錠剤・目薬など）が名前からわからない薬のカードに使う
+  'hako':
+    "<rect x=\"7\" y=\"12\" width=\"34\" height=\"27\" rx=\"3\"/><path d=\"M7 20h34\"/><rect x=\"14\" y=\"26\" width=\"14\" height=\"7\" rx=\"3.5\"/>",
+  // 質問: 「質問に答えて探す」の入口に使う
+  'shitsumon':
+    "<path d=\"M8 9h32a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H23l-9 8v-8H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3z\"/><path d=\"M20 18a4 4 0 1 1 6.5 3.1c-1.600 1.200-2.500 1.900-2.500 3.400\"/><circle cx=\"24\" cy=\"28.500\" r=\"1.500\" fill=\"currentColor\" stroke=\"none\"/>",
   'zutsu':
     "<circle cx=\"24\" cy=\"29\" r=\"12\"/><path d=\"M18.5 28h4M25.5 28h4M20.5 35q3.5-2 7 0\"/><path d=\"M24 6v6M12.5 9.5l3 4.5M35.5 9.5l-3 4.5\"/>",
   'hatsunetsu':

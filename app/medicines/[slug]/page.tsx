@@ -602,7 +602,7 @@ export default async function MedicineDetailPage({ params }: Props) {
                       {sm.sameIngredient ? '同成分' : '同カテゴリ'}
                     </span>
                     <span className={riskClass(sm.med.risk, sm.med.itype)}>
-                      {riskLabel(sm.med.risk, sm.med.itype).replace('医薬品', '').replace('分類', '')}
+                      {riskLabel(sm.med.risk, sm.med.itype).replace('医薬品', '').replace('分類不明', '区分未確認')}
                     </span>
                     {isDrowsyMedicine(sm.med) && <span className="text-sm text-risk-2x">眠気あり</span>}
                   </div>
@@ -669,7 +669,7 @@ export default async function MedicineDetailPage({ params }: Props) {
                         <span className={riskClass(col.med.risk, col.med.itype)}>
                           {riskLabel(col.med.risk, col.med.itype)
                             .replace('医薬品', '')
-                            .replace('分類', '')}
+                            .replace('分類不明', '区分未確認')}
                         </span>
                       </td>
                     ))}
@@ -772,7 +772,7 @@ export default async function MedicineDetailPage({ params }: Props) {
                         <span className={riskClass(s.med.risk, s.med.itype)}>
                           {riskLabel(s.med.risk, s.med.itype)
                             .replace('医薬品', '')
-                            .replace('分類', '')}
+                            .replace('分類不明', '区分未確認')}
                         </span>
                         {s.med.maker && (
                           <span className="text-xs text-gray-500">

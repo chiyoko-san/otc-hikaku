@@ -7,7 +7,9 @@ import { getNextSteps } from '@/lib/ingredient-next';
 import { pickRelatedColumns } from '@/lib/related-columns';
 import { NextSteps } from '@/components/ingredient/NextSteps';
 import { findOtcSimilarForIngredients } from '@/lib/otc-similar-77';
-import { MedicineCard } from '@/components/medicine/MedicineCard';
+import { MedicineGrid } from '@/components/medicine/MedicineGrid';
+import { Icon } from '@/components/icons/Icon';
+import { symptomIconKey } from '@/lib/icon-map';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
 import {
@@ -150,13 +152,31 @@ export default async function IngredientDetailPage({ params }: Props) {
         {/* まず結論: 検索語（市販で買える? 何に使う? 区分は?）に1画面で答える */}
         {meds.length > 0 ? (
           <section className="panel mb-8">
-            <h2 className="mb-3 text-lg font-bold md:text-xl">まず結論</h2>
-            <dl className="space-y-3 text-base leading-relaxed">
+            <h2 className="mb-3 text-base font-bold text-gray-500">まず結論</h2>
+            {/* いちばん知りたい答え（買えるか・何品か）を大きく */}
+            <p className="mb-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-2xl font-extrabold leading-snug text-brand-ink md:text-3xl">
+              {sum.medicineCount > 0 ? (
+                <>
+                  <span>市販で買えます</span>
+                  <span className="text-brand">
+                    <span className="text-4xl md:text-5xl">{sum.medicineCount}</span> 品
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>市販薬はありません</span>
+                  <span className="text-lg font-bold text-gray-600">
+                    機能性表示食品が {sum.foodCount} 品
+                  </span>
+                </>
+              )}
+            </p>
+            <dl className="space-y-4 text-base leading-relaxed md:text-lg">
               <div>
-                <dt className="font-bold">市販で買える?</dt>
+                <dt className="text-sm font-bold text-gray-500">市販で買える?</dt>
                 <dd>
                   {sum.medicineCount > 0
-                    ? `買えます。${ing.name}を含む市販薬は ${sum.medicineCount} 品あります(成分を確認できた製品)。`
+                    ? `${ing.name}を含む市販薬は ${sum.medicineCount} 品あります(成分を確認できた製品)。`
                     : `市販薬(医薬品)の掲載はありません。機能性表示食品が ${sum.foodCount} 品あります。`}
                   {sum.medicineCount > 0 && sum.foodCount > 0 &&
                     `ほかに機能性表示食品が ${sum.foodCount} 品あります。`}
@@ -164,16 +184,26 @@ export default async function IngredientDetailPage({ params }: Props) {
               </div>
               {sum.topSymptoms.length > 0 && sum.medicineCount > 0 && (
                 <div>
-                  <dt className="font-bold">どんな薬に入っている?</dt>
+                  <dt className="text-sm font-bold text-gray-500">どんな薬に入っている?</dt>
                   <dd>
-                    効能に「{sum.topSymptoms.join('」「')}」を含む製品に多く入っています。
-                    製品全体の効能で、この成分だけの働きではありません。
+                    <span className="mb-1 flex flex-wrap gap-2">
+                      {sum.topSymptoms.map((name) => (
+                        <span
+                          key={name}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-brand-light px-3 py-1 text-base font-bold text-brand-dark"
+                        >
+                          {symptomIconKey(name) && <Icon name={symptomIconKey(name)!} size={22} />}
+                          {name}
+                        </span>
+                      ))}
+                    </span>
+                    効能にこれらを含む製品に多く入っています。製品全体の効能で、この成分だけの働きではありません。
                   </dd>
                 </div>
               )}
               {sum.riskParts.length > 0 && (
                 <div>
-                  <dt className="font-bold">区分は?</dt>
+                  <dt className="text-sm font-bold text-gray-500">区分は?</dt>
                   <dd>
                     {sum.riskParts.join('、')}。
                     {sum.riskParts.some((r) => r.startsWith('第1類')) &&
@@ -183,7 +213,7 @@ export default async function IngredientDetailPage({ params }: Props) {
               )}
               {ing.description && (
                 <div>
-                  <dt className="font-bold">どんな成分?</dt>
+                  <dt className="text-sm font-bold text-gray-500">どんな成分?</dt>
                   <dd>{ing.description}</dd>
                 </div>
               )}
@@ -243,24 +273,8 @@ export default async function IngredientDetailPage({ params }: Props) {
             <h2 className="mb-4 border-l-4 border-brand pl-3 text-xl font-bold">
               {ing.name}を含む製品({meds.length}件)
             </h2>
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {meds.slice(0, FIRST_SHOWN).map((m) => (
-                <MedicineCard key={m.id} med={m} />
-              ))}
-            </div>
-            {/* 残りは折りたたむ（リンクはHTMLに残るので検索エンジンは辿れる） */}
-            {meds.length > FIRST_SHOWN && (
-              <details className="mt-4">
-                <summary className="card cursor-pointer p-4 text-center text-base font-bold text-brand-dark">
-                  残り {meds.length - FIRST_SHOWN} 品を見る
-                </summary>
-                <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                  {meds.slice(FIRST_SHOWN).map((m) => (
-                    <MedicineCard key={m.id} med={m} />
-                  ))}
-                </div>
-              </details>
-            )}
+            {/* 最初の12品だけ見せ、残りは「残り◯品を見る」で開く */}
+            <MedicineGrid meds={meds} first={FIRST_SHOWN} />
           </section>
         )}
 
@@ -277,10 +291,8 @@ export default async function IngredientDetailPage({ params }: Props) {
                 成分データを取り直している製品です。成分は各製品の添付文書で確認してください。
               </p>
             )}
-            <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {pending.map((m) => (
-                <MedicineCard key={m.id} med={m} />
-              ))}
+            <div className="mt-4">
+              <MedicineGrid meds={pending} />
             </div>
           </section>
         )}
