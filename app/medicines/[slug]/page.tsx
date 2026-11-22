@@ -15,6 +15,8 @@ import { getCategoryLabel } from '@/lib/categories';
 import { normalizeIngredientName } from '@/lib/slug';
 import { isIndexableMedicine } from '@/lib/indexable';
 import { getPeerMedicines } from '@/lib/medicine-links';
+import { symptomIconKey } from '@/lib/icon-map';
+import { Icon } from '@/components/icons/Icon';
 import { buildMedicineDescription, buildMedicineTitle, isDrowsyMedicine } from '@/lib/medicine-seo';
 import { findOtcSimilarForIngredients } from '@/lib/otc-similar-77';
 import { getRepresentativeItems, unitLabel, yen } from '@/lib/otc-similar-items';
@@ -518,13 +520,15 @@ export default async function MedicineDetailPage({ params }: Props) {
             <div className="flex flex-wrap gap-2">
               {med.symptoms.map((s) => {
                 const slug = symSlugMap.get(s);
+                const icon = symptomIconKey(s);
                 return slug ? (
                   <Link
                     key={s}
                     href={`/symptoms/${slug}/`}
-                    className="chip hover:border-brand"
+                    className="chip inline-flex items-center gap-1.5 hover:border-brand"
                   >
-                    #{s}
+                    {icon ? <Icon name={icon} size={20} className="text-brand" /> : '#'}
+                    {s}
                   </Link>
                 ) : (
                   <span key={s} className="chip">

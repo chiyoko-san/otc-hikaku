@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { JsonLd } from '@/components/layout/JsonLd';
+import { IconSprite } from '@/components/icons/IconSprite';
 import { buildWebsiteJsonLd, SITE_URL, SITE_NAME, SITE_DESCRIPTION, DEFAULT_OGP } from '@/lib/seo';
 import Script from 'next/script';
 import './globals.css';
@@ -43,6 +44,8 @@ export default function RootLayout({
         <JsonLd data={buildWebsiteJsonLd()} />
       </head>
       <body className="min-h-screen flex flex-col">
+        {/* アイコンの絵（画面には出ない。各ページの <Icon> がここを参照する） */}
+        <IconSprite />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

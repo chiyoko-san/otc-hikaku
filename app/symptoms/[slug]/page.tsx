@@ -11,6 +11,8 @@ import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { JsonLd } from '@/components/layout/JsonLd';
 import { buildMetadata, buildBreadcrumbJsonLd, SITE_URL } from '@/lib/seo';
+import { symptomIconKey } from '@/lib/icon-map';
+import { Icon } from '@/components/icons/Icon';
 
 // 一覧に無いページもアクセス時に生成する
 export const dynamicParams = true;
@@ -119,6 +121,7 @@ export default async function SymptomDetailPage({ params }: Props) {
   }
 
   const { meds, foods, foodOnly } = splitByType(sym);
+  const symIcon = symptomIconKey(sym.name);
 
   // タグが症状と一致するものを優先。無ければ全公開記事から振り分ける
   const columns = await getPublishedColumns();
@@ -175,10 +178,17 @@ export default async function SymptomDetailPage({ params }: Props) {
 
         <header className="mb-8">
           <div className="mb-2 text-sm text-gray-500">{sym.group}</div>
-          <h1 className="mb-2 text-3xl font-bold md:text-4xl">
-            {foodOnly
-              ? `${sym.name}が気になる方向けの機能性表示食品`
-              : `${sym.name}に効く市販薬`}
+          <h1 className="mb-2 flex items-center gap-3 text-3xl font-bold md:text-4xl">
+            {symIcon && (
+              <span className="flex flex-none rounded-xl bg-brand-light p-2 text-brand">
+                <Icon name={symIcon} size={40} />
+              </span>
+            )}
+            <span>
+              {foodOnly
+                ? `${sym.name}が気になる方向けの機能性表示食品`
+                : `${sym.name}に効く市販薬`}
+            </span>
           </h1>
           {foodOnly ? (
             <p className="text-gray-600">

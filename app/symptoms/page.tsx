@@ -5,6 +5,8 @@ import { SYMPTOM_GROUPS } from '@/lib/symptom-groups';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { SymptomPicker } from './SymptomPicker';
 import { buildMetadata } from '@/lib/seo';
+import { symptomIconKey } from '@/lib/icon-map';
+import { Icon } from '@/components/icons/Icon';
 
 export const metadata: Metadata = buildMetadata({
   title: '症状から市販薬を探す|症状別の選び方ガイド',
@@ -30,6 +32,11 @@ export default function SymptomsIndexPage() {
         count: countMap.get(s) || 0,
       })),
   })).filter((g) => g.symptoms.length > 0);
+
+  // よく調べられる症状: 薬の多い順に12個だけ（多すぎると選べないので絞る。残りは下のプルダウン）
+  const popular = symptoms
+    .filter((s) => symptomIconKey(s.name))
+    .slice(0, 12);
 
   return (
     <div className="container-narrow py-6 md:py-10">
@@ -71,10 +78,38 @@ export default function SymptomsIndexPage() {
         </div>
       </section>
 
+      {/* ===== よくある症状から選ぶ（絵つきの大きなボタン。2026-11-21 追加） ===== */}
+      <section className="mb-10">
+        <h2 className="mb-3 border-l-4 border-brand pl-3 text-xl font-bold text-brand-ink">
+          よくある症状から選ぶ
+        </h2>
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {popular.map((s) => (
+            <li key={s.slug}>
+              <Link
+                href={`/symptoms/${s.slug}/`}
+                className="card flex min-h-[72px] items-center gap-4 p-4 hover:border-brand"
+              >
+                <Icon name={symptomIconKey(s.name)!} size={44} className="text-brand" />
+                <span className="flex-1">
+                  <span className="block text-xl font-bold text-brand-ink">{s.name}</span>
+                  <span className="block text-sm text-gray-500">
+                    {s.medicineIds.length}品
+                  </span>
+                </span>
+                <span className="text-2xl text-brand" aria-hidden="true">
+                  ›
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* ===== サブ: 症状を直接選ぶ ===== */}
       <section className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8">
         <h2 className="mb-1 text-base font-bold text-brand-ink">
-          症状がはっきりしている方は
+          ほかの症状を探す
         </h2>
         <p className="mb-4 text-sm text-gray-500">
           部位・種類を選ぶと、その症状に適応のある市販薬一覧へ移動します。

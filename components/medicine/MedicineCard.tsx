@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import type { Medicine } from '@/types';
 import { getCategoryLabel } from '@/lib/categories';
+import { formIconKey } from '@/lib/icon-map';
+import { Icon } from '@/components/icons/Icon';
 
 function riskClass(risk: number, itype?: string): string {
   if (itype === 'functional') return 'risk-functional';
@@ -42,15 +44,25 @@ export function MedicineCard({
   med: Medicine;
   badge?: string;
 }) {
+  // 剤形アイコン（錠剤・目薬・貼り薬など）。名前から形がわからない薬には出さない
+  const formIcon = formIconKey(med);
+
   return (
     <Link
       href={`/medicines/${med.slug}/`}
       className={`card block p-4 ${spineClass(med.risk, med.itype)}`}
     >
       <div className="mb-2 flex items-start justify-between gap-2">
-        <h3 className="text-base font-bold leading-tight text-gray-900">
-          {med.name}
-        </h3>
+        <div className="flex min-w-0 items-center gap-3">
+          {formIcon && (
+            <span className="flex flex-none rounded-lg bg-brand-light p-1.5 text-brand">
+              <Icon name={formIcon} size={30} />
+            </span>
+          )}
+          <h3 className="text-base font-bold leading-tight text-gray-900">
+            {med.name}
+          </h3>
+        </div>
         <span className="flex flex-shrink-0 items-center gap-1">
           {badge && (
             <span className="pill-brand">
