@@ -3,6 +3,9 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAllIngredients, getIngredientBySlug } from '@/lib/medicines';
 import { summarize, countLabel, buildFaqs } from '@/lib/ingredient-summary';
+import { getNextSteps } from '@/lib/ingredient-next';
+import { pickRelatedColumns } from '@/lib/related-columns';
+import { NextSteps } from '@/components/ingredient/NextSteps';
 import { findOtcSimilarForIngredients } from '@/lib/otc-similar-77';
 import { MedicineCard } from '@/components/medicine/MedicineCard';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
@@ -16,6 +19,12 @@ import {
 
 // 一覧に無いページもアクセス時に生成する
 export const dynamicParams = true;
+
+// コラムの追加を1日1回反映する（「次に見る」の3枠目でコラムを出すため）
+export const revalidate = 86400;
+
+/** 製品一覧で最初から見せる数。残りは「残りを見る」で開く（下の案内まで届くように） */
+const FIRST_SHOWN = 12;
 
 // ビルド時に作るのは薬の多い上位800件。残りは初回アクセス時に生成される
 // 2026-10 修正: 以前は薬のスラッグを返していて（コピペ由来）、成分ページとしては存在しない
@@ -81,7 +90,7 @@ export function generateMetadata({ params }: Props): Metadata {
   });
 }
 
-export default function IngredientDetailPage({ params }: Props) {
+export default async function IngredientDetailPage({ params }: Props) {
   const ing = getIngredientBySlug(params.slug);
   if (!ing) notFound();
 
@@ -89,6 +98,13 @@ export default function IngredientDetailPage({ params }: Props) {
   const { meds, pending } = sum;
   const faqs = buildFaqs(ing, sum);
   const fee = findOtcSimilarForIngredients([ing.name]);
+
+  // 次に見る（3つまで）。コラムは成分名が題名・要約に出てくるものだけ（無関係な記事では埋めない）
+  const [column] =
+    meds.length > 0
+      ? await pickRelatedColumns({ ingredients: [ing.name], keywords: [], limit: 1, strict: true })
+      : [];
+  const nextSteps = meds.length > 0 ? getNextSteps(ing, sum, column ?? null) : [];
 
   const breadcrumbs = [
     { name: 'ホーム', href: '/' },
@@ -194,6 +210,9 @@ export default function IngredientDetailPage({ params }: Props) {
           )
         )}
 
+        {/* 次に見る: 読んで終わりにしない。行き先は3つまで */}
+        <NextSteps steps={nextSteps} place="top" />
+
         {/* 処方薬でもらうと上乗せ料金の対象になる成分 */}
         {fee.length > 0 && (
           <section className="panel mb-8">
@@ -225,10 +244,23 @@ export default function IngredientDetailPage({ params }: Props) {
               {ing.name}を含む製品({meds.length}件)
             </h2>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {meds.map((m) => (
+              {meds.slice(0, FIRST_SHOWN).map((m) => (
                 <MedicineCard key={m.id} med={m} />
               ))}
             </div>
+            {/* 残りは折りたたむ（リンクはHTMLに残るので検索エンジンは辿れる） */}
+            {meds.length > FIRST_SHOWN && (
+              <details className="mt-4">
+                <summary className="card cursor-pointer p-4 text-center text-base font-bold text-brand-dark">
+                  残り {meds.length - FIRST_SHOWN} 品を見る
+                </summary>
+                <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {meds.slice(FIRST_SHOWN).map((m) => (
+                    <MedicineCard key={m.id} med={m} />
+                  ))}
+                </div>
+              </details>
+            )}
           </section>
         )}
 
@@ -293,6 +325,9 @@ export default function IngredientDetailPage({ params }: Props) {
             </dl>
           </section>
         )}
+
+        {/* ページの最後にも同じ3つ（一覧を見終えた人の行き止まりを無くす） */}
+        <NextSteps steps={nextSteps} place="bottom" heading="ほかに調べるなら" />
 
         <aside className="mt-12 rounded bg-gray-50 p-4 text-xs text-gray-600">
           <p>

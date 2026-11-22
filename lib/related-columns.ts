@@ -34,6 +34,8 @@ export async function pickRelatedColumns(opts: {
   ingredients: string[]; // 正規化済み成分名
   keywords: string[]; // 薬名・カテゴリ・処方薬名・症状など
   limit?: number;
+  /** true なら、語が一致したコラムだけ返す（制度ネタで埋めない）。成分ページの「次に見る」用 */
+  strict?: boolean;
 }): Promise<ColumnLite[]> {
   const limit = opts.limit ?? 3;
   let cols: ColumnLite[] = [];
@@ -66,7 +68,7 @@ export async function pickRelatedColumns(opts: {
 
   const picked: ColumnLite[] = scored.slice(0, limit).map((x) => x.c);
 
-  if (picked.length < limit) {
+  if (!opts.strict && picked.length < limit) {
     const used = new Set(picked.map((c) => c.id));
     const policy = cols
       .filter((c) => !used.has(c.id) && (c.tag === '上乗せ料金' || c.tag === '制度解説'))
