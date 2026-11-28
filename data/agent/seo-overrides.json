@@ -12,6 +12,13 @@
         "ctr": 0.72,
         "impressions": 1804,
         "position": 9.0
+      },
+      "evaluated": "2026-11-28",
+      "result": {
+        "before_ctr": 0.75,
+        "after_ctr": 1.22,
+        "before_impr": 1733,
+        "after_impr": 575
       }
     },
     "medeipein-3": {
@@ -25,6 +32,13 @@
         "ctr": 0.76,
         "impressions": 131,
         "position": 5.5
+      },
+      "evaluated": "2026-11-28",
+      "result": {
+        "before_ctr": 0.76,
+        "after_ctr": 0,
+        "before_impr": 131,
+        "after_impr": 13
       }
     },
     "rebyua": {
